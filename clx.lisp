@@ -667,7 +667,7 @@
 	   :configure-request :circulate-notify :circulate-request :property-notify
 	   :selection-clear :selection-request :selection-notify
 	   :colormap-notify :client-message :mapping-notify
-           :shape-notify))
+           :shape-notify :xfree86-vidmode-notify))
 
 (deftype error-key ()
   '(member :access :alloc :atom :colormap :cursor :drawable :font :gcontext :id-choice
