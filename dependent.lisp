@@ -936,16 +936,21 @@
 			&body body)
   ;; This macro is used by WITH-DISPLAY, which claims to be callable
   ;; recursively.  So, had better use a recursive lock.
+  ;;
+  ;; FIXME: This is hideously ugly.  If WITH-TIMEOUT handled NIL
+  ;; timeouts...
   (declare (ignore display whostate))
   (if timeout
-      `(handler-case
-	   (sb-ext:with-timeout ,timeout
-	     (sb-thread:with-recursive-lock (,lock)
-	       ,@body))
-	 (sb-ext:timeout () nil))
+      `(if ,timeout
+	   (handler-case
+	       (sb-ext:with-timeout ,timeout
+		 (sb-thread:with-recursive-lock (,lock)
+		   ,@body))
+	     (sb-ext:timeout () nil))
+	   (sb-thread:with-recursive-lock (,lock)
+	     ,@body))
       `(sb-thread:with-recursive-lock (,lock)
 	 ,@body)))
-      
 
 #+Genera
 (defmacro holding-lock ((locator display &optional whostate &key timeout)
@@ -1202,6 +1207,7 @@
 
 #+(and sb-thread sbcl)
 (defun process-wakeup (process)
+  (declare (ignore process))
   (destructuring-bind (lock . queue)
       (gethash (sb-thread:current-thread-id) *process-conditions*
 	       (cons nil nil))
