@@ -2546,7 +2546,7 @@
   (let ((hostent (get-host-by-name (string host))))
     (ecase family
       ((:internet nil 0)
-       (cons :internet (coerce (host-ent-address hostent) 'list)))))))
+       (cons :internet (coerce (host-ent-address hostent) 'list))))))
 
 #+explorer ;; This isn't required, but it helps make sense of the results from access-hosts
 (defun get-host (host-object)
@@ -2643,6 +2643,15 @@
   #+sbcl (sb-ext:posix-getenv name)
   #-(or sbcl excl lcl3.0 CMU) (progn name nil))
 
+(defun get-host-name ()
+  "Return the same hostname as gethostname(3) would"
+  ;; machine-instance probably works on a lot of lisps, but clisp is not
+  ;; one of them
+  #+(or cmu sbcl) (machine-instance)
+  ;; resources-pathname was using short-site-name for this purpose
+  #+excl (short-site-name)
+  #-(or excl cmu sbcl) (error "get-host-name not implemented"))
+
 (defun homedir-file-pathname (name)
   (and #-(or unix mach) (search "Unix" (software-type) :test #'char-equal)
        (merge-pathnames (user-homedir-pathname) (pathname name))))
@@ -2660,9 +2669,8 @@
   (or (let ((string (getenv "XENVIRONMENT")))
 	(and string
 	     (pathname string)))
-      (homedir-file-pathname (concatenate 'string ".Xdefaults-"
-					  #+excl (short-site-name)
-					  #-excl (machine-instance)))))
+      (homedir-file-pathname
+       (concatenate 'string ".Xdefaults-" (get-host-name)))))
 
 ;;; AUTHORITY-PATHNAME - The pathname of the authority file.
 
@@ -2677,7 +2685,7 @@
 (defun get-default-display ()
   "Get the default X display as list of (host display-number screen protocol).
 In UNIX this is selected using the DISPLAY environment variable, and
-may use :internet or :unix protocol"
+may use :internet or :local protocol"
   (let* ((name (or (getenv "DISPLAY")
 		   (error "DISPLAY environment variable is not set")))
 	 (colon-i (position #\: name))
@@ -2689,7 +2697,7 @@ may use :internet or :unix protocol"
 	 (screen (if dot-i
 		     (ignore-errors (parse-integer name :start (1+ dot-i)))))
 	 (protocol (if (or (string= host "") (string-equal host "unix"))
-		       :unix
+		       :local
 		       :internet)))
     (list host (or display 0) (or screen 0) protocol)))
 
