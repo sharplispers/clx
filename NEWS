@@ -1,4 +1,4 @@
----  Changes in SBCL CLX 0.5.1, XXX FILL THIS IN XXX  ---
+---  Changes in SBCL CLX 0.5.1, Wed Jun 25 14:20:31 BST 2003  ---
 
 experimental RENDER extension support (from Gilbert Baumann)
   note: the API to this is as yet unfinalized, as indeed the protocol
