@@ -654,7 +654,8 @@
 	   :reparent-notify :configure-notify :gravity-notify :resize-request
 	   :configure-request :circulate-notify :circulate-request :property-notify
 	   :selection-clear :selection-request :selection-notify
-	   :colormap-notify :client-message :mapping-notify))
+	   :colormap-notify :client-message :mapping-notify
+           :shape-notify))
 
 (deftype error-key ()
   '(member :access :alloc :atom :colormap :cursor :drawable :font :gcontext :id-choice
