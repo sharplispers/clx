@@ -13,6 +13,9 @@ A Texinfo version of the CLX manual as been added.
 The portable-clx mailing list has been created for development discussion
 and bug reports
 
+A demonstration of ICCCM-compliant selection handling for select and paste
+has been included in demo/clipboard.lisp
+
 ---  Changes in SBCL CLX 0.5.4, Tue Nov 11 00:02:43 2003   ---
 
 A change in the implementation of PROCESS-BLOCK and PROCESS-WAKEUP
