@@ -2,6 +2,8 @@
 
 ---  Changes in SBCL CLX 0.6.1, FILL IN TIMESTAMP  ---
 
+experimental GLX extension support (from Janis Dzerins)
+
 The ICCCM-compliant selection handling in demo/clipboard.lisp is now
 more ICCCM-compliant.
 
