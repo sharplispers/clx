@@ -1205,7 +1205,7 @@
 
 (defun make-event-handlers (&key (type 'array) default)
   (declare (type t type)			;Sequence type specifier
-	   (type function default)
+	   (type (or null function) default)
 	   (clx-values sequence))			;Default handler for initial content
   ;; Makes a handler sequence suitable for process-event
   (make-sequence type *max-events* :initial-element default))
