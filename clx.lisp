@@ -921,8 +921,8 @@
 (defun encode-modifier-mask (modifier-mask)
   (declare (type modifier-mask modifier-mask))
   (declare (clx-values mask16))
-  (or (encode-mask *state-mask-vector* modifier-mask 'modifier-key)
-      (and (eq modifier-mask :any) #x8000)
+  (or (and (eq modifier-mask :any) #x8000)
+      (encode-mask *state-mask-vector* modifier-mask 'modifier-key)
       (x-type-error modifier-mask 'modifier-mask)))
 
 (defun encode-state-mask (state-mask)
