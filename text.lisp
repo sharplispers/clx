@@ -266,9 +266,9 @@
 	  (setq font new-font))))
     (values width next-start)))
 
-(defun text-extents-server (font string start end)
+(defun text-extents-server (font sequence start end)
   (declare (type font font)
-	   (type sequence string)
+	   (type sequence sequence)
 	   (type array-index start end))
   (declare (clx-values width ascent descent left right font-ascent font-descent direction))
   (let ((display (font-display font))
@@ -282,7 +282,7 @@
 	  (length (index+ (index-ceiling length 2) 2))
 	  (resource-id font-id)
 	  ((sequence :format char2b :start start :end end :appending t)
-	   string))
+	   sequence))
       (values
 	(integer-get 16)
 	(int16-get 12)
@@ -293,9 +293,9 @@
 	(int16-get 10)
 	(member8-get 1 :left-to-right :right-to-left)))))
 
-(defun text-width-server (font string start end)
+(defun text-width-server (font sequence start end)
   (declare (type (or font gcontext) font)
-	   (type sequence string)
+	   (type sequence sequence)
 	   (type array-index start end))
   (declare (clx-values integer))
   (let ((display (font-display font))
@@ -309,7 +309,7 @@
 	  (length (index+ (index-ceiling length 2) 2))
 	  (resource-id font-id)
 	  ((sequence :format char2b :start start :end end :appending t)
-	   string))
+	   sequence))
       (values (integer-get 16)))))
 
 (defun text-extents-local (font sequence start end width-only-p)
