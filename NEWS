@@ -1,5 +1,14 @@
 -*- Text -*-
 
+---  Changes in SBCL CLX 0.5.4, FILL ME IN AT RELEASE TIME   ---
+
+A change in the implementation of PROCESS-BLOCK and PROCESS-WAKEUP
+under multithreaded SBCL.  Previous versions used queues and condition
+variables, but this seems to have undesireable performance
+characteristics; the newer version uses a polling loop calling
+sched_yield() inside, which is more resource-hungry but greatly
+improves responsiveness.
+
 ---  Changes in SBCL CLX 0.5.3, Sat Sep  6 12:14:39 UTC 2003 ---
 
 We allow a PIXMAP-DEPTH of 12 in clx.lisp, despite not having any

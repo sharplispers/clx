@@ -1151,9 +1151,31 @@
 				(apply predicate predicate-args))))
 
 #+(and sbcl sb-thread)
-(defvar *process-conditions* (make-hash-table))
+(progn
+  (declaim (inline yield))
+  (defun yield ()
+    (declare (optimize speed (safety 0)))
+    (sb-alien:alien-funcall
+     (sb-alien:extern-alien "sched_yield" (function sb-alien:int)))
+    (values)))
 
 #+(and sbcl sb-thread)
+(defun process-block (whostate predicate &rest predicate-args)
+  (declare (ignore whostate))
+  (declare (type function predicate))
+  (loop
+   (when (apply predicate predicate-args)
+     (return))
+   (yield)))
+
+;;; FIXME: the below implementation for threaded PROCESS-BLOCK using
+;;; queues and condition variables might seem better, but in fact it
+;;; turns out to make performance extremely suboptimal, at least as
+;;; measured by McCLIM on linux 2.4 kernels.  -- CSR, 2003-11-10
+#+(or)
+(defvar *process-conditions* (make-hash-table))
+
+#+(or)
 (defun process-block (whostate predicate &rest predicate-args)
   (declare (ignore whostate))
   (declare (type function predicate))
@@ -1212,6 +1234,10 @@
   (mp:process-yield))
 
 #+(and sb-thread sbcl)
+(defun process-wakeup (process)
+  (declare (ignore process))
+  (yield))
+#+(or)
 (defun process-wakeup (process)
   (declare (ignore process))
   (destructuring-bind (lock . queue)
