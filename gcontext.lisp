@@ -843,12 +843,11 @@
 	    (if i
 		(setq mask (the xgcmask (logior mask
 						(the xgcmask (svref *gcontext-masks* i)))))
-	      (multiple-value-bind (extension index)
-		  (find key *gcontext-extensions* :key #'gcontext-extension-name)
+	      (let ((extension (find key *gcontext-extensions* :key #'gcontext-extension-name)))
 		(if extension
 		    (funcall (gcontext-extension-copy-function extension)
 			     src dst (svref (gcontext-local-state src)
-					    (index+ index *gcontext-data-length*)))
+					    (index+ (position extension *gcontext-extensions*) *gcontext-data-length*)))
 		  (x-type-error key 'gcontext-key))))))
 	
 	(when (plusp mask)
