@@ -1,0 +1,66 @@
+This directory contains CLX, which is an X11 client library for Common
+Lisp. The code was originally taken from a CMUCL distribution, and has
+been modified somewhat in order to make it compile and run under SBCL.
+
+Note: I just tried the image.lisp file under tests, and it seems not
+to work. Bummer. On the other hand, it also seems broken under CMUCL,
+so it might be something like the current colour depth.
+
+The library requires some sort of network functionality, which is one
+of the bits that were chopped off when SBCL was branched from CMUCL
+(CLX itself does also fall into this category). Martin Atzmueller has
+implemented the neccessary functionality on the form of the package
+"NET.SBCL.SOCKETS", and this version of CLX has been modified to use
+Martin's network library. Another option would be to use Daniel
+Barlow's sockets library ("db-sockets"), although this would probably
+require some (small!) changes to the file dependent.lisp.
+
+The build process for CLX under SBCL is self-contained and (almost)
+fully automatic. The one thing that has to be done manually is to
+compile the file socket.c and link it as a shared object. Under
+FreeBSD and Linux, you can do this by
+
+cc -o socket.o socket.c
+ld -shared -o socket.so socket.o
+
+Once this is done, you should set up a logical translation for the
+host CLX. I use the following (in my ~/.sbclrc):
+
+(setf (logical-pathname-translations "HOME")
+      `(("**;*.*.*" ,(concatenate 'string
+				   (posix-getenv "HOME") "/**/*.*.*"))))
+
+(setf (logical-pathname-translations "CLX")
+      `(("**;*.*.*" ,(translate-logical-pathname
+		      "HOME:lisp;clx;**;*.*.*"))))
+
+The effect of this is to tell SBCL to look for the CLX-related files
+in the directory ~/lisp/clx/.
+
+Now, with the file socket.so built in the CLX directory, and a logical
+pathname translation in place for the host CLX, do the following:
+
+(load "CLX:build-clx")
+
+This only has to be done once (actually, not quite true: it has to be
+repeated if/when SBCL is rebuilt with a different object format. In
+this case, you probably need to manually remove the lisp object files
+before you attempt a rebuild.)
+
+After CLX has been built, you can load it into SBCL by
+
+(load "clx:defsystem.lisp")
+(load-clx (translate-logical-pathname "CLX:"))
+
+Note: make sure that the appropriate network library has been loaded
+first!
+
+To test CLX (and get a small amount of Lisp advocacy), try loading the
+file "CLX:demo;menu", and then executing the function
+xlib::just-say-lisp with the argument "localhost":
+
+(load "CLX:demo;menu")
+(xlib::just-say-lisp "localhost")
+
+-- 
+Raymond.Wiker@fast.no
