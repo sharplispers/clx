@@ -150,6 +150,12 @@
 	   ;; calls that expand into calls to these accessors will be
 	   ;; optimized in the same way).
 	   (let ((sb-ext:*derive-function-types* t))
+	     ;; deeply unportable stuff, this.  I will be shot.  We
+	     ;; want to enable the dynamic-extent declarations in CLX.
+	     (when (sb-c::policy-quality-name-p
+		    'sb-c::stack-allocate-dynamic-extent)
+	       ;; no way of setting it back short of yet more yukky stuff
+	       (proclaim '(optimize (sb-c::stack-allocate-dynamic-extent 3))))
 	     (call-next-method)))
       (setf (operation-on-warnings o) on-warnings
 	    (operation-on-failure o) on-failure))))
