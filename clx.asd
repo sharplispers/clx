@@ -102,6 +102,9 @@
      (:legacy-file "defsystem" :pathname "defsystem.lisp")
      (:legacy-file "provide" :pathname "provide.lisp")
      (:legacy-file "cmudep" :pathname "cmudep.lisp")
+     (:module manual
+	      ;; TODO: teach asdf how to process texinfo files
+	      :components ((:static-file "clx.texinfo")))
      (:module debug
 	      :default-component-class legacy-file
 	      :components
