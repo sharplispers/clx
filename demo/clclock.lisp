@@ -9,10 +9,11 @@
 (defvar *colormap* (xlib:screen-default-colormap *screen*))
 
 (defvar *font* (xlib:open-font *display* "fixed"))
+(defvar *win*)
 
-(multiple-value-bind (width ascent descent left right font-ascent)
+(multiple-value-bind (width ascent)
     (xlib:text-extents *font* "XVIIII XXXVIIII XXXVIIII")
-  (defvar *win*
+  (setq *win*
     (xlib:create-window
      :parent (xlib:screen-root *screen*)
      :x 512
