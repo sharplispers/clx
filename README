@@ -22,6 +22,15 @@ usually also work with earlier versions back to 0.8.1, and possibly
 earlier still, but may need manual adjustment to the clx.asd file (to
 remove use of newly-introduced features).
 
+It has also been used as a basis for CLX ports on other Lisp 
+implementations, but these instructions are only good for SBCL.  If
+you're running something else, you need to know (a) that it builds
+with asdf (and asdf-install, if the planets are in alignment) and
+(b) what asdf is anyway.  http://www.weitz.de/asdf-install/ might help
+you there.  If you've installed this using some non-SBCL Lisp, please
+send mail describing the process so that future versions can incorporate
+your instructions.
+
 If you are following SBCL CVS and this CLX does not run in it, please
 check the CVS tree for this CLX distribution to see if your bug has
 been fixed already.  See http://cvs.telent.net/ for details
