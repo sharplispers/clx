@@ -1215,6 +1215,7 @@
 (defmacro without-interrupts (&body body)
   `(system:without-interrupts ,@body))
 
+#+sbcl
 (defmacro without-interrupts (&body body)
   `(sb-sys:without-interrupts ,@body))
 
@@ -1622,6 +1623,7 @@
   (system:output-raw-bytes (display-output-stream display) vector start end)
   nil)
 
+#+sbcl
 (defun buffer-write-default (vector display start end)
   (declare (type buffer-bytes vector)
 	   (type display display)
