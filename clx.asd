@@ -59,6 +59,11 @@
 
 #+sbcl
 (defmethod perform :around ((o compile-op) (f clx-source-file))
+  ;; our CLX library should compile without WARNINGs, and ideally
+  ;; without STYLE-WARNINGs.  Since it currently does, let's enforce
+  ;; it here so that we can catch regressions easily.
+  (setf (operation-on-warnings o) :error
+	(operation-on-failure o) :error)
   ;; a variety of accessors, such as AREF-CARD32, are not declared
   ;; INLINE.  Without this (non-ANSI) static-type-inference behaviour,
   ;; SBCL emits about 100 optimization notes (roughly one fifth of all
