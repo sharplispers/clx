@@ -3,7 +3,7 @@
 ;;;     Title: The X Render Extension
 ;;;   Created: 2002-08-03
 ;;;    Author: Gilbert Baumann <unk6@rz.uni-karlsruhe.de>
-;;;       $Id: xrender.lisp,v 1.2 2003/06/14 15:16:07 csr21 Exp $
+;;;       $Id: xrender.lisp,v 1.3 2004/08/20 21:32:05 dan Exp $
 ;;; ---------------------------------------------------------------------------
 ;;;
 ;;; (c) copyright 2002, 2003 by Gilbert Baumann
@@ -299,11 +299,11 @@ by every function, which attempts to generate RENDER requests."
   (id 0 :type resource-id)
   (display nil :type (or null display))
   (plist nil :type list)                ; Extension hook
-  format
-  %changed-p 
-  %server-values
-  %values
-  %drawable)
+  (format)
+  (%changed-p)
+  (%server-values)
+  (%values)
+  (%drawable))
 
 (defun picture-drawable (picture)
   (picture-%drawable picture))
@@ -523,7 +523,7 @@ by every function, which attempts to generate RENDER requests."
   (id 0 :type resource-id)
   (display nil :type (or null display))
   (plist nil :type list)                ; Extension hook
-  format)
+  (format))
 
 (defun render-create-glyph-set (format &key glyph-set)
   (let ((display (picture-format-display format)))
@@ -869,6 +869,9 @@ by every function, which attempts to generate RENDER requests."
 
 
 ;; $Log: xrender.lisp,v $
+;; Revision 1.3  2004/08/20 21:32:05  dan
+;; patch from Milan Zamazal to fix when using *def-clx-class-use-defclass*
+;;
 ;; Revision 1.2  2003/06/14 15:16:07  csr21
 ;; Clean up compilation under sbcl: a couple of IGNOREs, a couple of
 ;; s/load/:load-toplevel/, one s/*foo*/+foo+/.  Still many many compilation
