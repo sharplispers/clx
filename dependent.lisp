@@ -691,7 +691,7 @@
 ;;; particular, the different float approximations will always be /=.  This
 ;;; causes problems with type checking, because people might compute an
 ;;; argument in any precision.  What we do is discard all the excess precision
-;;; in the value, and see if the protocal encoding falls in the desired range
+;;; in the value, and see if the protocol encoding falls in the desired range
 ;;; (64'ths of a degree.)
 ;;;
 (deftype angle () '(satisfies anglep))
@@ -1480,7 +1480,7 @@
 			  :foreign-port (+ *x-tcp-port* display)))
 
 #+sbcl
-(defparameter +X-unix-socket-path+
+(defconstant +X-unix-socket-path+
   "/tmp/.X11-unix/X"
   "The location of the X socket")
 
