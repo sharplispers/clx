@@ -13,11 +13,28 @@ a selection of patches were added from other CLXes around the net.
  - OPEN-DEFAULT-DISPLAY function which, as the name suggests, does that (dan)
  - various bug fixes (Iban Hatchondo and a cast of several)
 
-= Building
+= Compatibility
 
-0. You need SBCL 0.8.1 or any later release.  Earlier releases of SBCL
-   will work, but need manual adjustment to the clx.asd file (to
-   remove use of newly-introduced features).
+This CLX distribution is intended to work under the latest released
+version of SBCL - please report the bug if it doesn't.  It should
+usually also work with earlier versions back to 0.8.1, and possibly
+earlier still, but may need manual adjustment to the clx.asd file (to
+remove use of newly-introduced features).
+
+If you are following SBCL CVS and this CLX does not run in it, please
+check the CVS tree for this CLX distribution to see if your bug has
+been fixed already.  See http://cvs.telent.net/ for details
+
+= Building using asdf-install
+
+* (require 'asdf)
+* (require 'asdf-install)
+* (asdf-install:install 'clx) ; download and install automatically, or
+* (asdf-install:install "clx-x.y.z.tar.gz") ; if you've downloaded already
+
+= Building by hand
+
+If you don't trust asdf-install, here's how to do it manually -
 
 1. Untar this tree somewhere
 

@@ -1,6 +1,6 @@
 -*- Text -*-
 
----  Changes in SBCL CLX 0.5.3, Sat Sep  6 12:04:39 UTC 2003 ---
+---  Changes in SBCL CLX 0.5.3, Sat Sep  6 12:14:39 UTC 2003 ---
 
 We allow a PIXMAP-DEPTH of 12 in clx.lisp, despite not having any
 image routines for it, to allow clx to load when running under eXceed.
