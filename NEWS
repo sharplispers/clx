@@ -1,5 +1,13 @@
 -*- Text -*-
 
+---  Changes in SBCL CLX 0.5.5, <FILL IN TIMESTAMP>        ---
+
+With the addition of an implementation of DYNAMIC-EXTENT &REST lists
+to SBCL, various functions (e.g. READ-INPUT, QUEUE-EVENT) in CLX
+should cons less.
+
+A Texinfo version of the CLX manual as been added.
+
 ---  Changes in SBCL CLX 0.5.4, Tue Nov 11 00:02:43 2003   ---
 
 A change in the implementation of PROCESS-BLOCK and PROCESS-WAKEUP
