@@ -326,7 +326,8 @@
     merge-resources min-char-ascent min-char-attributes min-char-descent
     min-char-left-bearing min-char-right-bearing min-char-width
     missing-parameter modifier-key modifier-mapping modifier-mask
-    motion-events name-error no-operation open-display open-font
+    motion-events name-error no-operation 
+    open-default-display open-display open-font
     pixarray pixel pixmap pixmap-display pixmap-equal
     pixmap-error pixmap-format pixmap-format-bits-per-pixel
     pixmap-format-depth pixmap-format-p pixmap-format-scanline-pad
@@ -384,3 +385,6 @@
     wm-size-hints-width wm-size-hints-width-inc wm-size-hints-win-gravity
     wm-size-hints-x wm-size-hints-y wm-zoom-hints write-bitmap-file
     write-resources xatom))
+
+
+

@@ -406,7 +406,7 @@
 					(display-input-in-progress display) nil token)))
 			    (null (buffer-listen display))))
 	       (go force-output))
-	     ;; Ensure that ony one process is reading input.
+	    ;; Ensure that only one process is reading input.
 	     (unless (or (eq (display-input-in-progress display) token)
 			 (conditional-store (display-input-in-progress display) nil token))
 	       (if (eql timeout 0)
