@@ -37,6 +37,7 @@
 	  *image-test-get-image-result-type-choices*)
 	(get-image-image-x-format-choices
 	  *image-test-get-image-image-x-format-choices*))
+  (declare (ignore host))
   (let* ((display nil)
 	 (abort t)
 	 (images nil))
