@@ -36,7 +36,7 @@
 
 (defsystem CLX
     :depends-on (sb-bsd-sockets)
-    :version "0.5.2"
+    :version "0.5.3"
     :serial t
     :default-component-class clx-source-file
     :components
@@ -77,7 +77,7 @@
 	       (:file "clclock")
 	       (:file "clx-demos")
 	       ;; FIXME: compiling this generates 30-odd spurious code
-	       ;; deletiong notes.  Find out why, and either fix or
+	       ;; deletion notes.  Find out why, and either fix or
 	       ;; workaround the problem.
 	       (:file "mandel")
 	       (:file "menu")

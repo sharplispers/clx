@@ -1,16 +1,17 @@
 -*- Text -*-
 
----  Changes in SBCL CLX 0.5.3, XXX REALLY FILL TIMESTAMP IN  ---
+---  Changes in SBCL CLX 0.5.3, Sat Sep  6 12:04:39 UTC 2003 ---
 
 We allow a PIXMAP-DEPTH of 12 in clx.lisp, despite not having any
 image routines for it, to allow clx to load when running under eXceed.
 Image routines are unlikely to work in such circumstances.
 
-Bug fix
+Bug fixes
 
  * ERROR idiom (xvidmode.lisp)
+ * Add timestamp in NEWS file
 
----  Changes in SBCL CLX 0.5.2, XXX FILL TIMESTAMP IN  ---
+---  Changes in SBCL CLX 0.5.2, about twenty minutes before 0.5.3  ---
 
 OPEN-DEFAULT-DISPLAY now takes an optional argument for the display
 name, which has the same "protocol/host:display.screen" format as used
