@@ -10,17 +10,23 @@ Bug fixes
  * fix bugs in the image test: always draw glyphs in white on black
    (not 1 on 0 -- i.e. dark red/blue on black in 24 bit truecolour);
    don't abuse the X-HOT and Y-HOT slots for communicating persistent
-   information any more.  Disable the "optimized" pixarray read/write
-   routines, on the basis that the newly fixed image test reveals that
-   they are broken.
+   information any more.  
+
+ * Disable the "optimized" pixarray read/write routines, on the basis
+   that the newly fixed image test reveals that they are broken.
+
+ * fix type bugs in DEFINE-GCONTEXT-ACCESSOR, which previously
+   signalled a type error if :COPY-FUNCTION was not provided, and a
+   different type error if it was.
 
 Other notes
 
  * we use the SBCL extensions to the condition system to customize
    compiler behaviour.  As such, the system will only build without
-   breaking into the debugger using the supplied .asd; the benefits of
-   this are easier code sharing, as we minimize divergence within the
-   clx source proper from other implementations.
+   breaking into the debugger using the supplied .asd, as we inhibit
+   error signalling from DEFCONSTANT; the benefits of this are easier
+   code sharing, as we minimize divergence within the clx source
+   proper from other implementations.
 
  * we also use an SBCL extension to maximize efficiency: we set
    SB-EXT:*DERIVE-FUNCTION-TYPES* to true for the duration of the
