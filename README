@@ -41,9 +41,7 @@ better yet, the USE option to DEFPACKAGE
 
 = Known problems:
 
-1) tests/image.lisp seems not to work.  "On the other hand, it also
-seems broken under CMUCL, so it might be something like the current
-colour depth."
+(none reported)
 
  
 = Bug reports, new features, patches
