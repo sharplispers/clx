@@ -9,16 +9,16 @@
 ;;; Portions Copyright (C) 1987 Texas Instruments Incorporated.
 ;;; Portions Copyright (C) 1988, 1989 Franz Inc, Berkeley, Ca.
 ;;;
-;;; Permission is granted to any individual or institution to use, copy, modify,
-;;; and distribute this software, provided that this complete copyright and
-;;; permission notice is maintained, intact, in all copies and supporting
-;;; documentation.
+;;; Permission is granted to any individual or institution to use,
+;;; copy, modify, and distribute this software, provided that this
+;;; complete copyright and permission notice is maintained, intact, in
+;;; all copies and supporting documentation.
 ;;;
-;;; Texas Instruments Incorporated provides this software "as is" without
-;;; express or implied warranty.
+;;; Texas Instruments Incorporated provides this software "as is"
+;;; without express or implied warranty.
 ;;;
-;;; Franz Incorporated provides this software "as is" without express or
-;;; implied warranty.
+;;; Franz Incorporated provides this software "as is" without express
+;;; or implied warranty.
 
 (defpackage :clx-system (:use :cl :asdf))
 (in-package :clx-system)  
@@ -36,7 +36,7 @@
 
 (defsystem CLX
     :depends-on (sb-bsd-sockets)
-    :version "0.5.1"
+    :version "0.5.2"
     :serial t
     :default-component-class clx-source-file
     :components
@@ -74,7 +74,12 @@
 	       ;; but we don't declare that dependency here, because
 	       ;; asdf doesn't load example files anyway.
 	       (:file "beziertest")
+	       (:file "clclock")
 	       (:file "clx-demos")
+	       ;; FIXME: compiling this generates 30-odd spurious code
+	       ;; deletiong notes.  Find out why, and either fix or
+	       ;; workaround the problem.
+	       (:file "mandel")
 	       (:file "menu")
 	       (:file "zoid")))
      (:module test
