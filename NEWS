@@ -1,3 +1,9 @@
+---  Changes in SBCL CLX 0.5.2, XXX FILL TIMESTAMP IN  ---
+
+inclusion of two new tests/demos (from Ingvar Mattson):
+ * demo/clclock: a simple clock application;
+ * demo/mandel: a Mandelbrot set viewer.
+
 ---  Changes in SBCL CLX 0.5.1, Wed Jun 25 14:20:31 BST 2003  ---
 
 experimental RENDER extension support (from Gilbert Baumann)
