@@ -95,14 +95,16 @@
 (defstruct (gcontext-extension (:type vector) (:copier nil)) ;; un-named
   (name nil :type symbol :read-only t)
   (default nil :type t :read-only t)
+  ;; FIXME: these used to have glorious, but wrong, type declarations.
+  ;; See if we can't return them to their former glory.
   (set-function #'(lambda (gcontext value)
 		    (declare (ignore gcontext))
 		    value)
-		:type (function (gcontext t) t) :read-only t)
+		:type (or function symbol) :read-only t)
   (copy-function #'(lambda (from-gc to-gc value)
 		     (declare (ignore from-gc to-gc))
 		     value)
-		 :type (function (gcontext gcontext t) t) :read-only t))
+		 :type (or function symbol) :read-only t))
 
 (defvar *gcontext-extensions* nil) ;; list of gcontext-extension
 
@@ -904,7 +906,7 @@
   (declare (type symbol name)
 	   (type t default)
 	   (type symbol set-function) ;; required
-	   (type symbol copy-function))
+	   (type (or symbol list) copy-function))
   (let* ((gc-name (intern (concatenate 'string
 				       (string 'gcontext-)
 				       (string name)))) ;; in current package
@@ -957,8 +959,8 @@
 (defun add-gcontext-extension (name default-value set-function copy-function)
   (declare (type symbol name)
 	   (type t default-value)
-	   (type (function (gcontext t) t) set-function)
-	   (type (function (gcontext gcontext t) t) copy-function))
+	   (type (or function symbol) set-function)
+	   (type (or function symbol) copy-function))
   (let ((number (or (position name *gcontext-extensions* :key #'gcontext-extension-name)
 		    (prog1 (length *gcontext-extensions*)
 			   (push nil *gcontext-extensions*)))))
