@@ -1,0 +1,23 @@
+Changes in SBCL CLX 0.5, Fri May 30 01:16:34 BST 2003
+
+XFREE86-VIDMODE extension support (courtesy of Iban Hatchondo)
+
+OPEN-DEFAULT-DISPLAY (opens display in $DISPLAY environment variable) exported
+
+Implement CLX MP dependencies for SBCL: HOLDING-LOCK, PROCESS-BLOCK, etc
+
+Many bug fixes
+
+ * asking for text extents on unchached fonts could potentially deadlock
+   http://article.gmane.org/gmane.lisp.clx.devel/16
+
+ * lots of compiler warnings, style-warnings, notes cleared up
+
+
+Style and ANSI cleanups
+
+ * Much renaming of constants from *foo* to +foo+
+
+ *  Change old-style COMPILE LOAD EVAL to new-style :COMPILE-TOPLEVEL
+     :LOAD-TOPLEVEL :EXECUTE in EVAL-WHENs.
+
