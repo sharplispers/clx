@@ -1,5 +1,15 @@
 -*- Text -*-
 
+---  Changes in SBCL CLX 0.5.3, XXX REALLY FILL TIMESTAMP IN  ---
+
+We allow a PIXMAP-DEPTH of 12 in clx.lisp, despite not having any
+image routines for it, to allow clx to load when running under eXceed.
+Image routines are unlikely to work in such circumstances.
+
+Bug fix
+
+ * ERROR idiom (xvidmode.lisp)
+
 ---  Changes in SBCL CLX 0.5.2, XXX FILL TIMESTAMP IN  ---
 
 OPEN-DEFAULT-DISPLAY now takes an optional argument for the display
@@ -15,6 +25,7 @@ Bug fixes
 
  * Fix bad type declarations in TEXT-EXTENTS-SERVER and
    TEXT-WIDTH-SERVER (text.lisp)
+ * Fix FORMAT argument mismatch error in WRITE-BITMAP-FILE (image.lisp)
 
 ---  Changes in SBCL CLX 0.5.1, Wed Jun 25 14:20:31 BST 2003  ---
 
