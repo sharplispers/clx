@@ -858,7 +858,7 @@
 
 ;;; MAKE-PROCESS-LOCK: Creating a process lock.
 
-#-(or LispM excl Minima (and cmu mp))
+#-(or LispM excl Minima sbcl (and cmu mp))
 (defun make-process-lock (name)
   (declare (ignore name))
   nil)
@@ -883,6 +883,10 @@
 (defun make-process-lock (name)
   (mp:make-lock name))
 
+#+sbcl
+(defun make-process-lock (name)
+  (sb-thread:make-mutex :name name))
+
 ;;; HOLDING-LOCK: Execute a body of code with a lock held.
 
 ;;; The holding-lock macro takes a timeout keyword argument.  EVENT-LISTEN
@@ -891,7 +895,7 @@
 
 ;; If you're not sharing DISPLAY objects within a multi-processing
 ;; shared-memory environment, this is sufficient
-#-(or lispm excl lcl3.0 Minima (and CMU mp) )
+#-(or lispm excl lcl3.0 Minima sbcl (and CMU mp) )
 (defmacro holding-lock ((locator display &optional whostate &key timeout) &body body)
   (declare (ignore locator display whostate timeout))
   `(progn ,@body))
@@ -905,7 +909,7 @@
 ;;; display connection.  We inhibit GC notifications since display of them
 ;;; could cause recursive entry into CLX.
 ;;;
-#+(or (and CMU (not mp)))
+#+(and CMU (not mp))
 (defmacro holding-lock ((locator display &optional whostate &key timeout)
 			&body body)
   `(let #+cmu((ext:*gc-verbose* nil)
@@ -924,6 +928,16 @@
 			&body body)
   (declare (ignore display))
   `(mp:with-lock-held (,lock ,whostate ,@(and timeout `(:timeout ,timeout)))
+    ,@body))
+
+#+sbcl
+(defmacro holding-lock ((lock display &optional (whostate "CLX wait")
+			      &key timeout)
+			&body body)
+  ;; This macro is used by WITH-DISPLAY, which claims to be callable
+  ;; recursively.  So, had better use a recursive lock
+  (declare (ignore display))
+  `(sb-thread:with-recursive-lock (,lock)
     ,@body))
 
 #+Genera
@@ -1071,7 +1085,7 @@
 ;;; Caller guarantees that PROCESS-WAKEUP will be called after the predicate's
 ;;; value changes.
 
-#-(or lispm excl lcl3.0 Minima (and cmu mp))
+#-(or lispm excl lcl3.0 Minima sbcl (and cmu mp))
 (defun process-block (whostate predicate &rest predicate-args)
   (declare (ignore whostate))
   (or (apply predicate predicate-args)
@@ -1119,9 +1133,34 @@
   (mp:process-wait whostate #'(lambda ()
 				(apply predicate predicate-args))))
 
+#+sbcl
+(defvar *process-conditions* (make-hash-table))
+
+#+sbcl
+(defun process-block (whostate predicate &rest predicate-args)
+  (declare (type function predicate))
+  (let* ((pid (sb-thread:current-thread-id))
+	 (last (gethash  pid *process-conditions*))
+	 (lock
+	  (or (car last)
+	      (sb-thread:make-mutex :name (format nil "lock ~A" pid))))
+	 (queue
+	  (or (cdr last)
+	      (sb-thread:make-waitqueue :name (format nil "queue ~A" pid)))))
+    (unless last
+      (setf (gethash pid *process-conditions*) (cons lock queue)))
+    (sb-thread::with-mutex (lock)
+      (loop
+       (when (apply predicate predicate-args) (return))
+       (handler-case
+	   (sb-unix::with-timeout .5
+	     (sb-thread:condition-wait queue lock))
+	 (sb-kernel::timeout (c)
+	   (format *trace-output* "process-block timed out~%")))))))
+
 ;;; PROCESS-WAKEUP: Check some other process' wait function.
 
-(declaim (inline process-wakeup))
+;;; (declaim (inline process-wakeup))
 
 #-(or excl Genera Minima (and cmu mp))
 (defun process-wakeup (process)
@@ -1153,6 +1192,15 @@
   (declare (ignore process))
   (mp:process-yield))
 
+#+sbcl
+(defun process-wakeup (process)
+  (destructuring-bind (lock . queue)
+      (gethash (sb-thread:current-thread-id) *process-conditions*
+	       (cons nil nil))
+    (when queue
+      (sb-thread:condition-notify queue))))
+
+
 ;;; CURRENT-PROCESS: Return the current process object for input locking and
 ;;; for calling PROCESS-WAKEUP.
 
@@ -1160,7 +1208,7 @@
 
 ;;; Default return NIL, which is acceptable even if there is a scheduler.
 
-#-(or lispm excl lcl3.0 Minima (and cmu mp))
+#-(or lispm excl lcl3.0 sbcl Minima (and cmu mp))
 (defun current-process ()
   nil)
 
@@ -1184,6 +1232,10 @@
 #+(and cmu mp)
 (defun current-process ()
   mp:*current-process*)
+
+#+sbcl
+(defun current-process ()
+  (sb-thread:current-thread-id))
 
 ;;; WITHOUT-INTERRUPTS -- provide for atomic operations.
 
@@ -1212,15 +1264,32 @@
   `(system:without-interrupts ,@body))
 
 #+sbcl
+(defvar *without-interrupts-sic-lock*
+  (sb-thread:make-mutex :name "lock simulating *without-interrupts*"))
+#+sbcl
 (defmacro without-interrupts (&body body)
-  `(sb-sys:without-interrupts ,@body))
+  `(sb-thread:with-recursive-lock (*without-interrupts-sic-lock*)
+    ,@body))
 
 ;;; CONDITIONAL-STORE:
 
 ;; This should use GET-SETF-METHOD to avoid evaluating subforms multiple times.
 ;; It doesn't because CLtL doesn't pass the environment to GET-SETF-METHOD.
+#-sbcl
 (defmacro conditional-store (place old-value new-value)
   `(without-interrupts
+     (cond ((eq ,place ,old-value)
+	    (setf ,place ,new-value)
+	    t))))
+
+;;; we only use this queue for the spinlock word, in fact
+#+sbcl
+(defvar *conditional-store-queue*
+  (sb-thread::make-waitqueue :name "conditional store"))
+
+#+sbcl
+(defmacro conditional-store (place old-value new-value)
+  `(sb-thread::with-spinlock (*conditional-store-queue*)
      (cond ((eq ,place ,old-value)
 	    (setf ,place ,new-value)
 	    t))))
