@@ -2323,7 +2323,7 @@
 	    (image-xy-bitmap-list image))))
 
 (defun image-xy->image-z (image x y width height)
-  (declare (type image-z image)
+  (declare (type image-xy image)
 	   (type card16 x y width height)
 	   (ignore image x y width height))
   (error "Format conversion from ~S to ~S not supported"
