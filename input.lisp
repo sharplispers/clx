@@ -936,20 +936,20 @@
 (declare-event :circulate-notify
   (card16 sequence)
   (window event-window window parent)
-  ((member16 :top :bottom) place))
+  ((member8 :top :bottom) place))
 
 (declare-event :circulate-request
   (card16 sequence)
   (window (parent event-window) window)
   (pad16 1 2)
-  ((member16 :top :bottom) place))
+  ((member8 :top :bottom) place))
 
 (declare-event :property-notify
   (card16 sequence)
   (window (window event-window))
   (keyword atom) ;; keyword
   ((or null card32) time)
-  ((member16 :new-value :deleted) state))
+  ((member8 :new-value :deleted) state))
 
 (declare-event :selection-clear
   (card16 sequence)
