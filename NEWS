@@ -1,13 +1,15 @@
 -*- Text -*-
 
----  Changes in SBCL CLX 0.5.4, FILL ME IN AT RELEASE TIME   ---
+---  Changes in SBCL CLX 0.5.4, Tue Nov 11 00:02:43 2003   ---
 
 A change in the implementation of PROCESS-BLOCK and PROCESS-WAKEUP
 under multithreaded SBCL.  Previous versions used queues and condition
 variables, but this seems to have undesireable performance
 characteristics; the newer version uses a polling loop calling
-sched_yield() inside, which is more resource-hungry but greatly
-improves responsiveness.
+sched_yield() inside, which greatly improves responsiveness, but is
+more CPU-hungry (as perceived by top(1), at least; in theory it
+only hogs the CPU when nobody else wants it).
+
 
 ---  Changes in SBCL CLX 0.5.3, Sat Sep  6 12:14:39 UTC 2003 ---
 
