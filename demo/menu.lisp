@@ -273,8 +273,8 @@
     ;; Make menu visible
     (MAP-WINDOW menu-window)))
 
-(defun just-say-lisp (host &optional (font-name "fixed"))
-  (let* ((display   (OPEN-DISPLAY host))
+(defun just-say-lisp (&optional (font-name "fixed"))
+  (let* ((display   (open-default-display))
 	 (screen    (first (DISPLAY-ROOTS display)))
 	 (fg-color  (SCREEN-BLACK-PIXEL screen))
 	 (bg-color  (SCREEN-WHITE-PIXEL screen))

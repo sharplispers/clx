@@ -1,53 +1,64 @@
+This directory contains CLX, an X11 client library for Common
+Lisp. The code was originally taken from a CMUCL distribution, was
+modified somewhat in order to make it compile and run under SBCL, then
+a selection of patches were added from other CLXes around the net,
 
-Original CLX README, retained for historical information.  See README.SBCL
-for more recent information
+= Features
 
---- 
-These files contain beta code, but they have been tested to some extent under
-Symbolics, TI, Lucid and Franz.  The files have been given .l suffixes to keep
-them within 12 characters, to keep SysV sites happy.  Please rename them with
-more appropriate suffixes for your system.
+ - SHAPE extension support (Gilbert Baumann)
+ - X authority support that works with ssh forwarding (Eric Marsden via CMUCL)
+ - OPEN-DEFAULT-DISPLAY function, as the name suggests, does that (dan)
+ - various bug fixes (mostly thanks to Iban Hatchondo)
 
+= Building
 
-For Franz systems, see exclREADME.
+0. You need SBCL 0.7.12.25 (CVS version) or any release after that
 
+1. Untar this tree somewhere
 
-For Symbolics systems, first rename all the .l files to .lisp.  Then edit your
-sys.translations file so that sys:x11;clx; points to this directory and put a
-clx.system file in your sys:site;directory that has the form
+2. Add a symlink to clx.asd from one of the directories listed in your
+asdf:*central-registry*
 
-    (si:set-system-source-file "clx" "sys:x11;clx;defsystem.lisp")
+3. 
+   * (require 'asdf)
+   * (require 'clx)
 
-in it.   After that CLX can be compiled with the "Compile System CLX" command
-and loaded with the "Load System CLX" command.
+This will load all the files, after compiling anything that needs compiling
 
+4. To test CLX (and get a small amount of Lisp advocacy), try loading
+the file "demo/menu", and then executing the function
+xlib::just-say-lisp.
 
+   * (load "clx/demo/menu")
+   * (xlib::just-say-lisp)
 
-For TI systems, rename all the .l files to .lisp, and make a clx.translations
-file in your sys:site; directory pointing to this directory and a
-sys:site;clx.system file like the one described for symbolics systems above,
-but with the defsystem file being in the clx:clx; directory.  Then CLX can be
-compiled with (make-system "CLX" :compile :noconfirm) and loaded with
-(make-system "CLX" :noconfirm).
-
-
-
-For Lucid systems, you should rename all the .l files to .lisp too (This might
-not be possible on SysV systems).  After loading the defsystem.l file, CLX can
-be compiled with the (compile-clx) function and loaded with the
-(load-clx) form.  
-
-The ms-patch.uu file is a patch to Lucid version 2 systems.  You probably
-don't need it, as you are probably running Lucid version 3 or later, but if
-you are still using Lucid version 2, you need this patch.  You'll need to
-uudecode it to produce the binary.
+5. If you're new to Lisp, be advised that despite the examples in
+demo/, it's generally /not/ considered good style to switch to the
+:xlib package and write your code in it.  Spend some time with a
+language reference to familiarize yourself with USE-PACKAGE, or 
+better yet, the USE option to DEFPACKAGE
 
 
+= Known problems:
 
-For kcl systems, after loading the defsystem.l file, CLX can be compiled with
-the (compile-clx) function and loaded with the (load-clx) form.
+1) tests/image.lisp seems not to work.  "On the other hand, it also
+seems broken under CMUCL, so it might be something like the current
+colour depth."
+
+ 
+= Bug reports, new features, patches
+
+The best place to send bug reports, especially if you can verify that
+some other CLX port (e.g. CMUCL's) also has the problem, is to the
+portable-clx-devel list
+
+http://clozure.com/cgi-bin/mailman/listinfo/portable-clx-devel
+
+For packaging or SBCL-specific problems, mail dan at metacircles.com
 
 
+-dan
 
-For more information, see defsystem.l and provide.l.
-
+-- 
+Heavy lifting by Raymond.Wiker@fast.no
+ASDFized version and ongoing by Daniel Barlow <dan@metacirles.com>
