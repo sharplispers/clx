@@ -1629,7 +1629,7 @@
 	   (type display display)
 	   (type array-index start end))
   #.(declare-buffun)
-  (write-sequence vector (display-output-stream display) :start start :end end)
+  (sb-impl::output-raw-bytes (display-output-stream display) vector start end)
   nil)
 
 ;;; WARNING:
