@@ -1174,7 +1174,8 @@
 	   (sb-ext:with-timeout .5
 	     (sb-thread:condition-wait queue lock))
 	 (sb-ext:timeout ()
-	   (format *trace-output* "process-block timed out~%")))))))
+	   (format *trace-output* "thread ~A, process-block timed out~%"
+		   (sb-thread:current-thread-id) )))))))
 
 ;;; PROCESS-WAKEUP: Check some other process' wait function.
 
