@@ -3,7 +3,7 @@
 ;;;     Title: The X Render Extension
 ;;;   Created: 2002-08-03
 ;;;    Author: Gilbert Baumann <unk6@rz.uni-karlsruhe.de>
-;;;       $Id: xrender.lisp,v 1.3 2004/08/20 21:32:05 dan Exp $
+;;;       $Id: xrender.lisp,v 1.4 2004/08/20 21:38:22 dan Exp $
 ;;; ---------------------------------------------------------------------------
 ;;;
 ;;; (c) copyright 2002, 2003 by Gilbert Baumann
@@ -868,32 +868,3 @@ by every function, which attempts to generate RENDER requests."
 ||#
 
 
-;; $Log: xrender.lisp,v $
-;; Revision 1.3  2004/08/20 21:32:05  dan
-;; patch from Milan Zamazal to fix when using *def-clx-class-use-defclass*
-;;
-;; Revision 1.2  2003/06/14 15:16:07  csr21
-;; Clean up compilation under sbcl: a couple of IGNOREs, a couple of
-;; s/load/:load-toplevel/, one s/*foo*/+foo+/.  Still many many compilation
-;; notes, but since the render protocol is inherently slow anyway...
-;;
-;; Revision 1.1  2003/06/14 14:27:33  gilbert
-;; imported as is.
-;;
-;; Revision 1.1  2003/05/25 13:37:07  gilbert
-;; imported
-;;
-;; Revision 1.5  2003/05/25 14:37:26  gilbert
-;; - adjusted copyright.
-;; - added a few more exports
-;; - CLX-EXT-RENDER is now on *FEATURES*
-;;
-;; Revision 1.4  2002/08/22 23:57:29  noss
-;; render-free-glyphs - new function
-;; In %render-composite-glyphs - Found a lingering pict-format
-;; In render-add-glyph - changed origin and advance to be transmitted as int16 instead of card16
-;;
-;; Revision 1.3  2002/08/21 19:56:08  gilbert
-;; %render-composite-glyphs - new macro
-;; render-composite-glyphs - new function
-;;
