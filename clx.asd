@@ -27,7 +27,7 @@
 
 (defsystem CLX
     :depends-on (sb-bsd-sockets)
-    :version "0.4"
+    :version "0.4.1"
     :serial t
     :components
     ((:file "package")
