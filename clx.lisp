@@ -504,6 +504,18 @@
     :static)
  #+sbcl #'equalp)
 
+(defparameter *protocol-families*
+  '(;; X11/X.h, Family*
+    (:internet . 0)
+    (:decnet . 1)
+    (:chaos . 2)
+    ;; X11/Xauth.h "not part of X standard"
+    (:Local . 256)
+    (:Wild . 65535)
+    (:Netname . 254)
+    (:Krb5Principal . 253)
+    (:LocalHost . 252)))
+
 (deftype win-gravity ()
   '(member :unmap :north-west :north :north-east :west
 	   :center :east :south-west :south :south-east :static))

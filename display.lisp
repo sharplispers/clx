@@ -62,18 +62,20 @@
 	(let* ((address (read-short-length-vector stream))
 	       (number (parse-integer (read-short-length-string stream)))
 	       (name (read-short-length-string stream))
-	       (data (read-short-length-vector stream)))
+	       (data (read-short-length-vector stream))
+	       (family (or (car (rassoc family *protocol-families*)) family)))
 	  (list 
-	   (case family
-	     (0 :internet) (1 :dna) (2 :chaos) (256 :unix) (t :unknown))
-	   (if (eq family 256) (map 'string #'code-char address) address)
+	   family
+	   (ecase family
+	     (:local (map 'string #'code-char address))
+	     (:internet (coerce address 'list)))
 	   number name data))))))
 
 (defun get-best-authorization (host display protocol)
   ;; parse .Xauthority, extract the cookie for DISPLAY on HOST.
   ;; PROTOCOL determines whether the server connection is using an
-  ;; Internet protocol (values of :tcp or :internet) or a non-network
-  ;; protocol such as Unix domain sockets (value of :unix).  Returns
+  ;; Internet protocol (value of :internet) or a non-network
+  ;; protocol such as Unix domain sockets (value of :local).  Returns
   ;; two strings: an authorization name (very likely the string
   ;; "MIT-MAGIC-COOKIE-1") and an authorization key, represented as
   ;; fixnums in a vector.  If we fail to find an appropriate cookie,
@@ -83,17 +85,23 @@
       (with-open-file (stream pathname :element-type '(unsigned-byte 8)
 			      :if-does-not-exist nil)
 	(when stream
-	  (let* ((host-address (unless (eql protocol :unix)
-				 (rest (host-address host protocol))))
+	  (let* ((host-address (and (eql protocol :internet)
+				    (rest (host-address host protocol))))
 		 (best-name nil) (best-pos nil)
 		 (best-data nil))
+	    ;; Check for the localhost address, in which case we're
+	    ;; really FamilyLocal.
+	    (when (or (eql protocol :local)
+		      (and (eql protocol :internet)
+			   (equal host-address '(127 0 0 1))))
+	      (setq host-address (get-host-name))
+	      (setq protocol :local))
 	    (loop
 	     (destructuring-bind (family address number name data)
 		 (read-xauth-entry stream)
 	       (unless family (return))
 	       (when (and (eql family protocol)
-			  (or (eql protocol :unix)
-			      (equal host-address (coerce address 'list)))
+			  (equal host-address address)
 			  (= number display)
 			  (let ((pos1 (position name *known-authorizations*
 						:test #'string=)))
@@ -314,6 +322,11 @@
 		      ,@(and timeout `(:timeout ,timeout)))
 	 ,@body))))
 
+(defun open-default-display ()
+  (destructuring-bind (host display screen protocol) (get-default-display)
+    (declare (ignore screen))
+    (open-display host :display display :protocol protocol)))
+
 (defun open-display (host &key (display 0) protocol authorization-name authorization-data)
   ;; Implementation specific routine to setup the buffer for a
   ;; specific host and display.  This must interface with the local
@@ -328,13 +341,13 @@
   (declare (clx-values display))
   ;; Get the authorization mechanism from the environment.  Handle the
   ;; special case of a host name of "" and "unix" which means the
-  ;; protocol is :unix
+  ;; protocol is :local
   (when (null authorization-name)
     (multiple-value-setq (authorization-name authorization-data)
       (get-best-authorization host
 			      display
 			      (if (member host '("" "unix") :test #'equal)
-				  :unix
+				  :local
 				  protocol))))
   ;; PROTOCOL is the network protocol (something like :TCP :DNA or :CHAOS). See OPEN-X-STREAM.
   (let* ((stream (open-x-stream host display protocol))
