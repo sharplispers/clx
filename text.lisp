@@ -268,7 +268,7 @@
 
 (defun text-extents-server (font string start end)
   (declare (type font font)
-	   (type string string)
+	   (type sequence string)
 	   (type array-index start end))
   (declare (clx-values width ascent descent left right font-ascent font-descent direction))
   (let ((display (font-display font))
@@ -295,7 +295,7 @@
 
 (defun text-width-server (font string start end)
   (declare (type (or font gcontext) font)
-	   (type string string)
+	   (type sequence string)
 	   (type array-index start end))
   (declare (clx-values integer))
   (let ((display (font-display font))
