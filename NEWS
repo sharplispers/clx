@@ -1,8 +1,20 @@
+-*- Text -*-
+
 ---  Changes in SBCL CLX 0.5.2, XXX FILL TIMESTAMP IN  ---
 
-inclusion of two new tests/demos (from Ingvar Mattson):
+OPEN-DEFAULT-DISPLAY now takes an optional argument for the display
+name, which has the same "protocol/host:display.screen" format as used
+by the C libX11 (XOpenDisplay).  OPEN-DISPLAY is not actively
+deprecated, but is much less useful by comparison
+
+Inclusion of two new tests/demos (from Ingvar Mattson):
  * demo/clclock: a simple clock application;
  * demo/mandel: a Mandelbrot set viewer.
+
+Bug fixes
+
+ * Fix bad type declarations in TEXT-EXTENTS-SERVER and
+   TEXT-WIDTH-SERVER (text.lisp)
 
 ---  Changes in SBCL CLX 0.5.1, Wed Jun 25 14:20:31 BST 2003  ---
 
