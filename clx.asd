@@ -65,7 +65,9 @@
 	      :components
 	      ((:file "shape")
 	       (:file "xvidmode")
-	       (:xrender-source-file "xrender")))
+	       (:xrender-source-file "xrender")
+               (:file "glx")
+               (:file "gl" :depends-on ("glx"))))
      (:module demo
 	      :default-component-class example-source-file
 	      :components
@@ -77,6 +79,7 @@
 	       (:file "clclock")
                (:file "clipboard")
 	       (:file "clx-demos")
+	       (:file "gl-test")
 	       ;; FIXME: compiling this generates 30-odd spurious code
 	       ;; deletion notes.  Find out why, and either fix or
 	       ;; workaround the problem.
