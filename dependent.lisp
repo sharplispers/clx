@@ -2769,23 +2769,46 @@
 
 ;;; this particular defaulting behaviour is typical to most Unices, I think
 #+unix
-(defun get-default-display ()
-  "Get the default X display as list of (host display-number screen protocol).
-In UNIX this is selected using the DISPLAY environment variable, and
-may use :internet or :local protocol"
-  (let* ((name (or (getenv "DISPLAY")
+(defun get-default-display (&optional display-name)
+  "Parse the argument DISPLAY-NAME, or the environment variable $DISPLAY
+if it is NIL.  Display names have the format
+
+  [protocol/] [hostname] : [:] displaynumber [.screennumber]
+
+There are two special cases in parsing, to match that done in the Xlib
+C language bindings
+
+ - If the hostname is ``unix'' or the empty string, any supplied
+   protocol is ignored and a connection is made using the :local
+   transport.
+
+ - If a double colon separates hostname from displaynumber, the
+   protocol is assumed to be decnet.
+
+Returns a list of (host display-number screen protocol)."
+  (let* ((name (or display-name
+		   (getenv "DISPLAY")
 		   (error "DISPLAY environment variable is not set")))
-	 (colon-i (position #\: name))
-	 (host (subseq name 0 colon-i))
+	 (slash-i (or (position #\/ name) -1))
+	 (colon-i (position #\: name :start (1+ slash-i)))
+	 (decnet-colon-p (eql (elt name (1+ colon-i)) #\:))
+	 (host (subseq name (1+ slash-i) colon-i))
 	 (dot-i (and colon-i (position #\. name :start colon-i)))
-	 (display (if colon-i
-		      (ignore-errors
-			(parse-integer name :start (1+ colon-i) :end dot-i))))
-	 (screen (if dot-i
-		     (ignore-errors (parse-integer name :start (1+ dot-i)))))
-	 (protocol (if (or (string= host "") (string-equal host "unix"))
-		       :local
-		       :internet)))
+	 (display (when colon-i
+		    (parse-integer name
+				   :start (if decnet-colon-p
+					      (+ colon-i 2)
+					      (1+ colon-i))
+				   :end dot-i)))
+	 (screen (when dot-i
+		   (parse-integer name :start (1+ dot-i))))
+	 (protocol
+	  (cond ((or (string= host "") (string-equal host "unix")) :local)
+		(decnet-colon-p :decnet)
+		((> slash-i -1) (intern
+				 (string-upcase (subseq name 0 slash-i))
+				 :keyword))
+		(t :internet))))
     (list host (or display 0) (or screen 0) protocol)))
 
 
