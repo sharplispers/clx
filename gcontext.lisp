@@ -82,19 +82,11 @@
 	      `(within-definition (def-gc-internals ,name)
 		 ,@(nreverse macros)
 		 (eval-when (eval compile load)
-		   (#-sbcl defconstant
-		    #+sbcl sb-int:defconstant-eqx
-		    *gcontext-data-length* ,index
-		    #'equal)
-		   (#-sbcl defconstant
-	            #+sbcl sb-int:defconstant-eqx
-		    *gcontext-indexes* ',indexes
-		    #+sbcl #'equal)
-		   (#-sbcl defconstant
-		    #+sbcl sb-int:defconstant-eqx
-		    *gcontext-masks*
-		    ',(coerce (nreverse masks) 'simple-vector)
-		    #+sbcl #'equalp))))))
+		   (defvar *gcontext-data-length* ,index)
+		   (defvar *gcontext-indexes* ',indexes)
+		   (defvar *gcontext-masks*
+		     ',(coerce (nreverse masks) 'simple-vector)
+		     ))))))
   (def-gc-internals ignore
     (:clip :clip-mask) (:dash :dashes) (:font-obj :font) (:timestamp)))
 
