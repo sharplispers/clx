@@ -1,4 +1,4 @@
-Changes in SBCL CLX 0.5.1, XXX FILL THIS IN XXX
+---  Changes in SBCL CLX 0.5.1, XXX FILL THIS IN XXX  ---
 
 experimental RENDER extension support (from Gilbert Baumann)
   note: the API to this is as yet unfinalized, as indeed the protocol
@@ -14,7 +14,21 @@ Bug fixes
    routines, on the basis that the newly fixed image test reveals that
    they are broken.
 
-Changes in SBCL CLX 0.5, Fri May 30 01:16:34 BST 2003
+Other notes
+
+ * we use the SBCL extensions to the condition system to customize
+   compiler behaviour.  As such, the system will only build without
+   breaking into the debugger using the supplied .asd; the benefits of
+   this are easier code sharing, as we minimize divergence within the
+   clx source proper from other implementations.
+
+ * we also use an SBCL extension to maximize efficiency: we set
+   SB-EXT:*DERIVE-FUNCTION-TYPES* to true for the duration of the
+   compilation of the clx library.  Should functions in CLX be
+   redefined in a type-incompatible way, their callers in CLX (but not
+   outside) will need to be recompiled.
+
+---  Changes in SBCL CLX 0.5, Fri May 30 01:16:34 BST 2003  ---
 
 XFree86-VidModeExtension extension support (courtesy of Iban Hatchondo)
 
