@@ -2491,7 +2491,7 @@
 ;#+sbcl
 ;(require :sockets)
 
-#+(or CMU sbcl)
+#+CMU
 (defun host-address (host &optional (family :internet))
   ;; Return a list whose car is the family keyword (:internet :DECnet :Chaos)
   ;; and cdr is a list of network address bytes.
@@ -2536,6 +2536,17 @@
 		 #+db-sockets(coerce (sockets:host-ent-address hostent)
 				     'list)))))))
 
+#+sbcl
+(defun host-address (host &optional (family :internet))
+  ;; Return a list whose car is the family keyword (:internet :DECnet :Chaos)
+  ;; and cdr is a list of network address bytes.
+  (declare (type stringable host)
+	   (type (or null (member :internet :decnet :chaos) card8) family))
+  (declare (clx-values list))
+  (let ((hostent (get-host-by-name (string host))))
+    (ecase family
+      ((:internet nil 0)
+       (cons :internet (coerce (host-ent-address hostent) 'list)))))))
 
 #+explorer ;; This isn't required, but it helps make sense of the results from access-hosts
 (defun get-host (host-object)
@@ -2629,16 +2640,12 @@
   #+excl (sys:getenv name)
   #+lcl3.0 (lcl:environment-variable name)
   #+CMU (cdr (assoc name ext:*environment-list* :test #'string=))
-  #-(or excl lcl3.0 CMU) (progn name nil))
+  #+sbcl (sb-ext:posix-getenv name)
+  #-(or sbcl excl lcl3.0 CMU) (progn name nil))
 
-#-sbcl
 (defun homedir-file-pathname (name)
   (and #-(or unix mach) (search "Unix" (software-type) :test #'char-equal)
        (merge-pathnames (user-homedir-pathname) (pathname name))))
-
-#+sbcl
-(defun homedir-file-pathname (name)
-  (concatenate 'string (getenv "HOME") "/" name))
 
 ;;; DEFAULT-RESOURCES-PATHNAME - The pathname of the resources file to load if
 ;;; a resource manager isn't running.
@@ -2664,6 +2671,27 @@
 	(and xauthority
 	     (pathname xauthority)))
       (homedir-file-pathname ".Xauthority")))
+
+;;; this particular defaulting behaviour is typical to most Unices, I think
+#+unix
+(defun get-default-display ()
+  "Get the default X display as list of (host display-number screen protocol).
+In UNIX this is selected using the DISPLAY environment variable, and
+may use :internet or :unix protocol"
+  (let* ((name (or (getenv "DISPLAY")
+		   (error "DISPLAY environment variable is not set")))
+	 (colon-i (position #\: name))
+	 (host (subseq name 0 colon-i))
+	 (dot-i (and colon-i (position #\. name :start colon-i)))
+	 (display (if colon-i
+		      (ignore-errors
+			(parse-integer name :start (1+ colon-i) :end dot-i))))
+	 (screen (if dot-i
+		     (ignore-errors (parse-integer name :start (1+ dot-i)))))
+	 (protocol (if (or (string= host "") (string-equal host "unix"))
+		       :unix
+		       :internet)))
+    (list host (or display 0) (or screen 0) protocol)))
 
 
 ;;-----------------------------------------------------------------------------
