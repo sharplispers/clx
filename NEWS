@@ -5,6 +5,9 @@
 The ICCCM-compliant selection handling in demo/clipboard.lisp is now
 more ICCCM-compliant.
 
+The implementation of the RENDER client protocol has been
+enhanced. (Gilbert Baumann)
+
 ---  Changes in SBCL CLX 0.6, Tue Nov 16 2004  ---
 
 A port to ECL has been merged (Juan Jose Garcia Ripoll)
