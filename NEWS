@@ -1,6 +1,6 @@
 -*- Text -*-
 
----  Changes in SBCL CLX 0.5.5, <FILL IN TIMESTAMP>        ---
+---  Changes in SBCL CLX 0.6, <FILL IN TIMESTAMP>        ---
 
 A port to ECL has been merged (Juan Jose Garcia Ripoll)
 
@@ -15,6 +15,11 @@ and bug reports
 
 A demonstration of ICCCM-compliant selection handling for select and paste
 has been included in demo/clipboard.lisp
+
+Bug fix: change the sizes of certain fields in a WM-SIZE-HINT to be 32
+bits wide, as per the ICCCM specifications. Fixes a problem seen with
+the MacOS X11 window manger, that uses very large hint values.
+(Patch from Eric Marsden)
 
 ---  Changes in SBCL CLX 0.5.4, Tue Nov 11 00:02:43 2003   ---
 

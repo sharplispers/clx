@@ -233,20 +233,23 @@
 (def-clx-class (wm-size-hints)
   (user-specified-position-p nil :type generalized-boolean) ;; True when user specified x y
   (user-specified-size-p nil :type generalized-boolean)     ;; True when user specified width height
-  (x nil :type (or null int16))			;; Obsolete
-  (y nil :type (or null int16))			;; Obsolete
-  (width nil :type (or null card16))		;; Obsolete
-  (height nil :type (or null card16))		;; Obsolete
-  (min-width nil :type (or null card16))
-  (min-height nil :type (or null card16))
-  (max-width nil :type (or null card16))
-  (max-height nil :type (or null card16))
-  (width-inc nil :type (or null card16))
-  (height-inc nil :type (or null card16))
+  ;; the next four fields are obsolete when using a modern window manager
+  ;; (that will use min-width and friends instead), but they should be set by
+  ;; clients in case an old window manager is used
+  (x nil :type (or null int32))
+  (y nil :type (or null int32))
+  (width nil :type (or null card32))
+  (height nil :type (or null card32))
+  (min-width nil :type (or null card32))
+  (min-height nil :type (or null card32))
+  (max-width nil :type (or null card32))
+  (max-height nil :type (or null card32))
+  (width-inc nil :type (or null card32))
+  (height-inc nil :type (or null card32))
   (min-aspect nil :type (or null number))
   (max-aspect nil :type (or null number))
-  (base-width nil :type (or null card16))
-  (base-height nil :type (or null card16))
+  (base-width nil :type (or null card32))
+  (base-height nil :type (or null card32))
   (win-gravity nil :type (or null win-gravity))
   (program-specified-position-p nil :type generalized-boolean) ;; True when program specified x y
   (program-specified-size-p nil :type generalized-boolean)     ;; True when program specified width height
@@ -496,15 +499,15 @@
 	   (type (or null wm-size-hints) normal-hints zoom-hints)
 	   (type generalized-boolean user-specified-position-p user-specified-size-p)
 	   (type generalized-boolean program-specified-position-p program-specified-size-p)
-	   (type (or null int16) x y)
-	   (type (or null card16) width height min-width min-height max-width max-height width-inc height-inc base-width base-height)
+	   (type (or null int32) x y)
+	   (type (or null card32) width height min-width min-height max-width max-height width-inc height-inc base-width base-height)
 	   (type (or null win-gravity) win-gravity)
 	   (type (or null number) min-aspect max-aspect)
 	   (type (or null (member :off :on)) input)
 	   (type (or null (member :dont-care :normal :zoom :iconic :inactive)) initial-state)
 	   (type (or null pixmap) icon-pixmap icon-mask)
 	   (type (or null window) icon-window)
-	   (type (or null card16) icon-x icon-y)
+	   (type (or null card32) icon-x icon-y)
 	   (type (or null resource-id) window-group)
 	   (dynamic-extent options))
   (when name (setf (wm-name window) name))
