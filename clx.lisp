@@ -451,9 +451,7 @@
 
 (deftype xatom () '(or string symbol))
 
-(#-sbcl defconstant
- #+sbcl sb-int:defconstant-eqx
- +predefined-atoms+
+(defconstant +predefined-atoms+
  '#(nil :PRIMARY :SECONDARY :ARC :ATOM :BITMAP
     :CARDINAL :COLORMAP :CURSOR
     :CUT_BUFFER0 :CUT_BUFFER1 :CUT_BUFFER2 :CUT_BUFFER3
@@ -473,8 +471,7 @@
     :ITALIC_ANGLE :X_HEIGHT :QUAD_WIDTH :WEIGHT
     :POINT_SIZE :RESOLUTION :COPYRIGHT :NOTICE
     :FONT_NAME :FAMILY_NAME :FULL_NAME :CAP_HEIGHT
-    :WM_CLASS :WM_TRANSIENT_FOR)
- #+sbcl #'equalp)
+    :WM_CLASS :WM_TRANSIENT_FOR))
 
 (deftype stringable () '(or string symbol))
 
@@ -484,25 +481,19 @@
 
 (deftype timestamp () '(or null card32))
 
-(#-sbcl defconstant
- #+sbcl sb-int:defconstant-eqx
- +bit-gravity-vector+
+(defconstant +bit-gravity-vector+
  '#(:forget :north-west :north :north-east :west
     :center :east :south-west :south
-    :south-east :static)
- #+sbcl #'equalp)
+    :south-east :static))
 
 (deftype bit-gravity ()
   '(member :forget :north-west :north :north-east :west
 	   :center :east :south-west :south :south-east :static))
 
-(#-sbcl defconstant
- #+sbcl sb-int:defconstant-eqx
- +win-gravity-vector+
+(defconstant +win-gravity-vector+
  '#(:unmap :north-west :north :north-east :west
     :center :east :south-west :south :south-east
-    :static)
- #+sbcl #'equalp)
+    :static))
 
 (defparameter *protocol-families*
   '(;; X11/X.h, Family*
@@ -569,16 +560,13 @@
     (write-string " " stream)
     (prin1 (gcontext-id gcontext) stream)))
 
-(#-sbcl defconstant
- #+sbcl sb-int:defconstant-eqx
- +event-mask-vector+
+(defconstant +event-mask-vector+
  '#(:key-press :key-release :button-press :button-release
     :enter-window :leave-window :pointer-motion :pointer-motion-hint
     :button-1-motion :button-2-motion :button-3-motion :button-4-motion
     :button-5-motion :button-motion :keymap-state :exposure :visibility-change
     :structure-notify :resize-redirect :substructure-notify :substructure-redirect
-    :focus-change :property-change :colormap-change :owner-grab-button)
- #+sbcl #'equalp)
+    :focus-change :property-change :colormap-change :owner-grab-button))
 
 (deftype event-mask-class ()
   '(member :key-press :key-release :owner-grab-button :button-press :button-release
@@ -591,14 +579,11 @@
 (deftype event-mask ()
   '(or mask32 (clx-list event-mask-class)))
 
-(#-sbcl defconstant
- #+sbcl sb-int:defconstant-eqx
- +pointer-event-mask-vector+
+(defconstant +pointer-event-mask-vector+
  '#(%error %error :button-press :button-release
     :enter-window :leave-window :pointer-motion :pointer-motion-hint
     :button-1-motion :button-2-motion :button-3-motion :button-4-motion
-    :button-5-motion :button-motion :keymap-state)
- #+sbcl #'equalp)
+    :button-5-motion :button-motion :keymap-state))
 
 (deftype pointer-event-mask-class ()
   '(member :button-press :button-release
@@ -609,13 +594,10 @@
 (deftype pointer-event-mask ()
   '(or mask32 (clx-list pointer-event-mask-class)))
 
-(#-sbcl defconstant
- #+sbcl sb-int:defconstant-eqx
- +device-event-mask-vector+
+(defconstant +device-event-mask-vector+
  '#(:key-press :key-release :button-press :button-release :pointer-motion
     :button-1-motion :button-2-motion :button-3-motion :button-4-motion
-    :button-5-motion :button-motion)
- #+sbcl #'equalp)
+    :button-5-motion :button-motion))
 
 (deftype device-event-mask-class ()
   '(member :key-press :key-release :button-press :button-release :pointer-motion
@@ -625,12 +607,9 @@
 (deftype device-event-mask ()
   '(or mask32 (clx-list device-event-mask-class)))
 
-(#-sbcl defconstant
- #+sbcl sb-int:defconstant-eqx
- +state-mask-vector+
+(defconstant +state-mask-vector+
  '#(:shift :lock :control :mod-1 :mod-2 :mod-3 :mod-4 :mod-5
-    :button-1 :button-2 :button-3 :button-4 :button-5)
- #+sbcl #'equalp)
+    :button-1 :button-2 :button-3 :button-4 :button-5))
 
 (deftype modifier-key ()
   '(member :shift :lock :control :mod-1 :mod-2 :mod-3 :mod-4 :mod-5))
@@ -641,15 +620,12 @@
 (deftype state-mask-key ()
   '(or modifier-key (member :button-1 :button-2 :button-3 :button-4 :button-5)))
 
-(#-sbcl defconstant
- #+sbcl sb-int:defconstant-eqx
- +gcontext-components+
+(defconstant +gcontext-components+
  '(:function :plane-mask :foreground :background
    :line-width :line-style :cap-style :join-style :fill-style
    :fill-rule :tile :stipple :ts-x :ts-y :font :subwindow-mode
    :exposures :clip-x :clip-y :clip-mask :dash-offset :dashes
-   :arc-mode)
- #+sbcl #'equalp)
+   :arc-mode))
 
 (deftype gcontext-key ()
   '(member :function :plane-mask :foreground :background
@@ -676,14 +652,11 @@
 (deftype draw-direction ()
   '(member :left-to-right :right-to-left))
 
-(#-sbcl defconstant
- #+sbcl sb-int:defconstant-eqx
- +boole-vector+
+(defconstant +boole-vector+
  '#(#.boole-clr #.boole-and #.boole-andc2 #.boole-1
     #.boole-andc1 #.boole-2 #.boole-xor #.boole-ior
     #.boole-nor #.boole-eqv #.boole-c2 #.boole-orc2
-    #.boole-c1 #.boole-orc1 #.boole-nand #.boole-set)
- #+sbcl #'equalp)
+    #.boole-c1 #.boole-orc1 #.boole-nand #.boole-set))
 
 (deftype boole-constant ()
   `(member ,boole-clr ,boole-and ,boole-andc2 ,boole-1

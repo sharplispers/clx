@@ -59,16 +59,10 @@
     (write-string "x" stream)
     (prin1 (image-depth image) stream)))
 
-(#-sbcl defconstant
- #+sbcl sb-int:defconstant-eqx
- +empty-data-x+ '#.(make-sequence '(array card8 (*)) 0)
- #+sbcl #'equalp)
+(defconstant +empty-data-x+ '#.(make-sequence '(array card8 (*)) 0))
 
-(#-sbcl defconstant
- #+sbcl sb-int:defconstant-eqx
- +empty-data-z+
- '#.(make-array '(0 0) :element-type 'pixarray-1-element-type)
- #+sbcl #'equalp)
+(defconstant +empty-data-z+
+  '#.(make-array '(0 0) :element-type 'pixarray-1-element-type))
 
 (def-clx-class (image-x (:include image) (:copier nil)
 			(:print-function print-image))
@@ -471,9 +465,7 @@
 			    (byte 4 4)
 			    (the card4 (ldb (byte 4 4) byte2)))))))))))
 
-(#-sbcl defconstant
- #+sbcl sb-int:defconstant-eqx
- +image-byte-reverse+
+(defconstant +image-byte-reverse+
  '#.(coerce
      '#(
 	0 128 64 192 32 160 96 224 16 144 80 208 48 176 112 240
@@ -492,8 +484,7 @@
 	11 139 75 203 43 171 107 235 27 155 91 219 59 187 123 251
 	7 135 71 199 39 167 103 231 23 151 87 215 55 183 119 247
 	15 143 79 207 47 175 111 239 31 159 95 223 63 191 127 255)
-     '(vector card8))
-  #+sbcl #'equalp)
+     '(vector card8)))
 
 (defun image-swap-bits
        (src dest srcoff destoff srclen srcinc destinc height lsb-first-p)
@@ -709,10 +700,7 @@
 ;;; 	lr  l+R
 ;;; 	wr  w+R
 
-(#-sbcl defconstant
- #+sbcl sb-int:defconstant-eqx
-	
- +image-swap-function+
+(defconstant +image-swap-function+
  '#.(make-array
      '(12 12) :initial-contents
      (let ((n  'image-noswap)
@@ -723,7 +711,7 @@
 	   (sr 'image-swap-bits-and-two-bytes)
 	   (lr 'image-swap-bits-and-four-bytes)
 	   (wr 'image-swap-bits-and-words))
-       (list #|             1Mm 2Mm 4Mm 1Ml 2Ml 4Ml 1Lm 2Lm 4Lm 1Ll 2Ll 4Ll  |#
+       (list  #|       1Mm 2Mm 4Mm 1Ml 2Ml 4Ml 1Lm 2Lm 4Lm 1Ll 2Ll 4Ll  |#
 	(list #| 1Mm |# n   n   n   r   sr  lr  n   s   l   r   r   r )
 	(list #| 2Mm |# n   n   n   r   sr  lr  n   s   l   r   r   r )
 	(list #| 4Mm |# n   n   n   r   sr  lr  n   s   l   r   r   r )
@@ -735,8 +723,7 @@
 	(list #| 4Lm |# l   l   l   lr  wr  r   l   w   n   lr  lr  lr)
 	(list #| 1Ll |# r   r   r   n   s   l   r   sr  lr  n   n   n )
 	(list #| 2Ll |# r   r   r   n   s   l   r   sr  lr  n   n   n )
-	(list #| 4Ll |# r   r   r   n   s   l   r   sr  lr  n   n   n ))))
-  #+sbcl #'equalp)
+	(list #| 4Ll |# r   r   r   n   s   l   r   sr  lr  n   n   n )))))
 
 ;;; Of course, the table above is a lie.  We also need to factor in the
 ;;; order of the source data to cope with swapping half of a unit at the
@@ -745,10 +732,7 @@
 ;;;
 ;;; Defines whether the first half of a unit has the first half of the data
 
-(#-sbcl defconstant
- #+sbcl sb-int:defconstant-eqx
-	
- +image-swap-lsb-first-p+
+(defconstant +image-swap-lsb-first-p+
  '#.(make-array
      12 :initial-contents
      (list t   #| 1mm |#
@@ -763,8 +747,7 @@
 	   t   #| 1ll |#
 	   t   #| 2ll |#
 	   t   #| 4ll |#
-	   ))
- #+sbcl #'equalp)
+	   )))
 
 (defun image-swap-function
        (bits-per-pixel
