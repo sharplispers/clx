@@ -21,6 +21,9 @@ bits wide, as per the ICCCM specifications. Fixes a problem seen with
 the MacOS X11 window manger, that uses very large hint values.
 (Patch from Eric Marsden)
 
+Bug fix: +pointer-event-mask-vector+ is supposed to be a vector of
+keywords.  It wasn't, but it is now.
+
 ---  Changes in SBCL CLX 0.5.4, Tue Nov 11 00:02:43 2003   ---
 
 A change in the implementation of PROCESS-BLOCK and PROCESS-WAKEUP
