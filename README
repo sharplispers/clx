@@ -84,13 +84,11 @@ better yet, the USE option to DEFPACKAGE.
  
 = Bug reports, new features, patches
 
-The best place to send bug reports, especially if you can verify that
-some other CLX port (e.g. CMUCL's) also has the problem, is to the
-portable-clx-devel list.
+Please send bug reports to the portable-clx list:
 
-http://clozure.com/cgi-bin/mailman/listinfo/portable-clx-devel
+http://lists.metacircles.com/cgi-bin/mailman/listinfo/portable-clx
 
-For packaging or SBCL-specific problems, mail <dan at metacircles.com>
+Note that your post will be held for approval if you are not subscribed.
 
 
 -dan
