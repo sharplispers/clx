@@ -1,5 +1,10 @@
 -*- Text -*-
 
+---  Changes in SBCL CLX 0.6.1, FILL IN TIMESTAMP  ---
+
+The ICCCM-compliant selection handling in demo/clipboard.lisp is now
+more ICCCM-compliant.
+
 ---  Changes in SBCL CLX 0.6, Tue Nov 16 2004  ---
 
 A port to ECL has been merged (Juan Jose Garcia Ripoll)
