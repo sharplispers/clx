@@ -3,7 +3,7 @@
 ;;;     Title: The X Render Extension
 ;;;   Created: 2002-08-03
 ;;;    Author: Gilbert Baumann <unk6@rz.uni-karlsruhe.de>
-;;;       $Id: xrender.lisp,v 1.1 2003/06/14 14:27:33 gilbert Exp $
+;;;       $Id: xrender.lisp,v 1.2 2003/06/14 15:16:07 csr21 Exp $
 ;;; ---------------------------------------------------------------------------
 ;;;
 ;;; (c) copyright 2002, 2003 by Gilbert Baumann
@@ -237,17 +237,13 @@ by every function, which attempts to generate RENDER requests."
       (t
        ))))
 
-(eval-when (eval compile load)
-
+(eval-when (:compile-toplevel :load-toplevel :execute)
   (define-accessor picture (32)
     ((index) index :blip)
     ((index thing) `(resource-id-put ,index (picture-id ,thing))))
-
   (define-accessor glyph-set (32)
     ((index) index :blip)
-    ((index thing) `(resource-id-put ,index (glyph-set-id ,thing))))
-
-  )
+    ((index thing) `(resource-id-put ,index (glyph-set-id ,thing)))))
 
 ;;; picture format
 
@@ -280,21 +276,18 @@ by every function, which attempts to generate RENDER requests."
               (picture-format-id object)
               (picture-format-type object) abbrev))))
 
-(eval-when (eval compile load)
-
+(eval-when (:compile-toplevel :load-toplevel :execute)
   (define-accessor picture-format (32)
     ((index)       `(gethash (read-card32 ,index)
                      (render-info-picture-formats (display-render-info .display.))))
     ((index thing) `(write-card32 ,index (picture-format-id ,thing))))
-
   (define-accessor render-op (8)
     ((index) `(member8-get ,index
                :clear :src :dst :over :over-reverse :in :in-reverse
                :out :out-reverse :atop :atop-reverse :xor :add :saturate :maximum))
     ((index thing) `(member8-put ,index ,thing
                      :clear :src :dst :over :over-reverse :in :in-reverse
-                     :out :out-reverse :atop :atop-reverse :xor :add :saturate :maximum)))
-  )
+                     :out :out-reverse :atop :atop-reverse :xor :add :saturate :maximum))))
 
 ;; Now these pictures objects are like graphics contexts. I was about
 ;; to introduce a synchronous mode, realizing that the RENDER protocol
@@ -417,7 +410,7 @@ by every function, which attempts to generate RENDER requests."
                    (setf (picture-%drawable picture) drawable)
                    picture))
     
-               (defconstant *picture-state-length*
+               (defconstant +picture-state-length+
                  ,(length specs)) )))
 
   (foo ((member :off :on) repeat                                          :off)
@@ -463,6 +456,7 @@ by every function, which attempts to generate RENDER requests."
     (let ((n-picture-formats (card32-get 8))
           (n-screens      (card32-get 12))
           (off 32))
+      (declare (ignore n-screens off))
       (loop for i below n-picture-formats
             collect
             (let ((off (+ (* 8 4)
@@ -536,6 +530,7 @@ by every function, which attempts to generate RENDER requests."
     (let* ((glyph-set (or glyph-set (make-glyph-set :display display)))
            (gsid (setf (glyph-set-id glyph-set)
                        (allocate-resource-id display glyph-set 'glyph-set))))
+      (declare (ignore gsid))
       (setf (glyph-set-format glyph-set) format)
       (with-buffer-request (display (extension-opcode display "RENDER"))
         (data +X-RenderCreateGlyphSet+)
@@ -548,6 +543,7 @@ by every function, which attempts to generate RENDER requests."
     (let* ((glyph-set (or glyph-set (make-glyph-set :display display)))
            (gsid (setf (glyph-set-id glyph-set)
                        (allocate-resource-id display glyph-set 'glyph-set))))
+      (declare (ignore gsid))
       (setf (glyph-set-format glyph-set)
             (glyph-set-format existing-glyph-set))
       (with-buffer-request (display (extension-opcode display "RENDER"))
@@ -873,6 +869,11 @@ by every function, which attempts to generate RENDER requests."
 
 
 ;; $Log: xrender.lisp,v $
+;; Revision 1.2  2003/06/14 15:16:07  csr21
+;; Clean up compilation under sbcl: a couple of IGNOREs, a couple of
+;; s/load/:load-toplevel/, one s/*foo*/+foo+/.  Still many many compilation
+;; notes, but since the render protocol is inherently slow anyway...
+;;
 ;; Revision 1.1  2003/06/14 14:27:33  gilbert
 ;; imported as is.
 ;;
