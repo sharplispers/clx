@@ -36,7 +36,11 @@
        (unless *display*
 	 #+:cmu
 	 (multiple-value-setq (*display* *screen*) (ext:open-clx-display))
-	 #-:cmu
+	 #+sbcl
+	 (progn
+	   (setf *display* (xlib::open-default-display))
+	   (setf *screen* (xlib:display-default-screen *display*)))
+	 #-(or cmu sbcl)
 	 (progn
 	   ;; Portable method
 	   (setf *display* (xlib:open-display (machine-instance)))
@@ -241,12 +245,14 @@
 	  (rplaca (qix-buffer h)
 		  (make-array 4 :initial-contents (list x y x y)))))
       (rplacd (last histories) histories)
-      (let (x1 y1 x2 y2 dx1 dy1 dx2 dy2 tem line next-line qix
-	       (gc (xlib:create-gcontext :drawable window
-					 :foreground *white-pixel*
-					 :background *black-pixel*
-					 :line-width 0 :line-style :solid
-					 :function boole-c2)))
+      (let ((x1 0) (y1 0) (x2 0) (y2 0)
+	    (dx1 0) (dy1 0) (dx2 0) (dy2 0)
+	    tem line next-line qix
+	    (gc (xlib:create-gcontext :drawable window
+				      :foreground *white-pixel*
+				      :background *black-pixel*
+				      :line-width 0 :line-style :solid
+				      :function boole-c2)))
 	(declare (fixnum x1 y1 x2 y2 dx1 dy1 dx2 dy2))
 	(dotimes (i duration)
 	  ;; Line is the next line in the next qix. Rotate this qix and
