@@ -26,6 +26,7 @@
 (pushnew :clx-ansi-common-lisp *features*)
 
 (defclass clx-source-file (cl-source-file) ())
+(defclass xrender-source-file (clx-source-file) ())
 
 (defsystem CLX
     :depends-on (sb-bsd-sockets)
@@ -53,9 +54,22 @@
      (:file "manager")
      (:file "image")
      (:file "resource")
+     ;; FIXME: I'm fairly sure that these don't need to be serially
+     ;; compiled.  We should reflect that here, so that a change in
+     ;; "shape" doesn't trigger recompilation of "xvidmode" and
+     ;; "xrender".
      (:file "shape")
-     (:file "xvidmode")))
+     (:file "xvidmode")
+     (:xrender-source-file "xrender")))
 ;;; (:module doc ("doc") (:type :lisp-example))
+
+#+sbcl
+(defmethod perform :around ((o compile-op) (f xrender-source-file))
+  ;; RENDER would appear to be an inherently slow protocol; further,
+  ;; it's not set in stone, and consequently we care less about speed
+  ;; than we do about correctness.
+  (handler-bind ((sb-ext:compiler-note #'muffle-warning))
+    (call-next-method)))
 
 #+sbcl
 (defmethod perform :around ((o compile-op) (f clx-source-file))
@@ -86,8 +100,8 @@
   (handler-bind
       ((sb-ext:defconstant-uneql
 	   (lambda (c)
-	     ;; this really means "don't warn be about efficiency of
-	     ;; generic array access, please"
+	     ;; KLUDGE: this really means "don't warn me about
+	     ;; efficiency of generic array access, please"
 	     (declare (optimize (sb-ext:inhibit-warnings 3)))
 	     (let ((old (sb-ext:defconstant-uneql-old-value c))
 		   (new (sb-ext:defconstant-uneql-new-value c)))
