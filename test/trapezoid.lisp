@@ -21,9 +21,9 @@
 (in-package :xlib)
 
 
-(defun zoid-test (host)
+(defun zoid-test ()
   ;; Display the part picture in /extensions/test/datafile
-  (let* ((display (open-display host))
+  (let* ((display (open-default-display))
 	 (width 400)
 	 (height 400)
 	 (screen (display-default-screen display))
@@ -55,15 +55,15 @@
 	      (when (zerop count) ;; Ignore all but the last exposure event
 		(clear-area window)
 		;; NOT VERY INTERESTING, BUT CHECKS ALL THE POSSIBILITIES
-		(poly-fill-Trapezoids window gc  '(10 20 30 40 100 200))
+		(draw-filled-trapezoids window gc  '(10 20 30 40 100 200))
 		(setf (gcontext-trapezoid-alignment gc) :y)
-		(poly-fill-Trapezoids window gc  #(10 20 30 40 100 200))
+		(draw-filled-trapezoids window gc  #(10 20 30 40 100 200))
 		(with-gcontext (gc :trapezoid-alignment :x)
-		  (poly-fill-Trapezoids window gc  '(40 50 60 70 140 240)))
+		  (draw-filled-trapezoids window gc  '(40 50 60 70 140 240)))
 		(setf (gcontext-trapezoid-alignment gc) :x)
-		(poly-fill-Trapezoids window gc  #(40 50 60 70 80 90))
+		(draw-filled-trapezoids window gc  #(40 50 60 70 80 90))
 		(with-gcontext (gc :trapezoid-alignment :y)
-		  (poly-fill-Trapezoids window gc  #(40 50 60 70 140 240)))
+		  (draw-filled-trapezoids window gc  #(40 50 60 70 140 240)))
 		  
 		(draw-glyphs window gc 10 10 "Press any key to exit")
 		;; Returning non-nil causes event-case to exit
