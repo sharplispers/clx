@@ -1,5 +1,5 @@
 \input texinfo   @c -*-texinfo-*-
-@c $Id: clx.texinfo,v 1.2 2004/11/13 22:45:07 dan Exp $
+@c $Id: clx.texinfo,v 1.3 2004/11/18 12:01:48 dan Exp $
 @c %**start of header
 @setfilename clx.info
 @settitle Common LISP X Interface
@@ -8,7 +8,7 @@
 
 @dircategory lisp
 @direntry
-* CLX:       Common LISP X Interface
+* CLX: (clx).           Common LISP X Interface
 @end direntry
 
 @copying
@@ -2175,7 +2175,7 @@ protocol is assumed to be @code{decnet}.
 If @var{display-name} is not supplied, a default will be provided
 appropriate for the local environment: on a POSIX system - the only
 kind this CLX port runs on - the default display is taken from the
-environment variable @envvar{DISPLAY}.  See also the section ``DISPLAY
+environment variable @env{DISPLAY}.  See also the section ``DISPLAY
 NAMES'' in X(7)
 
 @end table
@@ -2188,7 +2188,7 @@ following complicated rules that closely match the ones that the C
 Xlib bindings use.  Briefly: the hostname is resolved to an address,
 then authorization data for the (protocol, host-address,
 displaynumber) triple is looked up in the file given by the
-environment variable @envvar{AUTHORITY_PATHNAME} (typically
+environment variable @env{AUTHORITY_PATHNAME} (typically
 @file{$HOME/.Xauthority}).  If the protocol is @code{:local}, or if
 the hostname resolves to the local host, authority data for the local
 machine's actual hostname - as returned by gethostname(3) - is used
