@@ -75,6 +75,7 @@
 	       ;; asdf doesn't load example files anyway.
 	       (:file "beziertest")
 	       (:file "clclock")
+               (:file "clipboard")
 	       (:file "clx-demos")
 	       ;; FIXME: compiling this generates 30-odd spurious code
 	       ;; deletion notes.  Find out why, and either fix or
