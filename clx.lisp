@@ -242,7 +242,7 @@
 
 (def-clx-class (pixmap-format (:copier nil) (:print-function print-pixmap-format))
   (depth 0 :type image-depth)
-  (bits-per-pixel 8 :type (member 1 4 8 16 24 32))
+  (bits-per-pixel 8 :type (member 1 4 8 12 16 24 32))
   (scanline-pad 8 :type (member 8 16 32)))
 
 (defun print-pixmap-format (pixmap-format stream depth)
