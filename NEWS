@@ -1,6 +1,22 @@
+Changes in SBCL CLX 0.5.1, XXX FILL THIS IN XXX
+
+experimental RENDER extension support (from Gilbert Baumann)
+  note: the API to this is as yet unfinalized, as indeed the protocol
+        and specification appear to be in flux.  Nevertheless,
+        feedback is welcome to the portable-clx-devel mailing list.
+
+Bug fixes
+
+ * fix bugs in the image test: always draw glyphs in white on black
+   (not 1 on 0 -- i.e. dark red/blue on black in 24 bit truecolour);
+   don't abuse the X-HOT and Y-HOT slots for communicating persistent
+   information any more.  Disable the "optimized" pixarray read/write
+   routines, on the basis that the newly fixed image test reveals that
+   they are broken.
+
 Changes in SBCL CLX 0.5, Fri May 30 01:16:34 BST 2003
 
-XFREE86-VIDMODE extension support (courtesy of Iban Hatchondo)
+XFree86-VidModeExtension extension support (courtesy of Iban Hatchondo)
 
 OPEN-DEFAULT-DISPLAY (opens display in $DISPLAY environment variable) exported
 
