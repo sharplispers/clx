@@ -28,6 +28,12 @@
 (defclass clx-source-file (cl-source-file) ())
 (defclass xrender-source-file (clx-source-file) ())
 
+;;; CL-SOURCE-FILE, not CLX-SOURCE-FILE, so that we're not accused of
+;;; cheating by rebinding *DERIVE-FUNCTION-TYPES* :-)
+(defclass example-source-file (cl-source-file) ())
+
+(defclass legacy-file (static-file) ())
+
 (defsystem CLX
     :depends-on (sb-bsd-sockets)
     :version "0.5.1"
@@ -54,14 +60,52 @@
      (:file "manager")
      (:file "image")
      (:file "resource")
-     ;; FIXME: I'm fairly sure that these don't need to be serially
-     ;; compiled.  We should reflect that here, so that a change in
-     ;; "shape" doesn't trigger recompilation of "xvidmode" and
-     ;; "xrender".
-     (:file "shape")
-     (:file "xvidmode")
-     (:xrender-source-file "xrender")))
-;;; (:module doc ("doc") (:type :lisp-example))
+     (:module extensions
+	      :pathname #.(make-pathname :directory '(:relative))
+	      :components
+	      ((:file "shape")
+	       (:file "xvidmode")
+	       (:xrender-source-file "xrender")))
+     (:module demo
+	      :default-component-class example-source-file
+	      :components
+	      ((:file "bezier")
+	       ;; KLUDGE: this requires "bezier" for proper operation,
+	       ;; but we don't declare that dependency here, because
+	       ;; asdf doesn't load example files anyway.
+	       (:file "beziertest")
+	       (:file "clx-demos")
+	       (:file "menu")
+	       (:file "zoid")))
+     (:module test
+	      :default-component-class example-source-file
+	      :components
+	      ((:file "image")
+	       ;; KLUDGE: again, this depends on "zoid"
+	       (:file "trapezoid")))
+     (:static-file "NEWS")
+     (:static-file "CHANGES")
+     (:static-file "README")
+     (:static-file "README-R5")
+     (:legacy-file "exclMakefile")
+     (:legacy-file "exclREADME")
+     (:legacy-file "exclcmac" :pathname "exclcmac.lisp")
+     (:legacy-file "excldepc" :pathname "excldep.c")
+     (:legacy-file "excldep" :pathname "excldep.lisp")
+     (:module debug
+	      :default-component-class legacy-file
+	      :components
+	      ((:file "debug" :pathname "debug.lisp")
+	       (:file "describe" :pathname "describe.lisp")
+	       (:file "event-test" :pathname "event-test.lisp")
+	       (:file "keytrans" :pathname "keytrans.lisp")
+	       (:file "trace" :pathname "trace.lisp")
+	       (:file "util" :pathname "util.lisp")))))
+
+(defmethod perform ((o load-op) (f example-source-file))
+  ;; do nothing.  We want to compile them when CLX is compiled, but
+  ;; not load them when CLX is loaded.
+  t)
 
 #+sbcl
 (defmethod perform :around ((o compile-op) (f xrender-source-file))
@@ -76,18 +120,26 @@
   ;; our CLX library should compile without WARNINGs, and ideally
   ;; without STYLE-WARNINGs.  Since it currently does, let's enforce
   ;; it here so that we can catch regressions easily.
-  (setf (operation-on-warnings o) :error
-	(operation-on-failure o) :error)
-  ;; a variety of accessors, such as AREF-CARD32, are not declared
-  ;; INLINE.  Without this (non-ANSI) static-type-inference behaviour,
-  ;; SBCL emits an extra 100 optimization notes (roughly one fifth of
-  ;; all of the notes emitted).  Since the internals are unlikely to
-  ;; change much, and certainly the internals should stay in sync,
-  ;; enabling this extension is a win.  (Note that the use of this
-  ;; does not imply that applications using CLX calls that expand into
-  ;; calls to these accessors will be optimized in the same way).
-  (let ((sb-ext:*derive-function-types* t))
-    (call-next-method)))
+  (let ((on-warnings (operation-on-warnings o))
+	(on-failure (operation-on-failure o)))
+    (unwind-protect
+	 (progn
+	   (setf (operation-on-warnings o) :error
+		 (operation-on-failure o) :error)
+	   ;; a variety of accessors, such as AREF-CARD32, are not
+	   ;; declared INLINE.  Without this (non-ANSI)
+	   ;; static-type-inference behaviour, SBCL emits an extra 100
+	   ;; optimization notes (roughly one fifth of all of the
+	   ;; notes emitted).  Since the internals are unlikely to
+	   ;; change much, and certainly the internals should stay in
+	   ;; sync, enabling this extension is a win.  (Note that the
+	   ;; use of this does not imply that applications using CLX
+	   ;; calls that expand into calls to these accessors will be
+	   ;; optimized in the same way).
+	   (let ((sb-ext:*derive-function-types* t))
+	     (call-next-method)))
+      (setf (operation-on-warnings o) on-warnings
+	    (operation-on-failure o) on-failure))))
 
 #+sbcl
 (defmethod perform :around (o (f clx-source-file))
