@@ -77,13 +77,25 @@
 
 #+sbcl
 (defmethod perform :around (o (f clx-source-file))
+  ;; SBCL signals an error if DEFCONSTANT is asked to redefine a
+  ;; constant unEQLly.  For CLX's purposes, however, we are defining
+  ;; structured constants (lists and arrays) not for EQLity, but for
+  ;; the purposes of constant-folding operations such as (MEMBER FOO
+  ;; +BAR+), so it is safe to abort the redefinition provided the
+  ;; structured data is sufficiently equal.
   (handler-bind
       ((sb-ext:defconstant-uneql
 	   (lambda (c)
+	     ;; this really means "don't warn be about efficiency of
+	     ;; generic array access, please"
+	     (declare (optimize (sb-ext:inhibit-warnings 3)))
 	     (let ((old (sb-ext:defconstant-uneql-old-value c))
 		   (new (sb-ext:defconstant-uneql-new-value c)))
 	       (typecase old
 		 (list (when (equal old new) (abort c)))
+		 (string (when (and (typep new 'string)
+				    (string= old new))
+			   (abort c)))
 		 (simple-vector
 		  (when (and (typep new 'simple-vector)
 			     (= (length old) (length new))
