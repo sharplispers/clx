@@ -2,6 +2,8 @@
 
 ---  Changes in SBCL CLX 0.5.5, <FILL IN TIMESTAMP>        ---
 
+A port to ECL has been merged (Juan Jose Garcia Ripoll)
+
 With the addition of an implementation of DYNAMIC-EXTENT &REST lists
 to SBCL, various functions (e.g. READ-INPUT, QUEUE-EVENT) in CLX
 should cons less.
