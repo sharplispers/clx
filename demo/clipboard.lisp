@@ -26,6 +26,8 @@
 ;;;   with an empty event mask ("2.2 Responsibilities of the Selection
 ;;;   Owner").
 ;;;
+;;; * implemented the ICCCM-required TIMESTAMP and MULTIPLE targets
+;;;
 ;;; As ever with these things, the divisions in intellectual property
 ;;; between the writer of the original C program, Tor Andersson
 ;;; (contactable at tor [dot] andersson [at] gmail [dot] com) and the
@@ -111,22 +113,56 @@
     (delete-property *window* property)))
 
 (defun send-copy (selection target property requestor time)
-  (case target
-    ((:string)
-     (format t "~&> sending text data~%") (finish-output)
-     (change-property requestor property
-                      "Hello, World (from the CLX clipboard)!" target 8
-                      :transform #'char-code))
-    (:targets
-     (format t "~&> sending targets list~%") (finish-output)
-     (change-property requestor property '(:targets :string) target 32
-                      :transform (lambda (x) (intern-atom *display* x))))
-    (t
-     (format t "~&> sending none~%") (finish-output)
-     (setf property nil)))
-  (send-event requestor :selection-notify (make-event-mask)
-              :selection selection :target target :property property :time time
-              :event-window requestor :window requestor))
+  (flet ((send (target property)
+	   (case target
+	     ((:string)
+	      (format t "~&> sending text data~%") (finish-output)
+	      (change-property requestor property
+			       "Hello, World (from the CLX clipboard)!"
+			       target 8
+			       :transform #'char-code)
+	      property)
+	     (:targets
+	      (format t "~&> sending targets list~%") (finish-output)
+	      ;; ARGH.  Can't use :TRANSFORM as we scribble over CLX's buffer.
+	      (let ((targets
+		     (mapcar (lambda (x) (intern-atom *display* x))
+			     '(:targets :timestamp :multiple :string))))
+		(change-property requestor property targets target 32))
+	      property)
+	     (:timestamp
+	      (format t "~&> sending timestamp~%") (finish-output)
+	      (change-property requestor property (list *time*) target 32)
+	      property)
+	     (t
+	      (format t "~&> sending none~%") (finish-output)
+	      nil))))
+    (case target
+      ;; WARNING: this is untested.  I don't know of any clients which
+      ;; use the :MULTIPLE target.
+      (:multiple
+       (let* ((list (get-property requestor property))
+	      (plist (mapcar (lambda (x) (atom-name *display* x)) list)))
+	 (loop for (ptarget pproperty) on plist by #'cddr
+	    with all-succeeded = t
+	    if (send ptarget pproperty)
+	    collect ptarget into result
+	    and collect pproperty into result
+	    else
+	    collect nil into result
+	    and collect pproperty into result
+	    and do (setf all-succeeded nil)
+	    finally (unless all-succeeded
+		      (let ((new-list
+			     (mapcar (lambda (x) (intern-atom *display* x))
+				     result)))
+			(change-property requestor property new-list
+					 target 32))))))
+      (t (setf property (send target property))))
+    (send-event requestor :selection-notify (make-event-mask)
+		:selection selection :target target
+		:property property :time time
+		:event-window requestor :window requestor)))
 
 (defun main ()
   (let* ((*display* (open-default-display))
