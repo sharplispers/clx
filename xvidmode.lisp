@@ -170,7 +170,7 @@
   (declare (clx-values position))
   (let ((position (position screen (xlib:display-roots display))))
     (if (not (numberp position))
-	(error (format nil "screen ~a, not found in display ~a" screen display))
+	(error "screen ~A not found in display ~A" screen display)
 	position)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
