@@ -92,6 +92,11 @@
      (:legacy-file "exclcmac" :pathname "exclcmac.lisp")
      (:legacy-file "excldepc" :pathname "excldep.c")
      (:legacy-file "excldep" :pathname "excldep.lisp")
+     (:legacy-file "sockcl" :pathname "sockcl.lisp")
+     (:legacy-file "socket" :pathname "socket.c")
+     (:legacy-file "defsystem" :pathname "defsystem.lisp")
+     (:legacy-file "provide" :pathname "provide.lisp")
+     (:legacy-file "cmudep" :pathname "cmudep.lisp")
      (:module debug
 	      :default-component-class legacy-file
 	      :components
