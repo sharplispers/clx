@@ -119,7 +119,7 @@
 ;;;--------------------------------------------------------------------------
 (#-sbcl defconstant
  #+sbcl sb-int:defconstant-eqx
- *clx-cached-types*
+ +clx-cached-types+
  '(drawable
    window
    pixmap
@@ -341,7 +341,7 @@
 
 ;;;; Stuff for BUFFER definition
 
-(defconstant *replysize* 32.)
+(defconstant +replysize+ 32.)
 
 ;; used in defstruct initializations to avoid compiler warnings
 (defvar *empty-bytes* (make-sequence 'buffer-bytes 0))
@@ -372,8 +372,8 @@
   (data-size 0 :type array-index)
   )
 
-(defconstant *buffer-text16-size* 256)
-(deftype buffer-text16 () `(simple-array (unsigned-byte 16) (,*buffer-text16-size*)))
+(defconstant +buffer-text16-size+ 256)
+(deftype buffer-text16 () `(simple-array (unsigned-byte 16) (,+buffer-text16-size+)))
 
 ;; These are here because.
 
@@ -554,7 +554,7 @@
   #+clx-overlapping-arrays
   (obuf32 *empty-longs* :type buffer-longs)
   ;; Holding buffer for 16-bit text
-  (tbuf16 (make-sequence 'buffer-text16 *buffer-text16-size* :initial-element 0))
+  (tbuf16 (make-sequence 'buffer-text16 +buffer-text16-size+ :initial-element 0))
   ;; Probably EQ to Output-Stream
   #-excl (input-stream nil :type (or null stream))
   #+excl (input-stream -1 :type fixnum)
@@ -623,17 +623,17 @@
 ;; Image stuff
 ;;-----------------------------------------------------------------------------
 
-(defconstant *image-bit-lsb-first-p*
+(defconstant +image-bit-lsb-first-p+
 	     #+clx-little-endian t
 	     #-clx-little-endian nil)
 
-(defconstant *image-byte-lsb-first-p*
+(defconstant +image-byte-lsb-first-p+
 	     #+clx-little-endian t
 	     #-clx-little-endian nil)
 
-(defconstant *image-unit* 32)
+(defconstant +image-unit+ 32)
 
-(defconstant *image-pad* 32)
+(defconstant +image-pad+ 32)
 
 
 ;;-----------------------------------------------------------------------------

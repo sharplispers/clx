@@ -453,7 +453,7 @@
 
 (#-sbcl defconstant
  #+sbcl sb-int:defconstant-eqx
- *predefined-atoms*
+ +predefined-atoms+
  '#(nil :PRIMARY :SECONDARY :ARC :ATOM :BITMAP
     :CARDINAL :COLORMAP :CURSOR
     :CUT_BUFFER0 :CUT_BUFFER1 :CUT_BUFFER2 :CUT_BUFFER3
@@ -486,7 +486,7 @@
 
 (#-sbcl defconstant
  #+sbcl sb-int:defconstant-eqx
- *bit-gravity-vector*
+ +bit-gravity-vector+
  '#(:forget :north-west :north :north-east :west
     :center :east :south-west :south
     :south-east :static)
@@ -498,7 +498,7 @@
 
 (#-sbcl defconstant
  #+sbcl sb-int:defconstant-eqx
- *win-gravity-vector*
+ +win-gravity-vector+
  '#(:unmap :north-west :north :north-east :west
     :center :east :south-west :south :south-east
     :static)
@@ -571,7 +571,7 @@
 
 (#-sbcl defconstant
  #+sbcl sb-int:defconstant-eqx
- *event-mask-vector*
+ +event-mask-vector+
  '#(:key-press :key-release :button-press :button-release
     :enter-window :leave-window :pointer-motion :pointer-motion-hint
     :button-1-motion :button-2-motion :button-3-motion :button-4-motion
@@ -593,7 +593,7 @@
 
 (#-sbcl defconstant
  #+sbcl sb-int:defconstant-eqx
- *pointer-event-mask-vector*
+ +pointer-event-mask-vector+
  '#(%error %error :button-press :button-release
     :enter-window :leave-window :pointer-motion :pointer-motion-hint
     :button-1-motion :button-2-motion :button-3-motion :button-4-motion
@@ -611,7 +611,7 @@
 
 (#-sbcl defconstant
  #+sbcl sb-int:defconstant-eqx
- *device-event-mask-vector*
+ +device-event-mask-vector+
  '#(:key-press :key-release :button-press :button-release :pointer-motion
     :button-1-motion :button-2-motion :button-3-motion :button-4-motion
     :button-5-motion :button-motion)
@@ -627,7 +627,7 @@
 
 (#-sbcl defconstant
  #+sbcl sb-int:defconstant-eqx
- *state-mask-vector*
+ +state-mask-vector+
  '#(:shift :lock :control :mod-1 :mod-2 :mod-3 :mod-4 :mod-5
     :button-1 :button-2 :button-3 :button-4 :button-5)
  #+sbcl #'equalp)
@@ -643,7 +643,7 @@
 
 (#-sbcl defconstant
  #+sbcl sb-int:defconstant-eqx
- *gcontext-components*
+ +gcontext-components+
  '(:function :plane-mask :foreground :background
    :line-width :line-style :cap-style :join-style :fill-style
    :fill-rule :tile :stipple :ts-x :ts-y :font :subwindow-mode
@@ -678,7 +678,7 @@
 
 (#-sbcl defconstant
  #+sbcl sb-int:defconstant-eqx
- *boole-vector*
+ +boole-vector+
  '#(#.boole-clr #.boole-and #.boole-andc2 #.boole-1
     #.boole-andc1 #.boole-2 #.boole-xor #.boole-ior
     #.boole-nor #.boole-eqv #.boole-c2 #.boole-orc2
@@ -852,7 +852,7 @@
 	     (let ((predicate (xintern type '-equal))
 		   (id (xintern type '-id))
 		   (dpy (xintern type '-display)))
-	       (if (member type *clx-cached-types*)
+	       (if (member type +clx-cached-types+)
 		   `(within-definition (,type make-mumble-equal)
 		      (declaim (inline ,predicate))
 		      (defun ,predicate (a b) (eq a b)))
@@ -908,7 +908,7 @@
 (defun encode-event-mask (event-mask)
   (declare (type event-mask event-mask))
   (declare (clx-values mask32))
-  (or (encode-mask *event-mask-vector* event-mask 'event-mask-class)
+  (or (encode-mask +event-mask-vector+ event-mask 'event-mask-class)
       (x-type-error event-mask 'event-mask)))
 
 (defun make-event-mask (&rest keys)
@@ -916,18 +916,18 @@
   ;; Useful for constructing event-mask, pointer-event-mask, device-event-mask.
   (declare (type (clx-list event-mask-class) keys))
   (declare (clx-values mask32))
-  (encode-mask *event-mask-vector* keys 'event-mask-class))
+  (encode-mask +event-mask-vector+ keys 'event-mask-class))
 
 (defun make-event-keys (event-mask)
   ;; This is only defined for core events.
   (declare (type mask32 event-mask))
   (declare (clx-values (clx-list event-mask-class)))
-  (decode-mask *event-mask-vector* event-mask))
+  (decode-mask +event-mask-vector+ event-mask))
 
 (defun encode-device-event-mask (device-event-mask)
   (declare (type device-event-mask device-event-mask))
   (declare (clx-values mask32))
-  (or (encode-mask *device-event-mask-vector* device-event-mask
+  (or (encode-mask +device-event-mask-vector+ device-event-mask
 		   'device-event-mask-class)
       (x-type-error device-event-mask 'device-event-mask)))
 
@@ -935,29 +935,29 @@
   (declare (type modifier-mask modifier-mask))
   (declare (clx-values mask16))
   (or (and (eq modifier-mask :any) #x8000)
-      (encode-mask *state-mask-vector* modifier-mask 'modifier-key)
+      (encode-mask +state-mask-vector+ modifier-mask 'modifier-key)
       (x-type-error modifier-mask 'modifier-mask)))
 
 (defun encode-state-mask (state-mask)
   (declare (type (or mask16 (clx-list state-mask-key)) state-mask))
   (declare (clx-values mask16))
-  (or (encode-mask *state-mask-vector* state-mask 'state-mask-key)
+  (or (encode-mask +state-mask-vector+ state-mask 'state-mask-key)
       (x-type-error state-mask '(or mask16 (clx-list state-mask-key)))))
 
 (defun make-state-mask (&rest keys)
   ;; Useful for constructing modifier-mask, state-mask.
   (declare (type (clx-list state-mask-key) keys))
   (declare (clx-values mask16))
-  (encode-mask *state-mask-vector* keys 'state-mask-key))
+  (encode-mask +state-mask-vector+ keys 'state-mask-key))
 
 (defun make-state-keys (state-mask)
   (declare (type mask16 state-mask))
   (declare (clx-values (clx-list state-mask-key)))
-  (decode-mask *state-mask-vector* state-mask))
+  (decode-mask +state-mask-vector+ state-mask))
 
 (defun encode-pointer-event-mask (pointer-event-mask)
   (declare (type pointer-event-mask pointer-event-mask))
   (declare (clx-values mask32))
-  (or (encode-mask *pointer-event-mask-vector* pointer-event-mask
+  (or (encode-mask +pointer-event-mask-vector+ pointer-event-mask
 		   'pointer-event-mask-class)
       (x-type-error pointer-event-mask 'pointer-event-mask)))

@@ -51,7 +51,7 @@
 
 (#-sbcl defconstant
  #+sbcl sb-int:defconstant-eqx
- *gcontext-fast-change-length* #.(length *gcontext-components*)
+ +gcontext-fast-change-length+ #.(length +gcontext-components+)
  #+sbcl #'equal)
 
 (macrolet ((def-gc-internals (name &rest extras)
@@ -59,7 +59,7 @@
 		  (indexes nil)
 		  (masks nil)
 		  (index 0))
-	      (dolist (name *gcontext-components*)
+	      (dolist (name +gcontext-components+)
 		(push `(defmacro ,(xintern 'gcontext-internal- name) (state)
 			 `(svref ,state ,,index))
 		      macros)
@@ -75,7 +75,7 @@
 		  (setf (getf indexes (or (second extra) (first extra))) index))
 		(push (logior (ash 1 index)
 			      (if (second extra)
-				  (ash 1 (position (second extra) *gcontext-components*))
+				  (ash 1 (position (second extra) +gcontext-components+))
 				  0))
 		      masks)
 		(incf index))
@@ -92,7 +92,7 @@
 
 ) ;; end EVAL-WHEN
 
-(deftype gcmask () '(unsigned-byte #.*gcontext-fast-change-length*))
+(deftype gcmask () '(unsigned-byte #.+gcontext-fast-change-length+))
 
 (deftype xgcmask () '(unsigned-byte #.*gcontext-data-length*))
 
@@ -165,7 +165,7 @@
 ;; Generate all the accessors and defsetf's for GContext
 
 (defmacro xgcmask->gcmask (mask)
-  `(the gcmask (logand ,mask #.(1- (ash 1 *gcontext-fast-change-length*)))))
+  `(the gcmask (logand ,mask #.(1- (ash 1 +gcontext-fast-change-length+)))))
 
 (defmacro access-gcontext ((gcontext local-state) &body body)
   `(let ((,local-state (gcontext-local-state ,gcontext)))
@@ -407,7 +407,7 @@
 
 	(block no-changes
 	  (let ((last-request (buffer-last-request display)))
-	    (with-buffer-request (display *x-changegc*)
+	    (with-buffer-request (display +x-changegc+)
 	      (gcontext gcontext)
 	      (progn
 		(do ((i 0 (index+ i 1))
@@ -415,7 +415,7 @@
 		     (nbyte 12)
 		     (mask 0)
 		     (local 0))
-		    ((index>= i *gcontext-fast-change-length*)
+		    ((index>= i +gcontext-fast-change-length+)
 		     (when (zerop mask)
 		       ;; If nothing changed, restore last-request and quit
 		       (setf (buffer-last-request display)
@@ -455,7 +455,7 @@
 	  (unless (equalp local-clip server-clip)
 	    (setf (gcontext-internal-clip server-state) nil)
 	    (unless (null local-clip)
-	      (with-buffer-request (display *x-setcliprectangles*)
+	      (with-buffer-request (display +x-setcliprectangles+)
 		(data (first local-clip))
 		(gcontext gcontext)
 		;; XXX treat nil correctly
@@ -473,7 +473,7 @@
 	  (unless (equalp local-dash server-dash)
 	    (setf (gcontext-internal-dash server-state) nil)
 	    (unless (null local-dash)
-	      (with-buffer-request (display *x-setdashes*)
+	      (with-buffer-request (display +x-setdashes+)
 		(gcontext gcontext)
 		;; XXX treat nil correctly
 		(card16 (or (gcontext-internal-dash-offset local-state) 0)
@@ -605,13 +605,13 @@
 		  (gcontext-server-state temp-gc) saved-state
 		  (gcontext-local-state temp-gc) saved-state)
 	    ;; Create a new (temporary) gcontext
-	    (with-buffer-request (display *x-creategc*)
+	    (with-buffer-request (display +x-creategc+)
 	      (gcontext temp-gc)
 	      (drawable (gcontext-drawable gcontext))
 	      (card29 0))
 	    ;; Copy changed components to the temporary gcontext
 	    (when (plusp temp-mask)
-	      (with-buffer-request (display *x-copygc*)
+	      (with-buffer-request (display +x-copygc+)
 		(gcontext gcontext)
 		(gcontext temp-gc)
 		(card29 (xgcmask->gcmask temp-mask))))
@@ -634,7 +634,7 @@
   (let ((display (gcontext-display gcontext)))
     (declare (type display display))
     (with-display (display)
-      (with-buffer-request (display *x-copygc*)
+      (with-buffer-request (display +x-copygc+)
 	(gcontext temp-gc)
 	(gcontext gcontext)
 	(card29 (xgcmask->gcmask temp-mask)))
@@ -647,7 +647,7 @@
 	(let ((copy-function (gcontext-extension-copy-function (car extensions))))
 	  (funcall copy-function temp-gc gcontext (svref local-state i))))
       ;; free gcontext
-      (with-buffer-request (display *x-freegc*)
+      (with-buffer-request (display +x-freegc+)
 	(gcontext temp-gc))
       (deallocate-resource-id display (gcontext-id temp-gc) 'gcontext)
       (deallocate-temp-gcontext temp-gc)
@@ -774,7 +774,7 @@
 	    ;; No, mark local state "unmodified"
 	    1))
     
-    (with-buffer-request (display *x-creategc*)
+    (with-buffer-request (display +x-creategc+)
       (resource-id gcontextid)
       (drawable drawable)
       (progn (do* ((i 0 (index+ i 1))
@@ -782,7 +782,7 @@
 		   (nbyte 16)
 		   (mask 0)
 		   (local (svref local-state i) (svref local-state i)))
-		 ((index>= i *gcontext-fast-change-length*)
+		 ((index>= i +gcontext-fast-change-length+)
 		  (card29-put 12 mask)
 		  (card16-put 2 (index-ash nbyte -2))
 		  (index-incf (buffer-boffset display) nbyte))
@@ -867,14 +867,14 @@
 	    (when (oddp bit)
 	      (setf (svref dst-local-state i)
 		    (setf (svref dst-server-state i) (svref src-server-state i)))))
-	  (with-buffer-request (display *x-copygc*)
+	  (with-buffer-request (display +x-copygc+)
 	    (gcontext src dst)
 	    (card29 (xgcmask->gcmask mask))))))))
 
 (defun copy-gcontext (src dst)
   (declare (type gcontext src dst))
   ;; Copies all components.
-  (apply #'copy-gcontext-components src dst *gcontext-components*)
+  (apply #'copy-gcontext-components src dst +gcontext-components+)
   (do ((extensions *gcontext-extensions* (cdr extensions))
        (i *gcontext-data-length* (index+ i 1)))
       ((endp extensions))
@@ -884,7 +884,7 @@
 (defun free-gcontext (gcontext)
   (declare (type gcontext gcontext))
   (let ((display (gcontext-display gcontext)))
-    (with-buffer-request (display *x-freegc*)
+    (with-buffer-request (display +x-freegc+)
       (gcontext gcontext))
     (deallocate-resource-id display (gcontext-id gcontext) 'gcontext)
     (deallocate-gcontext-state (gcontext-server-state gcontext))

@@ -184,7 +184,7 @@
        (sequence-get :length (print (* 4 (card32-get 8)))
                      :result-type result-type
                      :format int16
-                     :index *replysize*)
+                     :index +replysize+)
        (ecase (card8-get 1)
          (0 :unsorted)
          (1 :y-sorted)
