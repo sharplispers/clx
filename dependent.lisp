@@ -1409,8 +1409,8 @@
   (declare (ignore protocol)
            (type (integer 0) display))
   (socket-make-stream 
-   (if (or (string= host "") (string= host "unix")) ; AF_UNIX domain socket
-       (let ((s (make-instance 'unix-socket :type :stream)))
+   (if (or (string= host "") (string= host "unix")) ; AF_LOCAL domain socket
+       (let ((s (make-instance 'local-socket :type :stream)))
 	 (socket-connect s (format nil "~A~D" +X-unix-socket-path+ display))
 	 s)
        (let ((host (car (host-ent-addresses (get-host-by-name host)))))
