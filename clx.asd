@@ -25,10 +25,13 @@
 
 (pushnew :clx-ansi-common-lisp *features*)
 
+(defclass clx-source-file (cl-source-file) ())
+
 (defsystem CLX
     :depends-on (sb-bsd-sockets)
-    :version "0.5"
+    :version "0.5.1"
     :serial t
+    :default-component-class clx-source-file
     :components
     ((:file "package")
      (:file "depdefs")
@@ -53,3 +56,16 @@
      (:file "shape")
      (:file "xvidmode")))
 ;;; (:module doc ("doc") (:type :lisp-example))
+
+#+sbcl
+(defmethod perform :around ((o compile-op) (f clx-source-file))
+  ;; a variety of accessors, such as AREF-CARD32, are not declared
+  ;; INLINE.  Without this (non-ANSI) static-type-inference behaviour,
+  ;; SBCL emits about 100 optimization notes (roughly one fifth of all
+  ;; of the notes emitted).  Since the internals are unlikely to
+  ;; change much, and certainly the internals should stay in sync,
+  ;; enabling this extension is a win.  (Note that the use of this
+  ;; does not imply that applications using CLX calls that expand into
+  ;; calls to these accessors will be optimized in the same way).
+  (let ((sb-ext:*derive-function-types* t))
+    (call-next-method)))
