@@ -52,7 +52,7 @@ xlib::just-say-lisp.
 demo/, it's generally /not/ considered good style to switch to the
 :xlib package and write your code in it.  Spend some time with a
 language reference to familiarize yourself with USE-PACKAGE, or 
-better yet, the USE option to DEFPACKAGE
+better yet, the USE option to DEFPACKAGE.
 
 
 = Known problems:
@@ -64,15 +64,15 @@ better yet, the USE option to DEFPACKAGE
 
 The best place to send bug reports, especially if you can verify that
 some other CLX port (e.g. CMUCL's) also has the problem, is to the
-portable-clx-devel list
+portable-clx-devel list.
 
 http://clozure.com/cgi-bin/mailman/listinfo/portable-clx-devel
 
-For packaging or SBCL-specific problems, mail dan at metacircles.com
+For packaging or SBCL-specific problems, mail <dan at metacircles.com>
 
 
 -dan
 
 -- 
-Heavy lifting by Raymond.Wiker@fast.no
-ASDFized version and ongoing by Daniel Barlow <dan@metacircles.com>
+Heavy lifting by <Raymond.Wiker at fast.no>
+ASDFized version and ongoing by Daniel Barlow <dan at metacircles.com>
