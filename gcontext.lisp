@@ -48,10 +48,7 @@
 ;;	The state vector contains all card32s to speed server updating
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-(#-sbcl defconstant
- #+sbcl sb-int:defconstant-eqx
- +gcontext-fast-change-length+ #.(length +gcontext-components+)
- #+sbcl #'equal)
+(defconstant +gcontext-fast-change-length+ #.(length +gcontext-components+))
 
 (macrolet ((def-gc-internals (name &rest extras)
 	    (let ((macros nil)

@@ -117,17 +117,14 @@
 ;;; useful for much beyond xatoms and windows (since almost nothing else
 ;;; ever comes back in events).
 ;;;--------------------------------------------------------------------------
-(#-sbcl defconstant
- #+sbcl sb-int:defconstant-eqx
- +clx-cached-types+
+(defconstant +clx-cached-types+
  '(drawable
    window
    pixmap
    ;;		gcontext
    cursor
    colormap
-   font)
- #+sbcl #'equal)
+   font))
 
 (defmacro resource-id-map-test ()
   #+excl '#'equal

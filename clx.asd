@@ -66,11 +66,38 @@
 	(operation-on-failure o) :error)
   ;; a variety of accessors, such as AREF-CARD32, are not declared
   ;; INLINE.  Without this (non-ANSI) static-type-inference behaviour,
-  ;; SBCL emits about 100 optimization notes (roughly one fifth of all
-  ;; of the notes emitted).  Since the internals are unlikely to
+  ;; SBCL emits an extra 100 optimization notes (roughly one fifth of
+  ;; all of the notes emitted).  Since the internals are unlikely to
   ;; change much, and certainly the internals should stay in sync,
   ;; enabling this extension is a win.  (Note that the use of this
   ;; does not imply that applications using CLX calls that expand into
   ;; calls to these accessors will be optimized in the same way).
   (let ((sb-ext:*derive-function-types* t))
+    (call-next-method)))
+
+#+sbcl
+(defmethod perform :around (o (f clx-source-file))
+  (handler-bind
+      ((sb-ext:defconstant-uneql
+	   (lambda (c)
+	     (let ((old (sb-ext:defconstant-uneql-old-value c))
+		   (new (sb-ext:defconstant-uneql-new-value c)))
+	       (typecase old
+		 (list (when (equal old new) (abort c)))
+		 (simple-vector
+		  (when (and (typep new 'simple-vector)
+			     (= (length old) (length new))
+			     (every #'eql old new))
+		    (abort c)))
+		 (array
+		  (when (and (typep new 'array)
+			     (equal (array-dimensions old)
+				    (array-dimensions new))
+			     (equal (array-element-type old)
+				    (array-element-type new))
+			     (dotimes (i (array-total-size old) t)
+			       (unless (eql (row-major-aref old i)
+					    (row-major-aref new i))
+				 (return nil))))
+		    (abort c))))))))
     (call-next-method)))
