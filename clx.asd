@@ -32,7 +32,6 @@
     :components
     ((:file "package")
      (:file "depdefs")
-;     (:file "generalock")
      (:file "clx")
      (:file "dependent")
      (:file "macros")
@@ -50,5 +49,6 @@
      (:file "keysyms")
      (:file "manager")
      (:file "image")
-     (:file "resource")))
+     (:file "resource")
+     (:file "shape")))
 ;;; (:module doc ("doc") (:type :lisp-example))
