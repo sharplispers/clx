@@ -916,7 +916,7 @@
   (boolean override-redirect-p))
 
 (declare-event :configure-request
-  ((data (member :above :below :top-if :bottom-if :opposite)) stack-mode)
+  ((data (member8 :above :below :top-if :bottom-if :opposite)) stack-mode)
   (card16 sequence)
   (window (parent event-window) window)
   ((or null window) above-sibling)
