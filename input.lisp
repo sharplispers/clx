@@ -406,11 +406,11 @@
 					(display-input-in-progress display) nil token)))
 			    (null (buffer-listen display))))
 	       (go force-output))
-	    ;; Ensure that only one process is reading input.
-	     (unless (or (eq (display-input-in-progress display) token)
-			 (conditional-store (display-input-in-progress display) nil token))
-	       (if (eql timeout 0)
-		   (return-from read-input :timeout)
+	   ;; Ensure that only one process is reading input.
+	   (unless (or (eq (display-input-in-progress display) token)
+		       (conditional-store (display-input-in-progress display) nil token))
+	     (if (eql timeout 0)
+		 (return-from read-input :timeout)
 		 (apply #'process-block "CLX Input Lock"
 			#'(lambda (display predicate &rest predicate-args)
 			    (declare (type display display)
