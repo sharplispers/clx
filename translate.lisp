@@ -48,26 +48,30 @@
       (when (<= first keysym last)
 	(return (first set))))))
 
-(eval-when (compile eval load) ;; Required for Vaxlisp ...
-(defmacro keysym (keysym &rest bytes)
-  ;; Build a keysym.
-  ;; If KEYSYM is an integer, it is used as the most significant bits of
-  ;; the keysym, and BYTES are used to specify low order bytes. The last
-  ;; parameter is always byte4 of the keysym.  If KEYSYM is not an
-  ;; integer, the keysym associated with KEYSYM is returned.
-  ;;
-  ;; This is a macro and not a function macro to promote compile-time
-  ;; lookup. All arguments are evaluated.
-  (declare (type t keysym)
-	   (type list bytes)
-	   (clx-values keysym))
-  (typecase keysym
-    ((integer 0 *)
-     (dolist (b bytes keysym) (setq keysym (+ (ash keysym 8) b))))
-    (otherwise
-     (or (car (character->keysyms keysym))
-	 (error "~s Isn't the name of a keysym" keysym)))))
-)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defmacro keysym (keysym &rest bytes)
+    ;; Build a keysym.
+    ;;
+    ;; If KEYSYM is an integer, it is used as the most significant
+    ;; bits of the keysym, and BYTES are used to specify low order
+    ;; bytes. The last parameter is always byte4 of the keysym.  If
+    ;; KEYSYM is not an integer, the keysym associated with KEYSYM is
+    ;; returned.
+    ;;
+    ;; This is a macro and not a function macro to promote
+    ;; compile-time lookup. All arguments are evaluated.
+    ;;
+    ;; FIXME: The above means that this shouldn't really be a macro at
+    ;; all, but a compiler macro.  Probably, anyway.
+    (declare (type t keysym)
+	     (type list bytes)
+	     (clx-values keysym))
+    (typecase keysym
+      ((integer 0 *)
+       (dolist (b bytes keysym) (setq keysym (+ (ash keysym 8) b))))
+      (otherwise
+       (or (car (character->keysyms keysym))
+	   (error "~s Isn't the name of a keysym" keysym))))))
 
 (defvar *keysym->character-map*
 	(make-hash-table :test (keysym->character-map-test) :size 400))
@@ -245,23 +249,22 @@
 	     *keysym->character-map*)
     result))
 
-(eval-when (compile eval load) ;; Required for Symbolics...
-(defconstant character-set-switch-keysym (keysym 255 126))
-(defconstant left-shift-keysym (keysym 255 225))
-(defconstant right-shift-keysym (keysym 255 226))
-(defconstant left-control-keysym (keysym 255 227))
-(defconstant right-control-keysym (keysym 255 228))
-(defconstant caps-lock-keysym (keysym 255 229))
-(defconstant shift-lock-keysym (keysym 255 230))
-(defconstant left-meta-keysym (keysym 255 231))
-(defconstant right-meta-keysym (keysym 255 232))
-(defconstant left-alt-keysym (keysym 255 233))
-(defconstant right-alt-keysym (keysym 255 234))
-(defconstant left-super-keysym (keysym 255 235))
-(defconstant right-super-keysym (keysym 255 236))
-(defconstant left-hyper-keysym (keysym 255 237))
-(defconstant right-hyper-keysym (keysym 255 238))
-) ;; end eval-when
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defconstant character-set-switch-keysym (keysym 255 126))
+  (defconstant left-shift-keysym (keysym 255 225))
+  (defconstant right-shift-keysym (keysym 255 226))
+  (defconstant left-control-keysym (keysym 255 227))
+  (defconstant right-control-keysym (keysym 255 228))
+  (defconstant caps-lock-keysym (keysym 255 229))
+  (defconstant shift-lock-keysym (keysym 255 230))
+  (defconstant left-meta-keysym (keysym 255 231))
+  (defconstant right-meta-keysym (keysym 255 232))
+  (defconstant left-alt-keysym (keysym 255 233))
+  (defconstant right-alt-keysym (keysym 255 234))
+  (defconstant left-super-keysym (keysym 255 235))
+  (defconstant right-super-keysym (keysym 255 236))
+  (defconstant left-hyper-keysym (keysym 255 237))
+  (defconstant right-hyper-keysym (keysym 255 238)))
 
 
 ;;-----------------------------------------------------------------------------

@@ -42,10 +42,10 @@
 
 (in-package :xlib)
 
-(eval-when (compile load eval)			;needed by Franz Lisp
-(defconstant +attribute-size+ 44)
-(defconstant +geometry-size+ 24)
-(defconstant +context-size+ (max +attribute-size+ +geometry-size+ (* 16 4))))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defconstant +attribute-size+ 44)
+  (defconstant +geometry-size+ 24)
+  (defconstant +context-size+ (max +attribute-size+ +geometry-size+ (* 16 4))))
 
 (defvar *window-attributes* nil) ;; Bound to an alist of (drawable . state) within WITH-STATE
 

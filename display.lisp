@@ -309,6 +309,8 @@
 	   (type function function)
 	   #+clx-ansi-common-lisp
 	   (dynamic-extent function)
+	   ;; FIXME: see SBCL bug #243
+	   (ignorable display timeout)
 	   #+(and lispm (not clx-ansi-common-lisp))
 	   (sys:downward-funarg function))
   (with-event-queue (display :timeout timeout :inline t)

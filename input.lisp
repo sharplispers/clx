@@ -30,11 +30,12 @@
 ;; Event Resource
 (defvar *event-free-list* nil) ;; List of unused (processed) events
 
-(eval-when (eval compile load)
-(defconstant +max-events+ 64) ;; Maximum number of events supported (the X11 alpha release only has 34)
-(defvar *event-key-vector* (make-array +max-events+ :initial-element nil)
-  "Vector of event keys - See define-event")
-)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  ;; Maximum number of events supported (the X11 alpha release only has 34)
+  (defconstant +max-events+ 64) 
+  (defvar *event-key-vector* (make-array +max-events+ :initial-element nil)
+    "Vector of event keys - See define-event"))
+
 (defvar *event-macro-vector* (make-array +max-events+ :initial-element nil)
   "Vector of event handler functions - See declare-event")
 (defvar *event-handler-vector* (make-array +max-events+ :initial-element nil)
@@ -94,38 +95,37 @@
 	   (type list events errors))
   (let ((name-symbol (kintern name)) ;; Intern name in the keyword package
 	(event-list (mapcar #'canonicalize-event-name events)))
-    `(eval-when (compile load eval)
+    `(eval-when (:compile-toplevel :load-toplevel :execute)
        (setq *extensions* (cons (list ',name-symbol ',event-list ',errors)
 				(delete ',name-symbol *extensions* :key #'car))))))
 
-(eval-when (compile eval load)
-(defun canonicalize-event-name (event)
-  ;; Returns the event name keyword given an event name stringable
-  (declare (type stringable event))
-  (declare (clx-values event-key))
-  (kintern event))
-) ;; end eval-when
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defun canonicalize-event-name (event)
+    ;; Returns the event name keyword given an event name stringable
+    (declare (type stringable event))
+    (declare (clx-values event-key))
+    (kintern event)))
 
-(eval-when (compile eval load)
-(defun allocate-extension-event-code (name)
-  ;; Allocate an event-code for an extension
-  ;; This is executed at COMPILE and LOAD time from DECLARE-EVENT.
-  ;; The event-code is used at compile-time by macros to index the following vectors:
-  ;; *event-key-vector* *event-macro-vector* *event-handler-vector* *event-send-vector*
-  (let ((event-code (get name 'event-code)))
-    (declare (type (or null card8) event-code))
-    (unless event-code
-      ;; First ensure the name is for a declared extension
-      (unless (dolist (extension *extensions*)
-		(when (member name (second extension))
-		  (return t)))
-	(x-type-error name 'event-key))
-      (setq event-code (position nil *event-key-vector*
-				 :start *first-extension-event-code*))
-      (setf (svref *event-key-vector* event-code) name)
-      (setf (get name 'event-code) event-code))
-    event-code))
-) ;; end eval-when
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defun allocate-extension-event-code (name)
+    ;; Allocate an event-code for an extension.  This is executed at
+    ;; COMPILE and LOAD time from DECLARE-EVENT.  The event-code is
+    ;; used at compile-time by macros to index the following vectors:
+    ;; *EVENT-KEY-VECTOR* *EVENT-MACRO-VECTOR* *EVENT-HANDLER-VECTOR*
+    ;; *EVENT-SEND-VECTOR*
+    (let ((event-code (get name 'event-code)))
+      (declare (type (or null card8) event-code))
+      (unless event-code
+	;; First ensure the name is for a declared extension
+	(unless (dolist (extension *extensions*)
+		  (when (member name (second extension))
+		    (return t)))
+	  (x-type-error name 'event-key))
+	(setq event-code (position nil *event-key-vector*
+				   :start *first-extension-event-code*))
+	(setf (svref *event-key-vector* event-code) name)
+	(setf (get name 'event-code) event-code))
+      event-code)))
 
 (defun get-internal-event-code (display code)
   ;; Given an X11 event-code, return the internal event-code.
@@ -646,7 +646,7 @@
 
 
 (defmacro define-event (name code)
-  `(eval-when (eval compile load)
+  `(eval-when (:compile-toplevel :load-toplevel :execute)
      (setf (svref *event-key-vector* ,code) ',name)
      (setf (get ',name 'event-code) ,code)))
 
@@ -1454,7 +1454,7 @@
 ;;; Error Handling
 ;;;-----------------------------------------------------------------------------
 
-(eval-when (eval compile load)
+(eval-when (:compile-toplevel :load-toplevel :execute)
 (defparameter
   *xerror-vector*
   '#(unknown-error
