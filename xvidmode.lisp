@@ -262,7 +262,8 @@ into the returned structure."
        (incf offset 4)
        (setf (mode-info-privsize mode-info) size
 	     (mode-info-private mode-info)
-	     (sequence-get :format card32 :index offset :length size))
+	     (sequence-get :format card32 :index offset
+			   :length size :result-type 'list))
        mode-info))))
 
 (defun xfree86-vidmode-get-all-mode-lines (dpy screen)
@@ -304,7 +305,8 @@ The first element of the list corresponds to the current video mode."
 		  (setf size 0))
 		(setf (mode-info-privsize mode-info) size
 		      (mode-info-private mode-info)
-		      (sequence-get :format card32 :index offset :length size))
+		      (sequence-get :format card32 :index offset
+				    :length size :result-type 'list))
 		(incf offset (* 4 size))
 		mode-info))))))
 
@@ -461,9 +463,12 @@ invalid."
 	      (off2 (+ off1 rep-size (* 2 (mod rep-size 2)))))
 	 (declare (type fixnum off1 off2))
 	 (values
-	  (sequence-get :format card16 :length (card16-get 8) :index 32)
-	  (sequence-get :format card16 :length (card16-get 8) :index off1)
-	  (sequence-get :format card16 :length (card16-get 8) :index off2)))))))
+	  (sequence-get :format card16 :length (card16-get 8)
+			:index 32 :result-type 'list)
+	  (sequence-get :format card16 :length (card16-get 8)
+			:index off1 :result-type 'list)
+	  (sequence-get :format card16 :length (card16-get 8)
+			:index off2 :result-type 'list)))))))
 
 (defun xfree86-vidmode-set-gamma-ramp (dpy scr size &key red green blue)
   (declare (type (or null simple-vector) red green blue)
@@ -577,8 +582,9 @@ in the XF86Config file."
 	  (nvsync (card8-get 11))
 	  (vindex (+ 32 (* 4 (+ nhsync nvsync))))
 	  (mindex (+ vindex vendor-name-length pad))
-	  (hsync (sequence-get :length nhsync :index 32))
-	  (vsync (sequence-get :length nvsync :index (+ 32 (* nhsync 4)))))
+	  (hsync (sequence-get :length nhsync :index 32 :result-type 'list))
+	  (vsync (sequence-get :length nvsync :index (+ 32 (* nhsync 4))
+			       :result-type 'list)))
      (declare (type card8 nhsync nvsync vendor-name-length model-name-length)
 	      (type fixnum pad vindex mindex))
      (values 
@@ -645,7 +651,8 @@ x and y keyword parameters value (zero will be theire default value)."
    (values
     (card32-get 8)  ; flags
     (card32-get 16) ; max clocks
-    (sequence-get :length (card32-get 12) :format card32 :index 32))))
+    (sequence-get :length (card32-get 12) :format card32
+		  :index 32 :result-type 'list))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;                                                                       ;;;;
