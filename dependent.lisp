@@ -63,8 +63,13 @@
     "Speed compiler option for buffer code.")
   (defconstant +buffer-safety+ #+clx-debugging 3 #-clx-debugging 0
     "Safety compiler option for buffer code.")
+  (defconstant +buffer-debug+ #+clx-debugging 2 #-clx-debugging 1
+    "Debug compiler option for buffer code>")
   (defun declare-bufmac ()
-    `(declare (optimize (speed ,+buffer-speed+) (safety ,+buffer-safety+))))
+    `(declare (optimize
+	       (speed ,+buffer-speed+)
+	       (safety ,+buffer-safety+)
+	       (debug ,+buffer-debug+))))
   ;; It's my impression that in lucid there's some way to make a
   ;; declaration called fast-entry or something that causes a function
   ;; to not do some checking on args. Sadly, we have no lucid manuals
@@ -72,10 +77,10 @@
   ;; idea to make it here when +buffer-speed+ is 3 and +buffer-safety+
   ;; is 0.
   (defun declare-buffun ()
-    #+(and cmu clx-debugging)
-    '(declare (optimize (speed 1) (safety 1)))
-    #-(and cmu clx-debugging)
-    `(declare (optimize (speed ,+buffer-speed+) (safety ,+buffer-safety+)))))
+    `(declare (optimize
+	       (speed ,+buffer-speed+)
+	       (safety ,+buffer-safety+)
+	       (debug ,+buffer-debug+)))))
 
 (declaim (inline card8->int8 int8->card8
 		 card16->int16 int16->card16
@@ -3136,6 +3141,12 @@ may use :internet or :local protocol"
 ;;; FAST-READ-PIXARRAY, FAST-WRITE-PIXARRAY and FAST-COPY-PIXARRAY routines
 ;;; return T if they can do it, NIL if they can't.
 
+;;; FIXME: though we have some #+sbcl -conditionalized routines in
+;;; here, they would appear not to work, and so are commented out in
+;;; the the FAST-xxx-PIXARRAY routines themseleves.  Investigate
+;;; whether the unoptimized routines are often used, and also whether
+;;; speeding them up while maintaining correctness is possible.
+
 ;;; FAST-READ-PIXARRAY - fill part of a pixarray from a buffer of card8s
 
 #+(or lcl3.0 excl)
@@ -3520,7 +3531,7 @@ may use :internet or :local protocol"
 				 bits-per-pixel)
 			      32))
 		     #'fast-read-pixarray-using-bitblt)
-		#+(or CMU sbcl)
+		#+(or CMU)
 		(and (index= (pixarray-element-size pixarray) bits-per-pixel)
 		     #'fast-read-pixarray-using-bitblt)
 		#+(or lcl3.0 excl)
@@ -3529,7 +3540,7 @@ may use :internet or :local protocol"
 		#+(or lcl3.0 excl)
 		(and (index= bits-per-pixel 4)
 		     #'fast-read-pixarray-4)
-		#+(or Genera lcl3.0 excl CMU sbcl)
+		#+(or Genera lcl3.0 excl CMU)
 		(and (index= bits-per-pixel 24)
 		     #'fast-read-pixarray-24))))
       (when function
@@ -3779,7 +3790,7 @@ may use :internet or :local protocol"
 				 bits-per-pixel)
 			      32))
 		     #'fast-write-pixarray-using-bitblt)
-		#+(or CMU sbcl)
+		#+(or CMU)
 		(and (index= (pixarray-element-size pixarray) bits-per-pixel)
 		     #'fast-write-pixarray-using-bitblt)
 		#+(or lcl3.0 excl)
@@ -3788,7 +3799,7 @@ may use :internet or :local protocol"
 		#+(or lcl3.0 excl)
 		(and (index= bits-per-pixel 4)
 		     #'fast-write-pixarray-4)
-		#+(or Genera lcl3.0 excl CMU sbcl)
+		#+(or Genera lcl3.0 excl CMU)
 		(and (index= bits-per-pixel 24)
 		     #'fast-write-pixarray-24))))
       (when function
@@ -3806,7 +3817,7 @@ may use :internet or :local protocol"
 	   (type (member 1 4 8 16 24 32) bits-per-pixel))
   (progn pixarray copy x y width height bits-per-pixel nil)
   (or
-    #+(or lispm CMU sbcl)
+    #+(or lispm CMU)
     (let* ((pixarray-padded-pixels-per-line
 	     #+Genera (sys:array-row-span pixarray)
 	     #-Genera (array-dimension pixarray 1))
@@ -3817,13 +3828,13 @@ may use :internet or :local protocol"
 	     #-Genera (array-dimension copy 1))
 	   (copy-padded-bits-per-line
 	     (* copy-padded-pixels-per-line bits-per-pixel)))
-      #-(or CMU sbcl)
+      #-(or CMU)
       (when (and (= (sys:array-element-size pixarray) bits-per-pixel)
 		 (zerop (index-mod pixarray-padded-bits-per-line 32))
 		 (zerop (index-mod copy-padded-bits-per-line 32)))
 	(sys:bitblt boole-1 width height pixarray x y copy 0 0)
 	t)
-      #+(or CMU sbcl)
+      #+(or CMU)
       (when (index= (pixarray-element-size pixarray)
 		    (pixarray-element-size copy)
 		    bits-per-pixel)
