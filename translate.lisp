@@ -157,7 +157,7 @@
 	 (mask-check (mask)
 	   (unless (or (numberp mask)
 		       (dolist (element mask t)
-			 (unless (or (find element *state-mask-vector*)
+			 (unless (or (find element +state-mask-vector+)
 				     (gethash element *keysym->character-map*))
 			   (return nil))))
 	     (x-type-error mask '(or mask16 (clx-list (or modifier-key modifier-keysym)))))))
@@ -333,7 +333,7 @@
 	   modifiers
 	 (dolist (modifier modifiers mask)
 	   (declare (type symbol modifier))
-	   (let ((bit (position modifier (the simple-vector *state-mask-vector*) :test #'eq)))
+	   (let ((bit (position modifier (the simple-vector +state-mask-vector+) :test #'eq)))
 	     (setq mask
 		   (logior mask
 			   (if bit
@@ -362,7 +362,7 @@
   ;; Returns a keysym-index for use with keycode->character
   (declare (clx-values card8))
   (macrolet ((keystate-p (state keyword)
-	       `(logbitp ,(position keyword *state-mask-vector*) ,state)))
+	       `(logbitp ,(position keyword +state-mask-vector+) ,state)))
     (let* ((mapping (display-keyboard-mapping display))
 	   (keysyms-per-keycode (array-dimension mapping 1))
 	   (symbolp (and (> keysyms-per-keycode 2)
@@ -388,7 +388,7 @@
 	                                  ;;; as neither if the character is alphabetic.
   (declare (clx-values generalized-boolean))
   (macrolet ((keystate-p (state keyword)
-	       `(logbitp ,(position keyword *state-mask-vector*) ,state)))
+	       `(logbitp ,(position keyword +state-mask-vector+) ,state)))
     (let* ((controlp (or (keystate-p state :control)
 			 (dolist (modifier control-modifiers)
 			   (when (state-keysymp display state modifier)

@@ -142,7 +142,7 @@
 
 (defmacro allocate-resource-id (display object type)
   ;; Allocate a resource-id for OBJECT in DISPLAY
-  (if (member (eval type) *clx-cached-types*)
+  (if (member (eval type) +clx-cached-types+)
       `(let ((id (funcall (display-xid ,display) ,display)))
 	 (save-id ,display id ,object)
 	 id)
@@ -150,7 +150,7 @@
 
 (defmacro deallocate-resource-id (display id type)
   ;; Deallocate a resource-id for OBJECT in DISPLAY
-  (when (member (eval type) *clx-cached-types*)
+  (when (member (eval type) +clx-cached-types+)
     `(deallocate-resource-id-internal ,display ,id)))
 
 (defun deallocate-resource-id-internal (display id)
@@ -179,19 +179,19 @@
 			  (declare (type display display)
 				   (type resource-id id))
 			  (declare (clx-values ,type))
-			  ,(if (member type *clx-cached-types*)
+			  ,(if (member type +clx-cached-types+)
 			       `(let ((,type (lookup-resource-id display id)))
 				  (cond ((null ,type) ;; Not found, create and save it.
 					 (setq ,type (,(xintern 'make- type)
 						      :display display :id id))
 					 (save-id display id ,type))
 					;; Found.  Check the type
-					,(cond ((null *type-check?*)
+					,(cond ((null +type-check?+)
 						`(t ,type))
 					       ((member type '(window pixmap))
 						`((type? ,type 'drawable) ,type))
 					       (t `((type? ,type ',type) ,type)))
-					,@(when *type-check?*
+					,@(when +type-check?+
 					    `((t (x-error 'lookup-error
 							  :id id
 							  :display display
@@ -239,9 +239,9 @@
 (defsetf atom-id set-atom-id)
 
 (defun initialize-predefined-atoms (display)
-  (dotimes (i (length *predefined-atoms*))
+  (dotimes (i (length +predefined-atoms+))
     (declare (type resource-id i))
-    (setf (atom-id (svref *predefined-atoms* i) display) i)))
+    (setf (atom-id (svref +predefined-atoms+ i) display) i)))
 
 (defun visual-info (display visual-id)
   (declare (type display display)
@@ -591,7 +591,7 @@
   ;; Forces output, then causes a round-trip to ensure that all possible
   ;; errors and events have been received.
   (declare (type display display))
-  (with-buffer-request-and-reply (display *x-getinputfocus* 16 :sizes (8 32))
+  (with-buffer-request-and-reply (display +x-getinputfocus+ 16 :sizes (8 32))
        ()
     )
   ;; Report asynchronous errors here if the user wants us to.

@@ -38,46 +38,46 @@
 
 #-(or clx-overlapping-arrays (not clx-little-endian))
 (progn
-  (defconstant *word-0* 0)
-  (defconstant *word-1* 1)
+  (defconstant +word-0+ 0)
+  (defconstant +word-1+ 1)
 
-  (defconstant *long-0* 0)
-  (defconstant *long-1* 1)
-  (defconstant *long-2* 2)
-  (defconstant *long-3* 3))
+  (defconstant +long-0+ 0)
+  (defconstant +long-1+ 1)
+  (defconstant +long-2+ 2)
+  (defconstant +long-3+ 3))
 
 #-(or clx-overlapping-arrays clx-little-endian)
 (progn
-  (defconstant *word-0* 1)
-  (defconstant *word-1* 0)
+  (defconstant +word-0+ 1)
+  (defconstant +word-1+ 0)
 
-  (defconstant *long-0* 3)
-  (defconstant *long-1* 2)
-  (defconstant *long-2* 1)
-  (defconstant *long-3* 0))
+  (defconstant +long-0+ 3)
+  (defconstant +long-1+ 2)
+  (defconstant +long-2+ 1)
+  (defconstant +long-3+ 0))
 
 ;;; Set some compiler-options for often used code
 
 (eval-when (eval compile load)
 
-(defconstant *buffer-speed* #+clx-debugging 1 #-clx-debugging 3
+(defconstant +buffer-speed+ #+clx-debugging 1 #-clx-debugging 3
   "Speed compiler option for buffer code.")
-(defconstant *buffer-safety* #+clx-debugging 3 #-clx-debugging 0
+(defconstant +buffer-safety+ #+clx-debugging 3 #-clx-debugging 0
   "Safety compiler option for buffer code.")
 
 (defun declare-bufmac ()
-  `(declare (optimize (speed ,*buffer-speed*) (safety ,*buffer-safety*))))
+  `(declare (optimize (speed ,+buffer-speed+) (safety ,+buffer-safety+))))
 
 ;;; It's my impression that in lucid there's some way to make a declaration
 ;;; called fast-entry or something that causes a function to not do some
 ;;; checking on args. Sadly, we have no lucid manuals here.  If such a
 ;;; declaration is available, it would be a good idea to make it here when
-;;; *buffer-speed* is 3 and *buffer-safety* is 0.
+;;; +buffer-speed+ is 3 and +buffer-safety+ is 0.
 (defun declare-buffun ()
   #+(and cmu clx-debugging)
   '(declare (optimize (speed 1) (safety 1)))
   #-(and cmu clx-debugging)
-  `(declare (optimize (speed ,*buffer-speed*) (safety ,*buffer-safety*))))
+  `(declare (optimize (speed ,+buffer-speed+) (safety ,+buffer-safety+))))
 
 )
 
@@ -521,17 +521,17 @@
   #.(declare-buffun)
   (the card16
        (logior (the card16
-		    (ash (the card8 (aref a (index+ i *word-1*))) 8))
+		    (ash (the card8 (aref a (index+ i +word-1+))) 8))
 	       (the card8
-		    (aref a (index+ i *word-0*))))))
+		    (aref a (index+ i +word-0+))))))
 
 (defun aset-card16 (v a i)
   (declare (type card16 v)
 	   (type buffer-bytes a)
 	   (type array-index i))
   #.(declare-buffun)
-  (setf (aref a (index+ i *word-1*)) (the card8 (ldb (byte 8 8) v))
-	(aref a (index+ i *word-0*)) (the card8 (ldb (byte 8 0) v)))
+  (setf (aref a (index+ i +word-1+)) (the card8 (ldb (byte 8 8) v))
+	(aref a (index+ i +word-0+)) (the card8 (ldb (byte 8 0) v)))
   v)
 
 (defun aref-int16 (a i)
@@ -541,17 +541,17 @@
   #.(declare-buffun)
   (the int16
        (logior (the int16
-		    (ash (the int8 (aref-int8 a (index+ i *word-1*))) 8))
+		    (ash (the int8 (aref-int8 a (index+ i +word-1+))) 8))
 	       (the card8
-		    (aref a (index+ i *word-0*))))))
+		    (aref a (index+ i +word-0+))))))
 
 (defun aset-int16 (v a i)
   (declare (type int16 v)
 	   (type buffer-bytes a)
 	   (type array-index i))
   #.(declare-buffun)
-  (setf (aref a (index+ i *word-1*)) (the card8 (ldb (byte 8 8) v))
-	(aref a (index+ i *word-0*)) (the card8 (ldb (byte 8 0) v)))
+  (setf (aref a (index+ i +word-1+)) (the card8 (ldb (byte 8 8) v))
+	(aref a (index+ i +word-0+)) (the card8 (ldb (byte 8 0) v)))
   v)
 
 (defun aref-card32 (a i)
@@ -561,23 +561,23 @@
   #.(declare-buffun)
   (the card32
        (logior (the card32
-		    (ash (the card8 (aref a (index+ i *long-3*))) 24))
+		    (ash (the card8 (aref a (index+ i +long-3+))) 24))
 	       (the card29
-		    (ash (the card8 (aref a (index+ i *long-2*))) 16))
+		    (ash (the card8 (aref a (index+ i +long-2+))) 16))
 	       (the card16
-		    (ash (the card8 (aref a (index+ i *long-1*))) 8))
+		    (ash (the card8 (aref a (index+ i +long-1+))) 8))
 	       (the card8
-		    (aref a (index+ i *long-0*))))))
+		    (aref a (index+ i +long-0+))))))
 
 (defun aset-card32 (v a i)
   (declare (type card32 v)
 	   (type buffer-bytes a)
 	   (type array-index i))
   #.(declare-buffun)
-  (setf (aref a (index+ i *long-3*)) (the card8 (ldb (byte 8 24) v))
-	(aref a (index+ i *long-2*)) (the card8 (ldb (byte 8 16) v))
-	(aref a (index+ i *long-1*)) (the card8 (ldb (byte 8 8) v))
-	(aref a (index+ i *long-0*)) (the card8 (ldb (byte 8 0) v)))
+  (setf (aref a (index+ i +long-3+)) (the card8 (ldb (byte 8 24) v))
+	(aref a (index+ i +long-2+)) (the card8 (ldb (byte 8 16) v))
+	(aref a (index+ i +long-1+)) (the card8 (ldb (byte 8 8) v))
+	(aref a (index+ i +long-0+)) (the card8 (ldb (byte 8 0) v)))
   v)
 
 (defun aref-int32 (a i)
@@ -587,23 +587,23 @@
   #.(declare-buffun)
   (the int32
        (logior (the int32
-		    (ash (the int8 (aref-int8 a (index+ i *long-3*))) 24))
+		    (ash (the int8 (aref-int8 a (index+ i +long-3+))) 24))
 	       (the card29
-		    (ash (the card8 (aref a (index+ i *long-2*))) 16))
+		    (ash (the card8 (aref a (index+ i +long-2+))) 16))
 	       (the card16
-		    (ash (the card8 (aref a (index+ i *long-1*))) 8))
+		    (ash (the card8 (aref a (index+ i +long-1+))) 8))
 	       (the card8
-		    (aref a (index+ i *long-0*))))))
+		    (aref a (index+ i +long-0+))))))
 
 (defun aset-int32 (v a i)
   (declare (type int32 v)
 	   (type buffer-bytes a)
 	   (type array-index i))
   #.(declare-buffun)
-  (setf (aref a (index+ i *long-3*)) (the card8 (ldb (byte 8 24) v))
-	(aref a (index+ i *long-2*)) (the card8 (ldb (byte 8 16) v))
-	(aref a (index+ i *long-1*)) (the card8 (ldb (byte 8 8) v))
-	(aref a (index+ i *long-0*)) (the card8 (ldb (byte 8 0) v)))
+  (setf (aref a (index+ i +long-3+)) (the card8 (ldb (byte 8 24) v))
+	(aref a (index+ i +long-2+)) (the card8 (ldb (byte 8 16) v))
+	(aref a (index+ i +long-1+)) (the card8 (ldb (byte 8 8) v))
+	(aref a (index+ i +long-0+)) (the card8 (ldb (byte 8 0) v)))
   v)
 
 (defun aref-card29 (a i)
@@ -613,23 +613,23 @@
   #.(declare-buffun)
   (the card29
        (logior (the card29
-		    (ash (the card8 (aref a (index+ i *long-3*))) 24))
+		    (ash (the card8 (aref a (index+ i +long-3+))) 24))
 	       (the card29
-		    (ash (the card8 (aref a (index+ i *long-2*))) 16))
+		    (ash (the card8 (aref a (index+ i +long-2+))) 16))
 	       (the card16
-		    (ash (the card8 (aref a (index+ i *long-1*))) 8))
+		    (ash (the card8 (aref a (index+ i +long-1+))) 8))
 	       (the card8
-		    (aref a (index+ i *long-0*))))))
+		    (aref a (index+ i +long-0+))))))
 
 (defun aset-card29 (v a i)
   (declare (type card29 v)
 	   (type buffer-bytes a)
 	   (type array-index i))
   #.(declare-buffun)
-  (setf (aref a (index+ i *long-3*)) (the card8 (ldb (byte 8 24) v))
-	(aref a (index+ i *long-2*)) (the card8 (ldb (byte 8 16) v))
-	(aref a (index+ i *long-1*)) (the card8 (ldb (byte 8 8) v))
-	(aref a (index+ i *long-0*)) (the card8 (ldb (byte 8 0) v)))
+  (setf (aref a (index+ i +long-3+)) (the card8 (ldb (byte 8 24) v))
+	(aref a (index+ i +long-2+)) (the card8 (ldb (byte 8 16) v))
+	(aref a (index+ i +long-1+)) (the card8 (ldb (byte 8 8) v))
+	(aref a (index+ i +long-0+)) (the card8 (ldb (byte 8 0) v)))
   v)
 
 )
@@ -2082,7 +2082,7 @@
 ;;; should it also check for non-negative and less than 65536?
 ;;;----------------------------------------------------------------------------
  
-;; The *TYPE-CHECK?* constant controls how much error checking is done.
+;; The +TYPE-CHECK?+ constant controls how much error checking is done.
 ;; Possible values are:
 ;;    NIL      - Don't do any error checking
 ;;    t        - Do the equivalent of checktype on every argument
@@ -2091,7 +2091,7 @@
 ;;; This controls macro expansion, and isn't changable at run-time You will
 ;;; probably want to set this to nil if you want good performance at
 ;;; production time.
-(defconstant *type-check?*
+(defconstant +type-check?+
   #+(or Genera Minima CMU sbcl) nil
   #-(or Genera Minima CMU sbcl) t)
 
@@ -2114,7 +2114,7 @@
     (progn
       (setq type (eval type))
       #+(or Genera explorer Minima)
-      (if *type-check?*
+      (if +type-check?+
 	  `(locally (declare (optimize safety)) (typep ,object ',type))
 	`(typep ,object ',type))
       #-(or Genera explorer Minima)
@@ -2128,7 +2128,7 @@
 	       `(,(second predicate) ,object))
 	      ((eq type 'generalized-boolean)
 	       't)			; Everything is a generalized-boolean.
-	      (*type-check?*
+	      (+type-check?+
 	       `(locally (declare (optimize safety)) (typep ,object ',type)))
 	      (t
 	       `(typep ,object ',type)))))))
@@ -2784,7 +2784,7 @@ may use :internet or :local protocol"
 		    left-super-keysym right-super-keysym
 		    left-hyper-keysym right-hyper-keysym))
   (when (characterp object)
-    (when (logbitp (position :control *state-mask-vector*) state)
+    (when (logbitp (position :control +state-mask-vector+) state)
       (setf (char-bit object :control) 1))
     (when (or (state-keysymp display state left-meta-keysym)
 	      (state-keysymp display state right-meta-keysym))
@@ -2911,7 +2911,7 @@ may use :internet or :local protocol"
 ;;; READ-IMAGE-LOAD-BYTE is used to extract 1 and 4 bit pixels from CARD8s.
 
 (defmacro read-image-load-byte (size position integer)
-  (unless *image-bit-lsb-first-p* (setq position (- 7 position)))
+  (unless +image-bit-lsb-first-p+ (setq position (- 7 position)))
   `(the (unsigned-byte ,size)
 	(#-Genera ldb #+Genera sys:%logldb
 	 (byte ,size ,position)
@@ -2921,7 +2921,7 @@ may use :internet or :local protocol"
 ;;; the appropriate number of CARD8s.
 
 (defmacro read-image-assemble-bytes (&rest bytes)
-  (unless *image-byte-lsb-first-p* (setq bytes (reverse bytes)))
+  (unless +image-byte-lsb-first-p+ (setq bytes (reverse bytes)))
   (let ((it (first bytes))
 	(count 0))
     (dolist (byte (rest bytes))
@@ -2938,7 +2938,7 @@ may use :internet or :local protocol"
 
 (defmacro write-image-load-byte (position integer integer-size)
   integer-size
-  (unless *image-byte-lsb-first-p* (setq position (- integer-size 8 position)))
+  (unless +image-byte-lsb-first-p+ (setq position (- integer-size 8 position)))
   `(the card8
 	(#-Genera ldb #+Genera sys:%logldb
 	 (byte 8 ,position)
@@ -2950,7 +2950,7 @@ may use :internet or :local protocol"
 ;;; pixels.
 
 (defmacro write-image-assemble-bytes (&rest bytes)
-  (unless *image-bit-lsb-first-p* (setq bytes (reverse bytes)))
+  (unless +image-bit-lsb-first-p+ (setq bytes (reverse bytes)))
   (let ((size (floor 8 (length bytes)))
 	(it (first bytes))
 	(count 0))
@@ -2962,10 +2962,10 @@ may use :internet or :local protocol"
     `(the card8 ,it)))
 
 #+(or Genera lcl3.0 excl)
-(defvar *computed-image-byte-lsb-first-p* *image-byte-lsb-first-p*)
+(defvar *computed-image-byte-lsb-first-p* +image-byte-lsb-first-p+)
 
 #+(or Genera lcl3.0 excl)
-(defvar *computed-image-bit-lsb-first-p* *image-bit-lsb-first-p*)
+(defvar *computed-image-bit-lsb-first-p* +image-bit-lsb-first-p+)
 
 ;;; The following table gives the bit ordering within bytes (when accessed
 ;;; sequentially) for a scanline containing 32 bits, with bits numbered 0 to
@@ -3035,7 +3035,7 @@ may use :internet or :local protocol"
 	      (list (bitpos a i #b10000000)
 		    (bitpos a i #b00000001)))
 	    ordering))
-    (setq ordering (cons (floor *image-unit* 8) (nreverse ordering)))
+    (setq ordering (cons (floor +image-unit+ 8) (nreverse ordering)))
     ;; Now from the ordering, compute byte-lsb-first-p and bit-lsb-first-p
     (let ((byte-and-bit-ordering
 	    (second (assoc ordering *image-bit-ordering-table*
@@ -3389,13 +3389,13 @@ may use :internet or :local protocol"
       (when (if (eq *computed-image-byte-lsb-first-p* *computed-image-bit-lsb-first-p*)
 		(and (index-zerop (index-mod pixarray-padded-bits-per-line 8))
 		     (index-zerop (index-mod x-bits 8)))
-	      (and (index-zerop (index-mod pixarray-padded-bits-per-line *image-unit*))
-		   (index-zerop (index-mod x-bits *image-unit*))))
+	      (and (index-zerop (index-mod pixarray-padded-bits-per-line +image-unit+))
+		   (index-zerop (index-mod x-bits +image-unit+))))
 	(multiple-value-bind (image-swap-function image-swap-lsb-first-p)
 	    (image-swap-function
 	      bits-per-pixel 
 	      unit byte-lsb-first-p bit-lsb-first-p
-	      *image-unit* *computed-image-byte-lsb-first-p*
+	      +image-unit+ *computed-image-byte-lsb-first-p*
 	      *computed-image-bit-lsb-first-p*)
 	  (declare (type symbol image-swap-function)
 		   (type generalized-boolean image-swap-lsb-first-p))
@@ -3457,7 +3457,7 @@ may use :internet or :local protocol"
 	  bbuf boffset pixarray x y width height padded-bytes-per-line
 	  bits-per-pixel function
 	  unit byte-lsb-first-p bit-lsb-first-p
-	  *image-unit* *image-byte-lsb-first-p* *image-bit-lsb-first-p*)))))
+	  +image-unit+ +image-byte-lsb-first-p+ +image-bit-lsb-first-p+)))))
 
 ;;; FAST-WRITE-PIXARRAY - copy part of a pixarray into an array of CARD8s
 
@@ -3653,12 +3653,12 @@ may use :internet or :local protocol"
       (when (if (eq *computed-image-byte-lsb-first-p* *computed-image-bit-lsb-first-p*)
 		(and (index-zerop (index-mod pixarray-padded-bits-per-line 8))
 		     (index-zerop (index-mod pixarray-start-bit-offset 8)))
-	      (and (index-zerop (index-mod pixarray-padded-bits-per-line *image-unit*))
-		   (index-zerop (index-mod pixarray-start-bit-offset *image-unit*))))
+	      (and (index-zerop (index-mod pixarray-padded-bits-per-line +image-unit+))
+		   (index-zerop (index-mod pixarray-start-bit-offset +image-unit+))))
 	(multiple-value-bind (image-swap-function image-swap-lsb-first-p)
 	    (image-swap-function
 	      bits-per-pixel
-	      *image-unit* *computed-image-byte-lsb-first-p*
+	      +image-unit+ *computed-image-byte-lsb-first-p*
 	      *computed-image-bit-lsb-first-p*
 	      unit byte-lsb-first-p bit-lsb-first-p)
 	  (declare (type symbol image-swap-function)
@@ -3715,7 +3715,7 @@ may use :internet or :local protocol"
 	(write-pixarray-internal
 	  bbuf boffset pixarray x y width height padded-bytes-per-line
 	  bits-per-pixel function
-	  *image-unit* *image-byte-lsb-first-p* *image-bit-lsb-first-p*
+	  +image-unit+ +image-byte-lsb-first-p+ +image-bit-lsb-first-p+
 	  unit byte-lsb-first-p bit-lsb-first-p)))))
 
 ;;; FAST-COPY-PIXARRAY - copy part of a pixarray into another
@@ -3774,9 +3774,9 @@ may use :internet or :local protocol"
 		  (and (index-zerop (index-mod pixarray-padded-bits-per-line 8))
 		       (index-zerop (index-mod copy-padded-bits-per-line 8))
 		       (index-zerop (index-mod pixarray-start-bit-offset 8)))
-		(and (index-zerop (index-mod pixarray-padded-bits-per-line *image-unit*))
-		     (index-zerop (index-mod copy-padded-bits-per-line *image-unit*))
-		     (index-zerop (index-mod pixarray-start-bit-offset *image-unit*))))
+		(and (index-zerop (index-mod pixarray-padded-bits-per-line +image-unit+))
+		     (index-zerop (index-mod copy-padded-bits-per-line +image-unit+))
+		     (index-zerop (index-mod pixarray-start-bit-offset +image-unit+))))
 	  (with-underlying-simple-vector (src card8 pixarray)
 	    (with-underlying-simple-vector (dst card8 copy)
 	      (image-noswap

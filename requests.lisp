@@ -91,7 +91,7 @@
       (setq do-not-propagate-mask (encode-device-event-mask do-not-propagate-mask)))
 
 						;Make the request
-    (with-buffer-request (display *x-createwindow*)
+    (with-buffer-request (display +x-createwindow+)
       (data depth)
       (resource-id wid)
       (window parent)
@@ -105,8 +105,8 @@
 			 (t
 			  (visual-info-id visual))))
       (mask (card32 back-pixmap back-pixel border-pixmap border-pixel)
-	    ((member-vector *bit-gravity-vector*) bit-gravity)
-	    ((member-vector *win-gravity-vector*) gravity)
+	    ((member-vector +bit-gravity-vector+) bit-gravity)
+	    ((member-vector +win-gravity-vector+) gravity)
 	    ((member :not-useful :when-mapped :always) backing-store)
 	    (card32  backing-planes backing-pixel)
 	    ((member :off :on) override-redirect save-under)
@@ -117,62 +117,62 @@
 
 (defun destroy-window (window)
   (declare (type window window))
-  (with-buffer-request ((window-display window) *x-destroywindow*)
+  (with-buffer-request ((window-display window) +x-destroywindow+)
     (window window)))
 
 (defun destroy-subwindows (window)
   (declare (type window window))
-  (with-buffer-request ((window-display window) *x-destroysubwindows*)
+  (with-buffer-request ((window-display window) +x-destroysubwindows+)
     (window window)))
 
 (defun add-to-save-set (window)
   (declare (type window window))
-  (with-buffer-request ((window-display window) *x-changesaveset*)
+  (with-buffer-request ((window-display window) +x-changesaveset+)
     (data 0)
     (window window)))
 
 (defun remove-from-save-set (window)
   (declare (type window window))
-  (with-buffer-request ((window-display window) *x-changesaveset*)
+  (with-buffer-request ((window-display window) +x-changesaveset+)
     (data 1)
     (window window)))
 
 (defun reparent-window (window parent x y)
   (declare (type window window parent)
 	   (type int16 x y))
-  (with-buffer-request ((window-display window) *x-reparentwindow*)
+  (with-buffer-request ((window-display window) +x-reparentwindow+)
     (window window parent)
     (int16 x y)))
 
 (defun map-window (window)
   (declare (type window window))
-  (with-buffer-request ((window-display window) *x-mapwindow*)
+  (with-buffer-request ((window-display window) +x-mapwindow+)
     (window window)))
 
 (defun map-subwindows (window)
   (declare (type window window))
-  (with-buffer-request ((window-display window) *x-mapsubwindows*)
+  (with-buffer-request ((window-display window) +x-mapsubwindows+)
     (window window)))
 
 (defun unmap-window (window)
   (declare (type window window))
-  (with-buffer-request ((window-display window) *x-unmapwindow*)
+  (with-buffer-request ((window-display window) +x-unmapwindow+)
     (window window)))
 
 (defun unmap-subwindows (window)
   (declare (type window window))
-  (with-buffer-request ((window-display window) *x-unmapsubwindows*)
+  (with-buffer-request ((window-display window) +x-unmapsubwindows+)
     (window window)))
 
 (defun circulate-window-up (window)
   (declare (type window window))
-  (with-buffer-request ((window-display window) *x-circulatewindow*)
+  (with-buffer-request ((window-display window) +x-circulatewindow+)
     (data 0)
     (window window)))
 
 (defun circulate-window-down (window)
   (declare (type window window))
-  (with-buffer-request ((window-display window) *x-circulatewindow*)
+  (with-buffer-request ((window-display window) +x-circulatewindow+)
     (data 1)
     (window window)))
 
@@ -182,13 +182,13 @@
   (declare (clx-values (clx-sequence window) parent root))
   (let ((display (window-display window)))
     (multiple-value-bind (root parent sequence)
-	(with-buffer-request-and-reply (display *x-querytree* nil :sizes (8 16 32))
+	(with-buffer-request-and-reply (display +x-querytree+ nil :sizes (8 16 32))
 	     ((window window))
 	  (values
 	    (window-get 8)
 	    (resource-id-get 12)
 	    (sequence-get :length (card16-get 16) :result-type result-type
-			  :index *replysize*)))
+			  :index +replysize+)))
       ;; Parent is NIL for root window
       (setq parent (and (plusp parent) (lookup-window display parent)))
       (dotimes (i (length sequence))		; Convert ID's to window's
@@ -210,7 +210,7 @@
 	(let ((string (symbol-name name)))
 	  (declare (type string string))
 	  (multiple-value-bind (id)
-	      (with-buffer-request-and-reply (display *x-internatom* 12 :sizes 32)
+	      (with-buffer-request-and-reply (display +x-internatom+ 12 :sizes 32)
 		   ((data 0)
 		    (card16 (length string))
 		    (pad16 nil)
@@ -234,7 +234,7 @@
 	(let ((string (symbol-name name)))
 	  (declare (type string string))
 	  (multiple-value-bind (id)
-	      (with-buffer-request-and-reply (display *x-internatom* 12 :sizes 32)
+	      (with-buffer-request-and-reply (display +x-internatom+ 12 :sizes 32)
 		   ((data 1)
 		    (card16 (length string))
 		    (pad16 nil)
@@ -256,10 +256,10 @@
       (let ((keyword
 	      (kintern
 		  (with-buffer-request-and-reply
-		       (display *x-getatomname* nil :sizes (16))
+		       (display +x-getatomname+ nil :sizes (16))
 		     ((resource-id atom-id))
 		  (values
-		    (string-get (card16-get 8) *replysize*))))))
+		    (string-get (card16-get 8) +replysize+))))))
 	(declare (type keyword keyword))
 	(setf (atom-id keyword display) atom-id)
 	  keyword))))
@@ -290,7 +290,7 @@
     (declare (type display display)
 	     (type array-index length)
 	     (type resource-id property-id type-id))
-    (with-buffer-request (display *x-changeproperty*)
+    (with-buffer-request (display +x-changeproperty+)
       ((data (member :replace :prepend :append)) mode)
       (window window)
       (resource-id property-id type-id)
@@ -312,7 +312,7 @@
 	 (property-id (intern-atom display property)))
     (declare (type display display)
 	     (type resource-id property-id))
-    (with-buffer-request (display *x-deleteproperty*)
+    (with-buffer-request (display +x-deleteproperty+)
       (window window)
       (resource-id property-id))))
 
@@ -335,7 +335,7 @@
 	     (type resource-id property-id)
 	     (type (or null resource-id) type-id))
     (multiple-value-bind (reply-format reply-type bytes-after data)
-	(with-buffer-request-and-reply (display *x-getproperty* nil :sizes (8 32))
+	(with-buffer-request-and-reply (display +x-getproperty+ nil :sizes (8 32))
 	     (((data boolean) delete-p)
 	      (window window)
 	      (resource-id property-id)
@@ -355,13 +355,13 @@
 		     (0  nil) ;; (make-sequence result-type 0) ;; Property not found.
 		     (8  (sequence-get :result-type result-type :format card8
 				       :length nitems :transform transform
-				       :index *replysize*))
+				       :index +replysize+))
 		     (16 (sequence-get :result-type result-type :format card16
 				       :length nitems :transform transform
-				       :index *replysize*))
+				       :index +replysize+))
 		     (32 (sequence-get :result-type result-type :format card32
 				       :length nitems :transform transform
-				       :index *replysize*)))))))
+				       :index +replysize+)))))))
       (values data
 	      (and (plusp reply-type) (atom-name display reply-type))
 	      reply-format
@@ -382,7 +382,7 @@
       ;; is started to allow InternAtom requests to be made.
       (dotimes (i length)
 	(setf (aref sequence i) (intern-atom display (elt properties i))))
-      (with-buffer-request (display *x-rotateproperties*)
+      (with-buffer-request (display +x-rotateproperties+)
 	(window window)
 	(card16 length)
 	(int16 (- delta))
@@ -395,11 +395,11 @@
   (declare (clx-values (clx-sequence keyword)))
   (let ((display (window-display window)))
     (multiple-value-bind (seq)
-	(with-buffer-request-and-reply (display *x-listproperties* nil :sizes 16)
+	(with-buffer-request-and-reply (display +x-listproperties+ nil :sizes 16)
 	     ((window window))
 	  (values
 	    (sequence-get :result-type result-type :length (card16-get 8)
-			  :index *replysize*)))
+			  :index +replysize+)))
       ;; lookup the atoms in the sequence
       (if (listp seq)
 	  (do ((elt seq (cdr elt)))
@@ -415,7 +415,7 @@
   (let ((selection-id (intern-atom display selection)))
     (declare (type resource-id selection-id))
     (multiple-value-bind (window)
-	(with-buffer-request-and-reply (display *x-getselectionowner* 12 :sizes 32)
+	(with-buffer-request-and-reply (display +x-getselectionowner+ 12 :sizes 32)
 	     ((resource-id selection-id))
 	  (values
 	    (resource-id-or-nil-get 8)))
@@ -428,7 +428,7 @@
 	   (type timestamp time))
   (let ((selection-id (intern-atom display selection)))
     (declare (type resource-id selection-id))
-    (with-buffer-request (display *x-setselectionowner*)
+    (with-buffer-request (display +x-setselectionowner+)
       ((or null window) owner)
       (resource-id selection-id)
       ((or null card32) time))
@@ -450,7 +450,7 @@
     (declare (type display display)
 	     (type resource-id selection-id type-id)
 	     (type (or null resource-id) property-id))
-    (with-buffer-request (display *x-convertselection*)
+    (with-buffer-request (display +x-convertselection+)
       (window requestor)
       (resource-id selection-id type-id)
       ((or null resource-id) property-id)
@@ -483,7 +483,7 @@
       (let ((keyword (getf args arg)))
 	(intern-atom display keyword)))
     ;; Make the sendevent request
-    (with-buffer-request (display *x-sendevent*)
+    (with-buffer-request (display +x-sendevent+)
       ((data boolean) propagate-p)
       (length 11) ;; 3 word request + 8 words for event = 11
       ((or (member :pointer-window :input-focus) window) window)
@@ -503,7 +503,7 @@
 	   (type timestamp time))
   (declare (clx-values grab-status))
   (let ((display (window-display window)))
-    (with-buffer-request-and-reply (display *x-grabpointer* nil :sizes 8)
+    (with-buffer-request-and-reply (display +x-grabpointer+ nil :sizes 8)
 	 (((data boolean) owner-p)
 	  (window window)
 	  (card16 (encode-pointer-event-mask event-mask))
@@ -516,7 +516,7 @@
 
 (defun ungrab-pointer (display &key time)
   (declare (type timestamp time))
-  (with-buffer-request (display *x-ungrabpointer*)
+  (with-buffer-request (display +x-ungrabpointer+)
     ((or null card32) time)))
 
 (defun grab-button (window button event-mask
@@ -529,7 +529,7 @@
 	   (type generalized-boolean owner-p sync-pointer-p sync-keyboard-p)
 	   (type (or null window) confine-to)
 	   (type (or null cursor) cursor))
-  (with-buffer-request ((window-display window) *x-grabbutton*)
+  (with-buffer-request ((window-display window) +x-grabbutton+)
     ((data boolean) owner-p)
     (window window)
     (card16 (encode-pointer-event-mask event-mask))
@@ -544,7 +544,7 @@
   (declare (type window window)
 	   (type (or (member :any) card8) button)
 	   (type modifier-mask modifiers))
-  (with-buffer-request ((window-display window) *x-ungrabbutton*)
+  (with-buffer-request ((window-display window) +x-ungrabbutton+)
     (data (if (eq button :any) 0 button))
     (window window)
     (card16 (encode-modifier-mask modifiers))))
@@ -554,7 +554,7 @@
 	   (type pointer-event-mask event-mask)
 	   (type (or null cursor) cursor)
 	   (type timestamp time))
-  (with-buffer-request (display *x-changeactivepointergrab*)
+  (with-buffer-request (display +x-changeactivepointergrab+)
     ((or null cursor) cursor)
     ((or null card32) time)
     (card16 (encode-pointer-event-mask event-mask))))
@@ -565,7 +565,7 @@
 	   (type timestamp time))
   (declare (clx-values grab-status))
   (let ((display (window-display window)))
-    (with-buffer-request-and-reply (display *x-grabkeyboard* nil :sizes 8)
+    (with-buffer-request-and-reply (display +x-grabkeyboard+ nil :sizes 8)
 	 (((data boolean) owner-p)
 	  (window window)
 	  ((or null card32) time)
@@ -576,7 +576,7 @@
 (defun ungrab-keyboard (display &key time)
   (declare (type display display)
 	   (type timestamp time))
-  (with-buffer-request (display *x-ungrabkeyboard*)
+  (with-buffer-request (display +x-ungrabkeyboard+)
     ((or null card32) time)))
 
 (defun grab-key (window key &key (modifiers 0) owner-p sync-pointer-p sync-keyboard-p)
@@ -584,7 +584,7 @@
 	   (type generalized-boolean owner-p sync-pointer-p sync-keyboard-p)
 	   (type (or (member :any) card8) key)
 	   (type modifier-mask modifiers))
-  (with-buffer-request ((window-display window) *x-grabkey*)
+  (with-buffer-request ((window-display window) +x-grabkey+)
     ((data boolean) owner-p)
     (window window)
     (card16 (encode-modifier-mask modifiers))
@@ -595,7 +595,7 @@
   (declare (type window window)
 	   (type (or (member :any) card8) key)
 	   (type modifier-mask modifiers))
-  (with-buffer-request ((window-display window) *x-ungrabkey*)
+  (with-buffer-request ((window-display window) +x-ungrabkey+)
     (data (if (eq key :any) 0 key))
     (window window)
     (card16 (encode-modifier-mask modifiers))))
@@ -607,7 +607,7 @@
 			 :async-both :sync-both)
 		 mode)
 	   (type timestamp time))
-  (with-buffer-request (display *x-allowevents*)
+  (with-buffer-request (display +x-allowevents+)
     ((data (member :async-pointer :sync-pointer :replay-pointer
 		   :async-keyboard :sync-keyboard :replay-keyboard
 		   :async-both :sync-both))
@@ -616,10 +616,10 @@
 
 (defun grab-server (display)
   (declare (type display display))
-  (with-buffer-request (display *x-grabserver*)))
+  (with-buffer-request (display +x-grabserver+)))
 
 (defun ungrab-server (display)
-  (with-buffer-request (display *x-ungrabserver*)))
+  (with-buffer-request (display +x-ungrabserver+)))
 
 (defmacro with-server-grabbed ((display) &body body)
   ;; The body is not surrounded by a with-display.
@@ -636,7 +636,7 @@
   (declare (type window window))
   (declare (clx-values x y same-screen-p child mask root-x root-y root))
   (let ((display (window-display window)))
-    (with-buffer-request-and-reply (display *x-querypointer* 26 :sizes (8 16 32))
+    (with-buffer-request-and-reply (display +x-querypointer+ 26 :sizes (8 16 32))
 	 ((window window))
       (values
 	(int16-get 20)
@@ -652,7 +652,7 @@
   (declare (type window window))
   (declare (clx-values x y same-screen-p))
   (let ((display (window-display window)))
-    (with-buffer-request-and-reply (display *x-querypointer* 24 :sizes (8 16))
+    (with-buffer-request-and-reply (display +x-querypointer+ 24 :sizes (8 16))
 	 ((window window))
       (values
 	(int16-get 20)
@@ -662,7 +662,7 @@
 (defun global-pointer-position (display)
   (declare (type display display))
   (declare (clx-values root-x root-y root))
-  (with-buffer-request-and-reply (display *x-querypointer* 20 :sizes (16 32))
+  (with-buffer-request-and-reply (display +x-querypointer+ 20 :sizes (16 32))
        ((window (screen-root (first (display-roots display)))))
     (values
       (int16-get 16)
@@ -675,12 +675,12 @@
 	   (type t result-type)) ;; a type specifier
   (declare (clx-values (repeat-seq (integer x) (integer y) (timestamp time))))
   (let ((display (window-display window)))
-    (with-buffer-request-and-reply (display *x-getmotionevents* nil :sizes 32)
+    (with-buffer-request-and-reply (display +x-getmotionevents+ nil :sizes 32)
 	 ((window window)
 	  ((or null card32) start stop))
       (values
 	(sequence-get :result-type result-type :length (index* (card32-get 8) 3)
-		      :index *replysize*)))))
+		      :index +replysize+)))))
 
 (defun translate-coordinates (src src-x src-y dst)
   ;; Returns NIL when not on the same screen
@@ -689,7 +689,7 @@
 	   (type window dst))
   (declare (clx-values dst-x dst-y child))
   (let ((display (window-display src)))
-    (with-buffer-request-and-reply (display *x-translatecoords* 16 :sizes (8 16 32))
+    (with-buffer-request-and-reply (display +x-translatecoords+ 16 :sizes (8 16 32))
 	 ((window src dst)
 	  (int16 src-x src-y))
       (and (boolean-get 1)
@@ -701,7 +701,7 @@
 (defun warp-pointer (dst dst-x dst-y)
   (declare (type window dst)
 	   (type int16 dst-x dst-y))
-  (with-buffer-request ((window-display dst) *x-warppointer*)
+  (with-buffer-request ((window-display dst) +x-warppointer+)
     (resource-id 0) ;; None
     (window dst)
     (int16 0 0)
@@ -711,7 +711,7 @@
 (defun warp-pointer-relative (display x-off y-off)
   (declare (type display display)
 	   (type int16 x-off y-off))
-  (with-buffer-request (display *x-warppointer*)
+  (with-buffer-request (display +x-warppointer+)
     (resource-id 0) ;; None
     (resource-id 0) ;; None
     (int16 0 0)
@@ -726,7 +726,7 @@
 	   (type int16 dst-x dst-y src-x src-y)
 	   (type (or null card16) src-width src-height))
   (unless (or (eql src-width 0) (eql src-height 0))
-    (with-buffer-request ((window-display dst) *x-warppointer*)
+    (with-buffer-request ((window-display dst) +x-warppointer+)
       (window src dst)
       (int16 src-x src-y)
       (card16 (or src-width 0) (or src-height 0))
@@ -740,7 +740,7 @@
 	   (type int16 x-off y-off src-x src-y)
 	   (type (or null card16) src-width src-height))
   (unless (or (eql src-width 0) (eql src-height 0))
-    (with-buffer-request ((window-display src) *x-warppointer*)
+    (with-buffer-request ((window-display src) +x-warppointer+)
       (window src)
       (resource-id 0) ;; None
       (int16 src-x src-y)
@@ -752,7 +752,7 @@
 	   (type (or (member :none :pointer-root) window) focus)
 	   (type (member :none :pointer-root :parent) revert-to)
 	   (type timestamp time))
-  (with-buffer-request (display *x-setinputfocus*)
+  (with-buffer-request (display +x-setinputfocus+)
     ((data (member :none :pointer-root :parent)) revert-to)
     ((or window (member :none :pointer-root)) focus)
     ((or null card32) time)))
@@ -760,7 +760,7 @@
 (defun input-focus (display)
   (declare (type display display))
   (declare (clx-values focus revert-to))
-  (with-buffer-request-and-reply (display *x-getinputfocus* 16 :sizes (8 32))
+  (with-buffer-request-and-reply (display +x-getinputfocus+ 16 :sizes (8 32))
        ()
     (values
       (or-get 8 window (member :none :pointer-root))
@@ -770,7 +770,7 @@
   (declare (type display display)
 	   (type (or null (bit-vector 256)) bit-vector))
   (declare (clx-values (bit-vector 256)))
-  (with-buffer-request-and-reply (display *x-querykeymap* 40 :sizes 8)
+  (with-buffer-request-and-reply (display +x-querykeymap+ 40 :sizes 8)
        ()
     (values
       (bit-vector256-get 8 8 bit-vector))))
@@ -790,7 +790,7 @@
 	 (pixmap (or pixmap (make-pixmap :display display)))
 	 (pid (allocate-resource-id display pixmap 'pixmap)))
     (setf (pixmap-id pixmap) pid)
-    (with-buffer-request (display *x-createpixmap*)
+    (with-buffer-request (display +x-createpixmap+)
       (data depth)
       (resource-id pid)
       (drawable drawable)
@@ -800,7 +800,7 @@
 (defun free-pixmap (pixmap)
   (declare (type pixmap pixmap))
   (let ((display (pixmap-display pixmap)))
-    (with-buffer-request (display *x-freepixmap*)
+    (with-buffer-request (display +x-freepixmap+)
       (pixmap pixmap))
     (deallocate-resource-id display (pixmap-id pixmap) 'pixmap)))
 
@@ -812,7 +812,7 @@
 	   (type (or null card16) width height)
 	   (type generalized-boolean exposures-p))
   (unless (or (eql width 0) (eql height 0))
-    (with-buffer-request ((window-display window) *x-cleartobackground*)
+    (with-buffer-request ((window-display window) +x-cleartobackground+)
       ((data boolean) exposures-p)
       (window window)
       (int16 x y)
@@ -823,7 +823,7 @@
 	   (type gcontext gcontext)
 	   (type int16 src-x src-y dst-x dst-y)
 	   (type card16 width height))
-  (with-buffer-request ((drawable-display src) *x-copyarea* :gc-force gcontext)
+  (with-buffer-request ((drawable-display src) +x-copyarea+ :gc-force gcontext)
     (drawable src dst)
     (gcontext gcontext)
     (int16 src-x src-y dst-x dst-y)
@@ -835,7 +835,7 @@
 	   (type pixel plane)
 	   (type int16 src-x src-y dst-x dst-y)
 	   (type card16 width height))
-  (with-buffer-request ((drawable-display src) *x-copyplane* :gc-force gcontext)
+  (with-buffer-request ((drawable-display src) +x-copyplane+ :gc-force gcontext)
     (drawable src dst)
     (gcontext gcontext)
     (int16 src-x src-y dst-x dst-y)
@@ -853,7 +853,7 @@
     (let* ((colormap (make-colormap :display display :visual-info visual-info))
 	   (id (allocate-resource-id display colormap 'colormap)))
       (setf (colormap-id colormap) id)
-      (with-buffer-request (display *x-createcolormap*)
+      (with-buffer-request (display +x-createcolormap+)
 	((data boolean) alloc-p)
 	(card29 id)
 	(window window)
@@ -863,7 +863,7 @@
 (defun free-colormap (colormap)
   (declare (type colormap colormap))
   (let ((display (colormap-display colormap)))
-    (with-buffer-request (display *x-freecolormap*)
+    (with-buffer-request (display +x-freecolormap+)
       (colormap colormap))
     (deallocate-resource-id display (colormap-id colormap) 'colormap)))
 
@@ -875,19 +875,19 @@
 				      :visual-info (colormap-visual-info colormap)))
 	 (id (allocate-resource-id display new-colormap 'colormap)))
     (setf (colormap-id new-colormap) id)
-    (with-buffer-request (display *x-copycolormapandfree*)
+    (with-buffer-request (display +x-copycolormapandfree+)
       (resource-id id)
       (colormap colormap))
     new-colormap))
 
 (defun install-colormap (colormap)
   (declare (type colormap colormap))
-  (with-buffer-request ((colormap-display colormap) *x-installcolormap*)
+  (with-buffer-request ((colormap-display colormap) +x-installcolormap+)
     (colormap colormap)))
 
 (defun uninstall-colormap (colormap)
   (declare (type colormap colormap))
-  (with-buffer-request ((colormap-display colormap) *x-uninstallcolormap*)
+  (with-buffer-request ((colormap-display colormap) +x-uninstallcolormap+)
     (colormap colormap)))
 
 (defun installed-colormaps (window &key (result-type 'list))
@@ -897,11 +897,11 @@
   (let ((display (window-display window)))
     (flet ((get-colormap (id)
 	     (lookup-colormap display id)))
-      (with-buffer-request-and-reply (display *x-listinstalledcolormaps* nil :sizes 16)
+      (with-buffer-request-and-reply (display +x-listinstalledcolormaps+ nil :sizes 16)
 	   ((window window))
 	(values
 	  (sequence-get :result-type result-type :length (card16-get 8)
-			:transform #'get-colormap :index *replysize*))))))
+			:transform #'get-colormap :index +replysize+))))))
 
 (defun alloc-color (colormap color)
   (declare (type colormap colormap)
@@ -910,7 +910,7 @@
   (let ((display (colormap-display colormap)))
     (etypecase color
       (color
-	(with-buffer-request-and-reply (display *x-alloccolor* 20 :sizes (16 32))
+	(with-buffer-request-and-reply (display +x-alloccolor+ 20 :sizes (16 32))
 	     ((colormap colormap)
 	      (rgb-val (color-red color)
 		       (color-green color)
@@ -925,7 +925,7 @@
       (stringable
 	(let* ((string (string color))
 	       (length (length string)))
-	  (with-buffer-request-and-reply (display *x-allocnamedcolor* 24 :sizes (16 32))
+	  (with-buffer-request-and-reply (display +x-allocnamedcolor+ 24 :sizes (16 32))
 	       ((colormap colormap)
 		(card16 length)
 		(pad16 nil)
@@ -946,16 +946,16 @@
 	   (type t result-type)) ;; CL type
   (declare (clx-values (clx-sequence pixel) (clx-sequence mask)))
   (let ((display (colormap-display colormap)))
-    (with-buffer-request-and-reply (display *x-alloccolorcells* nil :sizes 16)
+    (with-buffer-request-and-reply (display +x-alloccolorcells+ nil :sizes 16)
 	 (((data boolean) contiguous-p)
 	  (colormap colormap)
 	  (card16 colors planes))
       (let ((pixel-length (card16-get 8))
 	    (mask-length (card16-get 10)))
 	(values
-	  (sequence-get :result-type result-type :length pixel-length :index *replysize*)
+	  (sequence-get :result-type result-type :length pixel-length :index +replysize+)
 	  (sequence-get :result-type result-type :length mask-length
-			:index (index+ *replysize* (index* pixel-length 4))))))))
+			:index (index+ +replysize+ (index* pixel-length 4))))))))
 
 (defun alloc-color-planes (colormap colors
 			   &key (reds 0) (greens 0) (blues 0)
@@ -966,7 +966,7 @@
 	   (type t result-type)) ;; CL type
   (declare (clx-values (clx-sequence pixel) red-mask green-mask blue-mask))
   (let ((display (colormap-display colormap)))
-    (with-buffer-request-and-reply (display *x-alloccolorplanes* nil :sizes (16 32))
+    (with-buffer-request-and-reply (display +x-alloccolorplanes+ nil :sizes (16 32))
 	 (((data boolean) contiguous-p)
 	  (colormap colormap)
 	  (card16 colors reds greens blues))
@@ -974,14 +974,14 @@
 	    (green-mask (card32-get 16))
 	    (blue-mask (card32-get 20)))
 	(values
-	  (sequence-get :result-type result-type :length (card16-get 8) :index *replysize*)
+	  (sequence-get :result-type result-type :length (card16-get 8) :index +replysize+)
 	  red-mask green-mask blue-mask)))))
 
 (defun free-colors (colormap pixels &optional (plane-mask 0))
   (declare (type colormap colormap)
 	   (type sequence pixels) ;; Sequence of integers
 	   (type pixel plane-mask))
-  (with-buffer-request ((colormap-display colormap) *x-freecolors*)
+  (with-buffer-request ((colormap-display colormap) +x-freecolors+)
     (colormap colormap)
     (card32 plane-mask)
     (sequence pixels)))
@@ -1000,7 +1000,7 @@
     (when blue-p (incf flags 4))
     (etypecase spec
       (color
-	(with-buffer-request (display *x-storecolors*)
+	(with-buffer-request (display +x-storecolors+)
 	  (colormap colormap)
 	  (card32 pixel)
 	  (rgb-val (color-red spec)
@@ -1011,7 +1011,7 @@
       (stringable
 	(let* ((string (string spec))
 	       (length (length string)))
-	  (with-buffer-request (display *x-storenamedcolor*)
+	  (with-buffer-request (display +x-storenamedcolor+)
 	    ((data card8) flags)
 	    (colormap colormap)
 	    (card32 pixel)
@@ -1043,11 +1043,11 @@
 	   (type t result-type))   ;; a type specifier
   (declare (clx-values (clx-sequence color)))
   (let ((display (colormap-display colormap)))
-    (with-buffer-request-and-reply (display *x-querycolors* nil :sizes (8 16))
+    (with-buffer-request-and-reply (display +x-querycolors+ nil :sizes (8 16))
 	 ((colormap colormap)
 	  (sequence pixels))
       (let ((sequence (make-sequence result-type (card16-get 8))))
-	(advance-buffer-offset *replysize*)
+	(advance-buffer-offset +replysize+)
 	(dotimes (i (length sequence) sequence)
 	  (setf (elt sequence i)
 		(make-color :red (rgb-val-get 0)
@@ -1062,7 +1062,7 @@
   (let* ((display (colormap-display colormap))
 	 (string (string name))
 	 (length (length string)))
-    (with-buffer-request-and-reply (display *x-lookupcolor* 20 :sizes 16)
+    (with-buffer-request-and-reply (display +x-lookupcolor+ 20 :sizes 16)
 	 ((colormap colormap)
 	  (card16 length)
 	  (pad16 nil)
@@ -1091,7 +1091,7 @@
 	 (cursor (make-cursor :display display))
 	 (cid (allocate-resource-id display cursor 'cursor)))
     (setf (cursor-id cursor) cid)
-    (with-buffer-request (display *x-createcursor*)
+    (with-buffer-request (display +x-createcursor+)
       (resource-id cid)
       (pixmap source)
       ((or null pixmap) mask)
@@ -1124,7 +1124,7 @@
 	 (mask-font-id (if mask-font (font-id mask-font) 0)))
     (setf (cursor-id cursor) cid)
     (unless mask-char (setq mask-char 0))
-    (with-buffer-request (display *x-createglyphcursor*)
+    (with-buffer-request (display +x-createglyphcursor+)
       (resource-id cid source-font-id mask-font-id)
       (card16 source-char)
       (card16 mask-char)
@@ -1139,14 +1139,14 @@
 (defun free-cursor (cursor)
   (declare (type cursor cursor))
   (let ((display (cursor-display cursor)))
-    (with-buffer-request (display *x-freecursor*)
+    (with-buffer-request (display +x-freecursor+)
       (cursor cursor))
     (deallocate-resource-id display (cursor-id cursor) 'cursor)))
 
 (defun recolor-cursor (cursor foreground background)
   (declare (type cursor cursor)
 	   (type color foreground background))
-  (with-buffer-request ((cursor-display cursor) *x-recolorcursor*)
+  (with-buffer-request ((cursor-display cursor) +x-recolorcursor+)
     (cursor cursor)
     (rgb-val (color-red foreground)
 	     (color-green foreground)
@@ -1165,7 +1165,7 @@
       (if (type? drawable 'drawable)
 	  (values (drawable-display drawable) drawable)
 	(values drawable (screen-root (display-default-screen drawable))))
-    (with-buffer-request-and-reply (display *x-querybestsize* 12 :sizes 16)
+    (with-buffer-request-and-reply (display +x-querybestsize+ 12 :sizes 16)
 	 ((data 0)
 	  (window drawable)
 	  (card16 width height))
@@ -1178,7 +1178,7 @@
 	   (type drawable drawable))
   (declare (clx-values width height))
   (let ((display (drawable-display drawable)))
-    (with-buffer-request-and-reply (display *x-querybestsize* 12 :sizes 16)
+    (with-buffer-request-and-reply (display +x-querybestsize+ 12 :sizes 16)
 	 ((data 1)
 	  (drawable drawable)
 	  (card16 width height))
@@ -1191,7 +1191,7 @@
 	   (type drawable drawable))
   (declare (clx-values width height))
   (let ((display (drawable-display drawable)))
-    (with-buffer-request-and-reply (display *x-querybestsize* 12 :sizes 16)
+    (with-buffer-request-and-reply (display +x-querybestsize+ 12 :sizes 16)
 	 ((data 2)
 	  (drawable drawable)
 	  (card16 width height))
@@ -1204,7 +1204,7 @@
 	   (type stringable name))
   (declare (clx-values major-opcode first-event first-error))
   (let ((string (string name)))
-    (with-buffer-request-and-reply (display *x-queryextension* 12 :sizes 8)
+    (with-buffer-request-and-reply (display +x-queryextension+ 12 :sizes 8)
 	 ((card16 (length string))
 	  (pad16 nil)
 	  (string string))
@@ -1218,11 +1218,11 @@
   (declare (type display display)
 	   (type t result-type)) ;; CL type
   (declare (clx-values (clx-sequence string)))
-  (with-buffer-request-and-reply (display *x-listextensions* size :sizes 8)
+  (with-buffer-request-and-reply (display +x-listextensions+ size :sizes 8)
        ()
     (values
       (read-sequence-string
-	buffer-bbuf (index- size *replysize*) (card8-get 1) result-type *replysize*))))
+	buffer-bbuf (index- size +replysize+) (card8-get 1) result-type +replysize+))))
 
 (defun change-keyboard-control (display &key key-click-percent
 				bell-percent bell-pitch bell-duration
@@ -1237,7 +1237,7 @@
   (when (eq bell-percent :default) (setq bell-percent -1))
   (when (eq bell-pitch :default) (setq bell-pitch -1))
   (when (eq bell-duration :default) (setq bell-duration -1))
-  (with-buffer-request (display *x-changekeyboardcontrol* :sizes (32))
+  (with-buffer-request (display +x-changekeyboardcontrol+ :sizes (32))
     (mask
       (integer key-click-percent bell-percent bell-pitch bell-duration)
       (card32 led)
@@ -1249,7 +1249,7 @@
   (declare (type display display))
   (declare (clx-values key-click-percent bell-percent bell-pitch bell-duration
 		  led-mask global-auto-repeat auto-repeats))
-  (with-buffer-request-and-reply (display *x-getkeyboardcontrol* 32 :sizes (8 16 32))
+  (with-buffer-request-and-reply (display +x-getkeyboardcontrol+ 32 :sizes (8 16 32))
        ()
     (values
       (card8-get 12)
@@ -1273,24 +1273,24 @@
   ;; It is assumed that an eventual audio extension to X will provide more complete control.
   (declare (type display display)
 	   (type int8 percent-from-normal))
-  (with-buffer-request (display *x-bell*)
+  (with-buffer-request (display +x-bell+)
     (data (int8->card8 percent-from-normal))))
 
 (defun pointer-mapping (display &key (result-type 'list))
   (declare (type display display)
 	   (type t result-type)) ;; CL type
   (declare (clx-values sequence)) ;; Sequence of card
-  (with-buffer-request-and-reply (display *x-getpointermapping* nil :sizes 8)
+  (with-buffer-request-and-reply (display +x-getpointermapping+ nil :sizes 8)
        ()
     (values
       (sequence-get :length (card8-get 1) :result-type result-type :format card8
-		    :index *replysize*))))
+		    :index +replysize+))))
 
 (defun set-pointer-mapping (display map)
   ;; Can signal device-busy.
   (declare (type display display)
 	   (type sequence map)) ;; Sequence of card8
-  (when (with-buffer-request-and-reply (display *x-setpointermapping* 2 :sizes 8)
+  (when (with-buffer-request-and-reply (display +x-setpointermapping+ 2 :sizes 8)
 	     ((data (length map))
 	      ((sequence :format card8) map))
 	  (values
@@ -1331,14 +1331,14 @@
       (cond ((eq threshold :default) (setq threshold -1))
 	    ((null threshold) (setq threshold -1
 				    threshold-p 0)))
-      (with-buffer-request (display *x-changepointercontrol*)
+      (with-buffer-request (display +x-changepointercontrol+)
 	(int16 numerator denominator threshold)
 	(card8 acceleration-p threshold-p)))))
 
 (defun pointer-control (display)
   (declare (type display display))
   (declare (clx-values acceleration threshold))
-  (with-buffer-request-and-reply (display *x-getpointercontrol* 16 :sizes 16)
+  (with-buffer-request-and-reply (display +x-getpointercontrol+ 16 :sizes 16)
        ()
     (values
       (/ (card16-get 8) (card16-get 10))	; Should we float this?
@@ -1353,7 +1353,7 @@
   (case exposures (:yes (setq exposures :on)) (:no (setq exposures :off)))
   (when (eq timeout :default) (setq timeout -1))
   (when (eq interval :default) (setq interval -1))
-  (with-buffer-request (display *x-setscreensaver*)
+  (with-buffer-request (display +x-setscreensaver+)
     (int16 timeout interval)
     ((member8 :on :off :default) blanking exposures)))
 
@@ -1361,7 +1361,7 @@
   ;; Returns timeout and interval in seconds.
   (declare (type display display))
   (declare (clx-values timeout interval blanking exposures))
-  (with-buffer-request-and-reply (display *x-getscreensaver* 14 :sizes (8 16))
+  (with-buffer-request-and-reply (display +x-getscreensaver+ 14 :sizes (8 16))
        ()
     (values
       (card16-get 8)
@@ -1371,12 +1371,12 @@
 
 (defun activate-screen-saver (display)
   (declare (type display display))
-  (with-buffer-request (display *x-forcescreensaver*)
+  (with-buffer-request (display +x-forcescreensaver+)
     (data 1)))
 
 (defun reset-screen-saver (display)
   (declare (type display display))
-  (with-buffer-request (display *x-forcescreensaver*)
+  (with-buffer-request (display +x-forcescreensaver+)
     (data 0)))
 
 (defun add-access-host (display host &optional (family :internet))
@@ -1407,7 +1407,7 @@
     (setq host (host-address host family)))
   (let ((family (car host))
 	(address (cdr host)))
-    (with-buffer-request (display *x-changehosts*)
+    (with-buffer-request (display +x-changehosts+)
       ((data boolean) remove-p)
       (card8 (encode-type (or null (member :internet :decnet :chaos) card32) family))
       (card16 (length address))
@@ -1421,12 +1421,12 @@
   (declare (type display display)
 	   (type t result-type)) ;; CL type
   (declare (clx-values (clx-sequence host) enabled-p))
-  (with-buffer-request-and-reply (display *x-listhosts* nil :sizes (8 16))
+  (with-buffer-request-and-reply (display +x-listhosts+ nil :sizes (8 16))
        ()
     (let* ((enabled-p (boolean-get 1))
 	   (nhosts (card16-get 8))
 	   (sequence (make-sequence result-type nhosts)))
-      (advance-buffer-offset *replysize*)
+      (advance-buffer-offset +replysize+)
       (dotimes (i nhosts)
 	(let ((family (card8-get 0))
 	      (len (card16-get 2)))
@@ -1444,14 +1444,14 @@
 (defun access-control (display)
   (declare (type display display))
   (declare (clx-values generalized-boolean)) ;; True when access-control is ENABLED
-  (with-buffer-request-and-reply (display *x-listhosts* 2 :sizes 8)
+  (with-buffer-request-and-reply (display +x-listhosts+ 2 :sizes 8)
        ()
     (boolean-get 1)))
   
 (defun set-access-control (display enabled-p)
   (declare (type display display)
 	   (type generalized-boolean enabled-p))
-  (with-buffer-request (display *x-changeaccesscontrol*)
+  (with-buffer-request (display +x-changeaccesscontrol+)
     ((data boolean) enabled-p))
   enabled-p)
 
@@ -1469,7 +1469,7 @@
   (declare (type display display)
 	   (type (member :destroy :retain-permanent :retain-temporary) mode))
   (setf (display-close-down-mode display) mode)
-  (with-buffer-request (display *x-changeclosedownmode* :sizes (32))
+  (with-buffer-request (display +x-changeclosedownmode+ :sizes (32))
     ((data (member :destroy :retain-permanent :retain-temporary)) mode))
   mode)
 
@@ -1478,14 +1478,14 @@
 (defun kill-client (display resource-id)
   (declare (type display display)
 	   (type resource-id resource-id))
-  (with-buffer-request (display *x-killclient*)
+  (with-buffer-request (display +x-killclient+)
     (resource-id resource-id)))
 
 (defun kill-temporary-clients (display)
   (declare (type display display))
-  (with-buffer-request (display *x-killclient*)
+  (with-buffer-request (display +x-killclient+)
     (resource-id 0)))
 
 (defun no-operation (display)
   (declare (type display display))
-  (with-buffer-request (display *x-nooperation*)))
+  (with-buffer-request (display +x-nooperation+)))

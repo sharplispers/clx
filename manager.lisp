@@ -314,7 +314,7 @@
 		(wm-size-hints-base-height hints) (aref vector 16)))
 	(when (logbitp 9 flags)
 	  (setf (wm-size-hints-win-gravity hints)
-		(decode-type (member-vector *win-gravity-vector*) (aref vector 17)))))
+		(decode-type (member-vector +win-gravity-vector+) (aref vector 17)))))
       ;; Obsolete fields
       (when (or (logbitp 0 flags) (logbitp 2 flags))
 	(setf (wm-size-hints-x hints) (card32->int32 (aref vector 1))
@@ -369,7 +369,7 @@
     (when (wm-size-hints-win-gravity hints)
       (setf (ldb (byte 1 9) flags) 1
 	    (aref vector 17) (encode-type
-			       (member-vector *win-gravity-vector*)
+			       (member-vector +win-gravity-vector+)
 			       (wm-size-hints-win-gravity hints))))
     ;; Obsolete fields
     (when (and (wm-size-hints-x hints) (wm-size-hints-y hints)) 

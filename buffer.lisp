@@ -51,7 +51,7 @@
 
 (in-package :xlib)
 
-(defconstant *requestsize* 160) ;; Max request size (excluding variable length requests)
+(defconstant +requestsize+ 160) ;; Max request size (excluding variable length requests)
 
 ;;; This is here instead of in bufmac so that with-display can be
 ;;; compiled without macros and bufmac being loaded.
