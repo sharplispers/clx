@@ -227,15 +227,17 @@
 ;;
 (defmacro with-display ((display &key timeout inline)
 			&body body)
-  ;; This macro is for use in a multi-process environment.  It provides exclusive
-  ;; access to the local display object for multiple request generation.  It need not
-  ;; provide immediate exclusive access for replies; that is, if another process is
-  ;; waiting for a reply (while not in a with-display), then synchronization need not
-  ;; (but can) occur immediately.  Except where noted, all routines effectively
-  ;; contain an implicit with-display where needed, so that correct synchronization
-  ;; is always provided at the interface level on a per-call basis.  Nested uses of
-  ;; this macro will work correctly.  This macro does not prevent concurrent event
-  ;; processing; see with-event-queue.
+  ;; This macro is for use in a multi-process environment.  It
+  ;; provides exclusive access to the local display object for
+  ;; multiple request generation.  It need not provide immediate
+  ;; exclusive access for replies; that is, if another process is
+  ;; waiting for a reply (while not in a with-display), then
+  ;; synchronization need not (but can) occur immediately.  Except
+  ;; where noted, all routines effectively contain an implicit
+  ;; with-display where needed, so that correct synchronization is
+  ;; always provided at the interface level on a per-call basis.
+  ;; Nested uses of this macro will work correctly.  This macro does
+  ;; not prevent concurrent event processing; see with-event-queue.
   `(with-buffer (,display
 		 ,@(and timeout `(:timeout ,timeout))
 		 ,@(and inline `(:inline ,inline)))
@@ -283,9 +285,10 @@
 	 ,@body))))
 
 (defun open-display (host &key (display 0) protocol authorization-name authorization-data)
-  ;; Implementation specific routine to setup the buffer for a specific host and display.
-  ;; This must interface with the local network facilities, and will probably do special
-  ;; things to circumvent the nework when displaying on the local host.
+  ;; Implementation specific routine to setup the buffer for a
+  ;; specific host and display.  This must interface with the local
+  ;; network facilities, and will probably do special things to
+  ;; circumvent the nework when displaying on the local host.
   ;;
   ;; A string must be acceptable as a host, but otherwise the possible types
   ;; for host and protocol are not constrained, and will likely be very
@@ -500,13 +503,14 @@
 
 #+comment ;; defined by the DISPLAY defstruct
 (defsetf display-error-handler (display) (handler)
-  ;; All errors (synchronous and asynchronous) are processed by calling an error
-  ;; handler in the display.  If handler is a sequence it is expected to contain
-  ;; handler functions specific to each error; the error code is used to index the
-  ;; sequence, fetching the appropriate handler.  Any results returned by the handler
-  ;; are ignored; it is assumed the handler either takes care of the error
-  ;; completely, or else signals. For all core errors, the keyword/value argument
-  ;; pairs are:
+  ;; All errors (synchronous and asynchronous) are processed by
+  ;; calling an error handler in the display.  If handler is a
+  ;; sequence it is expected to contain handler functions specific to
+  ;; each error; the error code is used to index the sequence,
+  ;; fetching the appropriate handler.  Any results returned by the
+  ;; handler are ignored; it is assumed the handler either takes care
+  ;; of the error completely, or else signals. For all core errors,
+  ;; the keyword/value argument pairs are:
   ;;    :display display
   ;;    :error-key error-key
   ;;    :major integer
@@ -523,11 +527,12 @@
   )
 
   ;; setf'able
-  ;; If defined, called after every protocol request is generated, even those inside
-  ;; explicit with-display's, but never called from inside the after-function itself.
-  ;; The function is called inside the effective with-display for the associated
-  ;; request.  Default value is nil.  Can be set, for example, to
-  ;; #'display-force-output or #'display-finish-output.
+  ;; If defined, called after every protocol request is generated,
+  ;; even those inside explicit with-display's, but never called from
+  ;; inside the after-function itself.  The function is called inside
+  ;; the effective with-display for the associated request.  Default
+  ;; value is nil.  Can be set, for example, to #'display-force-output
+  ;; or #'display-finish-output.
 
 (defvar *inside-display-after-function* nil)
 
