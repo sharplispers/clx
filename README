@@ -6,8 +6,9 @@ a selection of patches were added from other CLXes around the net.
 = Features
 
  - SHAPE extension support (Gilbert Baumann)
+ - XFREE86-VIDMODE extension support (Iban Hatchondo)
  - X authority support that works with ssh forwarding (Eric Marsden via CMUCL)
- - OPEN-DEFAULT-DISPLAY function, as the name suggests, does that (dan)
+ - OPEN-DEFAULT-DISPLAY function which, as the name suggests, does that (dan)
  - various bug fixes (Iban Hatchondo and a cast of several)
 
 = Building
