@@ -44,7 +44,7 @@
       (setq images nil)
       (unwind-protect
 	  (progn
-	    (setq display (open-display host))
+	    (setq display (open-default-display))
 	    (let* ((screen (display-default-screen display))
 		   (window (screen-root screen))
 		   (gcontext (create-gcontext
