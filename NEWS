@@ -8,7 +8,8 @@ With the addition of an implementation of DYNAMIC-EXTENT &REST lists
 to SBCL, various functions (e.g. READ-INPUT, QUEUE-EVENT) in CLX
 should cons less.
 
-A Texinfo version of the CLX manual as been added.
+A Texinfo version of the CLX manual has been added, thansk to the work
+of Gilbert Baumann and Shawn Betts.  
 
 The portable-clx mailing list has been created for development discussion
 and bug reports
@@ -21,8 +22,11 @@ bits wide, as per the ICCCM specifications. Fixes a problem seen with
 the MacOS X11 window manger, that uses very large hint values.
 (Patch from Eric Marsden)
 
-Bug fix: +pointer-event-mask-vector+ is supposed to be a vector of
-keywords.  It wasn't, but it is now.
+Bug fix: +POINTER-EVENT-MASK-VECTOR+ is supposed to be a vector of
+keywords.  It wasn't, but it is now. (Milan Zamazal)
+
+Bug fix: xrender now compiles properly when *DEF-CLX-CLASS-USE-DEFCLASS*
+(Milan again)
 
 ---  Changes in SBCL CLX 0.5.4, Tue Nov 11 00:02:43 2003   ---
 

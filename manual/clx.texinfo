@@ -1,5 +1,5 @@
 \input texinfo   @c -*-texinfo-*-
-@c $Id: clx.texinfo,v 1.1 2004/04/09 14:32:44 dan Exp $
+@c $Id: clx.texinfo,v 1.2 2004/11/13 22:45:07 dan Exp $
 @c %**start of header
 @setfilename clx.info
 @settitle Common LISP X Interface
@@ -2107,8 +2107,13 @@ return information about the display.  This section discusses how to:
 @section Opening the Display
 
 
-The @var{open-display} function is used to open a connection to an X
-server.
+The @var{open-display} and @var{open-default-display} functions are
+used to open a connection to an X server.  @var{open-default-display}
+is an extension that is not present in the MIT CLX tree, but is
+preferred where available as it uses the same rules for display
+defaulting as the C Xlib bindings, and tends to get authorization
+right more often than @var{open-display} (particularly on
+ssh-forwarded connections)
 
 @defun open-display host &key :display :protocol
 
@@ -2147,6 +2152,49 @@ Type @var{display}.
 
 @end defun
 
+@defun open-default-display &optional display-name
+
+@table @var
+@item display-name
+The display to connect to.  Display names have the format
+
+@verbatim
+  [protocol/] [hostname] : [:] displaynumber [.screennumber]
+@end verbatim
+
+There are two special cases in parsing, to match that done in the Xlib
+C language bindings
+
+@itemize @bullet
+@item If the hostname is @code{unix} or the empty string, any supplied
+protocol is ignored and a connection is made using the @code{local} transport.
+@item If a double colon separates @var{hostname} from @var{displaynumber}, the
+protocol is assumed to be @code{decnet}.
+@end itemize
+
+If @var{display-name} is not supplied, a default will be provided
+appropriate for the local environment: on a POSIX system - the only
+kind this CLX port runs on - the default display is taken from the
+environment variable @envvar{DISPLAY}.  See also the section ``DISPLAY
+NAMES'' in X(7)
+
+@end table
+
+Open a connection to @var{display-name} or to the appropriate
+default display.
+
+@code{open-display-name} always attempts to do display authorization,
+following complicated rules that closely match the ones that the C
+Xlib bindings use.  Briefly: the hostname is resolved to an address,
+then authorization data for the (protocol, host-address,
+displaynumber) triple is looked up in the file given by the
+environment variable @envvar{AUTHORITY_PATHNAME} (typically
+@file{$HOME/.Xauthority}).  If the protocol is @code{:local}, or if
+the hostname resolves to the local host, authority data for the local
+machine's actual hostname - as returned by gethostname(3) - is used
+instead.
+
+@end defun
 
 @node Display Attributes, Managing the Output Buffer, Opening the Display, Displays
 @section Display Attributes
