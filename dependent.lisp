@@ -1085,7 +1085,7 @@
 ;;; Caller guarantees that PROCESS-WAKEUP will be called after the predicate's
 ;;; value changes.
 
-#-(or lispm excl lcl3.0 Minima sbcl (and cmu mp))
+#-(or lispm excl lcl3.0 Minima (and sb-thread sbcl) (and cmu mp))
 (defun process-block (whostate predicate &rest predicate-args)
   (declare (ignore whostate))
   (or (apply predicate predicate-args)
@@ -1133,10 +1133,10 @@
   (mp:process-wait whostate #'(lambda ()
 				(apply predicate predicate-args))))
 
-#+sbcl
+#+(and sbcl sb-thread)
 (defvar *process-conditions* (make-hash-table))
 
-#+sbcl
+#+(and sbcl sb-thread)
 (defun process-block (whostate predicate &rest predicate-args)
   (declare (type function predicate))
   (let* ((pid (sb-thread:current-thread-id))
@@ -1160,9 +1160,9 @@
 
 ;;; PROCESS-WAKEUP: Check some other process' wait function.
 
-;;; (declaim (inline process-wakeup))
+(declaim (inline process-wakeup))
 
-#-(or excl Genera Minima (and cmu mp))
+#-(or excl Genera Minima (and sbcl sb-thread) (and cmu mp))
 (defun process-wakeup (process)
   (declare (ignore process))
   nil)
@@ -1192,7 +1192,7 @@
   (declare (ignore process))
   (mp:process-yield))
 
-#+sbcl
+#+(and sb-thread sbcl)
 (defun process-wakeup (process)
   (destructuring-bind (lock . queue)
       (gethash (sb-thread:current-thread-id) *process-conditions*
