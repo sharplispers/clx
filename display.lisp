@@ -24,7 +24,22 @@
 
 (defparameter *known-authorizations* '("MIT-MAGIC-COOKIE-1"))
 
-(defun get-best-authorization (host display protocol)
+;;; X11 Authorization: to prevent malicious users from snooping on a
+;;; display, X servers may require connection requests to be
+;;; authorized. The X server (or display manager) will create a random
+;;; key on startup, and store it as an entry in a file generally named
+;;; $HOME/.Xauthority (see xauth(1) and the AUTHORITY-PATHNAME
+;;; function). Clients must extract from this file the "magic cookie"
+;;; that corresponds to the server they wish to connect to, and send
+;;; it as authorization data when opening the display.
+
+;;; The format of the .Xauthority file is documented in the XFree
+;;; sources, in the file xc/lib/Xau/README.
+
+;;; Stolen from the cmucl sources, with patches by Hannu Rummukainen and
+;;; Scott Fahlman.
+
+(defun read-xauth-entry (stream)
   (labels ((read-short (stream &optional (eof-errorp t))
 	     (let ((high-byte (read-byte stream eof-errorp)))
 	       (and high-byte
@@ -41,43 +56,58 @@
 		 (dotimes (k length)
 		   (setf (aref vector k) (read-byte stream)))
 		 vector))))
-    (let ((pathname (authority-pathname)))
-      (when pathname
-	(with-open-file (stream pathname :element-type '(unsigned-byte 8)
-				:if-does-not-exist nil)
-	  (when stream
-	    (let* ((host-family (ecase protocol
-				  ((:tcp :internet nil) 0)
-				  ((:dna :DECnet) 1)
-				  ((:chaos) 2)
-				  ((:unix) 256)))
-		   (host-address (if (eq protocol :unix)
-				     (map 'list #'char-int (machine-instance))
-				     (rest (host-address host host-family))))
-		   (best-name nil)
-		   (best-data nil))
-	      (loop
-	       (let ((family (read-short stream nil)))
-		 (when (null family)
-		   (return))
-		 (let* ((address (read-short-length-vector stream))
-			(number (parse-integer (read-short-length-string stream)))
-			(name (read-short-length-string stream))
-			(data (read-short-length-vector stream)))
-		   (when (and (= family host-family)
-			      (equal host-address (coerce address 'list))
-			      (= number display)
-			      (let ((pos1 (position name *known-authorizations* :test #'string=)))
-				(and pos1
-				     (or (null best-name)
-					 (< pos1 (position best-name *known-authorizations*
-							   :test #'string=))))))
-		     (setf best-name name)
-		     (setf best-data data)))))
-	      (when best-name
-		(return-from get-best-authorization
-		  (values best-name best-data)))))))))
-  (values "" ""))
+    (let ((family (read-short stream nil)))
+      (if (null family)
+	(list nil nil nil nil nil)
+	(let* ((address (read-short-length-vector stream))
+	       (number (parse-integer (read-short-length-string stream)))
+	       (name (read-short-length-string stream))
+	       (data (read-short-length-vector stream)))
+	  (list 
+	   (case family
+	     (0 :internet) (1 :dna) (2 :chaos) (256 :unix) (t :unknown))
+	   (if (eq family 256) (map 'string #'code-char address) address)
+	   number name data))))))
+
+(defun get-best-authorization (host display protocol)
+  ;; parse .Xauthority, extract the cookie for DISPLAY on HOST.
+  ;; PROTOCOL determines whether the server connection is using an
+  ;; Internet protocol (values of :tcp or :internet) or a non-network
+  ;; protocol such as Unix domain sockets (value of :unix).  Returns
+  ;; two strings: an authorization name (very likely the string
+  ;; "MIT-MAGIC-COOKIE-1") and an authorization key, represented as
+  ;; fixnums in a vector.  If we fail to find an appropriate cookie,
+  ;; return two empty strings.
+  (let ((pathname (authority-pathname)))
+    (when pathname
+      (with-open-file (stream pathname :element-type '(unsigned-byte 8)
+			      :if-does-not-exist nil)
+	(when stream
+	  (let* ((host-address (unless (eql protocol :unix)
+				 (rest (host-address host protocol))))
+		 (best-name nil) (best-pos nil)
+		 (best-data nil))
+	    (loop
+	     (destructuring-bind (family address number name data)
+		 (read-xauth-entry stream)
+	       (unless family (return))
+	       (when (and (eql family protocol)
+			  (or (eql protocol :unix)
+			      (equal host-address (coerce address 'list)))
+			  (= number display)
+			  (let ((pos1 (position name *known-authorizations*
+						:test #'string=)))
+			    (and pos1
+				 (or (null best-pos)
+				     (< pos1 best-pos)))))
+		 (setf best-name name
+		       best-pos (position name *known-authorizations*
+					  :test #'string=)
+		       best-data data))))
+	    (when best-name
+	      (return-from get-best-authorization
+		(values best-name best-data)))))))
+    (values "" "")))
 
 ;;
 ;; Resource id management
