@@ -324,8 +324,19 @@
 		      ,@(and timeout `(:timeout ,timeout)))
 	 ,@body))))
 
-(defun open-default-display ()
-  (destructuring-bind (host display screen protocol) (get-default-display)
+(defun open-default-display (&optional display-name)
+  "Open a connection to DISPLAY-NAME if supplied, or to the appropriate
+default display as given by GET-DEFAULT-DISPLAY otherwise.
+
+OPEN-DISPLAY-NAME always attempts to do display authorization.  The
+hostname is resolved to an address, then authorization data for the
+(protocol, host-address, displaynumber) triple is looked up in the
+file given by AUTHORITY_PATHNAME (typically $HOME/.Xauthority).  If
+the protocol is :local, or if the hostname resolves to the local host,
+authority data for the local machine's actual hostname - as returned by
+gethostname(3) - is used instead."
+  (destructuring-bind (host display screen protocol)
+      (get-default-display display-name)
     (declare (ignore screen))
     (open-display host :display display :protocol protocol)))
 
