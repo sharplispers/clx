@@ -31,6 +31,7 @@
 ;;;   ibcl
 ;;;   excl
 ;;;   CMU
+;;;   sbcl
 
 #+(or Genera Minima sbcl)
 (eval-when (:compile-toplevel :load-toplevel :execute)

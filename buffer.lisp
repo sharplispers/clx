@@ -89,6 +89,9 @@
 	   (type function function)
 	   #+clx-ansi-common-lisp
 	   (dynamic-extent function)
+	   ;; FIXME: This is probably more a bug in SBCL (logged as
+	   ;; bug #243)
+	   (ignorable timeout)
 	   #+(and lispm (not clx-ansi-common-lisp))
 	   (sys:downward-funarg function))
   (with-buffer (buffer :timeout timeout :inline t)

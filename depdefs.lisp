@@ -160,6 +160,17 @@
     (:big-endian)
     (:little-endian (pushnew :clx-little-endian *features*))))
 
+#+sbcl
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  ;; FIXME: Ideally, we shouldn't end up with the internal
+  ;; :CLX-LITTLE-ENDIAN decorating user-visible *FEATURES* lists.
+  ;; This probably wants to be split up into :compile-toplevel
+  ;; :execute and :load-toplevel clauses, so that loading the compiled
+  ;; code doesn't push the feature.
+  (ecase sb-c:*backend-byte-order*
+    (:big-endian)
+    (:little-endian (pushnew :clx-little-endian *features*))))
+
 ;;; Steele's Common-Lisp states:  "It is an error if the array specified
 ;;; as the :displaced-to argument  does not have the same :element-type
 ;;; as the array being created" If this is the case on your lisp, then
@@ -389,18 +400,20 @@
 
 ;;; Pseudo-class mechanism.
 
-(eval-when (eval compile load)
-(defvar *def-clx-class-use-defclass*
-  #+Genera t
-  #+(and cmu pcl) '(XLIB:DRAWABLE XLIB:WINDOW XLIB:PIXMAP)
-  #+(and cmu (not pcl)) nil
-  #-(or Genera cmu) nil
-  "Controls whether DEF-CLX-CLASS uses DEFCLASS.  
-   If it is a list, it is interpreted by DEF-CLX-CLASS to be a list of type names
-   for which DEFCLASS should be used. 
-   If it is not a list, then DEFCLASS is always used.
-   If it is NIL, then DEFCLASS is never used, since NIL is the empty list.")
-)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  ;; FIXME: maybe we should reevaluate this?
+  (defvar *def-clx-class-use-defclass*
+    #+Genera t
+    #+(and cmu pcl) '(XLIB:DRAWABLE XLIB:WINDOW XLIB:PIXMAP)
+    #+(and cmu (not pcl)) nil
+    #-(or Genera cmu) nil
+    "Controls whether DEF-CLX-CLASS uses DEFCLASS.
+
+If it is a list, it is interpreted by DEF-CLX-CLASS to be a list of
+type names for which DEFCLASS should be used.  If it is not a list,
+then DEFCLASS is always used.  If it is NIL, then DEFCLASS is never
+used, since NIL is the empty list.")
+  )
 
 (defmacro def-clx-class ((name &rest options) &body slots)
   (if (or (not (listp *def-clx-class-use-defclass*))
@@ -459,7 +472,7 @@
 		(setf (elt slot-types i) (getf slot :type t))))
 	    `(progn
 
-	       (eval-when (compile load eval)
+	       (eval-when (:compile-toplevel :load-toplevel :execute)
 		 (setf (get ',name 'def-clx-class) ',slots))
 
 	       ;; From here down are the system-specific expansions:

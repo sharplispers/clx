@@ -47,8 +47,7 @@
 ;; GContext state accessors
 ;;	The state vector contains all card32s to speed server updating
 
-(eval-when (eval compile load)
-
+(eval-when (:compile-toplevel :load-toplevel :execute)
 (#-sbcl defconstant
  #+sbcl sb-int:defconstant-eqx
  +gcontext-fast-change-length+ #.(length +gcontext-components+)
@@ -81,7 +80,7 @@
 		(incf index))
 	      `(within-definition (def-gc-internals ,name)
 		 ,@(nreverse macros)
-		 (eval-when (eval compile load)
+		 (eval-when (:compile-toplevel :load-toplevel :execute)
 		   (defvar *gcontext-data-length* ,index)
 		   (defvar *gcontext-indexes* ',indexes)
 		   (defvar *gcontext-masks*
@@ -926,7 +925,7 @@
 		   (,set-function dst-gc value)
 		 (error "Can't copy unknown GContext component ~a" ',name)))))
     `(progn
-       (eval-when (compile load eval)
+       (eval-when (:compile-toplevel :load-toplevel :execute)
 	 (defparameter ,internal-state-index
 		       (add-gcontext-extension ',key-name ,default ',internal-set-function
 					       ',internal-copy-function))

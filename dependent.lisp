@@ -58,28 +58,24 @@
 
 ;;; Set some compiler-options for often used code
 
-(eval-when (eval compile load)
-
-(defconstant +buffer-speed+ #+clx-debugging 1 #-clx-debugging 3
-  "Speed compiler option for buffer code.")
-(defconstant +buffer-safety+ #+clx-debugging 3 #-clx-debugging 0
-  "Safety compiler option for buffer code.")
-
-(defun declare-bufmac ()
-  `(declare (optimize (speed ,+buffer-speed+) (safety ,+buffer-safety+))))
-
-;;; It's my impression that in lucid there's some way to make a declaration
-;;; called fast-entry or something that causes a function to not do some
-;;; checking on args. Sadly, we have no lucid manuals here.  If such a
-;;; declaration is available, it would be a good idea to make it here when
-;;; +buffer-speed+ is 3 and +buffer-safety+ is 0.
-(defun declare-buffun ()
-  #+(and cmu clx-debugging)
-  '(declare (optimize (speed 1) (safety 1)))
-  #-(and cmu clx-debugging)
-  `(declare (optimize (speed ,+buffer-speed+) (safety ,+buffer-safety+))))
-
-)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defconstant +buffer-speed+ #+clx-debugging 1 #-clx-debugging 3
+    "Speed compiler option for buffer code.")
+  (defconstant +buffer-safety+ #+clx-debugging 3 #-clx-debugging 0
+    "Safety compiler option for buffer code.")
+  (defun declare-bufmac ()
+    `(declare (optimize (speed ,+buffer-speed+) (safety ,+buffer-safety+))))
+  ;; It's my impression that in lucid there's some way to make a
+  ;; declaration called fast-entry or something that causes a function
+  ;; to not do some checking on args. Sadly, we have no lucid manuals
+  ;; here.  If such a declaration is available, it would be a good
+  ;; idea to make it here when +buffer-speed+ is 3 and +buffer-safety+
+  ;; is 0.
+  (defun declare-buffun ()
+    #+(and cmu clx-debugging)
+    '(declare (optimize (speed 1) (safety 1)))
+    #-(and cmu clx-debugging)
+    `(declare (optimize (speed ,+buffer-speed+) (safety ,+buffer-safety+)))))
 
 (declaim (inline card8->int8 int8->card8
 		 card16->int16 int16->card16

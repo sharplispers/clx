@@ -69,14 +69,14 @@
 	(error "~s isn't a known field accessor" name)))
     increment))
 
-(eval-when (eval compile load)
+(eval-when (:compile-toplevel :load-toplevel :execute)
 (defun getify (name)
   (xintern name '-get))
 
 (defun putify (name &optional predicate-p)
   (xintern name '-put (if predicate-p '-predicating "")))
 
-					;; Use &body so zmacs indents properly
+;;; Use &body so zmacs indents properly
 (defmacro define-accessor (name (width) &body get-put-macros)
   ;; The first body form defines the get macro
   ;; The second body form defines the put macro
