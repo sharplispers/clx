@@ -7,13 +7,17 @@ a selection of patches were added from other CLXes around the net.
 
  - SHAPE extension support (Gilbert Baumann)
  - XFREE86-VIDMODE extension support (Iban Hatchondo)
+ - experimental RENDER extension support 
+     (Gilbert Baumann and Christian Sunesson)
  - X authority support that works with ssh forwarding (Eric Marsden via CMUCL)
  - OPEN-DEFAULT-DISPLAY function which, as the name suggests, does that (dan)
  - various bug fixes (Iban Hatchondo and a cast of several)
 
 = Building
 
-0. You need SBCL 0.7.13 or any later release
+0. You need SBCL 0.8.1 or any later release.  Earlier releases of SBCL
+   will work, but need manual adjustment to the clx.asd file (to
+   remove use of newly-introduced features).
 
 1. Untar this tree somewhere
 
@@ -75,4 +79,5 @@ For packaging or SBCL-specific problems, mail <dan at metacircles.com>
 
 -- 
 Heavy lifting by <Raymond.Wiker at fast.no>
-ASDFized version and ongoing by Daniel Barlow <dan at metacircles.com>
+ASDFized version and ongoing by Daniel Barlow <dan at metacircles.com> 
+and Christophe Rhodes <csr21 at cam.ac.uk>
