@@ -27,23 +27,6 @@
       `("    CLX X Library " ,*version*))
 
 
-;;; Stolen from Daniel Barlow's "socket" package. Introduces the
-;;; traditional CMUCL package names as nicknames for their SBCL
-;;; equivalents. 
-#+sbcl
-(eval-when (:compile-toplevel :load-toplevel)
-  (defun add-package-nickname (name nickname)
-    (let ((p (find-package name)))
-      (rename-package p (package-name p)
-                      (cons nickname (package-nicknames name)))))
-  (add-package-nickname "SB-EXT" "EXT")
-  (add-package-nickname "SB-ALIEN" "ALIEN")
-  (add-package-nickname "SB-UNIX" "UNIX")
-  (add-package-nickname "SB-C-CALL" "C-CALL")
-  (add-package-nickname "SB-SYS" "SYSTEM")
-  (add-package-nickname "SB-KERNEL" "KERNEL")
-  (add-package-nickname "SB-VM" "VM"))
-
 ;;; The size of the output buffer.  Must be a multiple of 4.
 (defparameter *output-buffer-size* 8192)
 
@@ -912,7 +895,7 @@
 
 ;; If you're not sharing DISPLAY objects within a multi-processing
 ;; shared-memory environment, this is sufficient
-#-(or lispm excl lcl3.0 Minima (and CMU mp) sbcl)
+#-(or lispm excl lcl3.0 Minima (and CMU mp) )
 (defmacro holding-lock ((locator display &optional whostate &key timeout) &body body)
   (declare (ignore locator display whostate timeout))
   `(progn ,@body))
@@ -926,7 +909,7 @@
 ;;; display connection.  We inhibit GC notifications since display of them
 ;;; could cause recursive entry into CLX.
 ;;;
-#+(or (and CMU (not mp)) sbcl)
+#+(or (and CMU (not mp)))
 (defmacro holding-lock ((locator display &optional whostate &key timeout)
 			&body body)
   `(let #+cmu((ext:*gc-verbose* nil)
@@ -1228,9 +1211,12 @@
 (defmacro without-interrupts (&body body)
   `(minima:with-no-other-processes ,@body))
 
-#+(or cmu sbcl)
+#+cmu
 (defmacro without-interrupts (&body body)
   `(system:without-interrupts ,@body))
+
+(defmacro without-interrupts (&body body)
+  `(sb-sys:without-interrupts ,@body))
 
 ;;; CONDITIONAL-STORE:
 
@@ -1412,24 +1398,28 @@
 						  (cdr (host-address host)))
 			  :foreign-port (+ *x-tcp-port* display)))
 
-;;; OPEN-X-STREAM -- for CMU Common Lisp.
-;;;
-;;; The file descriptor here just gets tossed into the stream slot of the
-;;; display object instead of a stream.
-;;;
-#+(or cmu sbcl)
-(alien:def-alien-routine ("connect_to_server" xlib::connect-to-server)
-			 c-call:int
-  (host c-call:c-string)
-  (port c-call:int))
-#+(or cmu sbcl)
-(defun open-x-stream (host display protocol)
-  (declare (ignore protocol))
-  (let ((server-fd (connect-to-server host display)))
-    (unless (plusp server-fd)
-      (error "Failed to connect to X11 server: ~A (display ~D)" host display))
-    (system:make-fd-stream server-fd :input t :output t
-			   :element-type '(unsigned-byte 8))))
+#+sbcl
+(defparameter +X-unix-socket-path+
+  "/tmp/.X11-unix/X"
+  "The location of the X socket")
+
+#+sbcl
+(defun open-x-stream (host display protocol)  
+  (declare (ignore protocol)
+           (type (integer 0) display))
+  (socket-make-stream 
+   (if (or (string= host "") (string= host "unix")) ; AF_UNIX domain socket
+       (let ((s (make-instance 'unix-socket :type :stream)))
+	 (socket-connect s (format nil "~A~D" +X-unix-socket-path+ display))
+	 s)
+       (let ((host (car (host-ent-addresses (get-host-by-name host)))))
+	 (when host
+	   (let ((s (make-instance 'inet-socket :type :stream :protocol :tcp)))
+	     (socket-connect s host (+ 6000 display))
+	     s))))
+   :element-type '(unsigned-byte 8)
+   :input t :output t :buffering :none))
+
 
 
 ;;; BUFFER-READ-DEFAULT - read data from the X stream
@@ -1538,8 +1528,10 @@
 	      (not (listen (display-input-stream display))))
 	 :timeout)
 	(t
-	 (system:read-n-bytes (display-input-stream display)
-			      vector start (- end start))
+	 (#+cmu system:read-n-bytes
+	  #+sbcl sb-sys:read-n-bytes
+	  (display-input-stream display)
+	  vector start (- end start))
 	 nil)))
 
 
@@ -1621,13 +1613,21 @@
     (unless (null stream) 
       (minima:write-vector vector stream start end))))
 
-#+(or CMU sbcl)
+#+CMU
 (defun buffer-write-default (vector display start end)
   (declare (type buffer-bytes vector)
 	   (type display display)
 	   (type array-index start end))
   #.(declare-buffun)
   (system:output-raw-bytes (display-output-stream display) vector start end)
+  nil)
+
+(defun buffer-write-default (vector display start end)
+  (declare (type buffer-bytes vector)
+	   (type display display)
+	   (type array-index start end))
+  #.(declare-buffun)
+  (write-sequence vector (display-output-stream display) :start start :end end)
   nil)
 
 ;;; WARNING:
@@ -1733,10 +1733,12 @@
 	  ((listen stream) nil)
 	  ((eql timeout 0) :timeout)
 	  (t
-	   (if #-mp (system:wait-until-fd-usable (system:fd-stream-fd stream)
-						 :input timeout)
+	   (if #+sbcl (sb-sys:wait-until-fd-usable (sb-sys:fd-stream-fd stream)
+						   :input timeout)
 	       #+mp (mp:process-wait-until-fd-usable
 		     (system:fd-stream-fd stream) :input timeout)
+	       #-(or sbcl mp) (system:wait-until-fd-usable
+			       (system:fd-stream-fd stream) :input timeout)
 	       nil
 	       :timeout)))))
 
@@ -1952,7 +1954,7 @@
 	      (setf (aref target-sequence target-index)
 		(aref source-sequence source-index))))))
 
-#+(or cmu sbcl)
+#+cmu 
 (defun buffer-replace (buf1 buf2 start1 end1 &optional (start2 0))
   (declare (type buffer-bytes buf1 buf2)
 	   (type array-index start1 end1 start2))
@@ -1982,7 +1984,7 @@
 	   (type array-index start1 end1 start2))
   (replace buf1 buf2 :start1 start1 :end1 end1 :start2 start2))
 
-#-(or lispm lucid excl CMU sbcl clx-overlapping-arrays)
+#-(or lispm lucid excl CMU clx-overlapping-arrays)
 (defun buffer-replace (buf1 buf2 start1 end1 &optional (start2 0))
   (declare (type buffer-bytes buf1 buf2)
 	   (type array-index start1 end1 start2))
@@ -2180,7 +2182,7 @@
   (declare (dynamic-extent keyargs))
   (apply #'error condition keyargs))
 
-#+(or clx-ansi-common-lisp excl lcl3.0 CMU sbcl)
+#+(or clx-ansi-common-lisp excl lcl3.0 CMU)
 (defun x-cerror (proceed-format-string condition &rest keyargs)
   (declare (dynamic-extent keyargs))
   (apply #'cerror proceed-format-string condition keyargs))
@@ -2194,7 +2196,7 @@
 ;;; descriptors, Mach messages, etc.) to come through one routine anyone can
 ;;; use to wait for input.
 ;;;
-#+(or (and CMU (not mp)) sbcl)
+#+(and CMU (not mp)) 
 (defun x-error (condition &rest keyargs)
   (let ((condx (apply #'make-condition condition keyargs)))
     (when (eq condition 'closed-display)
@@ -2861,9 +2863,8 @@
 (defmacro with-underlying-simple-vector 
     ((variable element-type pixarray) &body body)
   (declare (ignore element-type))
-  `(kernel::with-array-data ((,variable ,pixarray)
-				  (start)
-				  (end))
+  `(#+cmu kernel::with-array-data #+sbcl sb-kernel::with-array-data
+    ((,variable ,pixarray) (start) (end))
     (declare (ignore start end))
     ,@body))
 
@@ -3257,7 +3258,7 @@
 	  (t
 	   (error "Invalid pixarray: ~S." pixarray)))))
 
-#+(or CMU sbcl)
+#+CMU
 ;;; COPY-BIT-RECT  --  Internal
 ;;;
 ;;;    This is the classic BITBLT operation, copying a rectangular subarray
@@ -3288,6 +3289,28 @@
 	  ((zerop count))
 	(declare (type array-index src-idx dest-idx count))
 	(kernel:bit-bash-copy sdata src-idx ddata dest-idx width)))))
+
+
+#+sbcl
+(defun copy-bit-rect (source source-width sx sy dest dest-width dx dy
+			     height width)
+  (declare (type array-index source-width sx sy dest-width dx dy height width))
+  #.(declare-buffun)
+  (sb-kernel::with-array-data ((sdata source) (sstart) (send))
+    (declare (ignore send))
+    (sb-kernel::with-array-data ((ddata dest) (dstart) (dend))
+      (declare (ignore dend))
+      (assert (and (zerop sstart) (zerop dstart)))
+      (do ((src-idx (index+ (* sb-vm:vector-data-offset sb-vm:n-word-bits)
+			    sx (index* sy source-width))
+		    (index+ src-idx source-width))
+	   (dest-idx (index+ (* sb-vm:vector-data-offset sb-vm:n-word-bits)
+			     dx (index* dy dest-width))
+		     (index+ dest-idx dest-width))
+	   (count height (1- count)))
+	  ((zerop count))
+	(declare (type array-index src-idx dest-idx count))
+	(sb-kernel:bit-bash-copy sdata src-idx ddata dest-idx width)))))
 
 #+(or CMU sbcl)
 (defun fast-read-pixarray-using-bitblt

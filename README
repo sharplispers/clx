@@ -1,3 +1,8 @@
+
+Original CLX README, retained for historical information.  See README.SBCL
+for more recent information
+
+--- 
 These files contain beta code, but they have been tested to some extent under
 Symbolics, TI, Lucid and Franz.  The files have been given .l suffixes to keep
 them within 12 characters, to keep SysV sites happy.  Please rename them with
