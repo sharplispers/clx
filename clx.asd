@@ -50,5 +50,6 @@
      (:file "manager")
      (:file "image")
      (:file "resource")
-     (:file "shape")))
+     (:file "shape")
+     (:file "xvidmode")))
 ;;; (:module doc ("doc") (:type :lisp-example))
