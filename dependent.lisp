@@ -935,10 +935,17 @@
 			      &key timeout)
 			&body body)
   ;; This macro is used by WITH-DISPLAY, which claims to be callable
-  ;; recursively.  So, had better use a recursive lock
-  (declare (ignore display))
-  `(sb-thread:with-recursive-lock (,lock)
-    ,@body))
+  ;; recursively.  So, had better use a recursive lock.
+  (declare (ignore display whostate))
+  (if timeout
+      `(handler-case
+	   (sb-ext:with-timeout ,timeout
+	     (sb-thread:with-recursive-lock (,lock)
+	       ,@body))
+	 (sb-ext:timeout () nil))
+      `(sb-thread:with-recursive-lock (,lock)
+	 ,@body)))
+      
 
 #+Genera
 (defmacro holding-lock ((locator display &optional whostate &key timeout)
@@ -1138,6 +1145,7 @@
 
 #+(and sbcl sb-thread)
 (defun process-block (whostate predicate &rest predicate-args)
+  (declare (ignore whostate))
   (declare (type function predicate))
   (let* ((pid (sb-thread:current-thread-id))
 	 (last (gethash  pid *process-conditions*))
@@ -1149,13 +1157,13 @@
 	      (sb-thread:make-waitqueue :name (format nil "queue ~A" pid)))))
     (unless last
       (setf (gethash pid *process-conditions*) (cons lock queue)))
-    (sb-thread::with-mutex (lock)
+    (sb-thread:with-mutex (lock)
       (loop
        (when (apply predicate predicate-args) (return))
        (handler-case
-	   (sb-unix::with-timeout .5
+	   (sb-ext:with-timeout .5
 	     (sb-thread:condition-wait queue lock))
-	 (sb-kernel::timeout (c)
+	 (sb-ext:timeout ()
 	   (format *trace-output* "process-block timed out~%")))))))
 
 ;;; PROCESS-WAKEUP: Check some other process' wait function.
@@ -1197,6 +1205,7 @@
   (destructuring-bind (lock . queue)
       (gethash (sb-thread:current-thread-id) *process-conditions*
 	       (cons nil nil))
+    (declare (ignore lock))
     (when queue
       (sb-thread:condition-notify queue))))
 
@@ -1285,7 +1294,7 @@
 ;;; we only use this queue for the spinlock word, in fact
 #+sbcl
 (defvar *conditional-store-queue*
-  (sb-thread::make-waitqueue :name "conditional store"))
+  (sb-thread:make-waitqueue :name "conditional store"))
 
 #+sbcl
 (defmacro conditional-store (place old-value new-value)
@@ -2966,7 +2975,7 @@ may use :internet or :local protocol"
 (defmacro with-underlying-simple-vector 
     ((variable element-type pixarray) &body body)
   (declare (ignore element-type))
-  `(#+cmu kernel::with-array-data #+sbcl sb-kernel::with-array-data
+  `(#+cmu kernel::with-array-data #+sbcl sb-kernel:with-array-data
     ((,variable ,pixarray) (start) (end))
     (declare (ignore start end))
     ,@body))
@@ -3399,9 +3408,9 @@ may use :internet or :local protocol"
 			     height width)
   (declare (type array-index source-width sx sy dest-width dx dy height width))
   #.(declare-buffun)
-  (sb-kernel::with-array-data ((sdata source) (sstart) (send))
+  (sb-kernel:with-array-data ((sdata source) (sstart) (send))
     (declare (ignore send))
-    (sb-kernel::with-array-data ((ddata dest) (dstart) (dend))
+    (sb-kernel:with-array-data ((ddata dest) (dstart) (dend))
       (declare (ignore dend))
       (assert (and (zerop sstart) (zerop dstart)))
       (do ((src-idx (index+ (* sb-vm:vector-data-offset sb-vm:n-word-bits)
