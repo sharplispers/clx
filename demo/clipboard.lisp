@@ -20,6 +20,12 @@
 ;;;   flipped on that most clients select on at least one of those
 ;;;   events.  This bug is fixed below.
 ;;;
+;;; * [ Update 2004-11-29, superseding to some extent the above ] in
+;;;   fact, these two things are related.  ICCCM says that the event
+;;;   disclaiming the ability to send in a given format should be sent
+;;;   with an empty event mask ("2.2 Responsibilities of the Selection
+;;;   Owner").
+;;;
 ;;; As ever with these things, the divisions in intellectual property
 ;;; between the writer of the original C program, Tor Andersson
 ;;; (contactable at tor [dot] andersson [at] gmail [dot] com) and the
@@ -106,16 +112,7 @@
 
 (defun send-copy (selection target property requestor time)
   (case target
-    ;; we are being a little liberal in what we accept here: no
-    ;; requestor should ask us for a UTF8_STRING selection because we
-    ;; don't advertise the capability (see the TARGETS clause below).
-    ;; However, Xt-based requestors appear not to query TARGETS,
-    ;; instead trying UTF8_STRING, COMPOUND_TEXT and STRING in order;
-    ;; Gdk-based requestors don't query TARGETS either, trying just
-    ;; UTF8_STRING (and giving up if the selection owner returns a
-    ;; null property).  So pretend that we can send UTF8_STRING
-    ;; selections.
-    ((:string :utf8_string)
+    ((:string)
      (format t "~&> sending text data~%") (finish-output)
      (change-property requestor property
                       "Hello, World (from the CLX clipboard)!" target 8
@@ -127,8 +124,7 @@
     (t
      (format t "~&> sending none~%") (finish-output)
      (setf property nil)))
-  (send-event requestor :selection-notify
-              (make-event-mask :button-press :property-change)
+  (send-event requestor :selection-notify (make-event-mask)
               :selection selection :target target :property property :time time
               :event-window requestor :window requestor))
 
