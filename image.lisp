@@ -2593,7 +2593,7 @@
 	      (index-incf count)
 	      (unless (index= count last)
 		(write-char #\, fstream))))
-	  (format fstream "};~%" fstream))))))
+	  (format fstream "};~%"))))))
 
 (defun bitmap-image (&optional plist &rest patterns)
   ;; Create an image containg pattern
