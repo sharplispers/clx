@@ -580,10 +580,13 @@
   '(or mask32 (clx-list event-mask-class)))
 
 (defconstant +pointer-event-mask-vector+
- '#(%error %error :button-press :button-release
-    :enter-window :leave-window :pointer-motion :pointer-motion-hint
-    :button-1-motion :button-2-motion :button-3-motion :button-4-motion
-    :button-5-motion :button-motion :keymap-state))
+  ;; the first two elements used to be '%error '%error (i.e. symbols, 
+  ;; and not keywords) but the vector is supposed to contain 
+  ;; keywords, so I renamed them -dan 2004.11.13
+  '#(:%error :%error :button-press :button-release
+     :enter-window :leave-window :pointer-motion :pointer-motion-hint
+     :button-1-motion :button-2-motion :button-3-motion :button-4-motion
+     :button-5-motion :button-motion :keymap-state))
 
 (deftype pointer-event-mask-class ()
   '(member :button-press :button-release
@@ -847,10 +850,10 @@
 ;;;    Converts from keyword-lists to integer and back
 ;;;
 (defun encode-mask (key-vector key-list key-type)
-  ;; KEY-VECTOR is a vector containg bit-position keywords.  The position of the
-  ;; keyword in the vector indicates its bit position in the resulting mask
-  ;; KEY-LIST is either a mask or a list of KEY-TYPE
-  ;; Returns NIL when KEY-LIST is not a list or mask.
+  ;; KEY-VECTOR is a vector containg bit-position keywords.  The
+  ;; position of the keyword in the vector indicates its bit position
+  ;; in the resulting mask.  KEY-LIST is either a mask or a list of
+  ;; KEY-TYPE Returns NIL when KEY-LIST is not a list or mask.
   (declare (type (simple-array keyword (*)) key-vector)
 	   (type (or mask32 list) key-list))
   (declare (clx-values (or mask32 null)))
