@@ -1,6 +1,6 @@
 -*- Text -*-
 
----  Changes in SBCL CLX 0.6, <FILL IN TIMESTAMP>        ---
+---  Changes in SBCL CLX 0.6, Tue Nov 16 2004  ---
 
 A port to ECL has been merged (Juan Jose Garcia Ripoll)
 
@@ -8,11 +8,12 @@ With the addition of an implementation of DYNAMIC-EXTENT &REST lists
 to SBCL, various functions (e.g. READ-INPUT, QUEUE-EVENT) in CLX
 should cons less.
 
-A Texinfo version of the CLX manual has been added, thansk to the work
-of Gilbert Baumann and Shawn Betts.  
+A Texinfo version of the CLX manual has been added (in manual/), thanks
+to the work of Gilbert Baumann and Shawn Betts.  
 
 The portable-clx mailing list has been created for development discussion
-and bug reports
+and bug reports.  See 
+http://lists.metacircles.com/cgi-bin/mailman/listinfo/portable-clx
 
 A demonstration of ICCCM-compliant selection handling for select and paste
 has been included in demo/clipboard.lisp

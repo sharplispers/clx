@@ -36,7 +36,7 @@
 
 (defsystem CLX
     :depends-on (sb-bsd-sockets)
-    :version "0.5.5"
+    :version "0.6"
     :serial t
     :default-component-class clx-source-file
     :components
