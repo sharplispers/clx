@@ -33,7 +33,7 @@
 ;;;   CMU
 ;;;   sbcl
 
-#+(or Genera Minima sbcl)
+#+(or Genera Minima sbcl ecl)
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (common-lisp:pushnew :clx-ansi-common-lisp common-lisp:*features*))
 
@@ -542,3 +542,27 @@
       (load-binary "image")
       (load-binary "resource")
       )))
+
+;;;
+;;; ECL likes to combine several files into a single dynamically loadable
+;;; library.
+;;;
+#+ecl
+(defconstant +clx-modules+
+  '("package" "depdefs" "clx" "dependent" "macros" "bufmac" "buffer"
+    "display" "gcontext" "input" "requests" "fonts" "graphics" "text"
+    "attributes" "translate" "keysyms" "manager" "image" "resource"))
+
+#+(or) ;ecl
+(flet ((compile-if-old (destdir sources &rest options)
+	 (mapcar #'(lambda (source)
+		     (let ((object (merge-pathnames destdir (compile-file-pathname source :type :object))))
+		       (unless (and (probe-file object)
+				    (>= (file-write-date object) (file-write-date source)))
+			 (apply #'compile-file source :output-file object options))
+		       object))
+		 sources)))
+  (let ((clx-objects (compile-if-old "./" +clx-modules+ :system-p t)))
+    (c::build-fasl "clx" :lisp-files clx-objects)))
+
+(mapcar #'load +clx-modules+)

@@ -1403,7 +1403,7 @@
 ;;; OPEN-X-STREAM - create a stream for communicating to the appropriate X
 ;;; server
 
-#-(or explorer Genera lucid kcl ibcl excl Minima CMU sbcl)
+#-(or explorer Genera lucid kcl ibcl excl Minima CMU sbcl ecl)
 (defun open-x-stream (host display protocol)
   host display protocol ;; unused
   (error "OPEN-X-STREAM not implemented yet."))
@@ -1511,7 +1511,7 @@
 						  (cdr (host-address host)))
 			  :foreign-port (+ *x-tcp-port* display)))
 
-#+sbcl
+#+(or sbcl ecl)
 (defconstant +X-unix-socket-path+
   "/tmp/.X11-unix/X"
   "The location of the X socket")
@@ -1533,7 +1533,15 @@
    :element-type '(unsigned-byte 8)
    :input t :output t :buffering :none))
 
-
+#+ecl
+(defun open-x-stream (host display protocol)
+  (declare (ignore protocol)
+	   (type (integer 0) display))
+  (let (socket)
+    (if (or (string= host "") (string= host "unix")) ; AF_UNIX doamin socket
+	(sys::open-unix-socket-stream
+	 (format nil "~A~D" +X-unix-socket-path+ display))
+	(si::open-client-stream host (+ 6000 display)))))
 
 ;;; BUFFER-READ-DEFAULT - read data from the X stream
 
@@ -1647,13 +1655,29 @@
 	  vector start (- end start))
 	 nil)))
 
+#+ecl
+(defun buffer-read-default (display vector start end timeout)
+  (declare (type display display)
+	   (type buffer-bytes vector)
+	   (type array-index start end)
+	   (type (or null fixnum) timeout))
+  #.(declare-buffun)
+  (cond ((and (eql timeout 0)
+	      (not (listen (display-input-stream display))))
+	 :timeout)
+	(t
+	 (read-sequence vector
+			(display-input-stream display)
+                        :start start
+                        :end end)
+	 nil)))
 
 ;;; WARNING:
 ;;;	CLX performance will suffer if your lisp uses read-byte for
 ;;;	receiving all data from the X Window System server.
 ;;;	You are encouraged to write a specialized version of
 ;;;	buffer-read-default that does block transfers.
-#-(or Genera explorer excl lcl3.0 Minima CMU sbcl)
+#-(or Genera explorer excl lcl3.0 Minima CMU sbcl ecl)
 (defun buffer-read-default (display vector start end timeout)
   (declare (type display display)
 	   (type buffer-bytes vector)
@@ -1742,6 +1766,18 @@
 	   (type array-index start end))
   #.(declare-buffun)
   (sb-impl::output-raw-bytes (display-output-stream display) vector start end)
+  nil)
+
+#+ecl
+(defun buffer-write-default (vector display start end)
+  (declare (type buffer-bytes vector)
+	   (type display display)
+	   (type array-index start end))
+  #.(declare-buffun)
+  (write-sequence vector
+                  (display-output-stream display)
+                  :start start
+                  :end end)
   nil)
 
 ;;; WARNING:
@@ -2171,7 +2207,7 @@
        (deallocate-gcontext-state ,saved-state))))
 
 ;;;----------------------------------------------------------------------------
-;;; How error detection should CLX do?
+;;; How much error detection should CLX do?
 ;;; Several levels are possible:
 ;;;
 ;;; 1. Do the equivalent of check-type on every argument.
@@ -2493,7 +2529,7 @@
 ;;  HOST hacking
 ;;-----------------------------------------------------------------------------
 
-#-(or explorer Genera Minima Allegro CMU sbcl)
+#-(or explorer Genera Minima Allegro CMU sbcl ecl)
 (defun host-address (host &optional (family :internet))
   ;; Return a list whose car is the family keyword (:internet :DECnet :Chaos)
   ;; and cdr is a list of network address bytes.
@@ -2662,6 +2698,24 @@
       ((:internet nil 0)
        (cons :internet (coerce (host-ent-address hostent) 'list))))))
 
+#+ecl
+(defun host-address (host &optional (family :internet))
+  ;; Return a list whose car is the family keyword (:internet :DECnet :Chaos)
+  ;; and cdr is a list of network address bytes.
+  (declare (type stringable host)
+	   (type (or null (member :internet :decnet :chaos) card8) family))
+  (declare (clx-values list))
+  (labels ((no-host-error ()
+	     (error "Unknown host ~S" host)))
+    (let ((addr (first (nth-value 3 (si::lookup-host-entry (string host))))))
+      (unless addr
+	(no-host-error))
+      (list :internet
+	    (ldb (byte 8 24) addr)
+	    (ldb (byte 8 16) addr)
+	    (ldb (byte 8  8) addr)
+	    (ldb (byte 8  0) addr)))))
+
 #+explorer ;; This isn't required, but it helps make sense of the results from access-hosts
 (defun get-host (host-object)
   ;; host-object is a list whose car is the family keyword (:internet :DECnet :Chaos)
@@ -2755,7 +2809,8 @@
   #+lcl3.0 (lcl:environment-variable name)
   #+CMU (cdr (assoc name ext:*environment-list* :test #'string=))
   #+sbcl (sb-ext:posix-getenv name)
-  #-(or sbcl excl lcl3.0 CMU) (progn name nil))
+  #+ecl (si:getenv name)
+  #-(or sbcl excl lcl3.0 CMU ecl) (progn name nil))
 
 (defun get-host-name ()
   "Return the same hostname as gethostname(3) would"
@@ -2764,7 +2819,8 @@
   #+(or cmu sbcl) (machine-instance)
   ;; resources-pathname was using short-site-name for this purpose
   #+excl (short-site-name)
-  #-(or excl cmu sbcl) (error "get-host-name not implemented"))
+  #+ecl (si:getenv "HOST")
+  #-(or excl cmu sbcl ecl) (error "get-host-name not implemented"))
 
 (defun homedir-file-pathname (name)
   (and #-(or unix mach) (search "Unix" (software-type) :test #'char-equal)
