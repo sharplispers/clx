@@ -26,7 +26,7 @@
 (define-keysym-set :latin-4	(keysym 3 0) (keysym 3 255))
 (define-keysym-set :kana	(keysym 4 0) (keysym 4 255))
 (define-keysym-set :arabic	(keysym 5 0) (keysym 5 255))
-(define-keysym-set :cryllic	(keysym 6 0) (keysym 6 255))
+(define-keysym-set :cyrillic	(keysym 6 0) (keysym 6 255))
 (define-keysym-set :greek	(keysym 7 0) (keysym 7 255))
 (define-keysym-set :tech	(keysym 8 0) (keysym 8 255))
 (define-keysym-set :special	(keysym 9 0) (keysym 9 255))
