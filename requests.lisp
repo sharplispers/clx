@@ -520,7 +520,7 @@
     ((or null card32) time)))
 
 (defun grab-button (window button event-mask
-		    &key (modifiers 0)
+		    &key (modifiers :any)
 			 owner-p sync-pointer-p sync-keyboard-p confine-to cursor)
   (declare (type window window)
 	   (type (or (member :any) card8) button)
@@ -540,7 +540,7 @@
     (pad8 1)
     (card16 (encode-modifier-mask modifiers))))
 
-(defun ungrab-button (window button &key (modifiers 0))
+(defun ungrab-button (window button &key (modifiers :any))
   (declare (type window window)
 	   (type (or (member :any) card8) button)
 	   (type modifier-mask modifiers))
@@ -763,7 +763,7 @@
   (with-buffer-request-and-reply (display *x-getinputfocus* 16 :sizes (8 32))
        ()
     (values
-      (or-get 8 (member :none :pointer-root) window)
+      (or-get 8 window (member :none :pointer-root))
       (member8-get 1 :none :pointer-root :parent))))
 
 (defun query-keymap (display &optional bit-vector)
