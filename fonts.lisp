@@ -163,6 +163,8 @@
 	(string name-string))
       (push font (display-font-cache display)))
     (incf (font-reference-count font))
+    (unless (font-font-info-internal font)
+      (query-font font))
     font))
 
 (defun open-font-internal (font)
