@@ -48,8 +48,10 @@
 	    (let* ((screen (display-default-screen display))
 		   (window (screen-root screen))
 		   (gcontext (create-gcontext
-			       :drawable window
-			       :font (open-font display "fixed"))))
+			      :foreground (screen-white-pixel screen)
+			      :background (screen-black-pixel screen)
+			      :drawable window
+			      :font (open-font display "fixed"))))
 	      (dotimes (i nimages)
 		(let ((image (image-test-get-image
 			       window
@@ -92,10 +94,8 @@
 	     (image-z :z-pixmap)))
 	 (image (get-image window :x x :y y :width width :height height
 			   :format format :result-type result-type)))
-    ;; XCreatePixmapCursor(3X11) says that x,y for hotspot are
-    ;; unsigned, so what we're doing here I don't know
-    ;;(setf (image-x-hot image) (- x))
-    ;;(setf (image-y-hot image) (- y))
+    (setf (getf (image-plist image) :root-x) x)
+    (setf (getf (image-plist image) :root-y) y)
     image))
 
 (defun image-test-subimage-parameters (image random-subimage-p)
@@ -120,6 +120,8 @@
 	      ((or image-xy image-z) 'image-x)))))
     (multiple-value-bind (x y width height)
 	(image-test-subimage-parameters image random-subimage-p)
+      (incf (getf (image-plist image) :root-x) x)
+      (incf (getf (image-plist image) :root-y) y)
       (copy-image image :x x :y y :width width :height height
 		  :result-type result-type))))
 
@@ -127,8 +129,10 @@
   (multiple-value-bind (src-x src-y width height)
       (image-test-subimage-parameters image random-subimage-p)
     (let* ((border-width 1)
-	   (x (- src-x #+nil (image-x-hot image) border-width))
-	   (y (- src-y #+nil (image-y-hot image) border-width)))
+	   (root-x (getf (image-plist image) :root-x))
+	   (root-y (getf (image-plist image) :root-y))
+	   (x (+ src-x root-x (- border-width)))
+	   (y (+ src-y root-y (- border-width))))
       (unless (or (zerop width) (zerop height))
 	(let ((window
 		(create-window
