@@ -1,4 +1,4 @@
-;;; -*- Lisp mode -*-
+;;; -*- Lisp -*- mode
 
 ;;; Original copyright message from defsystem.lisp:
 
