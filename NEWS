@@ -1,5 +1,9 @@
 -*- Text -*-
 
+---  Changes in SBCL CLX 0.7.0, FILL IN TIMESTAMP ---
+
+The SBCL support now depends on version 0.9.0 or greater.
+
 ---  Changes in SBCL CLX 0.6.1, Mon Mar 28 2005 ---
 
 experimental GLX extension support (from Janis Dzerins)
