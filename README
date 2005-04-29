@@ -18,7 +18,7 @@ a selection of patches were added from other CLXes around the net.
 
 This CLX distribution is intended to work under the latest released
 version of SBCL - please report the bug if it doesn't.  It should
-usually also work with earlier versions back to 0.8.1, and possibly
+usually also work with earlier versions back to 0.9.0, and possibly
 earlier still, but may need manual adjustment to the clx.asd file (to
 remove use of newly-introduced features).
 

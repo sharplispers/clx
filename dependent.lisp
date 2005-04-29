@@ -3545,7 +3545,7 @@ Returns a list of (host display-number screen protocol)."
 	   (count height (1- count)))
 	  ((zerop count))
 	(declare (type array-index src-idx dest-idx count))
-	(sb-kernel:bit-bash-copy sdata src-idx ddata dest-idx width)))))
+	(sb-kernel:ub1-bash-copy sdata src-idx ddata dest-idx width)))))
 
 #+(or CMU sbcl)
 (defun fast-read-pixarray-using-bitblt
