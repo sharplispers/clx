@@ -1,6 +1,6 @@
 -*- Text -*-
 
----  Changes in SBCL CLX 0.7.0, FILL IN TIMESTAMP ---
+---  Changes in SBCL CLX 0.7.0, Sun May 1 2005 ---
 
 The SBCL support now depends on version 0.9.0 or greater.
 
