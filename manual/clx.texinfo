@@ -15688,9 +15688,10 @@ of zero is a hint that no repetition should occur.
 @node Extensions, Errors, Control Functions, Top
 @chapter Extensions
 @menu
-* Extensions (Extensions)::
-* SHAPE - The X11 Nonrectangular Window Shape Extension::
-* RENDER - A new rendering system for X11::
+* Extensions (Extensions)::     
+* SHAPE - The X11 Nonrectangular Window Shape Extension::  
+* RENDER - A new rendering system for X11::  
+* DPMS - The X11 Display Power Management Signaling Extension::  
 @end menu
 
 @node Extensions (Extensions), SHAPE - The X11 Nonrectangular Window Shape Extension, Extensions, Extensions
@@ -15778,7 +15779,7 @@ Type @var{card8} or @var{null}.
 
 This documentation is yet to be written.
 
-@node RENDER - A new rendering system for X11,  , SHAPE - The X11 Nonrectangular Window Shape Extension, Extensions
+@node RENDER - A new rendering system for X11, DPMS - The X11 Display Power Management Signaling Extension, SHAPE - The X11 Nonrectangular Window Shape Extension, Extensions
 @section RENDER - A new rendering system for X11
 
 
@@ -16115,6 +16116,134 @@ Requests the sequence of glyphs to be drawn with the glyph-set.
 @subsection Errors
 
 What new errors Xrender defines...
+
+
+@node  DPMS - The X11 Display Power Management Signaling Extension,  , RENDER - A new rendering system for X11, Extensions
+@section DPMS - The X11 Display Power Management Signaling Extension
+
+@defun dpms-get-version display &optional (major-version 1) (minor-version 1)
+@table @var
+@item display
+@var{display}
+@item major-version
+@var{card16}
+@item minor-version
+@var{card16}
+@end table
+
+
+Return two values: the major and minor version of the DPMS
+implementation the server supports.
+
+If supplied, the @var{major-version} and @var{minor-version}
+indicate what version of the protocol the client wants the server to
+implement.
+@end defun
+
+@defun dpms-capable display
+@table @var
+@item display
+@var{display}
+@end table
+
+
+True if the currently running server's devices are capable of DPMS
+operations.
+
+The truth value of this request is implementation defined, but is
+generally based on the capabilities of the graphic card and monitor
+combination.  Also, the return value in the case of heterogeneous
+multi-head servers is implementation defined.
+@end defun
+
+
+@defun dpms-get-timeouts display
+@table @var
+@item display
+@var{display}
+@end table
+
+
+Return three values: the current values of the DPMS timeout values.
+The timeout values are (in order returned): standby, suspend and off.
+All values are in units of seconds.  A value of zero for any timeout
+value indicates that the mode is disabled.
+@end defun
+
+@defun dpms-set-timeouts display standby suspend off
+@table @var
+@item display
+@var{display}
+@item standby
+@var{card16}
+@item suspend
+@var{card16}
+@item off 
+@var{card16}
+@end table
+
+
+Set the values of the DPMS timeouts.  All values are in units of
+seconds.  A value of zero for any timeout value disables that mode.
+@end defun
+ 
+@defun dpms-enable display
+@table @var
+@item display
+@var{display}
+@end table
+
+
+Enable the DPMS characteristics of the server using the server's
+currently stored timeouts.  If DPMS is already enabled, no change is
+affected.
+@end defun
+
+@defun dpms-disable display
+@table @var
+@item display
+@var{display}
+@end table
+
+
+Disable the DPMS characteristics of the server.  It does not affect
+the core or extension screen savers.  If DPMS is already disabled, no
+change is effected.
+
+This request is provided so that DPMS may be disabled without damaging
+the server's stored timeout values.
+@end defun
+
+@defun dpms-force-level display power-level
+@table @var
+@item display
+@var{display}
+@item power-level
+(member :dpms-mode-on :dpms-mode-standby :dpms-mode-suspend :dpms-mode-off)
+@end table
+
+
+Forces a specific DPMS level on the server.
+@end defun
+
+@defun dpms-info display
+@table @var
+@item display
+@var{display}
+@end table
+
+
+Returns two values: the DPMS power-level and state value for the
+display.
+
+State is one of the keywords DPMS-ENABLED or DPMS-DISABLED.  
+
+If state is DPMS-ENABLED, then power-level is returned as one of the
+keywords DPMS-MODE-ON, DPMS-MODE-STANDBY, DPMS-MODE-SUSPEND or
+DPMS-MODE-OFF.  If state is DPMS-DISABLED, then power-level is
+undefined and returned as NIL.
+@end defun
+
 
 @node Errors, Undocumented, Extensions, Top
 @chapter Errors

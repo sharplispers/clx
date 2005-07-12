@@ -68,7 +68,8 @@
 	       (:file "xvidmode")
 	       (:xrender-source-file "xrender")
                (:file "glx")
-               (:file "gl" :depends-on ("glx"))))
+               (:file "gl" :depends-on ("glx"))
+	       (:file "dpms")))
      (:module demo
 	      :default-component-class example-source-file
 	      :components
