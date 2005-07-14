@@ -1329,17 +1329,15 @@
 	    (setf ,place ,new-value)
 	    t))))
 
-;;; we only use this queue for the spinlock word, in fact
 #+sbcl
-(defvar *conditional-store-queue*
-  (sb-thread:make-waitqueue :name "conditional store"))
-
-#+sbcl
-(defmacro conditional-store (place old-value new-value)
-  `(sb-thread::with-spinlock (*conditional-store-queue*)
-     (cond ((eq ,place ,old-value)
-	    (setf ,place ,new-value)
-	    t))))
+(progn
+  (defvar *conditional-store-lock*
+    (sb-thread:make-mutex :name "conditional store"))
+  (defmacro conditional-store (place old-value new-value)
+    `(sb-thread:with-mutex (*conditional-store-lock*)
+       (cond ((eq ,place ,old-value)
+	      (setf ,place ,new-value)
+	      t)))))
 
 ;;;----------------------------------------------------------------------------
 ;;; IO Error Recovery
