@@ -1282,7 +1282,7 @@
 
 #+sbcl
 (defun current-process ()
-  (sb-thread:current-thread-id))
+  sb-thread:*current-thread*)
 
 ;;; WITHOUT-INTERRUPTS -- provide for atomic operations.
 
