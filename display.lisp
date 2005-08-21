@@ -41,35 +41,48 @@
 
 (defun read-xauth-entry (stream)
   (labels ((read-short (stream &optional (eof-errorp t))
-	     (let ((high-byte (read-byte stream eof-errorp)))
-	       (and high-byte
-		    (dpb high-byte (byte 8 8) (read-byte stream)))))
-	   (read-short-length-string (stream)
-	     (let ((length (read-short stream)))
-	       (let ((string (make-string length)))
-		 (dotimes (k length)
-		   (setf (schar string k) (card8->char (read-byte stream))))
-		 string)))
-	   (read-short-length-vector (stream)
-	     (let ((length (read-short stream)))
-	       (let ((vector (make-array length :element-type '(unsigned-byte 8))))
-		 (dotimes (k length)
-		   (setf (aref vector k) (read-byte stream)))
-		 vector))))
-    (let ((family (read-short stream nil)))
-      (if (null family)
-	(list nil nil nil nil nil)
-	(let* ((address (read-short-length-vector stream))
-	       (number (parse-integer (read-short-length-string stream)))
-	       (name (read-short-length-string stream))
-	       (data (read-short-length-vector stream))
-	       (family (or (car (rassoc family *protocol-families*)) family)))
-	  (list 
-	   family
-	   (ecase family
-	     (:local (map 'string #'code-char address))
-	     (:internet (coerce address 'list)))
-	   number name data))))))
+             (let ((high-byte (read-byte stream eof-errorp)))
+               (and high-byte
+                    (dpb high-byte (byte 8 8) (read-byte stream)))))
+           (read-short-length-string (stream)
+             (let ((length (read-short stream)))
+               (let ((string (make-string length)))
+                 (dotimes (k length)
+                   (setf (schar string k) (card8->char (read-byte stream))))
+                 string)))
+           (read-short-length-vector (stream)
+             (let ((length (read-short stream)))
+               (let ((vector (make-array length 
+                                         :element-type '(unsigned-byte 8))))
+                 (dotimes (k length)
+                   (setf (aref vector k) (read-byte stream)))
+                 vector))))
+    (let ((family-id (read-short stream nil)))
+      (if (null family-id)
+          (list nil nil nil nil nil)
+          (let* ((address-data (read-short-length-vector stream))
+                 (number (parse-integer (read-short-length-string stream)))
+                 (name (read-short-length-string stream))
+                 (data (read-short-length-vector stream))
+                 (family (car (rassoc family-id *protocol-families*))))
+            (unless family
+              (return-from read-xauth-entry
+                ;; we return FAMILY-ID to signal to
+                ;; GET-BEST-AUTHORIZATION that we haven't finished
+                ;; with the stream.
+                (list family-id nil nil nil nil)))
+            (let ((address 
+                   (case family
+                     (:local (map 'string #'code-char address-data))
+                     (:internet (coerce address-data 'list))
+                     ;; FIXME: we can probably afford not to support
+                     ;; :DECNET or :CHAOSNET in this modern age, but
+                     ;; :INTERNET6 probably deserve support.  -- CSR,
+                     ;; 2005-08-07
+                     (t nil))))
+              ;; if ADDRESS is NIL by this time, we will never match
+              ;; the address of DISPLAY.
+              (list family address number name data)))))))
 
 (defun get-best-authorization (host display protocol)
   ;; parse .Xauthority, extract the cookie for DISPLAY on HOST.
