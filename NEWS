@@ -1,4 +1,7 @@
 -*- Text -*-
+---  Changes in SBCL CLX 0.7.1, Wed Aug 24 2005 ---
+
+Works in SBCL 0.9.2 and newer.
 
 ---  Changes in SBCL CLX 0.7.0, Sun May 1 2005 ---
 

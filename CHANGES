@@ -1,9 +1,9 @@
 Details of changes since R5:
 
-NOTE: this file is not updated any more.  Dan's SBCL changes since
-checking into CVS can be found from the CVS logs.  There may however
-be some Dark Ages between when this file was last updated and the
-version he started from. 
+NOTE: this file is not updated any more.  Changes since checking into
+version control can be found from darcs in some way shape or form.
+There may however be some Dark Ages between when this file was last
+updated and the version that was the initial version control checkin.
 
 
 Changes in CLX 5.02:
