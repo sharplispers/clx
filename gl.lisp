@@ -1159,6 +1159,7 @@
 
 ;;; Opcodes.
 
+(eval-when (:compile-toplevel :load-toplevel :execute)
 (defconstant +get-string+       129)
 (defconstant +new-list+         101)
 (defconstant +end-list+         102)
@@ -2086,6 +2087,7 @@
 (defconstant +ext-texture-env-add+                1) 
 (defconstant +mesa-window-pos+                    1) 
 (defconstant +mesa-resize-buffers+                1)
+)
 
 
 
