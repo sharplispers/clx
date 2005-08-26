@@ -2123,6 +2123,18 @@
   value)
 
 
+#+openmcl
+(defun aset-float32 (value array index)
+  (declare (type single-float value)
+           (type buffer-bytes array)
+           (type array-index index))
+  #.(declare-buffun)
+  (let ((bits (ccl::single-float-bits value)))
+    (declare (type (unsigned-byte 32) bits))
+    (aset-card32 bits array index))
+  value)
+
+
 #+sbcl
 (defun aset-float64 (value array index)
   (declare (type double-float value)
@@ -2148,6 +2160,20 @@
     (declare (type (unsigned-byte 32) low high))
     (aset-card32 low array index)
     (aset-card32 high array (+ index 4)))
+  value)
+
+
+#+openmcl
+(defun aset-float64 (value array index)
+  (declare (type double-float value)
+           (type buffer-bytes array)
+           (type array-index index))
+  #.(declare-buffun)
+  (multiple-value-bind (low high)
+      (ccl::double-float-bits value)
+    (declare (type (unsigned-byte 32) low high))
+    (aset-card32 low array index)
+    (aset-card32 high array (the array-index (+ index 4))))
   value)
 
 
