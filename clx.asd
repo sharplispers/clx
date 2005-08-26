@@ -35,7 +35,7 @@
 (defclass legacy-file (static-file) ())
 
 (defsystem CLX
-    :depends-on (sb-bsd-sockets)
+    :depends-on (#+sbcl sb-bsd-sockets)
     :version "0.7.1"
     :serial t
     :default-component-class clx-source-file
@@ -43,7 +43,8 @@
     ((:file "package")
      (:file "depdefs")
      (:file "clx")
-     (:file "dependent")
+     #-(or openmcl) (:file "dependent")
+     #+openmcl (:file "dep-openmcl")
      (:file "macros")
      (:file "bufmac")
      (:file "buffer")
