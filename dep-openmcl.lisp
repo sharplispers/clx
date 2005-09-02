@@ -1096,58 +1096,29 @@ Returns a list of (host display-number screen protocol)."
 ;;; FAST-READ-PIXARRAY, FAST-WRITE-PIXARRAY and FAST-COPY-PIXARRAY routines
 ;;; return T if they can do it, NIL if they can't.
 
-;;; FIXME: though we have some #+sbcl -conditionalized routines in
-;;; here, they would appear not to work, and so are commented out in
-;;; the the FAST-xxx-PIXARRAY routines themseleves.  Investigate
-;;; whether the unoptimized routines are often used, and also whether
-;;; speeding them up while maintaining correctness is possible.
-
 ;;; FAST-READ-PIXARRAY - fill part of a pixarray from a buffer of card8s
 
 (defun fast-read-pixarray (bbuf boffset pixarray
 			   x y width height padded-bytes-per-line
 			   bits-per-pixel
 			   unit byte-lsb-first-p bit-lsb-first-p)
-  (declare (type buffer-bytes bbuf)
-	   (type array-index boffset
-		 padded-bytes-per-line)
-	   (type pixarray pixarray)
-	   (type card16 x y width height)
-	   (type (member 1 4 8 16 24 32) bits-per-pixel)
-	   (type (member 8 16 32) unit)
-	   (type generalized-boolean byte-lsb-first-p bit-lsb-first-p))
-  (progn bbuf boffset pixarray x y width height padded-bytes-per-line
-	 bits-per-pixel unit byte-lsb-first-p bit-lsb-first-p)
-  (read-pixarray-internal
-          bbuf boffset pixarray x y width height padded-bytes-per-line
-          bits-per-pixel t
-	  unit byte-lsb-first-p bit-lsb-first-p
-	  +image-unit+ +image-byte-lsb-first-p+ +image-bit-lsb-first-p+))
+  (declare (ignore bbuf boffset pixarray x y width height
+                   padded-bytes-per-line bits-per-pixel unit
+                   byte-lsb-first-p bit-lsb-first-p))
+  nil)
 
 ;;; FAST-WRITE-PIXARRAY - copy part of a pixarray into an array of CARD8s
 
 (defun fast-write-pixarray (bbuf boffset pixarray x y width height
 			    padded-bytes-per-line bits-per-pixel
 			    unit byte-lsb-first-p bit-lsb-first-p)
-  (declare (type buffer-bytes bbuf)
-	   (type pixarray pixarray)
-	   (type card16 x y width height)
-	   (type array-index boffset padded-bytes-per-line)
-	   (type (member 1 4 8 16 24 32) bits-per-pixel)
-	   (type (member 8 16 32) unit)
-	   (type generalized-boolean byte-lsb-first-p bit-lsb-first-p))
-  (progn bbuf boffset pixarray x y width height padded-bytes-per-line
-	 bits-per-pixel unit byte-lsb-first-p bit-lsb-first-p)
-  (write-pixarray-internal
-	  bbuf boffset pixarray x y width height padded-bytes-per-line
-	  bits-per-pixel t
-	  +image-unit+ +image-byte-lsb-first-p+ +image-bit-lsb-first-p+
-	  unit byte-lsb-first-p bit-lsb-first-p))
+  (declare (ignore bbuf boffset pixarray x y width height
+                   padded-bytes-per-line bits-per-pixel unit
+                   byte-lsb-first-p bit-lsp-first-p))
+  nil)
 
 ;;; FAST-COPY-PIXARRAY - copy part of a pixarray into another
 
 (defun fast-copy-pixarray (pixarray copy x y width height bits-per-pixel)
-  (declare (type pixarray pixarray copy)
-	   (type card16 x y width height)
-	   (type (member 1 4 8 16 24 32) bits-per-pixel))
-  (progn pixarray copy x y width height bits-per-pixel nil))
+  (declare (ignore pixarray copy x y width height bits-per-pixel))
+  nil)
