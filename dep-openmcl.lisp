@@ -1004,7 +1004,7 @@ Returns a list of (host display-number screen protocol)."
   '(unsigned-byte 24))
 
 (deftype pixarray-32-element-type ()
-  'fixnum)
+  '(unsigned-byte 32))
 
 (deftype pixarray-1  ()
   '(array pixarray-1-element-type (* *)))
