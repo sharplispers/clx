@@ -32,8 +32,12 @@ send mail describing the process so that future versions can incorporate
 your instructions.
 
 If you are following SBCL CVS and this CLX does not run in it, please
-check the CVS tree for this CLX distribution to see if your bug has
-been fixed already.  See http://cvs.telent.net/ for details
+check the darcs repositor{y,ies} for this CLX distribution to see if
+your bug has been fixed already.
+
+darcs get http://verisons.telent.net/clx # version from which releases are made
+          http://common-lisp.net/~crhodes/clx # patches merged by Christophe
+          http://monday-monkey.com/repos/clx/ # OpenMCL tree by bryan o'connor?
 
 = Building using asdf-install
 
@@ -105,4 +109,4 @@ Note that your post will be held for approval if you are not subscribed.
 -- 
 Heavy lifting by <Raymond.Wiker at fast.no>
 ASDFized version and ongoing by Daniel Barlow <dan at metacircles.com> 
-and Christophe Rhodes <csr21 at cam.ac.uk>
+and (mostly, these days) Christophe Rhodes <csr21 at cam.ac.uk>

@@ -1,4 +1,12 @@
 -*- Text -*-
+---  Changes in SBCL CLX 0.7.2, Tue Jan 10 2006 ---
+
+OpenMCL fixes
+DMPS extension support
+Xauthority ipv6 parsing fixes
+
+Thanks to Bryan O'Connor, Matthew Kennedy, Christophe Rhodes
+
 ---  Changes in SBCL CLX 0.7.1, Wed Aug 24 2005 ---
 
 Works in SBCL 0.9.2 and newer.
