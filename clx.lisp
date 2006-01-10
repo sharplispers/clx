@@ -381,7 +381,7 @@
   (print-unreadable-object (drawable stream :type t)
     (print-display-name (drawable-display drawable) stream)
     (write-string " " stream)
-    (prin1 (drawable-id drawable) stream)))
+    (let ((*print-base* 16)) (prin1 (drawable-id drawable) stream))))
 
 (def-clx-class (window (:include drawable) (:copier nil)
 		       (:print-function print-drawable))
