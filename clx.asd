@@ -43,8 +43,9 @@
     ((:file "package")
      (:file "depdefs")
      (:file "clx")
-     #-(or openmcl) (:file "dependent")
+     #-(or openmcl allegro) (:file "dependent")
      #+openmcl (:file "dep-openmcl")
+     #+allegro (:file "dep-allegro")
      (:file "macros")
      (:file "bufmac")
      (:file "buffer")
@@ -61,6 +62,8 @@
      (:file "manager")
      (:file "image")
      (:file "resource")
+     #+allegro
+     (:file "excldep" :pathname "excldep.lisp")
      (:module extensions
 	      :pathname #.(make-pathname :directory '(:relative))
 	      :components
@@ -102,7 +105,6 @@
      (:legacy-file "exclREADME")
      (:legacy-file "exclcmac" :pathname "exclcmac.lisp")
      (:legacy-file "excldepc" :pathname "excldep.c")
-     (:legacy-file "excldep" :pathname "excldep.lisp")
      (:legacy-file "sockcl" :pathname "sockcl.lisp")
      (:legacy-file "socket" :pathname "socket.c")
      (:legacy-file "defsystem" :pathname "defsystem.lisp")

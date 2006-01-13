@@ -30,7 +30,7 @@
 (eval-when (eval compile load)
   (let ((x '#(1)))
     (if (not (eq 0 (sys::memref x
-				#.(comp::mdparam 'comp::md-svector-data0-adj)
+				#.(sys::mdparam 'comp::md-lvector-data0-norm)
 				0 :unsigned-byte)))
 	(pushnew :little-endian *features*)
       (pushnew :big-endian *features*))))
@@ -184,12 +184,29 @@
 
 ;; Return t if there is a character available for reading or on error,
 ;; otherwise return nil.
+#-(version>= 6 0)
+(progn
+
+#-(or (version>= 4 2) mswindows)
 (defun fd-char-avail-p (fd)
   (multiple-value-bind (available-p errcode)
       (comp::.primcall-sargs 'sys::filesys excl::fs-char-avail fd)
     (excl:if* errcode
        then t
        else available-p)))
+
+#+(and (version>= 4 2) (not mswindows))
+(defun fd-char-avail-p (fd)
+  (excl::filesys-character-available-p fd))
+
+#+mswindows
+(defun fd-char-avail-p (socket-stream)
+  (listen socket-stream))
+)
+
+#+(version>= 6 0)
+(defun fd-char-avail-p (socket-stream)
+  (excl::read-no-hang-p socket-stream))
 
 (defmacro with-interrupt-checking-on (&body body)
   `(locally (declare (optimize (safety 1)))
@@ -199,54 +216,23 @@
 ;; Start storing at index 'start-index' and read exactly 'length' bytes.
 ;; Return t if an error or eof occurred, nil otherwise.
 (defun fd-read-bytes (fd vector start-index length)
-  (declare (fixnum fd start-index length)
-	   (type (simple-array (unsigned-byte 8) (*)) vector))
+  ;; Read from the given stream fd into 'vector', which has element type card8.
+  ;; Start storing at index 'start-index' and read exactly 'length' bytes.
+  ;; Return t if an error or eof occurred, nil otherwise.
+  (declare (fixnum next-index start-index length))
   (with-interrupt-checking-on
-   (do ((rest length))
-       ((eq 0 rest) nil)
-     (declare (fixnum rest))
-     (multiple-value-bind (numread errcode)
-	 (comp::.primcall-sargs 'sys::filesys excl::fs-read-bytes fd vector
-				start-index rest)
-       (declare (fixnum numread))
-       (excl:if* errcode
-	  then (if (not (eq errcode
-			    excl::*error-code-interrupted-system-call*))
-		   (return t))
-	elseif (eq 0 numread)
-	  then (return t)
-	  else (decf rest numread)
-	       (incf start-index numread))))))
-
-
-(when (plusp (ff:get-entry-points
-	      (make-array 1 :initial-contents
-			  (list (ff:convert-to-lang "fd_wait_for_input")))
-	      (make-array 1 :element-type '(unsigned-byte 32))))
-  (ff:remove-entry-point (ff:convert-to-lang "fd_wait_for_input"))
-  (load "excldep.o"))
-
-(when (plusp (ff:get-entry-points
-	      (make-array 1 :initial-contents
-			  (list (ff:convert-to-lang "connect_to_server")))
-	      (make-array 1 :element-type '(unsigned-byte 32))))
-  (ff:remove-entry-point (ff:convert-to-lang "connect_to_server" :language :c))
-  (load "socket.o"))
-
-(ff:defforeign-list `((connect-to-server
-		       :entry-point
-		       ,(ff:convert-to-lang "connect_to_server")
-		       :return-type :fixnum
-		       :arg-checking nil
-		       :arguments (string fixnum))
-		      (fd-wait-for-input
-		       :entry-point ,(ff:convert-to-lang "fd_wait_for_input")
-		       :return-type :fixnum
-		       :arg-checking nil
-		       :call-direct t
-		       :callback nil
-		       :allow-other-keys t
-		       :arguments (fixnum fixnum))))
+      (let ((end-index (+ start-index length)))
+	(loop
+	  (let ((next-index (excl:read-vector vector fd 
+					      :start start-index
+					      :end end-index)))
+	    (excl:if* (eq next-index start-index)
+	       then			; end of file before was all filled up
+		    (return t)
+	     elseif (eq next-index end-index)
+	       then			; we're all done
+		    (return nil)
+	       else (setq start-index next-index)))))))
 
 
 ;; special patch for CLX (various process fixes)
