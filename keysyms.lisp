@@ -166,6 +166,21 @@
   (define-keysym #\backspace (keysym 255 008))	; :tty
   )
 
+;;; these keysym definitions are only correct if the underlying lisp's
+;;; definition of characters between 160 and 255 match latin1 exactly.
+;;; If the characters are in some way locale-dependent (as, I believe,
+;;; in Allegro8) or are treated as opaque without any notions of
+;;; graphicness or case (as in cmucl and openmcl) then defining these
+;;; keysyms is either not useful or wrong.  -- CSR, 2006-03-14
+#+sbcl
+(progn
+  (do ((i 160 (+ i 1)))
+      ((> i 256))
+    (if (or (<= #xc0 i #xd6)
+            (<= #xd8 i #xde))
+        (define-keysym (code-char i) i :lowercase (+ i 32))
+        (define-keysym (code-char i) i))))
+
 #+(or lispm excl)
 (progn   ;; Nonstandard characters 
   (define-keysym #\escape (keysym 255 027))	; :tty
