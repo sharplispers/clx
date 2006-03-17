@@ -175,7 +175,7 @@
 #+sbcl
 (progn
   (do ((i 160 (+ i 1)))
-      ((> i 256))
+      ((>= i 256))
     (if (or (<= #xc0 i #xd6)
             (<= #xd8 i #xde))
         (define-keysym (code-char i) i :lowercase (+ i 32))
