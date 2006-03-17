@@ -715,12 +715,12 @@ by every function, which attempts to generate RENDER requests."
       (resource-id (picture-id source))
       (resource-id (if mask (picture-id mask) 0))
       (resource-id (picture-id dest))
-      (card16 src-x)
-      (card16 src-y)
-      (card16 mask-x)
-      (card16 mask-y)
-      (card16 dst-x)
-      (card16 dst-y)
+      (int16 src-x)
+      (int16 src-y)
+      (int16 mask-x)
+      (int16 mask-y)
+      (int16 dst-x)
+      (int16 dst-y)
       (card16 width)
       (card16 height))))
 
@@ -785,7 +785,7 @@ by every function, which attempts to generate RENDER requests."
       (int16 src-x) (int16 src-y)
       (card8 (- end start)) ;length of glyph elt
       (card8 0) (card16 0) ;padding
-      (card16 dest-x) (card16 dest-y)             ;dx, dy
+      (int16 dest-x) (int16 dest-y)             ;dx, dy
       ((sequence :format card8) sequence))))
 
 (defmacro %render-composite-glyphs
@@ -802,7 +802,7 @@ by every function, which attempts to generate RENDER requests."
     (int16 ,src-x) (int16 ,src-y)
     (card8 (- ,end ,start))                     ;length of glyph elt
     (card8 0) (card16 0)                        ;padding? really?
-    (card16 ,dest-x) (card16 ,dest-y)           ;dx, dy
+    (int16 ,dest-x) (int16 ,dest-y)           ;dx, dy
     ((sequence :format ,type :start ,start :end ,end :transform ,transform) ,sequence)))
 
 (defun render-composite-glyphs (dest glyph-set source dest-x dest-y sequence
