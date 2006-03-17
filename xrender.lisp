@@ -344,7 +344,10 @@ by every function, which attempts to generate RENDER requests."
                :out :out-reverse :atop :atop-reverse :xor :add :saturate :maximum))
     ((index thing) `(member8-put ,index ,thing
                      :clear :src :dst :over :over-reverse :in :in-reverse
-                     :out :out-reverse :atop :atop-reverse :xor :add :saturate :maximum))))
+                     :out :out-reverse :atop :atop-reverse :xor :add :saturate :maximum)))
+  (deftype render-op ()
+    '(member :clear :src :dst :over :over-reverse :in :in-reverse
+      :out :out-reverse :atop :atop-reverse :xor :add :saturate :maximum)))
 
 ;; Now these pictures objects are like graphics contexts. I was about
 ;; to introduce a synchronous mode, realizing that the RENDER protocol
