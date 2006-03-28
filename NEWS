@@ -1,8 +1,15 @@
 -*- Text -*-
+-- Changes in telent CLX 0.7.3, Tue Mar 28 2006 ---
+
+Support for Allegro CL (6.2 and later) (Mikel Evins)
+Latin 1 keysyms (Christophe Rhodes)
+Some protocol fixes (Douglas Crosher)
+Define a RENDER-OP typ (Douglas Crosher)
+
 ---  Changes in SBCL CLX 0.7.2, Tue Jan 10 2006 ---
 
 OpenMCL fixes
-DMPS extension support
+DPMS extension support
 Xauthority ipv6 parsing fixes
 
 Thanks to Bryan O'Connor, Matthew Kennedy, Christophe Rhodes
