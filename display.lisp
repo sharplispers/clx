@@ -350,8 +350,9 @@ authority data for the local machine's actual hostname - as returned by
 gethostname(3) - is used instead."
   (destructuring-bind (host display screen protocol)
       (get-default-display display-name)
-    (declare (ignore screen))
-    (open-display host :display display :protocol protocol)))
+    (let ((display (open-display host :display display :protocol protocol)))
+      (setf (display-default-screen display) (nth screen (display-roots display)))
+      display)))
 
 (defun open-display (host &key (display 0) protocol authorization-name authorization-data)
   ;; Implementation specific routine to setup the buffer for a
