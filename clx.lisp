@@ -343,6 +343,7 @@
   (atom-id-map (make-hash-table :test (resource-id-map-test)
 				:size *atom-cache-size*)
 	       :type hash-table)
+  (extended-max-request-length 0 :type card32)
   )
 
 (defun print-display-name (display stream)

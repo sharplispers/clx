@@ -68,6 +68,7 @@
 	      :pathname #.(make-pathname :directory '(:relative))
 	      :components
 	      ((:file "shape")
+	       (:file "big-requests")
 	       (:file "xvidmode")
 	       (:xrender-source-file "xrender")
                (:file "glx")
