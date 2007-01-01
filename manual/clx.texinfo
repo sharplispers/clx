@@ -240,6 +240,8 @@ Extensions
 * Extensions (Extensions)::
 * SHAPE - The X11 Nonrectangular Window Shape Extension::
 * RENDER - A new rendering system for X11::
+* DPMS - The X11 Display Power Management Signaling Extension::  
+* BIG-REQUESTS - Big Requests Extension::  
 
 RENDER - A new rendering system for X11
 
@@ -15692,6 +15694,7 @@ of zero is a hint that no repetition should occur.
 * SHAPE - The X11 Nonrectangular Window Shape Extension::  
 * RENDER - A new rendering system for X11::  
 * DPMS - The X11 Display Power Management Signaling Extension::  
+* BIG-REQUESTS - Big Requests Extension::  
 @end menu
 
 @node Extensions (Extensions), SHAPE - The X11 Nonrectangular Window Shape Extension, Extensions, Extensions
@@ -16118,7 +16121,7 @@ Requests the sequence of glyphs to be drawn with the glyph-set.
 What new errors Xrender defines...
 
 
-@node  DPMS - The X11 Display Power Management Signaling Extension,  , RENDER - A new rendering system for X11, Extensions
+@node  DPMS - The X11 Display Power Management Signaling Extension, BIG-REQUESTS - Big Requests Extension, RENDER - A new rendering system for X11, Extensions
 @section DPMS - The X11 Display Power Management Signaling Extension
 
 @defun dpms-get-version display &optional (major-version 1) (minor-version 1)
@@ -16244,9 +16247,16 @@ DPMS-MODE-OFF.  If state is DPMS-DISABLED, then power-level is
 undefined and returned as NIL.
 @end defun
 
+@node BIG-REQUESTS - Big Requests Extension, , DPMS - The X11 Display Power Management Signaling Extension, Extensions
+@section BIG-REQUESTS - Big Requests Extension
 
-@node Errors, Undocumented, Extensions, Top
+@defun display-extended-max-request-length display
+@end defun
+@defun enable-big-requests display
+@end defun
+
 @chapter Errors
+@node Errors, Undocumented, Extensions, Top
 
 @menu
 * Introduction (Errors)::
