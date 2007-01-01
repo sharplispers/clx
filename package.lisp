@@ -98,7 +98,8 @@
     device-event-mask-class discard-current-event discard-font-info display
     display-after-function display-authorization-data display-authorization-name
     display-bitmap-format display-byte-order display-default-screen
-    display-display display-error-handler display-finish-output
+    display-display display-error-handler 
+    display-extended-max-request-length display-finish-output
     display-force-output display-host display-image-lsb-first-p
     display-invoke-after-function display-keycode-range display-max-keycode
     display-max-request-length display-min-keycode display-motion-buffer-size
@@ -268,7 +269,8 @@
     device-event-mask-class discard-current-event discard-font-info display
     display-after-function display-authorization-data display-authorization-name
     display-bitmap-format display-byte-order display-default-screen
-    display-display display-error-handler display-finish-output
+    display-display display-error-handler 
+    display-extended-max-request-length display-finish-output
     display-force-output display-host display-image-lsb-first-p
     display-invoke-after-function display-keycode-range display-max-keycode
     display-max-request-length display-min-keycode display-motion-buffer-size
