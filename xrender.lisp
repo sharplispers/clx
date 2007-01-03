@@ -789,21 +789,59 @@ by every function, which attempts to generate RENDER requests."
       ((sequence :format card8) sequence))))
 
 (defmacro %render-composite-glyphs
-    (opcode type transform
-          display dest glyph-set source dest-x dest-y sequence alu src-x src-y mask-format start end)
-  `(with-buffer-request (,display (extension-opcode ,display "RENDER"))
-    (data ,opcode)
-    (render-op ,alu)
-    (card8 0) (card16 0)                        ;padding
-    (picture ,source)
-    (picture ,dest)
-    ((or (member :none) picture-format) ,mask-format)
-    (glyph-set ,glyph-set)
-    (int16 ,src-x) (int16 ,src-y)
-    (card8 (- ,end ,start))                     ;length of glyph elt
-    (card8 0) (card16 0)                        ;padding? really?
-    (int16 ,dest-x) (int16 ,dest-y)           ;dx, dy
-    ((sequence :format ,type :start ,start :end ,end :transform ,transform) ,sequence)))
+    (opcode type transform display dest glyph-set source dest-x dest-y sequence
+     alu src-x src-y mask-format start end)
+  (let ((size (ecase type (card8 1) (card16 2) (card32 4)))
+	;; FIXME: the last chunk for CARD8 can be 254.
+	(chunksize (ecase type (card8 252) (card16 254) (card32 254))))
+    `(multiple-value-bind (nchunks leftover)
+         (floor (- end start) ,chunksize)
+       (let* ((payloadsize (+ (* nchunks (+ 8 (* ,chunksize ,size)))
+			      (if (> leftover 0)
+				  (+ 8 (* 4 (ceiling (* leftover ,size) 4)))
+				  0)))
+	      (request-length (+ 7 (/ payloadsize 4))))
+	 (declare (integer request-length))
+	 (with-buffer-request (,display (extension-opcode ,display "RENDER") :length request-length)
+	   (data ,opcode)
+	   (length request-length)
+	   (render-op ,alu)
+	   (card8 0) (card16 0)                        ;padding
+	   (picture ,source)
+	   (picture ,dest)
+	   ((or (member :none) picture-format) ,mask-format)
+	   (glyph-set ,glyph-set)
+	   (int16 ,src-x) (int16 ,src-y)
+	   (progn
+	     (let ((boffset (+ buffer-boffset 28))
+		   (start ,start)
+		   (end ,end)
+		   (dest-x ,dest-x)
+		   (dest-y ,dest-y))
+	       (dotimes (i nchunks)
+		 (set-buffer-offset boffset)
+		 (put-items (0)
+		   (card8 ,chunksize)
+		   (card8 0)
+		   (card16 0)
+		   (int16 dest-x)
+		   (int16 dest-y)
+		   ((sequence :start start :end (+ start ,chunksize) :format ,type :transform ,transform :appending t) ,sequence))
+		 (setq dest-x 0 dest-y 0)
+		 (incf boffset (+ 8 (* ,chunksize ,size)))
+		 (incf start ,chunksize))
+	       (when (> leftover 0)
+		 (set-buffer-offset boffset)
+		 (put-items (0)
+		   (card8 leftover)
+		   (card8 0)
+		   (card16 0)
+		   (int16 dest-x)
+		   (int16 dest-y)
+		   ((sequence :start start :end end :format ,type :transform ,transform :appending t) ,sequence))
+		 ;; padding?
+		 (incf boffset (+ 8 (* 4 (ceiling (* leftover ,size) 4)))))
+	       (setf (buffer-boffset ,display) boffset))))))))
 
 (defun render-composite-glyphs (dest glyph-set source dest-x dest-y sequence
                                 &key (op :over)
