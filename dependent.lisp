@@ -689,7 +689,7 @@
   (the short-float (* (the int16 value) #.(coerce (/ pi 180.0 64.0) 'short-float))))
 
 
-#+(or cmu sbcl) (progn
+#+(or cmu sbcl clisp) (progn
 
 ;;; This overrides the (probably incorrect) definition in clx.lisp.  Since PI
 ;;; is irrational, there can't be a precise rational representation.  In
@@ -935,6 +935,14 @@
   `(mp:with-lock-held (,lock ,whostate ,@(and timeout `(:timeout ,timeout)))
     ,@body))
 
+#+clisp
+(defmacro holding-lock ((lock display &optional (whostate "CLX wait")
+                              &key timeout)
+                        &body body)
+  (declare (ignore lock display whostate timeout))
+  `(progn
+     ,@body))
+
 #+sbcl
 (defmacro holding-lock ((lock display &optional (whostate "CLX wait")
 			      &key timeout)
@@ -1167,6 +1175,7 @@
    (when (apply predicate predicate-args)
      (return))
    (yield)))
+
 
 ;;; FIXME: the below implementation for threaded PROCESS-BLOCK using
 ;;; queues and condition variables might seem better, but in fact it
@@ -1401,10 +1410,33 @@
 ;;; OPEN-X-STREAM - create a stream for communicating to the appropriate X
 ;;; server
 
-#-(or explorer Genera lucid kcl ibcl excl Minima CMU sbcl ecl)
+#-(or explorer Genera lucid kcl ibcl excl Minima CMU sbcl ecl clisp)
 (defun open-x-stream (host display protocol)
   host display protocol ;; unused
   (error "OPEN-X-STREAM not implemented yet."))
+
+#+clisp
+(defun open-x-stream (host display protocol)
+  (declare (ignore protocol)
+           (type (integer 0) display))
+  (let ((socket
+         ;; are we dealing with a localhost?
+         (when (or (string= host "")
+                   (string= host "unix"))
+           ;; ok, try to connect to a AF_UNIX domain socket
+           (sys::make-socket-stream "" display)))))
+    (if socket
+        socket
+        ;; try to connect by hand
+        (let ((host (host-address host)))
+          (when host
+            ;; Fixme: get a descent ip standard in CLX: a vector!
+            (let ((ip (format nil
+                              "~{~D~^.~}"
+                              (rest host))))
+              (socket:socket-connect (+ 6000 display) ip
+                                     :element-type '(unsigned-byte 8))))))))
+
 
 ;;; Genera:
 
@@ -1653,7 +1685,7 @@
 	  vector start (- end start))
 	 nil)))
 
-#+ecl
+#+(or ecl clisp)
 (defun buffer-read-default (display vector start end timeout)
   (declare (type display display)
 	   (type buffer-bytes vector)
@@ -1675,7 +1707,7 @@
 ;;;	receiving all data from the X Window System server.
 ;;;	You are encouraged to write a specialized version of
 ;;;	buffer-read-default that does block transfers.
-#-(or Genera explorer excl lcl3.0 Minima CMU sbcl ecl)
+#-(or Genera explorer excl lcl3.0 Minima CMU sbcl ecl clisp)
 (defun buffer-read-default (display vector start end timeout)
   (declare (type display display)
 	   (type buffer-bytes vector)
@@ -1766,7 +1798,7 @@
   (sb-impl::output-raw-bytes (display-output-stream display) vector start end)
   nil)
 
-#+ecl
+#+(or ecl clisp)
 (defun buffer-write-default (vector display start end)
   (declare (type buffer-bytes vector)
 	   (type display display)
@@ -1784,7 +1816,7 @@
 ;;;	You are STRONGLY encouraged to write a specialized version
 ;;;	of buffer-write-default that does block transfers.
 
-#-(or Genera explorer excl lcl3.0 Minima CMU sbcl)
+#-(or Genera explorer excl lcl3.0 Minima CMU sbcl clisp)
 (defun buffer-write-default (vector display start end)
   ;; The default buffer write function for use with common-lisp streams
   (declare (type buffer-bytes vector)
@@ -1847,7 +1879,7 @@
 #-(or Genera explorer excl lcl3.0 CMU sbcl)
 (defparameter *buffer-read-polling-time* 0.5)
 
-#-(or Genera explorer excl lcl3.0 CMU sbcl)
+#-(or Genera explorer excl lcl3.0 CMU sbcl clisp)
 (defun buffer-input-wait-default (display timeout)
   (declare (type display display)
 	   (type (or null (real 0 *)) timeout))
@@ -1871,7 +1903,7 @@
 		 (return-from buffer-input-wait-default nil)))
 	     :timeout)))))
 
-#+(or CMU sbcl)
+#+(or CMU sbcl clisp)
 (defun buffer-input-wait-default (display timeout)
   (declare (type display display)
 	   (type (or null number) timeout))
@@ -1885,7 +1917,10 @@
 						   :input timeout)
 	       #+mp (mp:process-wait-until-fd-usable
 		     (system:fd-stream-fd stream) :input timeout)
-	       #-(or sbcl mp) (system:wait-until-fd-usable
+               #+clisp (multiple-value-bind (sec usec) (floor (or timeout 0))
+                         (ext:socket-status stream (and timeout sec)
+                                            (round usec 1d-6)))
+	       #-(or sbcl mp clisp) (system:wait-until-fd-usable
 			       (system:fd-stream-fd stream) :input timeout)
 	       nil
 	       :timeout)))))
@@ -2252,9 +2287,9 @@
 ;; dispatching, not just type checking.  -- Ram.
 
 (defmacro type? (object type)
-  #+(or cmu sbcl)
+  #+(or cmu sbcl clisp)
   `(typep ,object ,type)
-  #-(or cmu sbcl)
+  #-(or cmu sbcl clisp)
   (if (not (constantp type))
       `(typep ,object ,type)
     (progn
@@ -2325,12 +2360,12 @@
   (declare (dbg:error-reporter))
   (apply #'sys:signal condition :continue-format-string proceed-format-string keyargs))
 
-#+(or clx-ansi-common-lisp excl lcl3.0 (and CMU mp))
+#+(or clx-ansi-common-lisp excl lcl3.0 clisp (and CMU mp))
 (defun x-error (condition &rest keyargs)
   (declare (dynamic-extent keyargs))
   (apply #'error condition keyargs))
 
-#+(or clx-ansi-common-lisp excl lcl3.0 CMU)
+#+(or clx-ansi-common-lisp excl lcl3.0 CMU clisp)
 (defun x-cerror (proceed-format-string condition &rest keyargs)
   (declare (dynamic-extent keyargs))
   (apply #'cerror proceed-format-string condition keyargs))
@@ -2353,12 +2388,12 @@
 	(ext::disable-clx-event-handling disp)))
     (error condx)))
 
-#-(or lispm ansi-common-lisp excl lcl3.0 CMU sbcl)
+#-(or lispm ansi-common-lisp excl lcl3.0 CMU sbcl clisp)
 (defun x-error (condition &rest keyargs)
   (error "X-Error: ~a"
 	 (princ-to-string (apply #'make-condition condition keyargs))))
 
-#-(or lispm clx-ansi-common-lisp excl lcl3.0 CMU sbcl)
+#-(or lispm clx-ansi-common-lisp excl lcl3.0 CMU sbcl clisp)
 (defun x-cerror (proceed-format-string condition &rest keyargs)
   (cerror proceed-format-string "X-Error: ~a"
 	 (princ-to-string (apply #'make-condition condition keyargs))))
@@ -2451,7 +2486,7 @@
 (sys:defmethod (dbg:document-proceed-type x-error :continue) (stream)
   (format stream continue-format-string))
 
-#+(or clx-ansi-common-lisp excl lcl3.0 CMU sbcl)
+#+(or clx-ansi-common-lisp excl lcl3.0 CMU sbcl clisp)
 (define-condition x-error (error) ())
 
 #-(or lispm clx-ansi-common-lisp excl lcl3.0 CMU sbcl)
@@ -2495,7 +2530,7 @@
 	       ,condition))
 	 ',name))))
 
-#-(or lispm clx-ansi-common-lisp excl lcl3.0 CMU sbcl)
+#-(or lispm clx-ansi-common-lisp excl lcl3.0 CMU sbcl clisp)
 (defun condition-print (condition stream depth)
   (declare (type x-error condition)
 	   (type stream stream)
@@ -2505,14 +2540,14 @@
     (funcall (x-error-report-function condition) condition stream))
   condition)
   
-#-(or lispm clx-ansi-common-lisp excl lcl3.0 CMU sbcl)
+#-(or lispm clx-ansi-common-lisp excl lcl3.0 CMU sbcl clisp)
 (defun make-condition (type &rest slot-initializations)
   (declare (dynamic-extent slot-initializations))
   (let ((make-function (intern (concatenate 'string (string 'make-) (string type))
 			       (symbol-package type))))
     (apply make-function slot-initializations)))
 
-#-(or clx-ansi-common-lisp excl lcl3.0 CMU sbcl)
+#-(or clx-ansi-common-lisp excl lcl3.0 CMU sbcl clisp)
 (define-condition type-error (x-error)
   ((datum :reader type-error-datum :initarg :datum)
    (expected-type :reader type-error-expected-type :initarg :expected-type))
@@ -2527,7 +2562,7 @@
 ;;  HOST hacking
 ;;-----------------------------------------------------------------------------
 
-#-(or explorer Genera Minima Allegro CMU sbcl ecl)
+#-(or explorer Genera Minima Allegro CMU sbcl ecl clisp)
 (defun host-address (host &optional (family :internet))
   ;; Return a list whose car is the family keyword (:internet :DECnet :Chaos)
   ;; and cdr is a list of network address bytes.
@@ -2536,6 +2571,45 @@
   (declare (clx-values list))
   host family
   (error "HOST-ADDRESS not implemented yet."))
+
+#+clisp
+(defun host-address (host &optional (family :internet))
+  "Return a list whose car is the family keyword (:internet :DECnet :Chaos)
+  and cdr is a list of network address bytes."
+  (declare (type stringable host)
+           (type (or null (member :internet :decnet :chaos) card8) family))
+  (declare (clx-values list))
+  (labels ((no-host-error ()
+             (error "Unknown host ~S" host))
+           (no-address-error ()
+             (error "Host ~S has no ~S address" host family)))
+
+    (let ((hostent (posix::resolve-host-ipaddr (string host))))
+      (when (not (posix::hostent-addr-list hostent))
+        (no-host-error))
+      (ecase family
+        ((:internet nil 0)
+         (unless (= (posix::hostent-addrtype hostent) 2)
+           (no-address-error))
+         (let ((addr (first (posix::hostent-addr-list hostent))))
+           (etypecase addr
+             (integer
+              (list :internet
+                    (ldb (byte 8 24) addr)
+                    (ldb (byte 8 16) addr)
+                    (ldb (byte 8  8) addr)
+                    (ldb (byte 8  0) addr)))
+             (string
+              (let ((parts (read-from-string
+                            (nsubstitute #\Space #\. (ext:string-concat
+                                                      "(" addr ")")))))
+                (check-type parts (cons (unsigned-byte 8)
+                                        (cons (unsigned-byte 8)
+                                              (cons (unsigned-byte 8)
+                                                    (cons (unsigned-byte 8)
+                                                          NULL)))))
+                (cons :internet parts))))))))))
+
 
 #+explorer
 (defun host-address (host &optional (family :internet))
@@ -2808,7 +2882,8 @@
   #+CMU (cdr (assoc name ext:*environment-list* :test #'string=))
   #+sbcl (sb-ext:posix-getenv name)
   #+ecl (si:getenv name)
-  #-(or sbcl excl lcl3.0 CMU ecl) (progn name nil))
+  #+clisp (ext:getenv name)
+  #-(or sbcl excl lcl3.0 CMU ecl clisp) (progn name nil))
 
 (defun get-host-name ()
   "Return the same hostname as gethostname(3) would"
@@ -2818,7 +2893,8 @@
   ;; resources-pathname was using short-site-name for this purpose
   #+excl (short-site-name)
   #+ecl (si:getenv "HOST")
-  #-(or excl cmu sbcl ecl) (error "get-host-name not implemented"))
+  #+clisp (let ((s (machine-instance))) (subseq s 0 (position #\Space s)))
+  #-(or excl cmu sbcl ecl clisp) (error "get-host-name not implemented"))
 
 (defun homedir-file-pathname (name)
   (and #-(or unix mach) (search "Unix" (software-type) :test #'char-equal)
@@ -2986,7 +3062,7 @@ Returns a list of (host display-number screen protocol)."
       (setf (char-bit object :hyper) 1)))
   object)
 
-#+(or (and clx-ansi-common-lisp (not lispm) (not allegro)) CMU sbcl)
+#+(or (and clx-ansi-common-lisp (not lispm) (not allegro)) CMU sbcl clisp)
 (defun default-keysym-translate (display state object)
   (declare (type display display)
 	   (type card16 state)
