@@ -1435,7 +1435,7 @@
                               "~{~D~^.~}"
                               (rest host))))
               (socket:socket-connect (+ 6000 display) ip
-                                     :element-type '(unsigned-byte 8))))))))
+                                     :element-type '(unsigned-byte 8)))))))
 
 
 ;;; Genera:
