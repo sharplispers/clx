@@ -177,6 +177,10 @@
 ;;; this to do fast array packing/unpacking when the overlapping-arrays
 ;;; feature is enabled.
 
+#+clisp
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (unless system::*big-endian* (pushnew :clx-little-endian *features*)))
+
 #+(and clx-little-endian lispm)
 (eval-when (eval compile load)
   (pushnew :clx-overlapping-arrays *features*))
