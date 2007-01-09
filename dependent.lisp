@@ -1424,7 +1424,7 @@
          (when (or (string= host "")
                    (string= host "unix"))
            ;; ok, try to connect to a AF_UNIX domain socket
-           (sys::make-socket-stream "" display)))))
+           (sys::make-socket-stream "" display))))
     (if socket
         socket
         ;; try to connect by hand
@@ -1435,7 +1435,7 @@
                               "~{~D~^.~}"
                               (rest host))))
               (socket:socket-connect (+ 6000 display) ip
-                                     :element-type '(unsigned-byte 8)))))))
+                                     :element-type '(unsigned-byte 8))))))))
 
 
 ;;; Genera:
