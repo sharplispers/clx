@@ -1258,7 +1258,7 @@
       (card16-get 16)
       (card32-get 8)
       (member8-get 1 :off :on)
-      (bit-vector256-get 32))))
+      (bit-vector256-get 20))))
 
 ;;  The base volume should
 ;; be considered to be the "desired" volume in the normal case; that is, a
