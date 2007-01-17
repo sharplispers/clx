@@ -802,7 +802,7 @@ by every function, which attempts to generate RENDER requests."
 				  0)))
 	      (request-length (+ 7 (/ payloadsize 4))))
 	 (declare (integer request-length))
-	 (with-buffer-request (,display (extension-opcode ,display "RENDER") :length request-length)
+	 (with-buffer-request (,display (extension-opcode ,display "RENDER") :length (* 4 request-length))
 	   (data ,opcode)
 	   (length request-length)
 	   (render-op ,alu)
