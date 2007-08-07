@@ -1789,25 +1789,13 @@
   (system:output-raw-bytes (display-output-stream display) vector start end)
   nil)
 
-#+sbcl
+#+(or sbcl ecl clisp)
 (defun buffer-write-default (vector display start end)
   (declare (type buffer-bytes vector)
 	   (type display display)
 	   (type array-index start end))
   #.(declare-buffun)
-  (sb-impl::output-raw-bytes (display-output-stream display) vector start end)
-  nil)
-
-#+(or ecl clisp)
-(defun buffer-write-default (vector display start end)
-  (declare (type buffer-bytes vector)
-	   (type display display)
-	   (type array-index start end))
-  #.(declare-buffun)
-  (write-sequence vector
-                  (display-output-stream display)
-                  :start start
-                  :end end)
+  (write-sequence vector (display-output-stream display) :start start :end end)
   nil)
 
 ;;; WARNING:
