@@ -639,15 +639,16 @@
 	   :arc-mode))
 
 (deftype event-key ()
-  '(member :key-press :key-release :button-press :button-release :motion-notify
-	   :enter-notify :leave-notify :focus-in :focus-out :keymap-notify
-	   :exposure :graphics-exposure :no-exposure :visibility-notify
-	   :create-notify :destroy-notify :unmap-notify :map-notify :map-request
-	   :reparent-notify :configure-notify :gravity-notify :resize-request
-	   :configure-request :circulate-notify :circulate-request :property-notify
-	   :selection-clear :selection-request :selection-notify
-	   :colormap-notify :client-message :mapping-notify
-           :shape-notify :xfree86-vidmode-notify :glx-pbuffer-clobber))
+  '(or (member :key-press :key-release :button-press :button-release 
+        :motion-notify :enter-notify :leave-notify :focus-in :focus-out 
+        :keymap-notify :exposure :graphics-exposure :no-exposure 
+        :visibility-notify :create-notify :destroy-notify :unmap-notify 
+        :map-notify :map-request :reparent-notify :configure-notify 
+        :gravity-notify :resize-request :configure-request :circulate-notify 
+        :circulate-request :property-notify :selection-clear 
+        :selection-request :selection-notify :colormap-notify :client-message 
+        :mapping-notify)
+       (satisfies extension-event-key-p)))
 
 (deftype error-key ()
   '(member :access :alloc :atom :colormap :cursor :drawable :font :gcontext :id-choice

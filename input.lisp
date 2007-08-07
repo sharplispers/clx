@@ -106,6 +106,11 @@
     (declare (clx-values event-key))
     (kintern event)))
 
+(defun extension-event-key-p (key)
+  (dolist (extension *extensions* nil)
+    (when (member key (second extension))
+      (return t))))
+    
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defun allocate-extension-event-code (name)
     ;; Allocate an event-code for an extension.  This is executed at
@@ -117,9 +122,7 @@
       (declare (type (or null card8) event-code))
       (unless event-code
 	;; First ensure the name is for a declared extension
-	(unless (dolist (extension *extensions*)
-		  (when (member name (second extension))
-		    (return t)))
+        (unless (extension-event-key-p name)
 	  (x-type-error name 'event-key))
 	(setq event-code (position nil *event-key-vector*
 				   :start *first-extension-event-code*))
