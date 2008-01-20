@@ -420,9 +420,8 @@ by every function, which attempts to generate RENDER requests."
                                     ,index))
                            (%render-change-picture-clip-rectangles
                             picture (aref (picture-%values picture) ,index))
-                           (setf (aref (picture-%values picture) ,index)
-                            (aref (picture-%server-values picture)
-                             ,index))))
+                           (setf (aref (picture-%server-values picture) ,index)
+                            (aref (picture-%values picture) ,index))))
                    (setf (picture-%changed-p picture) nil)))
 
                (defun render-create-picture
