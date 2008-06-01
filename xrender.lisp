@@ -133,11 +133,7 @@
           render-composite-glyphs
           render-add-glyph
           render-add-glyph-from-picture
-          render-free-glyphs
-          
-          
-	  render-combine
-	  ))
+          render-free-glyphs))
 
 (pushnew :clx-ext-render *features*)
 
@@ -341,13 +337,43 @@ by every function, which attempts to generate RENDER requests."
   (define-accessor render-op (8)
     ((index) `(member8-get ,index
                :clear :src :dst :over :over-reverse :in :in-reverse
-               :out :out-reverse :atop :atop-reverse :xor :add :saturate :maximum))
+               :out :out-reverse :atop :atop-reverse :xor :add :saturate
+               '#:undefined-pict-op-Eh '#:undefined-pict-op-Fh
+               :disjoint-clear :disjoint-src :disjoint-dst :disjoint-over
+               :disjoint-over-reverse :disjoint-in :disjoint-in-reverse
+               :disjoint-out :disjoint-out-reverse :disjoint-atop
+               :disjoint-atop-reverse :disjoint-xor
+               '#:undefined-pict-op-1Ch '#:undefined-pict-op-1Dh
+               '#:undefined-pict-op-1Eh '#:undefined-pict-op-1Fh
+               :conjoint-clear :conjoint-src :conjoint-dst :conjoint-over
+               :conjoint-over-reverse :conjoint-in :conjoint-in-reverse
+               :conjoint-out :conjoint-out-reverse :conjoint-atop
+               :conjoint-atop-reverse :conjoint-xor))
     ((index thing) `(member8-put ,index ,thing
                      :clear :src :dst :over :over-reverse :in :in-reverse
-                     :out :out-reverse :atop :atop-reverse :xor :add :saturate :maximum)))
+                     :out :out-reverse :atop :atop-reverse :xor :add :saturate
+                     '#:undefined-pict-op-Eh '#:undefined-pict-op-Fh
+                     :disjoint-clear :disjoint-src :disjoint-dst :disjoint-over
+                     :disjoint-over-reverse :disjoint-in :disjoint-in-reverse
+                     :disjoint-out :disjoint-out-reverse :disjoint-atop
+                     :disjoint-atop-reverse :disjoint-xor
+                     '#:undefined-pict-op-1Ch '#:undefined-pict-op-1Dh
+                     '#:undefined-pict-op-1Eh '#:undefined-pict-op-1Fh
+                     :conjoint-clear :conjoint-src :conjoint-dst :conjoint-over
+                     :conjoint-over-reverse :conjoint-in :conjoint-in-reverse
+                     :conjoint-out :conjoint-out-reverse :conjoint-atop
+                     :conjoint-atop-reverse :conjoint-xor)))
   (deftype render-op ()
     '(member :clear :src :dst :over :over-reverse :in :in-reverse
-      :out :out-reverse :atop :atop-reverse :xor :add :saturate :maximum)))
+      :out :out-reverse :atop :atop-reverse :xor :add :saturate
+      :disjoint-clear :disjoint-src :disjoint-dst :disjoint-over
+      :disjoint-over-reverse :disjoint-in :disjoint-in-reverse
+      :disjoint-out :disjoint-out-reverse :disjoint-atop
+      :disjoint-atop-reverse :disjoint-xor
+      :conjoint-clear :conjoint-src :conjoint-dst :conjoint-over
+      :conjoint-over-reverse :conjoint-in :conjoint-in-reverse
+      :conjoint-out :conjoint-out-reverse :conjoint-atop
+      :conjoint-atop-reverse :conjoint-xor)))
 
 ;; Now these pictures objects are like graphics contexts. I was about
 ;; to introduce a synchronous mode, realizing that the RENDER protocol
@@ -421,7 +447,8 @@ by every function, which attempts to generate RENDER requests."
                            (%render-change-picture-clip-rectangles
                             picture (aref (picture-%values picture) ,index))
                            (setf (aref (picture-%server-values picture) ,index)
-                            (aref (picture-%values picture) ,index))))
+                                 (aref (picture-%values picture) ,index))))
+
                    (setf (picture-%changed-p picture) nil)))
 
                (defun render-create-picture
@@ -1038,17 +1065,17 @@ by every function, which attempts to generate RENDER requests."
            (render-fill-rectangle px.pic :src
                                   (list #x8000 #x0000 #x8000 #xFFFF)
                                   0 0 256 256)
-           ;; render-combine simply does not work
-           (render-combine :src pic pic px.pic
-                           350 350 350 350 0 0 256 256)
+
+           (render-composite :src pic pic px.pic
+                             350 350 350 350 0 0 256 256)
            ;;
            (render-fill-rectangle px.pic :over
                                   (list #x8000 #x8000 #x8000 #x8000)
                                   0 0 100 100)
-           (render-combine :src
-                           px.pic px.pic pic
-                           0 0 0 0 350 350
-                           256 256)
+           (render-composite :src
+                             px.pic px.pic pic
+                             0 0 0 0 350 350
+                             256 256)
            (render-fill-rectangle pic op (list #x0 #x0 #x0 #x8000) 200 200 800 800)
            (display-finish-output dpy))
       (close-display dpy))))
@@ -1077,23 +1104,22 @@ by every function, which attempts to generate RENDER requests."
                (xlib:draw-point px px.gc x y)
                ))
            (xlib:clear-area win)
-           (let ((q(render-create-picture px
-                                          :format
-                                          (first (find-matching-picture-formats
-                                                  dpy
-                                                  :depth 32
-                                                  :alpha 8 :red 8 :green 8 :blue 8))
-                                          :component-alpha :on
-                                          :repeat :off
-                                          )))
-             (render-combine op
-                             q
-                             q 
-                             pic
-                             0 0
-                             0 0
-                             100 100
-                             400 400))
+           (let ((q (render-create-picture px
+                                           :format
+                                           (first (find-matching-picture-formats
+                                                   dpy
+                                                   :depth 32
+                                                   :alpha 8 :red 8 :green 8 :blue 8))
+                                           :component-alpha :on
+                                           :repeat :off)))
+             (render-composite op
+                               q
+                               q 
+                               pic
+                               0 0
+                               0 0
+                               100 100
+                               400 400))
            (let ()
              ;;(render-fill-rectangle pic op (list 255 255 255 255) 100 100 200 200)
              (display-finish-output dpy)))
