@@ -553,17 +553,16 @@
 ;;; OPEN-X-STREAM - create a stream for communicating to the appropriate X
 ;;; server
 
-(defparameter ccl::*x-server-unix-socket-format-string* "/tmp/.X11-unix/X~d")
-
 (defun open-x-stream (host display protocol)
   (declare (ignore protocol))
-  (if (or (string= host "") (string= host "unix"))
+  (let ((local-socket-path (unix-socket-path-from-host host display)))
+    (if local-socket-path
     (ccl::make-socket :connect :active
                       :address-family  :file
-                      :remote-filename (format nil ccl::*x-server-unix-socket-format-string* display))
+			 :remote-filename local-socket-path)
     (ccl::make-socket :connect :active
                       :remote-host host
-                      :remote-port (+ 6000 display))))
+			 :remote-port (+ 6000 display)))))
 
 ;;; BUFFER-READ-DEFAULT - read data from the X stream
 
