@@ -1541,36 +1541,22 @@
 						  (cdr (host-address host)))
 			  :foreign-port (+ *x-tcp-port* display)))
 
-#+(or sbcl ecl)
-(defconstant +X-unix-socket-path+
-  "/tmp/.X11-unix/X"
-  "The location of the X socket")
-
 #+sbcl
 (defun open-x-stream (host display protocol)  
   (declare (ignore protocol)
            (type (integer 0) display))
-  (flet
-      ((unix-socket-name (host)
-         (let ((launchd-p #+darwin (and (> (length host) 10)
-                                        (string= host "tmp/launch" :end1 10))))
-           (cond (launchd-p
-                  (concatenate 'string "/" host ":0"))
-                 ((or (string= host "") (string= host "unix"))
-                  (format nil "~A~D" +X-unix-socket-path+ display))
-                 (t nil)))))
-    (socket-make-stream
-     (if (unix-socket-name host)
-         (let ((s (make-instance 'local-socket :type :stream)))
-           (socket-connect s (unix-socket-name host))
-           s)
-         (let ((host (car (host-ent-addresses (get-host-by-name host)))))
-           (when host
-             (let ((s (make-instance 'inet-socket :type :stream :protocol :tcp)))
-               (socket-connect s host (+ 6000 display))
-               s))))
-     :element-type '(unsigned-byte 8)
-     :input t :output t :buffering :none)))
+  (socket-make-stream 
+   (if (or (string= host "") (string= host "unix")) ; AF_LOCAL domain socket
+       (let ((s (make-instance 'local-socket :type :stream)))
+	 (socket-connect s (format nil "~A~D" +X-unix-socket-path+ display))
+	 s)
+       (let ((host (car (host-ent-addresses (get-host-by-name host)))))
+	 (when host
+	   (let ((s (make-instance 'inet-socket :type :stream :protocol :tcp)))
+	     (socket-connect s host (+ 6000 display))
+	     s))))
+   :element-type '(unsigned-byte 8)
+   :input t :output t :buffering :none))
 
 #+ecl
 (defun open-x-stream (host display protocol)

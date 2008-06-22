@@ -671,3 +671,23 @@ used, since NIL is the empty list.")
       (:return-type :signed-32bit))
   (host :simple-string)
   (display :signed-32bit))
+
+
+;;-----------------------------------------------------------------------------
+;; Finding the server socket
+;;-----------------------------------------------------------------------------
+
+;; These are here because dep-openmcl.lisp and dependent.lisp both need them
+(defconstant +X-unix-socket-path+
+  "/tmp/.X11-unix/X"
+  "The location of the X socket")
+
+(defun unix-socket-path-from-host (host display)
+  "Return the name of the unix domain socket for host and display, or
+nil if a network socket should be opened."
+  (cond ((or (string= host "") (string= host "unix"))
+	 (format nil "~A~D" +X-unix-socket-path+ display))
+	#+darwin
+	((and (> (length host) 10) (string= host "tmp/launch" :end1 10))
+	 (format nil "/~A:~D" host display))	  
+	(t nil)))
