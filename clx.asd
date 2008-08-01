@@ -158,14 +158,18 @@
 	   ;; use of this does not imply that applications using CLX
 	   ;; calls that expand into calls to these accessors will be
 	   ;; optimized in the same way).
-	   (let ((sb-ext:*derive-function-types* t))
+	   (let ((sb-ext:*derive-function-types* t)
+                 (sadx (find-symbol "STACK-ALLOCATE-DYNAMIC-EXTENT" :sb-c))
+                 (sadx-var (find-symbol "*STACK-ALLOCATE-DYNAMIC-EXTENT*" :sb-ext)))
 	     ;; deeply unportable stuff, this.  I will be shot.  We
 	     ;; want to enable the dynamic-extent declarations in CLX.
-	     (when (sb-c::policy-quality-name-p
-		    'sb-c::stack-allocate-dynamic-extent)
+	     (when (and sadx (sb-c::policy-quality-name-p sadx))
 	       ;; no way of setting it back short of yet more yukky stuff
-	       (proclaim '(optimize (sb-c::stack-allocate-dynamic-extent 3))))
-	     (call-next-method)))
+	       (proclaim `(optimize (,sadx 3))))
+             (if sadx-var
+                 (progv (list sadx-var) (list t)
+                   (call-next-method))
+                 (call-next-method))))
       (setf (operation-on-warnings o) on-warnings
 	    (operation-on-failure o) on-failure))))
 
