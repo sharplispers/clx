@@ -130,6 +130,24 @@
 		(values best-name best-data)))))))
     (values "" "")))
 
+(defmacro with-display ((display &key timeout inline)
+			&body body)
+  ;; This macro is for use in a multi-process environment.  It
+  ;; provides exclusive access to the local display object for
+  ;; multiple request generation.  It need not provide immediate
+  ;; exclusive access for replies; that is, if another process is
+  ;; waiting for a reply (while not in a with-display), then
+  ;; synchronization need not (but can) occur immediately.  Except
+  ;; where noted, all routines effectively contain an implicit
+  ;; with-display where needed, so that correct synchronization is
+  ;; always provided at the interface level on a per-call basis.
+  ;; Nested uses of this macro will work correctly.  This macro does
+  ;; not prevent concurrent event processing; see with-event-queue.
+  `(with-buffer (,display
+		 ,@(and timeout `(:timeout ,timeout))
+		 ,@(and inline `(:inline ,inline)))
+     ,@body))
+
 ;;
 ;; Resource id management
 ;;
@@ -155,11 +173,12 @@
 
 (defmacro allocate-resource-id (display object type)
   ;; Allocate a resource-id for OBJECT in DISPLAY
-  (if (member (eval type) +clx-cached-types+)
-      `(let ((id (funcall (display-xid ,display) ,display)))
-	 (save-id ,display id ,object)
-	 id)
-    `(funcall (display-xid ,display) ,display)))
+  `(with-display (,display)
+     ,(if (member (eval type) +clx-cached-types+)
+          `(let ((id (funcall (display-xid ,display) ,display)))
+             (save-id ,display id ,object)
+             id)
+          `(funcall (display-xid ,display) ,display))))
 
 (defmacro deallocate-resource-id (display id type)
   ;; Deallocate a resource-id for OBJECT in DISPLAY
@@ -167,7 +186,8 @@
     `(deallocate-resource-id-internal ,display ,id)))
 
 (defun deallocate-resource-id-internal (display id)
-  (remhash id (display-resource-id-map display)))
+  (with-display (display)
+    (remhash id (display-resource-id-map display))))
 
 (defun lookup-resource-id (display id)
   ;; Find the object associated with resource ID
@@ -276,24 +296,6 @@
 ;;
 ;; Display functions
 ;;
-(defmacro with-display ((display &key timeout inline)
-			&body body)
-  ;; This macro is for use in a multi-process environment.  It
-  ;; provides exclusive access to the local display object for
-  ;; multiple request generation.  It need not provide immediate
-  ;; exclusive access for replies; that is, if another process is
-  ;; waiting for a reply (while not in a with-display), then
-  ;; synchronization need not (but can) occur immediately.  Except
-  ;; where noted, all routines effectively contain an implicit
-  ;; with-display where needed, so that correct synchronization is
-  ;; always provided at the interface level on a per-call basis.
-  ;; Nested uses of this macro will work correctly.  This macro does
-  ;; not prevent concurrent event processing; see with-event-queue.
-  `(with-buffer (,display
-		 ,@(and timeout `(:timeout ,timeout))
-		 ,@(and inline `(:inline ,inline)))
-     ,@body))
-
 (defmacro with-event-queue ((display &key timeout inline)
 			    &body body &environment env)
   ;; exclusive access to event queue
