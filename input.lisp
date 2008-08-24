@@ -1777,6 +1777,13 @@
       (format stream "inconsistent-parameters:~{ ~s~}"
 	      (inconsistent-parameters-parameters condition)))))
 
+(define-condition resource-ids-exhausted (x-error)
+  ()
+  (:report
+    (lambda (condition stream)
+      (declare (ignore condition))
+      (format stream "All X resource IDs are in use."))))
+
 (defun get-error-key (display error-code)
   (declare (type display display)
 	   (type array-index error-code))

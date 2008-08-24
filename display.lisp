@@ -164,12 +164,23 @@
 		 (type mask32 mask))))))
 
 (defun resourcealloc (display)
-  ;; Allocate a resource-id for in DISPLAY
+  ;; Allocate a resource-id for use in DISPLAY
   (declare (type display display))
   (declare (clx-values resource-id))
-  (dpb (incf (display-resource-id-count display))
-       (display-resource-id-byte display)
-       (display-resource-id-base display)))
+  (loop for next-count upfrom (1+ (display-resource-id-count display))
+        repeat (1+ (display-resource-id-mask display))
+        as id = (dpb next-count
+                     (display-resource-id-byte display)
+                     (display-resource-id-base display))
+        unless (nth-value 1 (gethash id (display-resource-id-map display)))
+        do (setf (display-resource-id-count display) next-count)
+           (setf (gethash id (display-resource-id-map display)) t)
+           (return-from resourcealloc id))
+  ;; internal consistency check
+  (assert (= (hash-table-count (display-resource-id-map display))
+             (1+ (display-resource-id-mask display))))
+  ;; tell the user what's gone wrong
+  (error 'resource-ids-exhausted))
 
 (defmacro allocate-resource-id (display object type)
   ;; Allocate a resource-id for OBJECT in DISPLAY
