@@ -192,9 +192,9 @@
           `(funcall (display-xid ,display) ,display))))
 
 (defmacro deallocate-resource-id (display id type)
+  (declare (ignore type))
   ;; Deallocate a resource-id for OBJECT in DISPLAY
-  (when (member (eval type) +clx-cached-types+)
-    `(deallocate-resource-id-internal ,display ,id)))
+  `(deallocate-resource-id-internal ,display ,id))
 
 (defun deallocate-resource-id-internal (display id)
   (with-display (display)
@@ -205,12 +205,17 @@
   (gethash id (display-resource-id-map display)))
 
 (defun save-id (display id object)
-  ;; Register a resource-id from another display.
+  ;; cache the object associated with ID for this display.
   (declare (type display display)
 	   (type integer id)
 	   (type t object))
   (declare (clx-values object))
-  (setf (gethash id (display-resource-id-map display)) object))
+  ;; we can't cache objects from other clients, because they may
+  ;; become invalid without us being told about that.
+  (let ((base (display-resource-id-base display))
+        (mask (display-resource-id-mask display)))
+    (when (= (logandc2 id mask) base)
+      (setf (gethash id (display-resource-id-map display)) object))))
 
 ;; Define functions to find the CLX data types given a display and resource-id
 ;; If the data type is being cached, look there first.
