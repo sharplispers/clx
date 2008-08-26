@@ -215,7 +215,8 @@
   (let ((base (display-resource-id-base display))
         (mask (display-resource-id-mask display)))
     (when (= (logandc2 id mask) base)
-      (setf (gethash id (display-resource-id-map display)) object))))
+      (setf (gethash id (display-resource-id-map display)) object))
+    object))
 
 ;; Define functions to find the CLX data types given a display and resource-id
 ;; If the data type is being cached, look there first.
