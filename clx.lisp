@@ -827,15 +827,17 @@
 
 (macrolet ((make-mumble-equal (type)
 	     ;; Since caching is only done for objects created by the
-	     ;; client, we must always compare ID and display
+	     ;; client, we must always compare ID and display for
+	     ;; non-identical mumbles.
 	     (let ((predicate (xintern type '-equal))
 		   (id (xintern type '-id))
 		   (dpy (xintern type '-display)))
 		`(within-definition (,type make-mumble-equal)
 		   (defun ,predicate (a b)
 		     (declare (type ,type a b))
-		     (and (= (,id a) (,id b))
-		          (eq (,dpy a) (,dpy b))))))))
+		     (or (eql a b)
+			 (and (= (,id a) (,id b))
+			      (eq (,dpy a) (,dpy b)))))))))
   (make-mumble-equal window)
   (make-mumble-equal pixmap)
   (make-mumble-equal cursor)
