@@ -265,8 +265,7 @@ by every function, which attempts to generate RENDER requests."
 
 (defun find-window-picture-format (window)
   "Find the picture format which matches the given window."
-  (let* ((cm (window-colormap window))
-         (vi (colormap-visual-info cm))
+  (let* ((vi (window-visual-info window))
          (display (window-display window)))
     (ensure-render-initialized display)
     (case (visual-info-class vi)
