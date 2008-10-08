@@ -495,8 +495,13 @@
   (declare (clx-values (or null colormap)))
   (with-attributes (window :sizes 32)
     (let ((id (resource-id-get 28)))
-      (if (zerop id) nil
-	(lookup-colormap (window-display window) id)))))
+      (if (zerop id)
+	  nil
+	  (let ((colormap (lookup-colormap (window-display window) id)))
+	    (unless (colormap-visual-info colormap)
+	      (setf (colormap-visual-info colormap)
+		    (visual-info (window-display window) (resource-id-get 8))))
+	    colormap)))))
 
 (defun set-window-colormap (window colormap)
   (change-window-attribute
