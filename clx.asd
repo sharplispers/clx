@@ -73,7 +73,8 @@
 	       (:xrender-source-file "xrender")
                (:file "glx")
                (:file "gl" :depends-on ("glx"))
-	       (:file "dpms")))
+	       (:file "dpms")
+               (:file "xtest")))
      (:module demo
 	      :default-component-class example-source-file
 	      :components
