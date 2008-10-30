@@ -334,6 +334,10 @@
   ((index) (declare (ignore index)) nil)
   ((index value) (declare (ignore index value)) nil))
 
+(define-accessor pad32 (32)
+  ((index) (declare (ignore index)) nil)
+  ((index value) (declare (ignore index value)) nil))
+
 (define-accessor bit-vector256 (256)
   ;; used for key-maps
   ;; REAL-INDEX parameter provided so the default index can be over-ridden.
