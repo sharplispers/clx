@@ -61,7 +61,10 @@
     (when value
       (let* ((name-len (position 0 (the (vector card8) value)))
 	     (name (subseq (the (vector card8) value) 0 name-len))
-	     (class (subseq (the (vector card8) value) (1+ name-len) (1- (length value)))))
+	     (class
+              (when name-len
+                (subseq (the (vector card8) value) (1+ name-len)
+                        (position 0 (the (vector card8) value) :start (1+ name-len))))))
 	(values (and (plusp (length name)) (map 'string #'card8->char name))
 		(and (plusp (length class)) (map 'string #'card8->char class)))))))
 
