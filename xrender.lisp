@@ -704,7 +704,7 @@ by every function, which attempts to generate RENDER requests."
   )
 ||#
 
-(defun render-trapezoids-1 (picture op source src-x src-y format coord-sequence)
+(defun render-trapezoids-1 (picture op source src-x src-y mask-format coord-sequence)
   ;; coord-sequence is  top bottom
   ;;                    line-1-x1 line-1-y1 line-1-x2 line-1-y2
   ;;                    line-2-x1 line-2-y1 line-2-x2 line-2-y2 ...
@@ -719,7 +719,7 @@ by every function, which attempts to generate RENDER requests."
       (card16 0)                        ;pad
       (resource-id (picture-id source))
       (resource-id (picture-id picture))
-      (picture-format format)
+      ((or (member :none) picture-format) mask-format)
       (int16 src-x)
       (int16 src-y)
       ((sequence :format int32) coord-sequence) )))
