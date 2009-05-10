@@ -75,7 +75,8 @@
                (:file "gl" :depends-on ("glx"))
 	       (:file "dpms")
                (:file "xtest")
-               (:file "screensaver")))
+               (:file "screensaver")
+               (:file "xinerama")))
      (:module demo
 	      :default-component-class example-source-file
 	      :components
