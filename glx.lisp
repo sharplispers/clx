@@ -577,6 +577,8 @@ Example: '(:glx-rgba (:glx-alpha-size 4) :glx-double-buffer (:glx-class 4 =)."
       (with-display (display)
         ;; Flush display's buffer first so we don't get messed up with X requests.
         (buffer-flush display)
+	;; We're manually creating a request, so bump the number.
+	(xlib::buffer-new-request-number display)
         ;; First, update the Render request fields.
         (aset-card8 (extension-opcode display "GLX") rbuf 0)
         (aset-card8 1 rbuf 1)
