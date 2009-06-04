@@ -1165,8 +1165,6 @@
 (defconstant +end-list+         102)
 (defconstant +gen-lists+        104)
 (defconstant +finish+           108)
-(defconstant +disable+          138)
-(defconstant +enable+           139)
 (defconstant +flush+            142)
 
 
@@ -3605,6 +3603,13 @@
 (define-rendering-command viewport 191
   ((x y width height) int32))
 
+
+(define-rendering-command disable 138
+  (cap          card32))
+
+(define-rendering-command enable 139
+  (cap          card32))
+
 
 ;;; Potentially lerge rendering commands.
 
@@ -3659,20 +3664,6 @@
       (data +end-list+)
       ;; *** GLX_CONTEXT_TAG
       (card32 (context-tag ctx)))))
-
-
-(defun enable (cap)
-  (assert (context-p *current-context*)
-          (*current-context*)
-          "~S is not a context." *current-context*)
-  (let* ((ctx *current-context*)
-         (display (context-display ctx)))
-    (with-buffer-request-and-reply (display (extension-opcode display "GLX") nil)
-        ((data +enable+)
-         ;; *** GLX_CONTEXT_TAG
-         (card32 (context-tag ctx))
-         ;; *** ENUM?
-         (card32 cap)))))
 
 
 ;;; FIXME: FLUSH and FINISH should send *all* buffered data, including
