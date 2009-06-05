@@ -245,6 +245,7 @@
            "NEW-LIST"
            "END-LIST"
            "GEN-LISTS"
+	   "GEN-TEXTURES"
 	   "GET-ERROR"
            "ENABLE"
            "DISABLE"
@@ -1181,6 +1182,7 @@
 (defconstant +new-list+         101)
 (defconstant +end-list+         102)
 (defconstant +gen-lists+        104)
+(defconstant +gen-textures+     145)
 (defconstant +get-error+        115)
 (defconstant +finish+           108)
 (defconstant +flush+            142)
@@ -3719,6 +3721,25 @@
          (card32 (context-tag ctx))
          (integer range))
       (card32-get 8))))
+
+
+(defun gen-textures (n)
+  (assert (context-p *current-context*)
+          (*current-context*)
+          "~S is not a context." *current-context*)
+  (let* ((ctx *current-context*)
+         (display (context-display ctx)))
+    (with-buffer-request-and-reply (display (extension-opcode display "GLX") nil)
+        ((data +gen-textures+)
+         ;; *** GLX_CONTEXT_TAG
+         (card32 (context-tag ctx))
+         (integer n))
+      (let ((length (card32-get 4)))
+	(values-list
+	 (sequence-get :format card32
+		       :result-type 'list
+		       :index 32
+		       :length length))))))
 
 
 (defun end-list ()
