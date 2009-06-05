@@ -245,6 +245,7 @@
            "NEW-LIST"
            "END-LIST"
            "GEN-LISTS"
+	   "GET-ERROR"
            "ENABLE"
            "DISABLE"
            "FLUSH"
@@ -1180,6 +1181,7 @@
 (defconstant +new-list+         101)
 (defconstant +end-list+         102)
 (defconstant +gen-lists+        104)
+(defconstant +get-error+        115)
 (defconstant +finish+           108)
 (defconstant +flush+            142)
 
@@ -3729,6 +3731,20 @@
       (data +end-list+)
       ;; *** GLX_CONTEXT_TAG
       (card32 (context-tag ctx)))))
+
+
+(defun get-error ()
+  (assert (context-p *current-context*)
+          (*current-context*)
+          "~S is not a context." *current-context*)
+  (let* ((ctx *current-context*)
+         (display (context-display ctx)))
+    (with-buffer-request-and-reply
+	(display (extension-opcode display "GLX") nil)
+        ((data +get-error+)
+         ;; *** GLX_CONTEXT_TAG
+         (card32 (context-tag ctx)))
+      (card32-get 8))))
 
 
 ;;; FIXME: FLUSH and FINISH should send *all* buffered data, including
