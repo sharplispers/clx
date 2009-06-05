@@ -199,6 +199,22 @@
            "STENCIL-FUNC"
            "STENCIL-MASK"
            "STENCIL-OP"
+	   "TEX-COORD-1D"
+	   "TEX-COORD-1F"
+	   "TEX-COORD-1I"
+	   "TEX-COORD-1S"
+	   "TEX-COORD-2D"
+	   "TEX-COORD-2F"
+	   "TEX-COORD-2I"
+	   "TEX-COORD-2S"
+	   "TEX-COORD-3D"
+	   "TEX-COORD-3F"
+	   "TEX-COORD-3I"
+	   "TEX-COORD-3S"
+	   "TEX-COORD-4D"
+	   "TEX-COORD-4F"
+	   "TEX-COORD-4I"
+	   "TEX-COORD-4S"
            "TEX-ENV-F"
            "TEX-ENV-I"
            "TEX-GEN-D"
@@ -3411,6 +3427,55 @@
   (zfail        card32)
   ;; *** ENUM
   (zpass        card32))
+
+
+(define-rendering-command tex-coord-1d 49
+  (s            float64))
+
+(define-rendering-command tex-coord-1f 50
+  (s            float32))
+
+(define-rendering-command tex-coord-1i 51
+  (s            int32))
+
+(define-rendering-command tex-coord-1s 52
+  (s            int16))
+
+(define-rendering-command tex-coord-2d 53
+  ((s #:t)      float64))
+
+(define-rendering-command tex-coord-2f 54
+  ((s #:t)      float32))
+
+(define-rendering-command tex-coord-2i 55
+  ((s #:t)      int32))
+
+(define-rendering-command tex-coord-2s 56
+  ((s #:t)      int16))
+
+(define-rendering-command tex-coord-3d 57
+  ((s #:t r)    float64))
+
+(define-rendering-command tex-coord-3f 58
+  ((s #:t r)    float32))
+
+(define-rendering-command tex-coord-3i 59
+  ((s #:t r)    int32))
+
+(define-rendering-command tex-coord-3s 60
+  ((s #:t r)    int16))
+
+(define-rendering-command tex-coord-4d 61
+  ((s #:t r q)  float64))
+
+(define-rendering-command tex-coord-4f 62
+  ((s #:t r q)  float32))
+
+(define-rendering-command tex-coord-4i 63
+  ((s #:t r q)  int32))
+
+(define-rendering-command tex-coord-4s 64
+  ((s #:t r q)  int16))
 
 
 (define-rendering-command tex-env-f 111
