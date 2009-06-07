@@ -96,6 +96,7 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
 (defconstant +render+ 1)
+(defconstant +render-large+ 2)
 (defconstant +create-context+ 3)
 (defconstant +destroy-context+ 4)
 (defconstant +make-current+ 5)
