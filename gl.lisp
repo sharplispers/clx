@@ -8,7 +8,8 @@
                 "CONTEXT-TAG"
                 "CONTEXT-RBUF"
                 "CONTEXT-INDEX"
-                )
+		"+RENDER-LARGE+"
+                "RENDER")
   (:import-from :xlib
                 "DATA"
                 "WITH-BUFFER-REQUEST"
@@ -18,6 +19,10 @@
 
                 "WITH-DISPLAY"
                 "DISPLAY-FORCE-OUTPUT"
+
+		"BUFFER-WRITE"
+		"BUFFER-FLUSH"
+		"BUFFER-NEW-REQUEST-NUMBER"
 
                 "INT8" "INT16" "INT32" "INTEGER"
                 "CARD8" "CARD16" "CARD32"
@@ -237,6 +242,11 @@
            "VERTEX-4I"
            "VERTEX-4S"
            "VIEWPORT"
+
+	   ;; Large rendering commands (alphabetical order)
+
+	   "DRAW-PIXELS"
+	   "TEX-IMAGE-2D"
 
            ;; * Where did this come from?
            ;;"NO-FLOATS"
@@ -2385,6 +2395,97 @@
 	     (setf (context-index .ctx.) (the array-index (+ .index0. .length.))))
 	   (values))))))
 
+(defun %with-large-render-request (opcode fixed-length variable-data populate-fields)
+  (declare (type (unsigned-byte 16) fixed-length)
+	   (type function populate-fields))
+  (let* ((command-buffer (make-array (+ fixed-length 16)
+				     :element-type '(unsigned-byte 8)))
+	 (payload-length #x7ff0)
+	 (request-total (1+ (ceiling (length variable-data) payload-length)))
+	 (display (context-display *current-context*)))
+    (declare (type (vector (unsigned-byte 8)) variable-data))
+    (with-display (display)
+      ;; Finish out any prior rendering commands.
+      (render)
+
+      ;; Make sure we can write to the display stream directly.
+      (buffer-flush display)
+
+      ;; Prep RenderLarge request header.
+      (aset-card8 (extension-opcode display "GLX") command-buffer 0)
+      (aset-card8 +render-large+ command-buffer 1)
+      (aset-card16 (+ 4 (ash fixed-length -2)) command-buffer 2)
+      (aset-card32 (context-tag *current-context*) command-buffer 4)
+      (aset-card16 1 command-buffer 8) ;; request number
+      (aset-card16 request-total command-buffer 10)
+      (aset-card32 fixed-length command-buffer 12) ;; n0 (request length)
+      (aset-card32 (+ fixed-length (length variable-data)) command-buffer 16) ;; L (command length)
+
+      ;; Prep render command header.
+      (aset-card32 opcode command-buffer 20) ;; command opcode
+
+      ;; Populate out render command fields.
+      (funcall populate-fields command-buffer)
+
+      ;; Send command header.
+      (buffer-write command-buffer display 0 (+ fixed-length 16))
+      (buffer-new-request-number display)
+
+      ;; Send command data.
+      (dotimes (i (1- request-total))
+	(let ((ni (min (- (length variable-data) (* i payload-length))
+		       payload-length)))
+	  (aset-card16 (+ 4 (ceiling ni 4)) command-buffer 2) ;; request length
+	  (aset-card16 (+ i 2) command-buffer 8) ;; request number
+	  (aset-card32 ni command-buffer 12) ;; ni
+	  (buffer-write command-buffer display 0 16)
+	  (buffer-new-request-number display)
+	  (buffer-write variable-data display (* i payload-length)
+			(+ (* i payload-length) ni)))))))
+
+(defmacro with-large-render-request ((opcode variable-data) &rest args)
+  ;; Like WITH-BUFFER-REQUEST, but obtains DISPLAY directly from the
+  ;; current GLX context, and produces a RenderLarge request with the
+  ;; appropriate render opcode and VARIABLE-DATA (which must be a
+  ;; (vector (unsigned-byte 8))) as the additional data.
+  ;;
+  ;; As a current limitation, VARIABLE-DATA must be a multiple of four
+  ;; octets in length, which may adversely affect some operations.
+  ;;
+  ;; Presently, this always produces a RenderLarge request.  In
+  ;; future, it may be redesigned to sometimes pack small-enough
+  ;; requests into the normal Render command stream.
+  (macrolet ((align (value width)
+	       ;; Align to 4-octet boundaries as needed (the 3 in the logand).
+	       (let ((lowmask (gensym)))
+		 `(let ((,lowmask (logand 3 (1- ,width))))
+		    (setf ,value (logandc1 ,lowmask
+					   (+ ,value ,lowmask)))))))
+    (let* ((buffer-name (gensym))
+	   fixed-length
+	   (field-setters
+	    (loop
+	       ;; We start at offset 24 as we're setting values into
+	       ;; an existing RenderLarge buffer.  We may want to
+	       ;; parameterize the offset if we start putting small
+	       ;; operations into a normal Render request (glCallLists
+	       ;; comes to mind here).
+	       with offset = 24
+	       for (type value) in args
+	       for width = (byte-width type)
+	       do (align offset width)
+	       collect `(,(setter type) ,value ,buffer-name ,offset)
+	       do (incf offset width)
+	       ;; fixed-length is the n0 value for the first
+	       ;; RenderLarge request, and thus includes the overhead
+	       ;; for the fields in the request after the context tag
+	       ;; and before the start of the args.
+	       finally (setf fixed-length (- (align offset 4) 16)))))
+      `(%with-large-render-request
+	,opcode ,fixed-length ,variable-data
+	#'(lambda (,buffer-name)
+	    ,@field-setters)))))
+
 ) ;; eval-when
 
 
@@ -3690,6 +3791,42 @@
   (type         card32)
   (lists        (list type n)))
 
+(defun draw-pixels (width height format type pixels)
+  ;; NOTE: PIXELS must be a (vector (unsigned-byte 8)) and a multiple
+  ;; of four octets in length.  This will likely cause problems with
+  ;; some combinations of WIDTH, HEIGHT and TYPE.
+  (with-large-render-request (173 pixels)
+    (card8 0) ;; swap_bytes
+    (card8 0) ;; lsb_first
+    (card32 width) ;; row_length
+    (card32 0) ;; skip_rows
+    (card32 0) ;; skip_pixels
+    (card32 1) ;;alignment
+    (int32 width)
+    (int32 height)
+    (card32 format)
+    (card32 type)))
+
+(defun tex-image-2d (target level internal-format width height
+			border format type pixels)
+  ;; NOTE: PIXELS must be a (vector (unsigned-byte 8)) and a multiple
+  ;; of four octets in length.  This will likely cause problems with
+  ;; some combinations of WIDTH, HEIGHT and TYPE.
+  (with-large-render-request (110 pixels)
+    (card8 0) ;; swap_bytes
+    (card8 0) ;; lsb_first
+    (card32 width) ;; row_length
+    (card32 0) ;; skip_rows
+    (card32 0) ;; skip_pixels
+    (card32 1) ;;alignment
+    (card32 target)
+    (card32 level)
+    (card32 internal-format) ;; components (?)
+    (int32 width)
+    (int32 height)
+    (int32 border)
+    (card32 format)
+    (card32 type)))
 
 
 ;;; Requests for GL non-rendering commands.
