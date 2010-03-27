@@ -64,6 +64,7 @@
            "VISUAL-ID"
            "RENDER"
            "SWAP-BUFFERS"
+           "USE-X-FONT"
            "WAIT-GL"
            "WAIT-X"
            ))
@@ -106,6 +107,7 @@
 (defconstant +wait-x+ 9)
 (defconstant +copy-context+ 10)
 (defconstant +swap-buffers+ 11)
+(defconstant +use-x-font+ 12)
 (defconstant +get-visual-configs+ 14)
 (defconstant +destroy-glx-pixmap+ 15)
 (defconstant +query-server-string+ 19)
@@ -606,6 +608,23 @@ Example: '(:glx-rgba (:glx-alpha-size 4) :glx-double-buffer (:glx-class 4 =)."
       (card32 (context-tag ctx))
       (resource-id (drawable-id (context-drawable ctx))))
     (display-force-output display)))
+
+(defun use-x-font (font first count list-base)
+  (assert (context-p *current-context*)
+          (*current-context*)
+          "~S is not a context." *current-context*)
+  (let* ((ctx *current-context*)
+         (display (context-display ctx)))
+    ;; Make sure all rendering commands are sent away.
+    (glx:render)
+    (with-buffer-request (display (extension-opcode display "GLX"))
+      (data +use-x-font+)
+      ;; *** GLX_CONTEXT_TAG
+      (card32 (context-tag ctx))
+      (resource-id (font-id font))
+      (card32 first)
+      (card32 count)
+      (card32 list-base))))
 
 
 ;;; FIXME: These two are more complicated than sending messages.  As I
