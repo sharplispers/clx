@@ -2172,8 +2172,14 @@
   (let ((low (sb-kernel:double-float-low-bits value))
         (high (sb-kernel:double-float-high-bits value)))
     (declare (type (unsigned-byte 32) low high))
-    (aset-card32 low array index)
-    (aset-card32 high array (the array-index (+ index 4))))
+    #+clx-little-endian
+    (progn
+      (aset-card32 low array index)
+      (aset-card32 high array (the array-index (+ index 4))))
+    #-clx-little-endian
+    (progn
+      (aset-card32 low array (the array-index (+ index 4)))
+      (aset-card32 high array index)))
   value)
 
 
@@ -2186,8 +2192,14 @@
   (let ((low (kernel:double-float-low-bits value))
         (high (kernel:double-float-high-bits value)))
     (declare (type (unsigned-byte 32) low high))
-    (aset-card32 low array index)
-    (aset-card32 high array (+ index 4)))
+    #+clx-little-endian
+    (progn
+      (aset-card32 low array index)
+      (aset-card32 high array (+ index 4)))
+    #-clx-little-endian
+    (progn
+      (aset-card32 low array (+ index 4))
+      (aset-card32 high array index)))
   value)
 
 
@@ -2200,8 +2212,14 @@
   (multiple-value-bind (low high)
       (ccl::double-float-bits value)
     (declare (type (unsigned-byte 32) low high))
-    (aset-card32 low array index)
-    (aset-card32 high array (the array-index (+ index 4))))
+    #+clx-little-endian
+    (progn
+      (aset-card32 low array index)
+      (aset-card32 high array (the array-index (+ index 4))))
+    #-clx-little-endian
+    (progn
+      (aset-card32 low array (the array-index (+ index 4)))
+      (aset-card32 high array index)))
   value)
 
 
