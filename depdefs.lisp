@@ -141,7 +141,7 @@
 ;;; You must define this to match the real byte order.  It is used by
 ;;; overlapping array and image code.
 
-#+(or lispm vax little-endian Minima)
+#+(or lispm vax (and (not sbcl) little-endian) Minima)
 (eval-when (eval compile load)
   (pushnew :clx-little-endian *features*))
 
