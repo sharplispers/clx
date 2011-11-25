@@ -37,6 +37,7 @@
 (defsystem CLX
     :depends-on (#+sbcl sb-bsd-sockets)
     :version "0.7.2"
+    :description "An X11 client library for Common Lisp."
     :serial t
     :default-component-class clx-source-file
     :components
