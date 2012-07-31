@@ -1153,19 +1153,20 @@ by every function, which attempts to generate RENDER requests."
         (card16 y))
       cursor)))
 
-;;;
-;;; Usage:
-;;;  (render-create-anim-cursor display (list (cursor-id cursor-1) delay-1
-;;;    (cursor-id cursor-2) delay-2 ...))
-(defun render-create-anim-cursor (display cursors-delays)
-  "Create animated cursor. @var{cursors-delays} should be
-sequence #(cursor-id-1 delay-1 cursor-id-2 delay-2 ... )."
-  (xlib::ensure-render-initialized display)
-  (let* ((cursor (xlib::make-cursor :display display))
-         (cid (xlib::allocate-resource-id display cursor 'cursor)))
-    (setf (xlib:cursor-id cursor) cid)
-    (xlib::with-buffer-request (display (xlib::extension-opcode display "RENDER"))
-      (data xlib::+X-RenderCreateAnimCursor+)
-      (resource-id cid)
-      ((sequence :format xlib:card32) cursors-delays))
-    cursor))
+(defun render-create-anim-cursor (cursors delays)
+  "Create animated cursor. cursors length must be the same as delays length."
+  (let ((display (cursor-display (first cursors))))
+    (ensure-render-initialized display)
+    (let* ((cursor (make-cursor :display display))
+           (cid (allocate-resource-id display cursor 'cursor))
+           (cursors-length (length cursors))
+           (cursors-delays (make-list (* 2 (length cursors)))))
+      (setf (xlib:cursor-id cursor) cid)
+      (dotimes (i cursors-length)
+        (setf (elt cursors-delays (* 2 i)) (cursor-id (elt cursors i))
+              (elt cursors-delays (1+ (* 2 i))) (elt delays i)))
+      (xlib::with-buffer-request (display (extension-opcode display "RENDER"))
+        (data +X-RenderCreateAnimCursor+)
+        (resource-id cid)
+        ((sequence :format card32) cursors-delays))
+      cursor)))

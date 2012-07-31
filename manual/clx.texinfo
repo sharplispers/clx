@@ -15801,6 +15801,7 @@ server and rendering sets of them.
 * The picture object::
 * Glyphs and Glyphsets::
 * Using glyphs::
+* Using cursors::       
 * Errors (Extensions)::
 @end menu
 
@@ -16075,7 +16076,7 @@ This request removes @emph{glyphs} from @emph{glyph-set}.
 Each glyph must exist in @emph{glyph-set} (else a @var{Match} error results).
 @end defun
 
-@node Using glyphs, Errors (Extensions), Glyphs and Glyphsets, RENDER - A new rendering system for X11
+@node Using glyphs, Using cursors, Glyphs and Glyphsets, RENDER - A new rendering system for X11
 @subsection Using glyphs
 
 @defun render-composite-glyph dest glyph-set source dest-x dest-y sequence &key op src-x src-y mask-format start end
@@ -16113,9 +16114,43 @@ blah
 Requests the sequence of glyphs to be drawn with the glyph-set.
 @end defun
 
+@node Using cursors, Errors (Extensions), Using glyphs, RENDER - A new rendering system for X11
+@subsection Using cursors
+
+@defun render-create-cursor picture &optional (x 0) (y 0))
 
 
-@node Errors (Extensions),  , Using glyphs, RENDER - A new rendering system for X11
+Creates cursor object from xrender @var{picture}. 
+The @var{x} and @var{y} coordinates define the hotspot relative to the source's
+origin and must be a point within the source. The resulting picture will
+nominally be drawn to the screen with :over operator.
+
+The components of the cursor may be transformed arbitrarily to meet
+display limitations.  In particular, if the display supports only
+two colors cursors without translucency, the cursor will be
+transformed so that areas less than .5 alpha will be transparent,
+else opaque, and areas darker than 50% gray will be black else
+white. 
+
+The source picture can be freed immediately if no further explicit
+references to it are to be made.
+
+Subsequent drawing in the source has an undefined effect on the
+cursor.  The server might or might not make a copy of the picture.
+@end defun
+
+@defun render-create-anim-cursor cursors delays
+
+Creates cursor object. @var{cursors} must be list of cursors,
+@var{delays} must be list of delays (in milliseconds). Lengths of lists
+must be the same.
+
+When active, the cursor image on the screen will cycle through
+@var{cursors}, showing each cursor in the element for the number of
+milliseconds indicated by the @var{delays} member of that element.
+@end defun
+
+@node Errors (Extensions),  , Using cursors, RENDER - A new rendering system for X11
 @subsection Errors
 
 What new errors Xrender defines...
