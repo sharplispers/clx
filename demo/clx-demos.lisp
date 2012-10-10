@@ -36,11 +36,11 @@
        (unless *display*
 	 #+:cmu
 	 (multiple-value-setq (*display* *screen*) (ext:open-clx-display))
-	 #+(or sbcl allegro clisp)
+	 #+(or sbcl allegro clisp lispworks)
 	 (progn
 	   (setf *display* (xlib::open-default-display))
 	   (setf *screen* (xlib:display-default-screen *display*)))
-	 #-(or cmu sbcl allegro clisp)
+	 #-(or cmu sbcl allegro clisp lispworks)
 	 (progn
 	   ;; Portable method
 	   (setf *display* (xlib:open-display (machine-instance)))
@@ -57,7 +57,7 @@
 					   :border-width 2
 					   :override-redirect :on)))
 	 (xlib:map-window *window*)
-	 ;; 
+	 ;;
 	 ;; I hate to do this since this is not something any normal
 	 ;; program should do ...
 	 (setf (xlib:window-priority *window*) :above)
@@ -147,7 +147,7 @@
 
 ;;; GREYNETIC displays random sized and shaded boxes in a window.  This is
 ;;; real slow.  It needs work.
-;;; 
+;;;
 (defun greynetic (window duration)
   (let* ((pixmap (xlib:create-pixmap :width 32 :height 32 :depth 1
 				     :drawable window))
@@ -320,9 +320,9 @@
 (defconstant vecmax 2880)
 
 (defparameter sin-array
-  '#(#o0 #o435 #o1073 #o1531 #o2166 #o2623 #o3260 
+  '#(#o0 #o435 #o1073 #o1531 #o2166 #o2623 #o3260
      #o3714 #o4350 #o5003 #o5435 #o6066 #o6516 #o7145
-     #o7573 #o10220 #o10644 #o11266 #o11706 #o12326 
+     #o7573 #o10220 #o10644 #o11266 #o11706 #o12326
      #o12743 #o13357 #o13771 #o14401 #o15007 #o15414
      #o16016 #o16416 #o17013 #o17407 #o20000 #o20366
      #o20752 #o21333 #o21711 #o22265 #o22636 #o23204
@@ -348,16 +348,16 @@
 	 (setq val (- d180 val)))
      (setq frac (logand val 7))
      (setq val (ash val -3))
-     ;; 
+     ;;
      (setq sinlo (if (>= val 90)
 		     (svref sin-array 90)
 		     (svref sin-array val)))
-     ;; 
+     ;;
      (if (< val 90)
 	 (setq sinlo
 	       (+ sinlo (ash (* frac (- (svref sin-array (1+ val)) sinlo))
 			     -3))))
-     ;; 
+     ;;
      (if neg
 	 (- sinlo)
 	 sinlo)))
@@ -381,7 +381,7 @@
 	factor cntval needed)
     (dotimes (i 3)
       (case i
-	(0 (setq factor 2 cntval 6)) 
+	(0 (setq factor 2 cntval 6))
 	(1 (setq factor 3 cntval 2))
 	(2 (setq factor 5 cntval 1)))
       (do ()
@@ -505,7 +505,7 @@
 
 ;;; Invert-Rectangle calls the CLX function draw-rectangle with "fill-p"
 ;;; set to T.  Update-Screen forces the display output.
-;;; 
+;;;
 (defmacro invert-rectangle (x y height width)
   `(xlib:draw-rectangle *hanoi-window* *hanoi-gcontext*
 			,x ,y ,width ,height t))
@@ -684,7 +684,7 @@
 ;;; disks, a third needle, TEMP-NEEDLE, is needed for temporary storage.
 
 (defun move-n-disks (n start-needle end-needle temp-needle)
-  "Moves the top N disks from START-NEEDLE to END-NEEDLE.  
+  "Moves the top N disks from START-NEEDLE to END-NEEDLE.
    Uses TEMP-NEEDLE for temporary storage."
   (cond ((= n 1)
 	 (move-one-disk start-needle end-needle))
@@ -724,7 +724,7 @@
 	t))))
 
 ;;; Change the names of these when the DEMO loop isn't so stupid.
-;;; 
+;;;
 (defdemo slow-hanoi-demo "Slow-towers-of-Hanoi" (&optional (how-many 4))
   0 100 768 300
   "Solves the Towers of Hanoi problem before your very eyes."
@@ -755,7 +755,7 @@
 ;;; cause the window to bounce forever, so we have prev-neg-velocity and
 ;;; number-problems to check for this.  This is not crucial with the x
 ;;; velocity since the loop terminates as a function of the y velocity.
-;;; 
+;;;
 (defun bounce-window (window &optional
 			     (x-velocity 0) (elasticity 0.85) (gravity 2))
   (unless (< 0 elasticity 1)
@@ -809,7 +809,7 @@
 	      (xlib:display-force-output *display*))))))))
 
 ;;; Change the name of this when DEMO is not so stupid.
-;;; 
+;;;
 (defdemo shove-bounce-demo "Shove-bounce" ()
   100 100 300 300
   "Drops the demo window with an inital X velocity which bounces off
@@ -829,12 +829,12 @@
 ;;; Permission is granted to any individual or institution to use, copy,
 ;;; modify, and distribute this software, provided that this complete
 ;;; copyright and permission notice is maintained, intact, in all copies and
-;;; supporting documentation.  
+;;; supporting documentation.
 
 ;;; The author provides this software "as is" without express or
 ;;; implied warranty.
 
-;;; This routine plots the recurrence 
+;;; This routine plots the recurrence
 ;;;      x <- y(1+sin(0.7x)) - 1.2(|x|)^.5
 ;;;      y <- .21 - x
 ;;; As described in a ?? 1983 issue of the Mathematical Intelligencer
@@ -860,7 +860,7 @@
     (let ((xf (floor (* (+ 1.0 x) hw ))) ;These lines center the picture
           (yf (floor (* (+ 0.7 y) hh ))))
       (xlib:draw-point win gc xf yf)
-      (draw-ppict win gc (1- count) 
+      (draw-ppict win gc (1- count)
                   (- (* y (1+ (sin (* 0.7 x)))) (* 1.2 (sqrt (abs x))))
                   (- 0.21 x)
                   hw
@@ -874,9 +874,9 @@
 
 ;;;; Plaid
 
-;;; 
+;;;
 ;;; Translated from the X11 Plaid Demo written in C by Christopher Hoover.
-;;; 
+;;;
 
 (defmacro rect-x (rects n)
   `(svref ,rects (ash ,n 2)))
@@ -931,9 +931,9 @@
 
 ;;;; Bball demo
 
-;;; 
+;;;
 ;;; Ported to CLX by Blaine Burks
-;;; 
+;;;
 
 (defvar *ball-size-x* 38)
 (defvar *ball-size-y* 34)

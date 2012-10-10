@@ -73,7 +73,7 @@
 (declaim (declaration ignorable))
 
 ;;; INDENTATION argpos1 arginden1 argpos2 arginden2 --- Tells the lisp editor how to
-;;; indent calls to the function or macro containing the declaration.  
+;;; indent calls to the function or macro containing the declaration.
 
 #-genera
 (declaim (declaration indentation))
@@ -222,7 +222,7 @@
 
 (defun make-index-op (operator args)
   `(the array-index
-	(values 
+	(values
 	  ,(case (length args)
 	     (0 `(,operator))
 	     (1 `(,operator
@@ -576,7 +576,7 @@ used, since NIL is the empty list.")
   (dead nil :type (or null (not null)))
   ;; T makes buffer-flush a noop.  Manipulated with with-buffer-flush-inhibited.
   (flush-inhibit nil :type (or null (not null)))
-  
+
   ;; Change these functions when using shared memory buffers to the server
   ;; Function to call when writing the buffer
   (write-function 'buffer-write-default)
@@ -592,7 +592,7 @@ used, since NIL is the empty list.")
   (listen-function 'buffer-listen-default)
 
   #+Genera (debug-io nil :type (or null stream))
-  ) 
+  )
 
 ;;-----------------------------------------------------------------------------
 ;; Printing routines.
@@ -622,7 +622,7 @@ used, since NIL is the empty list.")
   (when identity (princ "???" stream))
   (princ ">" stream)
   nil)
-  
+
 #-(or clx-ansi-common-lisp Genera)
 (defmacro print-unreadable-object
 	  ((object stream &key type identity) &body body)
@@ -666,7 +666,7 @@ used, since NIL is the empty list.")
 
 #+lcl3.0
 (lucid::def-foreign-function
-    (connect-to-server 
+    (connect-to-server
       (:language :c)
       (:return-type :signed-32bit))
   (host :simple-string)
@@ -677,7 +677,8 @@ used, since NIL is the empty list.")
 ;; Finding the server socket
 ;;-----------------------------------------------------------------------------
 
-;; These are here because dep-openmcl.lisp and dependent.lisp both need them
+;; These are here because dep-openmcl.lisp, dep-lispworks.lisp and
+;; dependent.lisp need them
 (defconstant +X-unix-socket-path+
   "/tmp/.X11-unix/X"
   "The location of the X socket")
@@ -689,5 +690,5 @@ nil if a network socket should be opened."
 	 (format nil "~A~D" +X-unix-socket-path+ display))
 	#+darwin
 	((and (> (length host) 10) (string= host "tmp/launch" :end1 10))
-	 (format nil "/~A:~D" host display))	  
+	 (format nil "/~A:~D" host display))
 	(t nil)))

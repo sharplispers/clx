@@ -49,7 +49,7 @@
 
              (unmap-window window)
              (free-gcontext gc)))
-      
+
       (when ctx (glx:destroy-context ctx))
       (close-display display))))
 
@@ -130,7 +130,7 @@
             (gl:pop-matrix)
             (glx:swap-buffers)
             (sleep 0.02))))
-  
+
   (sleep 3))
 
 
@@ -190,7 +190,7 @@
     (gl:end)
 
     (gl:normal-3f 0.0s0 0.0s0 -1.0s0)
-                 
+
     ;; Draw back face.
     (gl:begin gl:+quad-strip+)
     (dotimes (i (1+ teeth))
@@ -278,7 +278,7 @@
     (gl:end)
 
     (gl:shade-model gl:+smooth+)
-                 
+
     ;; Draw inside radius cylinder.
     (gl:begin gl:+quad-strip+)
     (dotimes (i (1+ teeth))
@@ -330,7 +330,7 @@
   (gl:load-identity)
   (gl:translate-f 0.0s0 0.0s0 -40.0s0))
 
-             
+
 (defun init ()
   (let (gear-1 gear-2 gear-3)
     ;;(gl:light-fv gl:+light0+ gl:+position+ '(5.0s0 5.0s0 10.0s0 0.0s0))
@@ -390,7 +390,7 @@
 
     (loop
        ;;for angle from 0.0s0 below 361.0s0 by 1.0s0
-       with angle single-float = 0.0s0
+       with angle of-type single-float = 0.0s0
        with dt = 0.004s0
        repeat 2500
        do (progn
@@ -412,7 +412,7 @@
             (gear 1.0s0 4.0s0 1.0s0 20 0.7s0)
             (gl:pop-matrix)
 
-            
+
             (gl:push-matrix)
             (gl:translate-f 3.1s0 -2.0s0 0.0s0)
             (gl:rotate-f (- (* angle -2.0s0) 9.0s0) 0.0s0 0.0s0 1.0s0)
@@ -434,7 +434,7 @@
             (glx:swap-buffers)
             ;;(sleep 0.025)
             )))
-  
+
 
   ;;(sleep 3)
   )
@@ -470,7 +470,7 @@
 
        (draw gear-1 gear-2 gear-3 view-rotx view-roty view-rotz angle)
        (glx:swap-buffers)
-       
+
        (incf frames)
 
        ;; FPS calculation goes here
