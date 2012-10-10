@@ -2144,12 +2144,13 @@
         (setf (fli:dereference pointer) x))
       (fli:dereference bits)))
 
+  (declaim (notinline aset-float32))
   (defun aset-float32 (value array index)
-    (declare (type single-float value)
+    (declare (type (or short-float single-float) value)
              (type buffer-bytes array)
              (type array-index index))
     #.(declare-buffun)
-    (let ((bits (%single-float-bits value)))
+    (let ((bits (%single-float-bits (coerce value 'single-float))))
       (declare (type (unsigned-byte 32) bits))
       (aset-card32 bits array index))
     value))
@@ -2212,6 +2213,7 @@
       (values (fli:foreign-slot-value bits 'low :type :uint32 :object-type '%uint64)
               (fli:foreign-slot-value bits 'high :type :uint32 :object-type '%uint64))))
 
+  (declaim (notinline aset-float64))
   (defun aset-float64 (value array index)
     (declare (type double-float value)
              (type buffer-bytes array)
