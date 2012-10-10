@@ -21,7 +21,7 @@
 ;;; or implied warranty.
 
 (defpackage :clx-system (:use :cl :asdf))
-(in-package :clx-system)  
+(in-package :clx-system)
 
 (pushnew :clx-ansi-common-lisp *features*)
 
@@ -44,9 +44,10 @@
     ((:file "package")
      (:file "depdefs")
      (:file "clx")
-     #-(or openmcl allegro) (:file "dependent")
+     #-(or openmcl allegro lispworks) (:file "dependent")
      #+openmcl (:file "dep-openmcl")
      #+allegro (:file "dep-allegro")
+     #+lispworks (:file "dep-lispworks")
      (:file "macros")
      (:file "bufmac")
      (:file "buffer")
