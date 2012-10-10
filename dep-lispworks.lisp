@@ -25,6 +25,9 @@
         Patches are welcome."
        (lisp-implementation-type) (lisp-implementation-version))
 
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (require "comm"))
+
 (proclaim '(declaration array-register))
 
 ;;; The size of the output buffer.  Must be a multiple of 4.
