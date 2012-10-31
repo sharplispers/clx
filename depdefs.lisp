@@ -677,7 +677,8 @@ used, since NIL is the empty list.")
 ;; Finding the server socket
 ;;-----------------------------------------------------------------------------
 
-;; These are here because dep-openmcl.lisp and dependent.lisp both need them
+;; These are here because dep-openmcl.lisp, dep-lispworks.lisp and
+;; dependent.lisp need them
 (defconstant +X-unix-socket-path+
   "/tmp/.X11-unix/X"
   "The location of the X socket")
