@@ -390,7 +390,7 @@
 
     (loop
        ;;for angle from 0.0s0 below 361.0s0 by 1.0s0
-       with angle single-float = 0.0s0
+       with angle of-type single-float = 0.0s0
        with dt = 0.004s0
        repeat 2500
        do (progn
