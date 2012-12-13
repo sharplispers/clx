@@ -127,6 +127,8 @@
           render-query-version
           ;; render-query-picture-formats
           render-fill-rectangle
+          render-triangles
+          render-trapezoids
           render-composite
           render-create-glyph-set
           render-reference-glyph-set
@@ -578,7 +580,7 @@ by every function, which attempts to generate RENDER requests."
 
 ;; fill rectangles, colors.
 
-(defun render-triangles-1 (picture op source src-x src-y format coord-sequence)
+(defun render-triangles (picture op source src-x src-y format coord-sequence)
   ;; For performance reasons we do a special typecase on (simple-array
   ;; (unsigned-byte 32) (*)), so that it'll be possible to have high
   ;; performance rasters.
@@ -705,7 +707,7 @@ by every function, which attempts to generate RENDER requests."
   )
 ||#
 
-(defun render-trapezoids-1 (picture op source src-x src-y mask-format coord-sequence)
+(defun render-trapezoids (picture op source src-x src-y mask-format coord-sequence)
   ;; coord-sequence is  top bottom
   ;;                    left-x1 left-y1 left-x2 left-y2
   ;;                    right-x1 right-y1 right-x2 right-y2 ...
