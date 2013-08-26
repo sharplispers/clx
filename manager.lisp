@@ -151,7 +151,7 @@
   wm-hints)
 
 (defun decode-wm-hints (vector display)
-  (declare (type (simple-vector 9) vector)
+  (declare (type (simple-vector *) vector)
 	   (type display display))
   (declare (clx-values wm-hints))
   (let ((input-hint 0)
