@@ -127,6 +127,8 @@
           render-query-version
           ;; render-query-picture-formats
           render-fill-rectangle
+          render-triangles
+          render-trapezoids
           render-composite
           render-create-glyph-set
           render-reference-glyph-set
@@ -569,16 +571,16 @@ by every function, which attempts to generate RENDER requests."
     (synchronise-picture-state picture)
     (with-buffer-request (display (extension-opcode display "RENDER"))
       (data +X-RenderFillRectangles+)
-      (render-op op)                         ;op
-      (card8 0)                        ;pad
-      (card16 0)                        ;pad
+      (render-op op)
+      (pad8 0)
+      (pad16 0)
       (resource-id (picture-id picture))
       (card16 (elt color 0)) (card16 (elt color 1)) (card16 (elt color 2)) (card16 (elt color 3))
       (int16 x1) (int16 y1) (card16 w) (card16 h))))
 
 ;; fill rectangles, colors.
 
-(defun render-triangles-1 (picture op source src-x src-y format coord-sequence)
+(defun render-triangles (picture op source src-x src-y format coord-sequence)
   ;; For performance reasons we do a special typecase on (simple-array
   ;; (unsigned-byte 32) (*)), so that it'll be possible to have high
   ;; performance rasters.
@@ -586,17 +588,18 @@ by every function, which attempts to generate RENDER requests."
                '(let ((display (picture-display picture)))
                  (synchronise-picture-state picture)
                  (synchronise-picture-state source)
-                 (with-buffer-request (display (extension-opcode display "RENDER"))
-                   (data +X-RenderTriangles+)
-                   (render-op op)                       ;op
-                   (card8 0)                            ;pad
-                   (card16 0)                           ;pad
-                   (resource-id (picture-id source))
-                   (resource-id (picture-id picture))
-                   (picture-format format)
-                   (int16 src-x)
-                   (int16 src-y)
-                   ((sequence :format int32) coord-sequence) ))))
+                 (labels ((funk (x) (ash x 16)))
+                   (with-buffer-request (display (extension-opcode display "RENDER"))
+                     (data +X-RenderTriangles+)
+                     (render-op op)
+                     (pad8 0)
+                     (pad16 0)
+                     (resource-id (picture-id source))
+                     (resource-id (picture-id picture))
+                     (picture-format format)
+                     (int16 src-x)
+                     (int16 src-y)
+                     ((sequence :format int32 :transform #'funk) coord-sequence))))))
     (typecase coord-sequence
       ((simple-array (unsigned-byte 32) (*))
        (locally
@@ -693,7 +696,7 @@ by every function, which attempts to generate RENDER requests."
       (data +X-RenderSetPictureFilter+)
       (resource-id (picture-id picture))
       (card16 (length filter))
-      (card16 0)                        ;pad
+      (pad16 0)
       ((sequence :format card8) (map 'vector #'char-code filter)))))
   
 
@@ -704,25 +707,26 @@ by every function, which attempts to generate RENDER requests."
   )
 ||#
 
-(defun render-trapezoids-1 (picture op source src-x src-y mask-format coord-sequence)
+(defun render-trapezoids (picture op source src-x src-y mask-format coord-sequence)
   ;; coord-sequence is  top bottom
-  ;;                    line-1-x1 line-1-y1 line-1-x2 line-1-y2
-  ;;                    line-2-x1 line-2-y1 line-2-x2 line-2-y2 ...
+  ;;                    left-x1 left-y1 left-x2 left-y2
+  ;;                    right-x1 right-y1 right-x2 right-y2 ...
   ;;
   (let ((display (picture-display picture)))
     (synchronise-picture-state picture)
     (synchronise-picture-state source)
-    (with-buffer-request (display (extension-opcode display "RENDER"))
-      (data +X-RenderTrapezoids+)
-      (render-op op)                    ;op
-      (card8 0)                         ;pad
-      (card16 0)                        ;pad
-      (resource-id (picture-id source))
-      (resource-id (picture-id picture))
-      ((or (member :none) picture-format) mask-format)
-      (int16 src-x)
-      (int16 src-y)
-      ((sequence :format int32) coord-sequence) )))
+    (labels ((funk (x) (ash x 16)))
+      (with-buffer-request (display (extension-opcode display "RENDER"))
+        (data +X-RenderTrapezoids+)
+        (render-op op)
+        (pad8 0)
+        (pad16 0)
+        (resource-id (picture-id source))
+        (resource-id (picture-id picture))
+        ((or (member :none) picture-format) mask-format)
+        (int16 src-x)
+        (int16 src-y)
+        ((sequence :format int32 :transform #'funk) coord-sequence)))))
 
 (defun render-composite (op
                          source mask dest
@@ -734,9 +738,9 @@ by every function, which attempts to generate RENDER requests."
     (synchronise-picture-state dest)
     (with-buffer-request (display (extension-opcode display "RENDER"))
       (data +X-RenderComposite+)
-      (render-op op)                         ;op
-      (card8 0)                         ;pad
-      (card16 0)                        ;pad
+      (render-op op)
+      (pad8 0)
+      (pad16 0)
       (resource-id (picture-id source))
       (resource-id (if mask (picture-id mask) 0))
       (resource-id (picture-id dest))
@@ -802,14 +806,16 @@ by every function, which attempts to generate RENDER requests."
     (with-buffer-request (display (extension-opcode display "RENDER"))
       (data +X-RenderCompositeGlyphs8+)
       (render-op alu)
-      (card8 0) (card16 0)              ;padding
+      (pad8 0)
+      (pad16 0)
       (picture source)
       (picture dest)
       ((or (member :none) picture-format) mask-format)
       (glyph-set glyph-set)
       (int16 src-x) (int16 src-y)
       (card8 (- end start)) ;length of glyph elt
-      (card8 0) (card16 0) ;padding
+      (pad8 0)
+      (pad16 0)
       (int16 dest-x) (int16 dest-y)             ;dx, dy
       ((sequence :format card8) sequence))))
 
@@ -831,7 +837,8 @@ by every function, which attempts to generate RENDER requests."
 	   (data ,opcode)
 	   (length request-length)
 	   (render-op ,alu)
-	   (card8 0) (card16 0)                        ;padding
+           (pad8 0)
+	   (pad16 0)
 	   (picture ,source)
 	   (picture ,dest)
 	   ((or (member :none) picture-format) ,mask-format)
