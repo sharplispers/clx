@@ -1295,7 +1295,7 @@
 
 ;;; WITHOUT-INTERRUPTS -- provide for atomic operations.
 
-#-(or lispm excl lcl3.0 Minima cmu)
+#-(or lispm excl lcl3.0 Minima cmu sbcl)
 (defmacro without-interrupts (&body body)
   `(progn ,@body))
 
