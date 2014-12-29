@@ -173,6 +173,14 @@
 	(error "screen ~A not found in display ~A" screen display)
 	position)))
 
+(declaim (inline __card32->card16__))
+(defun __card32->card16__ (i)
+  (declare (type card32 i))
+  #+clx-little-endian
+  (progn (values (ldb (byte 16 0) i) (ldb (byte 32 16) i)))
+  #-clx-little-endian
+  (progn (values (ldb (byte 32 16) i) (ldb (byte 16 0) i))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;                                                                       ;;;;
 ;;;;              public XFree86-VidMode Extension routines                ;;;;
@@ -720,11 +728,3 @@ x and y keyword parameters value (zero will be theire default value)."
 		   (setf (svref v (incf index)) w1
 			 (svref v (incf index)) w2))))
       v)))
-
-(declaim (inline __card32->card16__))
-(defun __card32->card16__ (i)
-  (declare (type card32 i))
-  #+clx-little-endian
-  (progn (values (ldb (byte 16 0) i) (ldb (byte 32 16) i)))
-  #-clx-little-endian
-  (progn (values (ldb (byte 32 16) i) (ldb (byte 16 0) i))))
