@@ -197,6 +197,24 @@
 ;; We do away with the distinction between pict-format and
 ;; picture-format-info. That is we cache picture-format-infos.
 
+(defstruct picture-format
+  display 
+  (id   0 :type (unsigned-byte 29))
+  type
+  depth
+  red-byte
+  green-byte
+  blue-byte
+  alpha-byte
+  colormap)
+
+(def-clx-class (glyph-set (:copier nil)
+                        )
+  (id 0 :type resource-id)
+  (display nil :type (or null display))
+  (plist nil :type list)                ; Extension hook
+  (format))
+
 (defstruct render-info
   major-version
   minor-version
@@ -298,17 +316,6 @@ by every function, which attempts to generate RENDER requests."
     ((index thing) `(resource-id-put ,index (glyph-set-id ,thing)))))
 
 ;;; picture format
-
-(defstruct picture-format
-  display 
-  (id   0 :type (unsigned-byte 29))
-  type
-  depth
-  red-byte
-  green-byte
-  blue-byte
-  alpha-byte
-  colormap)
 
 (defmethod print-object ((object picture-format) stream)
   (let ((abbrev
@@ -752,13 +759,6 @@ by every function, which attempts to generate RENDER requests."
       (int16 dst-y)
       (card16 width)
       (card16 height))))
-
-(def-clx-class (glyph-set (:copier nil)
-                        )
-  (id 0 :type resource-id)
-  (display nil :type (or null display))
-  (plist nil :type list)                ; Extension hook
-  (format))
 
 (defun render-create-glyph-set (format &key glyph-set)
   (let ((display (picture-format-display format)))
