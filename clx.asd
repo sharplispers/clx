@@ -44,10 +44,9 @@
     ((:file "package")
      (:file "depdefs")
      (:file "clx")
-     #-(or openmcl allegro lispworks) (:file "dependent")
+     #-(or openmcl allegro) (:file "dependent")
      #+openmcl (:file "dep-openmcl")
      #+allegro (:file "dep-allegro")
-     #+lispworks (:file "dep-lispworks")
      (:file "macros")
      (:file "bufmac")
      (:file "buffer")
@@ -67,7 +66,7 @@
      #+allegro
      (:file "excldep" :pathname "excldep.lisp")
      (:module extensions
-	      :pathname #.(make-pathname :directory '(:relative))
+	      :pathname #.(make-pathname :directory '(:relative "extensions"))
 	      :components
 	      ((:file "shape")
 	       (:file "big-requests")
@@ -78,7 +77,11 @@
 	       (:file "dpms")
                (:file "xtest")
                (:file "screensaver")
-               (:file "xinerama")))
+               (:file "xinerama")
+	       (:file "dbe")
+	       (:file "xc-misc")
+	       (:file "randr")
+	       ))
      (:module demo
 	      :default-component-class example-source-file
 	      :components
