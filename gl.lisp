@@ -2641,7 +2641,7 @@
                                   #.+convolution-width+
                                   #.+convolution-height+
                                   #.+max-convolution-width+
-                                  #.+max-convolution-width+)
+                                  #.+max-convolution-height+)
                                  1)
                                 ((#.+convolution-filter-scale+
                                   #.+convolution-filter-bias+)
@@ -2667,7 +2667,7 @@
                                 #.+convolution-width+
                                 #.+convolution-height+
                                 #.+max-convolution-width+
-                                #.+max-convolution-width+)
+                                #.+max-convolution-height+)
                                1)
                               ((#.+convolution-filter-scale+
                                 #.+convolution-filter-bias+)

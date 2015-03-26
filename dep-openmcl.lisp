@@ -492,7 +492,7 @@
 ;;; value changes.
 
 (defun process-block (whostate predicate &rest predicate-args)
-  (declare (dynamic-extern predicate-args))
+  (declare (dynamic-extent predicate-args))
   (apply #'ccl:process-wait whostate predicate predicate-args))
 
 ;;; PROCESS-WAKEUP: Check some other process' wait function.
@@ -828,7 +828,7 @@
   (declare (clx-values list))
   (ecase family
     ((:internet nil 0)
-     (let* ((addr (ccl::host-as-inet-host host)))
+     (let* ((addr (ccl::htonl (ccl::host-as-inet-host host))))
        (cons :internet (list
                         (ldb (byte 8 24) addr)
                         (ldb (byte 8 16) addr)
@@ -1113,7 +1113,7 @@ Returns a list of (host display-number screen protocol)."
 			    unit byte-lsb-first-p bit-lsb-first-p)
   (declare (ignore bbuf boffset pixarray x y width height
                    padded-bytes-per-line bits-per-pixel unit
-                   byte-lsb-first-p bit-lsp-first-p))
+                   byte-lsb-first-p bit-lsb-first-p))
   nil)
 
 ;;; FAST-COPY-PIXARRAY - copy part of a pixarray into another
