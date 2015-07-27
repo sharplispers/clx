@@ -1545,16 +1545,17 @@
 (defun open-x-stream (host display protocol)  
   (declare (ignore protocol)
            (type (integer 0) display))
-  (socket-make-stream 
-   (if (or (string= host "") (string= host "unix")) ; AF_LOCAL domain socket
-       (let ((s (make-instance 'local-socket :type :stream)))
-	 (socket-connect s (format nil "~A~D" +X-unix-socket-path+ display))
-	 s)
-       (let ((host (car (host-ent-addresses (get-host-by-name host)))))
-	 (when host
-	   (let ((s (make-instance 'inet-socket :type :stream :protocol :tcp)))
-	     (socket-connect s host (+ 6000 display))
-	     s))))
+  (socket-make-stream
+   (let ((unix-domain-socket-path (unix-socket-path-from-host host display)))
+     (if unix-domain-socket-path
+         (let ((s (make-instance 'local-socket :type :stream)))
+           (socket-connect s unix-domain-socket-path)
+           s)
+         (let ((host (car (host-ent-addresses (get-host-by-name host)))))
+           (when host
+             (let ((s (make-instance 'inet-socket :type :stream :protocol :tcp)))
+               (socket-connect s host (+ 6000 display))
+               s)))))
    :element-type '(unsigned-byte 8)
    :input t :output t :buffering :none))
 
