@@ -144,39 +144,28 @@
 
 #+sbcl
 (defmethod perform :around ((o compile-op) (f clx-source-file))
-  ;; our CLX library should compile without WARNINGs, and ideally
-  ;; without STYLE-WARNINGs.  Since it currently does, let's enforce
-  ;; it here so that we can catch regressions easily.
-  (let ((on-warnings (operation-on-warnings o))
-	(on-failure (operation-on-failure o)))
-    (unwind-protect
-	 (progn
-	   (setf (operation-on-warnings o) :error
-		 (operation-on-failure o) :error)
-	   ;; a variety of accessors, such as AREF-CARD32, are not
-	   ;; declared INLINE.  Without this (non-ANSI)
-	   ;; static-type-inference behaviour, SBCL emits an extra 100
-	   ;; optimization notes (roughly one fifth of all of the
-	   ;; notes emitted).  Since the internals are unlikely to
-	   ;; change much, and certainly the internals should stay in
-	   ;; sync, enabling this extension is a win.  (Note that the
-	   ;; use of this does not imply that applications using CLX
-	   ;; calls that expand into calls to these accessors will be
-	   ;; optimized in the same way).
-	   (let ((sb-ext:*derive-function-types* t)
-                 (sadx (find-symbol "STACK-ALLOCATE-DYNAMIC-EXTENT" :sb-c))
-                 (sadx-var (find-symbol "*STACK-ALLOCATE-DYNAMIC-EXTENT*" :sb-ext)))
-	     ;; deeply unportable stuff, this.  I will be shot.  We
-	     ;; want to enable the dynamic-extent declarations in CLX.
-	     (when (and sadx (sb-c::policy-quality-name-p sadx))
-	       ;; no way of setting it back short of yet more yukky stuff
-	       (proclaim `(optimize (,sadx 3))))
-             (if sadx-var
-                 (progv (list sadx-var) (list t)
-                   (call-next-method))
-                 (call-next-method))))
-      (setf (operation-on-warnings o) on-warnings
-	    (operation-on-failure o) on-failure))))
+  ;; a variety of accessors, such as AREF-CARD32, are not
+  ;; declared INLINE.  Without this (non-ANSI)
+  ;; static-type-inference behaviour, SBCL emits an extra 100
+  ;; optimization notes (roughly one fifth of all of the
+  ;; notes emitted).  Since the internals are unlikely to
+  ;; change much, and certainly the internals should stay in
+  ;; sync, enabling this extension is a win.  (Note that the
+  ;; use of this does not imply that applications using CLX
+  ;; calls that expand into calls to these accessors will be
+  ;; optimized in the same way).
+  (let ((sb-ext:*derive-function-types* t)
+        (sadx (find-symbol "STACK-ALLOCATE-DYNAMIC-EXTENT" :sb-c))
+        (sadx-var (find-symbol "*STACK-ALLOCATE-DYNAMIC-EXTENT*" :sb-ext)))
+    ;; deeply unportable stuff, this.  I will be shot.  We
+    ;; want to enable the dynamic-extent declarations in CLX.
+    (when (and sadx (sb-c::policy-quality-name-p sadx))
+      ;; no way of setting it back short of yet more yukky stuff
+      (proclaim `(optimize (,sadx 3))))
+    (if sadx-var
+        (progv (list sadx-var) (list t)
+          (call-next-method))
+        (call-next-method))))
 
 #+sbcl
 (defmethod perform :around (o (f clx-source-file))
