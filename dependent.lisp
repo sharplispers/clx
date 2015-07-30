@@ -1542,13 +1542,14 @@
                           :foreign-port (+ *x-tcp-port* display)))
 
 #+sbcl
-(defun open-x-stream (host display protocol)  
+(defun open-x-stream (host display protocol &key socket)
   (declare (ignore protocol)
-           (type (integer 0) display))
+           (type (integer 0) display)
+           (type (or string null) socket))
   (socket-make-stream 
    (if (or (string= host "") (string= host "unix")) ; AF_LOCAL domain socket
        (let ((s (make-instance 'local-socket :type :stream)))
-         (socket-connect s (format nil "~A~D" +X-unix-socket-path+ display))
+         (socket-connect s (or socket (format nil "~A~D" +X-unix-socket-path+ display)))
          s)
        (let ((host (car (host-ent-addresses (get-host-by-name host)))))
          (when host
