@@ -2932,15 +2932,12 @@ Returns a list of (host display-number screen protocol)."
          (slash-i (or (position #\/ name) -1))
          (colon-i (position #\: name :start (1+ slash-i)))
          (decnet-colon-p (eql (elt name (1+ colon-i)) #\:))
+         (socket (when (eql slash-i 0)
+                   (probe-file name)))
          (host
-           (cond ((and (uiop:os-macosx-p)
-                       ;; DISPLAY variable may name a launchd socket (xquartz)
-                       (eql slash-i 0)
-                       ;; it /is/ a socket...
-                       (probe-file name))
-                  "")
-                 (t
-                  (subseq name (1+ slash-i) colon-i))))
+          (if socket
+              name ; grab the whole name as the socket name
+            (subseq name (1+ slash-i) colon-i)))
          (dot-i (and colon-i (position #\. name :start colon-i)))
          (display (when colon-i
                     (parse-integer name
@@ -2951,7 +2948,7 @@ Returns a list of (host display-number screen protocol)."
          (screen (when dot-i
                    (parse-integer name :start (1+ dot-i))))
          (protocol
-          (cond ((or (string= host "") (string-equal host "unix")) :local)
+          (cond ((or (string= host "") (string-equal host "unix") socket) :local)
                 (decnet-colon-p :decnet)
                 ((> slash-i -1) (intern
                                  (string-upcase (subseq name 0 slash-i))
