@@ -14882,6 +14882,12 @@ keycodes within each list is server-dependent.
 Type @var{list} of @var{card8}.
 @end table
 
+Some servers may include the same keycode in more than one list.  For
+example, if the CAPS LOCK key has been turned into an additional
+CONTROL key, some servers include it in the third return value, but
+also in the second return value.  Client code can therefore not rely
+on the returned lists to have pairwise empty intersections.
+
 @end defun
 
 
