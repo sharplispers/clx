@@ -14950,6 +14950,12 @@ modifiers remain unchanged.
 One of @var{:success}, @var{:failed}, or @var{:device-busy}.
 @end table
 
+Notice that the default value for each of the key arguments is the
+empty list.  Failing to include a key argument in a call to this
+function will therefore remove all the keycodes as modifiers that were
+previously considered modifiers in the category corresponding to the
+keyword argument.
+
 @end defun
 
 
