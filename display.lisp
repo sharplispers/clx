@@ -116,7 +116,7 @@
 	       (unless family (return))
 	       (when (and (eql family protocol)
 			  (equal host-address address)
-			  (= number display)
+			  (or (null number) (= number display))
 			  (let ((pos1 (position name *known-authorizations*
 						:test #'string=)))
 			    (and pos1
