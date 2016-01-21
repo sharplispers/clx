@@ -14882,6 +14882,12 @@ keycodes within each list is server-dependent.
 Type @var{list} of @var{card8}.
 @end table
 
+Some servers may include the same keycode in more than one list.  For
+example, if the CAPS LOCK key has been turned into an additional
+CONTROL key, some servers include it in the third return value, but
+also in the second return value.  Client code can therefore not rely
+on the returned lists to have pairwise empty intersections.
+
 @end defun
 
 
@@ -14943,6 +14949,12 @@ modifiers remain unchanged.
 @item status
 One of @var{:success}, @var{:failed}, or @var{:device-busy}.
 @end table
+
+Notice that the default value for each of the key arguments is the
+empty list.  Failing to include a key argument in a call to this
+function will therefore remove all the keycodes as modifiers that were
+previously considered modifiers in the category corresponding to the
+keyword argument.
 
 @end defun
 
