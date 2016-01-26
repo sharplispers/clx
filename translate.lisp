@@ -24,8 +24,8 @@
   ;; Define all keysyms from first-keysym up to and including
   ;; last-keysym to be in SET (returned from the keysym-set function).
   ;; Signals an error if the keysym range overlaps an existing set.
- (declare (type keyword set)
-	  (type keysym first-keysym last-keysym))
+  (declare (type keyword set)
+	   (type keysym first-keysym last-keysym))
   (when (> first-keysym last-keysym)
     (rotatef first-keysym last-keysym))
   (setq *keysym-sets* (delete set *keysym-sets* :key #'car))
