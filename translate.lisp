@@ -22,8 +22,14 @@
 
 (defun define-keysym-set (set first-keysym last-keysym)
   ;; Define all keysyms from first-keysym up to and including
-  ;; last-keysym to be in SET (returned from the keysym-set function).
-  ;; Signals an error if the keysym range overlaps an existing set.
+  ;; last-keysym to be in the keysym set named SET.  SET is a keyword
+  ;; (i.e., a symbol in the package named KEYWORD).  When the function
+  ;; KEYSYM-SET is called with a keysym, the SET of the keysym set to
+  ;; which the keysym belongs is returned.
+  ;;
+  ;; If the range of keysyms defined by first-keysym and last-keysym
+  ;; overlaps the range of an existing keysym set, then an error is
+  ;; signaled.
   (declare (type keyword set)
 	   (type keysym first-keysym last-keysym))
   (when (> first-keysym last-keysym)
