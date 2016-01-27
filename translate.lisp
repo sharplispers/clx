@@ -118,8 +118,8 @@
 
 (defun define-keysym (object keysym &key lowercase translate modifiers mask display)
   ;; Define the translation from keysym/modifiers to a (usually
-  ;; character) object.  ANy previous keysym definition with
-  ;; KEYSYM and MODIFIERS is deleted before adding the new definition.
+  ;; character) object.  Any previous keysym definition with KEYSYM
+  ;; and MODIFIERS is deleted before the new definition is added.
   ;;
   ;; MODIFIERS is either a modifier-mask or list containing intermixed
   ;; keysyms and state-mask-keys specifying when to use this
