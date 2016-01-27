@@ -116,7 +116,7 @@
 	     (logand #xff (lognot (make-state-mask :lock))))
   "Default keysym state mask to use during keysym-translation.")
 
-(defun define-keysym (object keysym &key lowercase translate modifiers mask display)	              
+(defun define-keysym (object keysym &key lowercase translate modifiers mask display)
   ;; Define the translation from keysym/modifiers to a (usually
   ;; character) object.  ANy previous keysym definition with
   ;; KEYSYM and MODIFIERS is deleted before adding the new definition.
