@@ -22,10 +22,16 @@
 
 (defun define-keysym-set (set first-keysym last-keysym)
   ;; Define all keysyms from first-keysym up to and including
-  ;; last-keysym to be in SET (returned from the keysym-set function).
-  ;; Signals an error if the keysym range overlaps an existing set.
- (declare (type keyword set)
-	  (type keysym first-keysym last-keysym))
+  ;; last-keysym to be in the keysym set named SET.  SET is a keyword
+  ;; (i.e., a symbol in the package named KEYWORD).  When the function
+  ;; KEYSYM-SET is called with a keysym, the SET of the keysym set to
+  ;; which the keysym belongs is returned.
+  ;;
+  ;; If the range of keysyms defined by first-keysym and last-keysym
+  ;; overlaps the range of an existing keysym set, then an error is
+  ;; signaled.
+  (declare (type keyword set)
+	   (type keysym first-keysym last-keysym))
   (when (> first-keysym last-keysym)
     (rotatef first-keysym last-keysym))
   (setq *keysym-sets* (delete set *keysym-sets* :key #'car))
@@ -110,10 +116,10 @@
 	     (logand #xff (lognot (make-state-mask :lock))))
   "Default keysym state mask to use during keysym-translation.")
 
-(defun define-keysym (object keysym &key lowercase translate modifiers mask display)	              
+(defun define-keysym (object keysym &key lowercase translate modifiers mask display)
   ;; Define the translation from keysym/modifiers to a (usually
-  ;; character) object.  ANy previous keysym definition with
-  ;; KEYSYM and MODIFIERS is deleted before adding the new definition.
+  ;; character) object.  Any previous keysym definition with KEYSYM
+  ;; and MODIFIERS is deleted before the new definition is added.
   ;;
   ;; MODIFIERS is either a modifier-mask or list containing intermixed
   ;; keysyms and state-mask-keys specifying when to use this
