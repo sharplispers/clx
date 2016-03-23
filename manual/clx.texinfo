@@ -2065,6 +2065,150 @@ information.
 
 @end deftp
 
+@deftp {Structure} wm-size-hints
+
+A structure that contains size hints for the window manager.
+
+@end deftp
+
+
+@deftp {Slot of wm-size-hints} x
+
+Type: (@var{or} @var{null} @var{int32}).
+
+This slot is obsolete.  New window managers do not use it.
+
+@end deftp
+
+@deftp {Slot of wm-size-hints} y
+
+Type: (@var{or} @var{null} @var{int32}).
+
+This slot is obsolete.  New window managers do not use it.
+
+@end deftp
+
+@deftp {Slot of wm-size-hints} width
+
+Type: (@var{or} @var{null} @var{card32}).
+
+This slot is obsolete.  New window managers do not use it.  They will
+use the @var{min-width} and @var{max-width} slots instead.
+
+@end deftp
+
+@deftp {Slot of wm-size-hints} height
+
+Type: (@var{or} @var{null} @var{card32}).
+
+This slot is obsolete.  New window managers do not use it.  They will
+use the @var{min-height} and @var{max-height} slots instead.
+
+@end deftp
+
+@deftp {Slot of wm-size-hints} min-width
+
+Type: (@var{or} @var{null} @var{card32}).
+
+This slot indicates the smallest width for which the application still
+works properly.
+
+@end deftp
+
+@deftp {Slot of wm-size-hints} min-height
+
+Type: (@var{or} @var{null} @var{card32}).
+
+This slot indicates the smallest height for which the application still
+works properly.
+
+@end deftp
+
+@deftp {Slot of wm-size-hints} max-width
+
+Type: (@var{or} @var{null} @var{card32}).
+
+This slot indicates the largest width for which the application still
+works properly.
+
+@end deftp
+
+@deftp {Slot of wm-size-hints} max-height
+
+Type: (@var{or} @var{null} @var{card32}).
+
+This slot indicates the largest height for which the application still
+works properly.
+
+@end deftp
+
+@deftp {Slot of wm-size-hints} width-inc
+
+Type: (@var{or} @var{null} @var{card32}).
+
+This slot defines an arithmetic progression of widths (minimum to
+maximum) into which the window prefers to be resized.
+
+@end deftp
+
+@deftp {Slot of wm-size-hints} height-inc
+
+Type: (@var{or} @var{null} @var{card32}).
+
+This slot defines an arithmetic progression of heights (minimum to
+maximum) into which the window prefers to be resized.
+
+@end deftp
+
+@deftp {Slot of wm-size-hints} min-aspect
+
+Type: (@var{or} @var{null} @var{number}).
+
+This slot specifies the minimum aspect ratio (the fraction @var{x}
+size divided by @var{y} size) preferred by the application.
+
+@end deftp
+
+@deftp {Slot of wm-size-hints} max-aspect
+
+Type: (@var{or} @var{null} @var{number}).
+
+This slot specifies the maximum aspect ratio (the fraction @var{x}
+size divided by @var{y} size) preferred by the application.
+
+@end deftp
+
+@deftp {Slot of wm-size-hints} base-width
+
+Type: (@var{or} @var{null} @var{card32}).
+
+This slot specifies the desired width of the window.
+
+@end deftp
+
+@deftp {Slot of wm-size-hints} base-height
+
+Type: (@var{or} @var{null} @var{card32}).
+
+This slot specifies the desired height of the window.
+
+@end deftp
+
+@deftp {Slot of wm-size-hints} win-gravity
+
+Type: (@var{or} @var{null} @var{win-gravity}).
+
+The window manager will interpret the position of the window and its
+border width to position the point of the outer rectangle of the
+overall window specified by the value of this slot. The outer
+rectangle of the window includes any borders or decorations supplied
+by the window manager. In other words, if the window manager decides
+to place the window where the client asked, the position on the parent
+window's border named by the value of this slot will be placed where
+the client window would have been placed in the absence of a window
+manager.
+
+@end deftp
 
 @deftp {Type} xatom '(or string symbol)
 
@@ -17571,25 +17715,8 @@ XLIB:WM-HINTS-INITIAL-STATE ???     [Function]
 XLIB:WM-HINTS-INPUT ???   [Function]
 XLIB:WM-HINTS-P ???       [Function]
 XLIB:WM-HINTS-WINDOW-GROUP ???      [Function]
-XLIB:WM-SIZE-HINTS is undocumented.
-XLIB:WM-SIZE-HINTS-BASE-HEIGHT ???  [Function]
-XLIB:WM-SIZE-HINTS-BASE-WIDTH ???   [Function]
-XLIB:WM-SIZE-HINTS-HEIGHT ???       [Function]
-XLIB:WM-SIZE-HINTS-HEIGHT-INC ???   [Function]
-XLIB:WM-SIZE-HINTS-MAX-ASPECT ???   [Function]
-XLIB:WM-SIZE-HINTS-MAX-HEIGHT ???   [Function]
-XLIB:WM-SIZE-HINTS-MAX-WIDTH ???    [Function]
-XLIB:WM-SIZE-HINTS-MIN-ASPECT ???   [Function]
-XLIB:WM-SIZE-HINTS-MIN-HEIGHT ???   [Function]
-XLIB:WM-SIZE-HINTS-MIN-WIDTH ???    [Function]
-XLIB:WM-SIZE-HINTS-P ???  [Function]
 XLIB:WM-SIZE-HINTS-USER-SPECIFIED-POSITION-P ???        [Function]
 XLIB:WM-SIZE-HINTS-USER-SPECIFIED-SIZE-P ???  [Function]
-XLIB:WM-SIZE-HINTS-WIDTH ???        [Function]
-XLIB:WM-SIZE-HINTS-WIDTH-INC ???    [Function]
-XLIB:WM-SIZE-HINTS-WIN-GRAVITY ???  [Function]
-XLIB:WM-SIZE-HINTS-X ???  [Function]
-XLIB:WM-SIZE-HINTS-Y ???  [Function]
 @end ignore
 
 @node Glossary, Function Index, Undocumented, Top
