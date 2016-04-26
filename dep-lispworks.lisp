@@ -20,7 +20,7 @@
 
 (in-package :xlib)
 
-#-lispworks6
+#-(or lispworks6 lispworks7)
 (error "Sorry, your ~S lisp version ~S is not currently supported.  ~
         Patches are welcome."
        (lisp-implementation-type) (lisp-implementation-version))
