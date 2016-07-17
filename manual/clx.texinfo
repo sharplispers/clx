@@ -7649,6 +7649,17 @@ Type @var{image}.
 
 @end defun
 
+@defun bitmap-image &optional plist &rest patterns
+
+Creates an @var{image} object from the given @var{patterns} and
+returns an @var{image-z} of depth 1.  Each pattern is a bit-vector.
+If the first argument is a list, then it is used to initialize the
+property list of the image being created.
+
+The consequences are undefined if the @var{patterns} are not of the
+same length.
+
+@end defun
 
 @defun copy-image image &key (:x 0) (:y 0) :width :height :result-type
 
@@ -17437,9 +17448,6 @@ ChangeWindowAttributes    (@code{setf} (@var{window-save-under} @emph{window}))
 
 This section just lists all symbols exported from the
 @var{XLIB} package but not documented in this manual.
-
-@defun bitmap-image &optional plist &rest patterns
-@end defun
 
 
 @defun character->keysyms character &optional display
