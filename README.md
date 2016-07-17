@@ -1,1 +1,101 @@
+CLX is an X11 client library for Common Lisp. The code was originally
+taken from a CMUCL distribution, was modified somewhat in order to
+make it compile and run under SBCL, then a selection of patches were
+added from other CLXes around the net.
+
+#Features
+
+ - SHAPE extension support (Gilbert Baumann)
+ - XFREE86-VIDMODE extension support (Iban Hatchondo)
+ - experimental RENDER extension support 
+     (Gilbert Baumann and Christian Sunesson)
+ - X authority support that works with ssh forwarding (Eric Marsden via CMUCL)
+ - OPEN-DEFAULT-DISPLAY function which, as the name suggests, does that (dan)
+ - various bug fixes (Iban Hatchondo and a cast of several)
+ - a manual in texinfo format (Shawn Betts, Gilbert Baumann)
+
+#Compatibility
+
+This CLX distribution is intended to work under the latest released
+version of SBCL - please report the bug if it doesn't.  It should
+usually also work with earlier versions back to 0.9.0, and possibly
+earlier still, but may need manual adjustment to the clx.asd file (to
+remove use of newly-introduced features).
+
+It has also been used as a basis for CLX ports on other Lisp
+implementations, but these instructions are only good for SBCL. If
+you've installed this using some non-SBCL Lisp, please send mail
+describing the process so that future versions can incorporate your
+instructions.
+
+If you are following SBCL CVS and this CLX does not run in it, please
+check the git repository for this CLX distribution to see if your bug
+has been fixed already.
+
+git clone git://github.com/sharplispers/clx.git
+
+#Building using quicklisp
+
+* (ql:quickload 'clx)
+
+#Building by hand
+
+If you don't trust quicklisp, here's how to do it manually -
+
+1. Add a symlink to clx.asd from one of the directories listed in your
+   asdf:*central-registry*
+
+   If that makes no sense to you yet, choose one of -
+
+   1a. personal installation:
+
+     $ cd $HOME/.sbcl/systems # you may have to create this directory
+     $ ln -s /path/to/clx/source/clx.asd .
+
+   1b. systemwide installations: you need to ask SBCL where it lives
+
+     $ sbcl --noinform --eval '(format t "~A~%" (posix-getenv "SBCL_HOME"))' </dev/null
+     /usr/local/lib/sbcl/
+     * 
+     $ cd /usr/local/lib/sbcl/site-systems
+     $ ln -s /path/to/clx/source/clx.asd .
+
+2. 
+   * (require 'asdf)
+   * (asdf:load-system 'clx)
+
+This will load all the files, after compiling anything that needs compiling
+
+3. To test CLX (and get a small amount of Lisp advocacy), try loading
+the file "demo/menu", and then executing the function
+xlib::just-say-lisp.
+
+   * (load "clx/demo/menu")
+   * (xlib::just-say-lisp)
+
+4. If you're new to Lisp, be advised that despite the examples in
+demo/, it's generally /not/ considered good style to switch to the
+:xlib package and write your code in it.  Spend some time with a
+language reference to familiarize yourself with USE-PACKAGE, or 
+better yet, the USE option to DEFPACKAGE.
+
+#Bug reports, new features, patches
+
+Please use github to track issues:
+
+https://github.com/sharplispers/clx/issues
+
+and pull requests:
+
+https://github.com/sharplispers/clx/pulls
+
+===================
+Heavy lifting by <Raymond.Wiker at fast.no>
+ASDFized version by Daniel Barlow <dan at metacircles.com> 
+and Christophe Rhodes <csr21 at cam.ac.uk>
+
+The sharplispers group on github have recently (November 2011)
+"adopted" clx and maintain the version that lives at:
+
+https://github.com/sharplispers/clx
 
