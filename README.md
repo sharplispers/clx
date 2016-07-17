@@ -3,7 +3,7 @@ taken from a CMUCL distribution, was modified somewhat in order to
 make it compile and run under SBCL, then a selection of patches were
 added from other CLXes around the net.
 
-= Features
+#Features
 
  - SHAPE extension support (Gilbert Baumann)
  - XFREE86-VIDMODE extension support (Iban Hatchondo)
@@ -14,7 +14,7 @@ added from other CLXes around the net.
  - various bug fixes (Iban Hatchondo and a cast of several)
  - a manual in texinfo format (Shawn Betts, Gilbert Baumann)
 
-= Compatibility
+#Compatibility
 
 This CLX distribution is intended to work under the latest released
 version of SBCL - please report the bug if it doesn't.  It should
@@ -34,11 +34,11 @@ has been fixed already.
 
 git clone git://github.com/sharplispers/clx.git
 
-= Building using quicklisp
+#Building using quicklisp
 
 * (ql:quickload 'clx)
 
-= Building by hand
+#Building by hand
 
 If you don't trust quicklisp, here's how to do it manually -
 
@@ -79,13 +79,7 @@ demo/, it's generally /not/ considered good style to switch to the
 language reference to familiarize yourself with USE-PACKAGE, or 
 better yet, the USE option to DEFPACKAGE.
 
-
-= Known problems:
-
-(none reported)
-
- 
-= Bug reports, new features, patches
+#Bug reports, new features, patches
 
 Please use github to track issues:
 
@@ -95,7 +89,7 @@ and pull requests:
 
 https://github.com/sharplispers/clx/pulls
 
--- 
+===================
 Heavy lifting by <Raymond.Wiker at fast.no>
 ASDFized version by Daniel Barlow <dan at metacircles.com> 
 and Christophe Rhodes <csr21 at cam.ac.uk>
