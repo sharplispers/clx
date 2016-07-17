@@ -3,6 +3,8 @@ taken from a CMUCL distribution, was modified somewhat in order to
 make it compile and run under SBCL, then a selection of patches were
 added from other CLXes around the net.
 
+[![Picture of screen](https://dl.dropboxusercontent.com/u/46753018/Screenshot%20from%202016-03-12%2014%3A36%3A55.png)](https://dl.dropboxusercontent.com/u/46753018/Screenshot%20from%202016-03-12%2014%3A36%3A55.png)
+
 #Features
 
  - SHAPE extension support (Gilbert Baumann)
