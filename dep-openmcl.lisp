@@ -492,8 +492,12 @@
 ;;; value changes.
 
 (defun process-block (whostate predicate &rest predicate-args)
-  (declare (dynamic-extent predicate-args))
-  (apply #'ccl:process-wait whostate predicate predicate-args))
+  (declare (ignore whostate))
+  (declare (type function predicate))
+  (loop
+   (when (apply predicate predicate-args)
+     (return))
+   (process-allow-schedule)))
 
 ;;; PROCESS-WAKEUP: Check some other process' wait function.
 
