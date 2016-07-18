@@ -2644,6 +2644,17 @@ Type @var{card32}.
 
 @end defun
 
+@defun display-nscreens display
+
+@table @var
+@item display
+A @var{display} object.
+@end table
+
+Returns the number of screens available on @var{display}.
+
+@end defun
+
 
 @defun display-p display
 
@@ -17487,9 +17498,6 @@ A @var{display}.
 Explicitly invokes the @emph{after-function} of the display.
 (see @var{display-after-function}). This function is
 internally called after every request.
-@end defun
-
-@defun display-nscreens display
 @end defun
 
 @defun display-release-number object
