@@ -7662,6 +7662,13 @@ Type @var{image}.
 
 @defun bitmap-image &optional plist &rest patterns
 
+@table @var
+@item plist
+A list or a pattern.
+@item pattern
+A pattern.
+@end table
+
 Creates an @var{image} object from the given @var{patterns} and
 returns an @var{image-z} of depth 1.  Each pattern is a bit-vector.
 If the first argument is a list, then it is used to initialize the
