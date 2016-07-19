@@ -497,7 +497,7 @@
   (loop
    (when (apply predicate predicate-args)
      (return))
-   (process-allow-schedule)))
+   (ccl:process-allow-schedule)))
 
 ;;; PROCESS-WAKEUP: Check some other process' wait function.
 
