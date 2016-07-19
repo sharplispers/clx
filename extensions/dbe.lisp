@@ -34,8 +34,7 @@
 	  +undefined+
 	  +background+
 	  +untouched+
-	  +copied+)
-	:xlib)
+	  +copied+))
 
 (define-extension "DOUBLE-BUFFER"
   :errors (dbe-bad-buffer))
