@@ -516,12 +516,10 @@
   window
   (error "~S can only be set" 'window-cursor))
 
-(defun set-window-cursor (window cursor)
+(defun (setf window-cursor) (cursor window)
   (change-window-attribute
     window 14 (encode-type (or (member :none) cursor) cursor))
   cursor)
-
-(defsetf window-cursor set-window-cursor)
 
 (defun window-colormap-installed-p (window)
   (declare (type window window))
