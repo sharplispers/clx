@@ -15405,6 +15405,26 @@ Type @var{character} or @var{null}.
 
 @end defun
 
+@defun character->keysyms character &optional display
+
+@table @var
+@item character
+A @var{character}.
+@item display
+A @var{display}.
+@end table
+
+Given a character, returns a list of all matching keysyms.  If
+@var{display} is given, translations specific to @var{display} are
+used.  Otherwise only global translations are used.
+
+This function is implementation dependent.
+
+Calling this function may be slow,  because it involves a linear
+search over all known keysyms.
+
+@end defun
+
 
 @node Client Termination, Managing Host Access, Keyboard Encodings, Control Functions
 @section Client Termination
@@ -17466,11 +17486,6 @@ ChangeWindowAttributes    (@code{setf} (@var{window-save-under} @emph{window}))
 
 This section just lists all symbols exported from the
 @var{XLIB} package but not documented in this manual.
-
-
-@defun character->keysyms character &optional display
-@end defun
-
 
 @defun character-in-map-p display character keymap
 
