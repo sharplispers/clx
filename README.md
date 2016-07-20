@@ -16,25 +16,14 @@ added from other CLXes around the net.
  - various bug fixes (Iban Hatchondo and a cast of several)
  - a manual in texinfo format (Shawn Betts, Gilbert Baumann)
 
-# Compatibility
+# Supported versions
 
-This CLX distribution is intended to work under the latest released
-version of SBCL - please report the bug if it doesn't.  It should
-usually also work with earlier versions back to 0.9.0, and possibly
-earlier still, but may need manual adjustment to the clx.asd file (to
-remove use of newly-introduced features).
+CLX should work with SBCL, CCL, ECL and CLISP. If it doesn't please submit an
+[issue](https://github.com/sharplispers/clx/issues/new) along with the version
+information of your implementation.
 
-It has also been used as a basis for CLX ports on other Lisp
-implementations, but these instructions are only good for SBCL. If
-you've installed this using some non-SBCL Lisp, please send mail
-describing the process so that future versions can incorporate your
-instructions.
-
-If you are following SBCL CVS and this CLX does not run in it, please
-check the git repository for this CLX distribution to see if your bug
-has been fixed already.
-
-git clone git://github.com/sharplispers/clx.git
+Allegro Common Lisp users should use clx version maintained by Franz Inc., which can
+be found at [https://github.com/franzinc/clx](https://github.com/franzinc/clx)
 
 # Building using quicklisp
 
