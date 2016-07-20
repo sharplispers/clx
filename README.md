@@ -38,58 +38,67 @@ git clone git://github.com/sharplispers/clx.git
 
 # Building using quicklisp
 
-* (ql:quickload 'clx)
+```lisp
+(ql:quickload 'clx)
+```
 
-# Building by hand
+or if you want to use the latest version from git, clone this repository to
+your local-project and use `quickload` as described above
 
-If you don't trust quicklisp, here's how to do it manually -
+```shell
+cd ~/quicklisp/local-projects/
+git clone git://github.com/sharplispers/clx.git
+```
 
-1. Add a symlink to clx.asd from one of the directories listed in your
-   asdf:*central-registry*
+# Building using ASDF
 
-   If that makes no sense to you yet, choose one of -
+If you don't have quicklisp installed you can use ASDF to load CLX. To do so clone this repository to either:
 
-   1a. personal installation:
+* `~/.common-lisp`
+* `~/.local/share/common-lisp/source/.`
 
-     $ cd $HOME/.sbcl/systems # you may have to create this directory
-     $ ln -s /path/to/clx/source/clx.asd .
+where ASDF will look for system definitions by default
 
-   1b. systemwide installations: you need to ask SBCL where it lives
+and then on the lisp REPL type
 
-     $ sbcl --noinform --eval '(format t "~A~%" (posix-getenv "SBCL_HOME"))' </dev/null
-     /usr/local/lib/sbcl/
-     * 
-     $ cd /usr/local/lib/sbcl/site-systems
-     $ ln -s /path/to/clx/source/clx.asd .
+```lisp
+(require 'asdf)
+(asdf:load-system 'clx)
+```
 
-2. 
-   * (require 'asdf)
-   * (asdf:load-system 'clx)
+If you want to load clx from another location you have to first tell ASDF to
+look in that directory by adding the directory to ASDF's central registry on every session.
 
-This will load all the files, after compiling anything that needs compiling
+```lisp
+(require 'asdf)
+(push "/path/to/the/clx/directory/" asdf:*central-registry*) ; Mind the trailing slash, it is important.
+(asdf:load-system 'clx)
+```
 
-3. To test CLX (and get a small amount of Lisp advocacy), try loading
-the file "demo/menu", and then executing the function
-xlib::just-say-lisp.
+or you can configure ASDF to look in your directory as described in the [ASDF Manual](https://common-lisp.net/project/asdf/asdf.html#Configuring-ASDF-to-find-your-systems)
 
-   * (load "clx/demo/menu")
-   * (xlib::just-say-lisp)
 
-4. If you're new to Lisp, be advised that despite the examples in
+# Demos
+
+To test CLX (and get a small amount of Lisp advocacy), try loading the file
+"demo/menu", and then executing the function xlib::just-say-lisp.
+
+```lisp
+(load "clx/demo/menu")
+(xlib::just-say-lisp)
+```
+
+Note: If you're new to Lisp, be advised that despite the examples in
 demo/, it's generally /not/ considered good style to switch to the
 :xlib package and write your code in it.  Spend some time with a
 language reference to familiarize yourself with USE-PACKAGE, or 
 better yet, the USE option to DEFPACKAGE.
 
-# Bug reports, new features, patches
+# Contributing
 
-Please use github to track issues:
+To contribute submit a [pull request](https://github.com/sharplispers/clx/pulls)
 
-https://github.com/sharplispers/clx/issues
-
-and pull requests:
-
-https://github.com/sharplispers/clx/pulls
+To report bugs, request features, etc please use the [github issue tracker](https://github.com/sharplispers/clx/issues)
 
 ---
 
