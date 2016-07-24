@@ -525,13 +525,15 @@ by every function, which attempts to generate RENDER requests."
   (let ((display (picture-display picture)))
     (with-buffer-request (display (extension-opcode display "RENDER"))
       (data +X-RenderFreePicture+)
-      (picture  picture))))
+      (picture  picture))
+    (deallocate-resource-id display (picture-id picture) 'picture)))
 
 (defun render-free-glyph-set (glyph-set)
   (let ((display (glyph-set-display glyph-set)))
     (with-buffer-request (display (extension-opcode display "RENDER"))
       (data +X-RenderFreeGlyphSet+)
-      (glyph-set  glyph-set))))
+      (glyph-set  glyph-set))
+    (deallocate-resource-id display (glyph-set-id glyph-set) 'glyph-set)))
 
 (defun render-query-version (display)
   (with-buffer-request-and-reply (display (extension-opcode display "RENDER") nil)

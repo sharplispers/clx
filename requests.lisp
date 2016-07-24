@@ -117,8 +117,10 @@
 
 (defun destroy-window (window)
   (declare (type window window))
-  (with-buffer-request ((window-display window) +x-destroywindow+)
-    (window window)))
+  (let ((display (window-display window)))
+    (with-buffer-request (display +x-destroywindow+)
+      (window window))
+    (deallocate-resource-id display (window-id window) 'window)))
 
 (defun destroy-subwindows (window)
   (declare (type window window))
