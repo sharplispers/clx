@@ -67,7 +67,6 @@
      #+allegro
      (:file "excldep" :pathname "excldep.lisp")
      (:module extensions
-	      :pathname #.(make-pathname :directory '(:relative))
 	      :components
 	      ((:file "shape")
 	       (:file "big-requests")
