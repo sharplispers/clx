@@ -252,7 +252,8 @@
       (setf (display-font-cache display) (delete font (display-font-cache display)))
       ;; Close the font
       (with-buffer-request (display +x-closefont+)
-	(resource-id id)))))
+	(resource-id id))
+      (deallocate-resource-id display id 'font))))
 
 (defun list-font-names (display pattern &key (max-fonts 65535) (result-type 'list))
   (declare (type display display)
