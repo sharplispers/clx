@@ -34,16 +34,15 @@
 	  +undefined+
 	  +background+
 	  +untouched+
-	  +copied+)
-	:xlib)
+	  +copied+))
 
 (define-extension "DOUBLE-BUFFER"
   :errors (dbe-bad-buffer))
 
 ;; version
 
-(defconstant +major+                        1)
-(defconstant +minor+                        0)
+(defconstant +dbe-major+                    1)
+(defconstant +dbe-minor+                    0)
 
 ;; request codes
 
@@ -106,8 +105,8 @@
   (declare (display display))
   (with-buffer-request-and-reply (display (extension-opcode display "DOUBLE-BUFFER") nil)
 				   ((data +query-version+)
-				    (card8 +major+)
-				    (card8 +minor+))
+				    (card8 +dbe-major+)
+				    (card8 +dbe-minor+))
       (values
        (card8-get 8)
        (card8-get 9))))
