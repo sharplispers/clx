@@ -942,11 +942,11 @@ by every function, which attempts to generate RENDER requests."
       (let* ((byte-per-line (* 4 (ceiling 
 				  (* w (picture-format-depth (glyph-set-format glyph-set)))
 				  32)))
-             (request-length (+ 28
-				(* h byte-per-line))))
+             (request-bytes (+ 28
+                               (* h byte-per-line))))
         (with-buffer-request (display (extension-opcode display "RENDER"))
           (data +X-RenderAddGlyphs+)
-          (length (ceiling request-length 4))
+          (length (ceiling request-bytes 4))
           (glyph-set glyph-set)
           (card32 1)                    ;number glyphs
           (card32 id)                   ;id
