@@ -948,8 +948,8 @@ by every function, which attempts to generate RENDER requests."
           (data +X-RenderAddGlyphs+)
           (length (ceiling request-length 4))
           (glyph-set glyph-set)
-          (card32 1) ;number glyphs
-          (card32 id) ;id
+          (card32 1)                    ;number glyphs
+          (card32 id)                   ;id
           (card16 w)
           (card16 h)
           (int16 x-origin)
