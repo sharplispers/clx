@@ -943,7 +943,11 @@ by every function, which attempts to generate RENDER requests."
 				  (* w (picture-format-depth (glyph-set-format glyph-set)))
 				  32)))
              (request-bytes (+ 28
-                               (* h byte-per-line))))
+                               (* h byte-per-line)))
+             (max-bytes-per-request
+              (index* (index- (display-max-request-length display) 6) 4)))
+        (when (> request-bytes max-bytes-per-request)
+          (error "Glyph won't fit in a single request"))
         (with-buffer-request (display (extension-opcode display "RENDER"))
           (data +X-RenderAddGlyphs+)
           (length (ceiling request-bytes 4))
