@@ -939,13 +939,19 @@ by every function, which attempts to generate RENDER requests."
            (unit (bitmap-format-unit bitmap-format))
            (byte-lsb-first-p (display-image-lsb-first-p display))
            (bit-lsb-first-p  (bitmap-format-lsb-first-p bitmap-format)))
-      (let* ((byte-per-line (* 4 (ceiling 
-				  (* w (picture-format-depth (glyph-set-format glyph-set)))
-				  32)))
-             (request-bytes (+ 28
-                               (* h byte-per-line)))
+      (let* ((padded-bytes-per-line
+              (index* (index-ceiling
+                       (index* w (picture-format-depth
+                                  (glyph-set-format glyph-set)))
+                       32)
+                      4))
+             (request-bytes
+              (index+ 28 (index* h padded-bytes-per-line)))
              (max-bytes-per-request
               (index* (index- (display-max-request-length display) 6) 4)))
+        ;; INV: we can do better – if at least one scanline of the
+        ;; image fits in the request, we may render glyph in a loop
+        ;; like it's done in a function `put-image' in `image.lisp'.
         (when (> request-bytes max-bytes-per-request)
           (error "Glyph won't fit in a single request"))
         (with-buffer-request (display (extension-opcode display "RENDER"))
@@ -964,7 +970,7 @@ by every function, which attempts to generate RENDER requests."
             (setf (buffer-boffset display) (advance-buffer-offset 28))
             (let ((im (create-image :width w :height h :depth 8 :data data)))
               (write-image-z display im 0 0 w h
-                             byte-per-line ;padded bytes per line
+                             padded-bytes-per-line
                              unit byte-lsb-first-p bit-lsb-first-p)) ))) )))
 
 (defun render-add-glyph-from-picture (glyph-set picture
