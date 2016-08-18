@@ -832,7 +832,7 @@
   (declare (clx-values list))
   (ecase family
     ((:internet nil 0)
-     (let* ((addr (ccl::htonl (ccl::host-as-inet-host host))))
+     (let* ((addr (ccl:lookup-hostname host)))
        (cons :internet (list
                         (ldb (byte 8 24) addr)
                         (ldb (byte 8 16) addr)
