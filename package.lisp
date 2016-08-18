@@ -232,7 +232,6 @@
   (:use common-lisp)
   (:size 3000)
   #+(or kcl ibcl) (:shadow rational)
-  #+allegro (:use cltl1)
   #+allegro (:import-from excl without-interrupts)
   #+excl (:import-from excl arglist)
   #+Genera (:import-from zwei indentation)
