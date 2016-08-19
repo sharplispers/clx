@@ -104,7 +104,7 @@
 	       (:file "trapezoid")))
      (:static-file "NEWS")
      (:static-file "CHANGES")
-     (:static-file "README")
+     (:static-file "README.md")
      (:static-file "README-R5")
      (:legacy-file "exclMakefile")
      (:legacy-file "exclREADME")
