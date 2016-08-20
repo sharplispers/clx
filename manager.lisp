@@ -731,36 +731,7 @@
     (get-property root property :type type :result-type result-type
 		  :start start :end end :transform transform)))
 
-;; Implement the following:
-;; (defsetf cut-buffer (display &key (buffer 0) (type :string) (format 8)
-;;			        (transform #'char->card8) (start 0) end) (data)
-;; In order to avoid having to pass positional parameters to set-cut-buffer,
-;; We've got to do the following.  WHAT A PAIN...
-#-clx-ansi-common-lisp
-(define-setf-method cut-buffer (display &rest option-list)
-  (declare (dynamic-extent option-list))
-  (do* ((options (copy-list option-list))
-	(option options (cddr option))
-	(store (gensym))
-	(dtemp (gensym))
-	(temps (list dtemp))
-	(values (list display)))
-       ((endp option)
-	(values (nreverse temps)
-		(nreverse values)
-		(list store)
-		`(set-cut-buffer ,store ,dtemp ,@options)
-		`(cut-buffer ,@options)))
-    (unless (member (car option) '(:buffer :type :format :start :end :transform))
-      (error "Keyword arg ~s isn't recognized" (car option)))
-    (let ((x (gensym)))
-      (push x temps)
-      (push (cadr option) values)
-      (setf (cadr option) x))))
-
-(defun
-  #+clx-ansi-common-lisp (setf cut-buffer)
-  #-clx-ansi-common-lisp set-cut-buffer
+(defun (setf cut-buffer)
   (data display &key (buffer 0) (type :STRING) (format 8)
 	(start 0) end (transform #'char->card8))
   (declare (type sequence data)

@@ -159,20 +159,6 @@
 
 (deftype card4 () '(unsigned-byte 4))
 
-#-clx-ansi-common-lisp
-(deftype real (&optional (min '*) (max '*))
-  (labels ((convert (limit floatp)
-	     (typecase limit
-	       (number (if floatp (float limit 0s0) (rational limit)))
-	       (list (map 'list #'convert limit))
-	       (otherwise limit))))
-    `(or (float ,(convert min t) ,(convert max t))
-	 (rational ,(convert min nil) ,(convert max nil)))))
-
-#-clx-ansi-common-lisp
-(deftype base-char ()
-  'string-char)
-
 ; Note that we are explicitly using a different rgb representation than what
 ; is actually transmitted in the protocol.
 

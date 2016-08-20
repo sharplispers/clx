@@ -1130,19 +1130,13 @@
 #+Genera
 (defun process-block (whostate predicate &rest predicate-args)
   (declare (type function predicate)
-	   #+clx-ansi-common-lisp
-	   (dynamic-extent predicate)
-	   #-clx-ansi-common-lisp
-	   (sys:downward-funarg predicate))
+	   (dynamic-extent predicate))
   (apply #'process:block-process whostate predicate predicate-args))
 
 #+(and lispm (not Genera))
 (defun process-block (whostate predicate &rest predicate-args)
   (declare (type function predicate)
-	   #+clx-ansi-common-lisp
-	   (dynamic-extent predicate)
-	   #-clx-ansi-common-lisp 
-	   (sys:downward-funarg predicate))
+	   (dynamic-extent predicate))
   (apply #'global:process-wait whostate predicate predicate-args))
 
 #+excl
@@ -2088,7 +2082,7 @@
   ;; therefore DISAPPEARS when WITH-STACK-LIST is exited.
   `(let ((,var (list ,@elements)))
      (declare (type cons ,var)
-	      #+clx-ansi-common-lisp (dynamic-extent ,var))
+              (dynamic-extent ,var))
      ,@body))
 
 #-lispm
@@ -2099,7 +2093,7 @@
   ;; therefore DISAPPEARS when WITH-STACK-LIST is exited.
   `(let ((,var (list* ,@elements)))
      (declare (type cons ,var)
-	      #+clx-ansi-common-lisp (dynamic-extent ,var))
+              (dynamic-extent ,var))
      ,@body))
 
 (declaim (inline buffer-replace))
@@ -2344,31 +2338,10 @@
       (apply #'x-cerror "Ignore" error-key :display display :error-key error-key key-vals)
       (apply #'x-error error-key :display display :error-key error-key key-vals)))
 
-#+(and lispm (not Genera) (not clx-ansi-common-lisp))
-(defun x-error (condition &rest keyargs)
-  (apply #'sys:signal condition keyargs))
-
-#+(and lispm (not Genera) (not clx-ansi-common-lisp))
-(defun x-cerror (proceed-format-string condition &rest keyargs)
-  (sys:signal (apply #'zl:make-condition condition keyargs)
-	      :proceed-types proceed-format-string))
-
-#+(and Genera (not clx-ansi-common-lisp))
-(defun x-error (condition &rest keyargs)
-  (declare (dbg:error-reporter))
-  (apply #'sys:signal condition keyargs))
-
-#+(and Genera (not clx-ansi-common-lisp))
-(defun x-cerror (proceed-format-string condition &rest keyargs)
-  (declare (dbg:error-reporter))
-  (apply #'sys:signal condition :continue-format-string proceed-format-string keyargs))
-
-#+(or clx-ansi-common-lisp excl lcl3.0 clisp (and CMU mp))
 (defun x-error (condition &rest keyargs)
   (declare (dynamic-extent keyargs))
   (apply #'error condition keyargs))
 
-#+(or clx-ansi-common-lisp excl lcl3.0 CMU clisp)
 (defun x-cerror (proceed-format-string condition &rest keyargs)
   (declare (dynamic-extent keyargs))
   (apply #'cerror proceed-format-string condition keyargs))
@@ -2391,174 +2364,7 @@
 	(ext::disable-clx-event-handling disp)))
     (error condx)))
 
-#-(or lispm ansi-common-lisp excl lcl3.0 CMU sbcl clisp)
-(defun x-error (condition &rest keyargs)
-  (error "X-Error: ~a"
-	 (princ-to-string (apply #'make-condition condition keyargs))))
-
-#-(or lispm clx-ansi-common-lisp excl lcl3.0 CMU sbcl clisp)
-(defun x-cerror (proceed-format-string condition &rest keyargs)
-  (cerror proceed-format-string "X-Error: ~a"
-	 (princ-to-string (apply #'make-condition condition keyargs))))
-
-;; version 15 of Pitman error handling defines the syntax for define-condition to be:
-;; DEFINE-CONDITION name (parent-type) [({slot}*) {option}*]
-;; Where option is one of: (:documentation doc-string) (:conc-name symbol-or-string)
-;; or (:report exp)
-
-#+lcl3.0 
-(defmacro define-condition (name parent-types &optional slots &rest args)
-  `(lcl:define-condition
-     ,name (,(first parent-types))
-     ,(mapcar #'(lambda (slot) (if (consp slot) (car slot) slot))
-	      slots)
-     ,@args))
-
-#+(and excl (not clx-ansi-common-lisp))
-(defmacro define-condition (name parent-types &optional slots &rest args)
-  `(excl::define-condition
-     ,name (,(first parent-types))
-     ,(mapcar #'(lambda (slot) (if (consp slot) (car slot) slot))
-	      slots)
-     ,@args))
-
-#+(and CMU (not clx-ansi-common-lisp))
-(defmacro define-condition (name parent-types &optional slots &rest args)
-  `(common-lisp:define-condition
-     ,name (,(first parent-types))
-     ,(mapcar #'(lambda (slot) (if (consp slot) (car slot) slot))
-	      slots)
-     ,@args))
-
-#+(and lispm (not clx-ansi-common-lisp))
-(defmacro define-condition (name parent-types &body options)
-  (let ((slot-names
-	  (mapcar #'(lambda (slot) (if (consp slot) (car slot) slot))
-		  (pop options)))
-	(documentation nil)
-	(conc-name (concatenate 'string (string name) "-"))	       
-	(reporter nil))
-    (dolist (item options)
-      (ecase (first item)
-	(:documentation (setq documentation (second item)))
-	(:conc-name (setq conc-name (string (second item))))
-	(:report (setq reporter (second item)))))
-    `(within-definition (,name define-condition)
-       (zl:defflavor ,name ,slot-names ,parent-types
-	 :initable-instance-variables
-	 #-Genera
-	 (:accessor-prefix ,conc-name)
-	 #+Genera
-	 (:conc-name ,conc-name)
-	 #-Genera
-	 (:outside-accessible-instance-variables ,@slot-names)
-	 #+Genera
-	 (:readable-instance-variables ,@slot-names))
-       ,(when reporter ;; when no reporter, parent's is inherited
-	  `(zl:defmethod #-Genera (,name :report)
-	                 #+Genera (dbg:report ,name) (stream)
-	      ,(if (stringp reporter)
-		   `(write-string ,reporter stream)
-		 `(,reporter global:self stream))
-	      global:self))
-       (zl:compile-flavor-methods ,name)
-       ,(when documentation
-	  `(setf (documentation name 'type) ,documentation))
-       ',name)))
-
-#+(and lispm (not Genera) (not clx-ansi-common-lisp))
-(zl:defflavor x-error () (global:error))
-
-#+(and Genera (not clx-ansi-common-lisp))
-(scl:defflavor x-error
-	((dbg:proceed-types '(:continue))	;
-	 continue-format-string)
-	(sys:error)
-  (:initable-instance-variables continue-format-string))
-
-#+(and Genera (not clx-ansi-common-lisp))
-(scl:defmethod (scl:make-instance x-error) (&rest ignore)
-  (when (not (sys:variable-boundp continue-format-string))
-    (setf dbg:proceed-types (remove :continue dbg:proceed-types))))
-
-#+(and Genera (not clx-ansi-common-lisp))
-(scl:defmethod (dbg:proceed x-error :continue) ()
-  :continue)
-
-#+(and Genera (not clx-ansi-common-lisp))
-(sys:defmethod (dbg:document-proceed-type x-error :continue) (stream)
-  (format stream continue-format-string))
-
-#+(or clx-ansi-common-lisp excl lcl3.0 CMU sbcl clisp)
 (define-condition x-error (error) ())
-
-#-(or lispm clx-ansi-common-lisp excl lcl3.0 CMU sbcl)
-(defstruct x-error
-  report-function)
-
-#-(or lispm clx-ansi-common-lisp excl lcl3.0 CMU sbcl)
-(defmacro define-condition (name parent-types &body options)
-  ;; Define a structure that when printed displays an error message
-  (flet ((reporter-for-condition (name)
-	   (xintern "." name '-reporter.)))
-    (let ((slot-names
-	    (mapcar #'(lambda (slot) (if (consp slot) (car slot) slot))
-		    (pop options)))
-	  (documentation nil)
-	  (conc-name (concatenate 'string (string name) "-"))	       
-	  (reporter nil)
-	  (condition (gensym))
-	  (stream (gensym))
-	  (report-function (reporter-for-condition name)))
-      (dolist (item options)
-	(ecase (first item)
-	  (:documentation (setq documentation (second item)))
-	  (:conc-name (setq conc-name (string (second item))))
-	  (:report (setq reporter (second item)))))
-      (unless reporter
-	(setq report-function (reporter-for-condition (first parent-types))))
-      `(within-definition (,name define-condition)
-	 (defstruct (,name (:conc-name ,(intern conc-name))
-		     (:print-function condition-print)
-		     (:include ,(first parent-types)
-		      (report-function ',report-function)))
-	   ,@slot-names)
-	 ,(when documentation
-	    `(setf (documentation name 'type) ,documentation))
-	 ,(when reporter
-	    `(defun ,report-function (,condition ,stream)
-	       ,(if (stringp reporter)
-		    `(write-string ,reporter ,stream)
-		  `(,reporter ,condition ,stream))
-	       ,condition))
-	 ',name))))
-
-#-(or lispm clx-ansi-common-lisp excl lcl3.0 CMU sbcl clisp)
-(defun condition-print (condition stream depth)
-  (declare (type x-error condition)
-	   (type stream stream)
-	   (ignore depth))
-  (if *print-escape*
-      (print-unreadable-object (condition stream :type t))
-    (funcall (x-error-report-function condition) condition stream))
-  condition)
-  
-#-(or lispm clx-ansi-common-lisp excl lcl3.0 CMU sbcl clisp)
-(defun make-condition (type &rest slot-initializations)
-  (declare (dynamic-extent slot-initializations))
-  (let ((make-function (intern (concatenate 'string (string 'make-) (string type))
-			       (symbol-package type))))
-    (apply make-function slot-initializations)))
-
-#-(or clx-ansi-common-lisp excl lcl3.0 CMU sbcl clisp)
-(define-condition type-error (x-error)
-  ((datum :reader type-error-datum :initarg :datum)
-   (expected-type :reader type-error-expected-type :initarg :expected-type))
-  (:report
-    (lambda (condition stream)
-      (format stream "~s isn't a ~a"
-	      (type-error-datum condition)
-	      (type-error-expected-type condition)))))
 
 
 ;;-----------------------------------------------------------------------------
@@ -2995,38 +2801,6 @@ Returns a list of (host display-number screen protocol)."
 
 
 ;;-----------------------------------------------------------------------------
-;; WITH-STANDARD-IO-SYNTAX equivalent, used in (SETF WM-COMMAND)
-;;-----------------------------------------------------------------------------
-
-#-(or clx-ansi-common-lisp Genera CMU sbcl ecl)
-(defun with-standard-io-syntax-function (function)
-  (declare #+lispm
-	   (sys:downward-funarg function))
-  (let ((*package* (find-package :user))
-	(*print-array* t)
-	(*print-base* 10)
-	(*print-case* :upcase)
-	(*print-circle* nil)
-	(*print-escape* t)
-	(*print-gensym* t)
-	(*print-length* nil)
-	(*print-level* nil)
-	(*print-pretty* nil)
-	(*print-radix* nil)
-	(*read-base* 10)
-	(*read-default-float-format* 'single-float)
-	(*read-suppress* nil)
-	#+ticl (ticl:*print-structure* t)
-	#+lucid (lucid::*print-structure* t))
-    (funcall function)))
-
-#-(or clx-ansi-common-lisp Genera CMU sbcl ecl)
-(defmacro with-standard-io-syntax (&body body)
-  `(flet ((.with-standard-io-syntax-body. () ,@body))
-     (with-standard-io-syntax-function #'.with-standard-io-syntax-body.)))
-
-
-;;-----------------------------------------------------------------------------
 ;; DEFAULT-KEYSYM-TRANSLATE
 ;;-----------------------------------------------------------------------------
 
@@ -3041,7 +2815,7 @@ Returns a list of (host display-number screen protocol)."
 ;;; When MASK-MODIFIERS is missing, all other modifiers are ignored.
 ;;; In ambiguous cases, the most specific translation is used.
 
-#-(or (and clx-ansi-common-lisp (not lispm) (not allegro)) CMU sbcl)
+#+lispm
 (defun default-keysym-translate (display state object)
   (declare (type display display)
 	   (type card16 state)
@@ -3064,7 +2838,7 @@ Returns a list of (host display-number screen protocol)."
       (setf (char-bit object :hyper) 1)))
   object)
 
-#+(or (and clx-ansi-common-lisp (not lispm) (not allegro)) CMU sbcl clisp)
+#-lispm
 (defun default-keysym-translate (display state object)
   (declare (type display display)
 	   (type card16 state)

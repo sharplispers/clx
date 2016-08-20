@@ -774,7 +774,7 @@
   ;; therefore DISAPPEARS when WITH-STACK-LIST is exited.
   `(let ((,var (list ,@elements)))
      (declare (type cons ,var)
-	      #+clx-ansi-common-lisp (dynamic-extent ,var))
+              (dynamic-extent ,var))
      ,@body))
 
 (defmacro with-stack-list* ((var &rest elements) &body body)
@@ -784,7 +784,7 @@
   ;; therefore DISAPPEARS when WITH-STACK-LIST is exited.
   `(let ((,var (list* ,@elements)))
      (declare (type cons ,var)
-	      #+clx-ansi-common-lisp (dynamic-extent ,var))
+              (dynamic-extent ,var))
      ,@body))
 
 (declaim (inline buffer-replace))

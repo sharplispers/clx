@@ -20,7 +20,6 @@
 ;;; implied warranty.
 
 ;;; #+ features used in this file
-;;;   clx-ansi-common-lisp
 ;;;   lispm
 ;;;   genera
 ;;;   minima
@@ -33,23 +32,15 @@
 ;;;   CMU
 ;;;   sbcl
 
-#+(or Genera Minima sbcl ecl)
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (common-lisp:pushnew :clx-ansi-common-lisp common-lisp:*features*))
-
-#+(and Genera clx-ansi-common-lisp)
+#+Genera
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (setf *readtable* si:*ansi-common-lisp-readtable*))
-
-#-(or clx-ansi-common-lisp cmu)
-(lisp:in-package :user)
 
 #+cmu
 (lisp:in-package "XLIB")
 #+cmu 
 (export 'load-clx)
 
-#+clx-ansi-common-lisp
 (common-lisp:in-package :common-lisp-user)
 
 
@@ -375,7 +366,7 @@
 			:version   (pathname-version   source-path)))
 	 (binary-path (merge-pathnames binary-pathname-defaults
 				       path))
-	 #+clx-ansi-common-lisp (*compile-verbose* t)
+         (*compile-verbose* t)
 	 (*load-verbose* t))
 				       
     ;; Make sure source-path and binary-path file types are distinct so
@@ -445,9 +436,8 @@
 
       ;; Now compile and load all the files.
       ;; Defer compiler warnings until everything's compiled, if possible.
-      (#+(or clx-ansi-common-lisp CMU) with-compilation-unit
+      (with-compilation-unit
        #+lcl3.0 lucid::with-deferred-warnings
-       #-(or lcl3.0 clx-ansi-common-lisp CMU) progn
        ()
        
        (compile-and-load "package")

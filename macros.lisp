@@ -544,10 +544,7 @@
 
 (defun mask-get (index type-values body-function)
   (declare (type function body-function)
-	   #+clx-ansi-common-lisp
-	   (dynamic-extent body-function)
-	   #+(and lispm (not clx-ansi-common-lisp))
-	   (sys:downward-funarg body-function))
+	   (dynamic-extent body-function))
   ;; This is a function, because it must return more than one form (called by get-put-items)
   ;; Functions that use this must have a binding for %MASK
   (let* ((bit 0)
@@ -578,10 +575,7 @@
 
 (defun mask-put (index type-values body-function)
   (declare (type function body-function)
-	   #+clx-ansi-common-lisp
-	   (dynamic-extent body-function)
-	   #+(and lispm (not clx-ansi-common-lisp))
-	   (sys:downward-funarg body-function))
+	   (dynamic-extent body-function))
   ;; The MASK type writes a 32 bit mask with 1 bits for each non-nil value in TYPE-VALUES
   ;; A 32 bit value follows for each non-nil value.
   `((let ((%mask 0)
@@ -639,10 +633,7 @@
 
 (defun get-put-items (index type-args putp &optional body-function)
   (declare (type (or null function) body-function)
-	   #+clx-ansi-common-lisp
-	   (dynamic-extent body-function)
-	   #+(and lispm (not clx-ansi-common-lisp))
-	   (sys:downward-funarg body-function))
+	   (dynamic-extent body-function))
   ;; Given a lists of the form (type item item ... item)
   ;; Calls body-function with four arguments, a function name,
   ;; index, item name, and optional arguments.
@@ -712,7 +703,6 @@
 		(declare (type display .display.))
 		(with-buffer-request-internal (.display. ,opcode ,@options)
 		  ,@type-args)))
-	 #+clx-ansi-common-lisp
 	 (declare (dynamic-extent #'.request-body.))
 	 (,(if (eq (car (macroexpand '(with-buffer (buffer)) env)) 'progn)
 	       'with-buffer-request-function-nolock
@@ -752,7 +742,6 @@
 			   (type reply-buffer .reply-buffer.))
 		  (progn .display. .reply-buffer. nil)
 		  ,reply-body))
-	   #+clx-ansi-common-lisp
 	   (declare (dynamic-extent #'.request-body. #'.reply-body.))
 	   (with-buffer-request-and-reply-function
 	     ,buffer ,multiple-reply #'.request-body. #'.reply-body.))
