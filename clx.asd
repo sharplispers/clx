@@ -34,7 +34,7 @@
 
 (defclass legacy-file (static-file) ())
 
-(defsystem CLX
+(defsystem #:clx
     :description "An implementation of the X Window System protocol in Lisp."
     :depends-on (#+sbcl sb-bsd-sockets)
     :version "0.7.2"

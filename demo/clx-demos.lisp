@@ -6,10 +6,10 @@
 ;;; This file should be portable to any valid Common Lisp with CLX -- DEC 88.
 ;;;
 
-(defpackage :demos (:use :common-lisp)
+(defpackage #:xlib-demo/demos (:use :common-lisp)
   (:export do-all-demos demo))
 
-(in-package :demos)
+(in-package :xlib-demo/demos)
 
 
 ;;;; Graphic demos wrapper macro.

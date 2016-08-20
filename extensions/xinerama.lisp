@@ -12,7 +12,7 @@
 ;;; This is an implementation of the XINERAMA extension. It does not
 ;;; include the obsolete PanoramiX calls.
 
-(defpackage "XLIB.XINERAMA"
+(defpackage #:xlib/xinerama
   (:use "COMMON-LISP" "XLIB")
   (:nicknames "XINERAMA")
   (:import-from "XLIB"
@@ -33,7 +33,7 @@
            "XINERAMA-QUERY-VERSION"
            "XINERAMA-IS-ACTIVE"
            "XINERAMA-QUERY-SCREENS"))
-(in-package "XINERAMA")
+(in-package #:xlib/xinerama)
 
 (define-extension "XINERAMA")
 
