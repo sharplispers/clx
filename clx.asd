@@ -36,6 +36,12 @@
 
 (defsystem CLX
     :description "An implementation of the X Window System protocol in Lisp."
+    :author "Texas Instruments Incorporated.
+Franz Inc, Berkeley, Ca.
+Independent FOSS developers"
+    :maintainer "sharplispers"
+    :url "https://github.com/sharplispers/clx"
+    :license "MIT"
     :depends-on (#+sbcl sb-bsd-sockets)
     :version "0.7.2"
     :serial t
