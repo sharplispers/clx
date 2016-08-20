@@ -1,8 +1,8 @@
-(defpackage :gl-test
+(defpackage #:xlib-demo/gl-test
   (:use :common-lisp :xlib :xlib/gl)
   (:export "TEST" "CLX-TEST"))
 
-(in-package :gl-test)
+(in-package #:xlib-demo/gl-test)
 
 
 (defun test (function &key (host "localhost") (display 1) (width 200) (height 200))
@@ -13,19 +13,19 @@
     (unwind-protect
          (progn
            ;;; Inform the server about us.
-           (glx::client-info display)
-           (let* ((visual (glx:choose-visual screen '(:glx-rgba
+           (xlib/glx::client-info display)
+           (let* ((visual (xlib/glx:choose-visual screen '(:glx-rgba
                                                       (:glx-red-size 1)
                                                       (:glx-green-size 1)
                                                       (:glx-blue-size 1)
                                                       :glx-double-buffer)))
-                  (colormap (create-colormap (glx:visual-id visual) root))
+                  (colormap (create-colormap (xlib/glx:visual-id visual) root))
                   (window (create-window :parent root
                                          :x 10 :y 10 :width width :height height
                                          :class :input-output
                                          :background (screen-black-pixel screen)
                                          :border (screen-black-pixel screen)
-                                         :visual (glx:visual-id visual)
+                                         :visual (xlib/glx:visual-id visual)
                                          :depth 24
                                          :colormap colormap
                                          :event-mask '(:structure-notify :exposure)))
@@ -41,16 +41,16 @@
                                 :min-width width :min-height height
                                 :initial-state :normal)
 
-             (setf ctx (glx:create-context screen (glx:visual-id visual)))
+             (setf ctx (xlib/glx:create-context screen (xlib/glx:visual-id visual)))
              (map-window window)
-             (glx:make-current window ctx)
+             (xlib/glx:make-current window ctx)
 
              (funcall function display window)
 
              (unmap-window window)
              (free-gcontext gc)))
       
-      (when ctx (glx:destroy-context ctx))
+      (when ctx (xlib/glx:destroy-context ctx))
       (close-display display))))
 
 
@@ -59,7 +59,6 @@
 
 (defun no-floats (display window)
   (declare (ignore display window))
-  (glx:swap-buffers)
   (color-3s #x7fff #x7fff 0)
   (begin +polygon+)
   (vertex-2s 0 0)
@@ -67,6 +66,7 @@
   (vertex-2s 1 1)
   (vertex-2s 0 1)
   (end)
+  (xlib/glx:swap-buffers)
   (sleep 5))
 
 
@@ -79,7 +79,6 @@
      repeat 361
      for angle upfrom 0.0s0 by 1.0s0
      do (progn
-          (glx:swap-buffers)
           (clear +color-buffer-bit+)
           (push-matrix)
           (translate-f 0.5s0 0.5s0 0.0s0)
@@ -96,13 +95,13 @@
           (vertex-2f 0.25s0 0.75s0)
           (end)
           (pop-matrix)
+          (xlib/glx:swap-buffers)
           (sleep 0.02)))
   (sleep 3))
 
 
 (defun anim/list (display window)
   (declare (ignore display window))
-    (glx:render)
   (ortho 0.0d0 1.0d0 0.0d0 1.0d0 -1.0d0 1.0d0)
   (clear-color 0.0s0 0.0s0 0.0s0 0.0s0)
   (let ((list (gen-lists 1)))
@@ -117,18 +116,19 @@
     (color-3ub 255 255 255)
     (vertex-2f 0.25s0 0.75s0)
     (end)
+    (xlib/glx:render)
     (end-list)
 
     (loop
        repeat 361
        for angle upfrom 0.0s0 by 1.0s0
        do (progn
-            (glx:swap-buffers)
             (clear +color-buffer-bit+)
             (push-matrix)
             (rotate-f angle 0.0s0 0.0s0 1.0s0)
             (call-list list)
             (pop-matrix)
+            (xlib/glx:swap-buffers)
             (sleep 0.02))))
   
   (sleep 3))
@@ -384,7 +384,7 @@
       (new-list list +compile+)
       ;;(material-fv +front+ +ambient-and-diffuse+ '(0.8s0 0.1s0 0.0s0 1.0s0))
       (gear 1.0s0 4.0s0 1.0s0 20 0.7s0)
-      (glx:render)
+      (xlib/glx:render)
       (end-list))
 
 
@@ -431,7 +431,7 @@
 
             (pop-matrix)
 
-            (glx:swap-buffers)
+            (xlib/glx:swap-buffers)
             ;;(sleep 0.025)
             )))
   
@@ -469,7 +469,7 @@
          (decf angle 3600.0s0))
 
        (draw gear-1 gear-2 gear-3 view-rotx view-roty view-rotz angle)
-       (glx:swap-buffers)
+       (xlib/glx:swap-buffers)
        
        (incf frames)
 
