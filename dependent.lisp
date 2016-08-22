@@ -689,7 +689,8 @@
   (the short-float (* (the int16 value) #.(coerce (/ pi 180.0 64.0) 'short-float))))
 
 
-#+(or cmu sbcl clisp) (progn
+#+(or cmu sbcl clisp ecl)
+(progn
 
 ;;; This overrides the (probably incorrect) definition in clx.lisp.  Since PI
 ;;; is irrational, there can't be a precise rational representation.  In
@@ -699,13 +700,11 @@
 ;;; in the value, and see if the protocol encoding falls in the desired range
 ;;; (64'ths of a degree.)
 ;;;
-(deftype angle () '(satisfies anglep))
+  (deftype angle () '(satisfies anglep))
 
-(defun anglep (x)
-  (and (typep x 'real)
-       (<= (* -360 64) (radians->int16 x) (* 360 64))))
-
-)
+  (defun anglep (x)
+    (and (typep x 'real)
+         (<= (* -360 64) (radians->int16 x) (* 360 64)))))
 
 
 ;;-----------------------------------------------------------------------------
@@ -863,7 +862,7 @@
 
 ;;; MAKE-PROCESS-LOCK: Creating a process lock.
 
-#-(or LispM excl Minima sbcl (and cmu mp))
+#-(or LispM excl Minima sbcl (and cmu mp) (and ecl threads))
 (defun make-process-lock (name)
   (declare (ignore name))
   nil)
@@ -892,6 +891,10 @@
 (defun make-process-lock (name)
   (sb-thread:make-mutex :name name))
 
+#+(and ecl threads)
+(defun make-process-lock (name)
+  (mp:make-lock :name name :recursive t))
+
 ;;; HOLDING-LOCK: Execute a body of code with a lock held.
 
 ;;; The holding-lock macro takes a timeout keyword argument.  EVENT-LISTEN
@@ -900,7 +903,7 @@
 
 ;; If you're not sharing DISPLAY objects within a multi-processing
 ;; shared-memory environment, this is sufficient
-#-(or lispm excl lcl3.0 Minima sbcl (and CMU mp) )
+#-(or lispm excl lcl3.0 Minima sbcl (and CMU mp) (and ecl threads))
 (defmacro holding-lock ((locator display &optional whostate &key timeout) &body body)
   (declare (ignore locator display whostate timeout))
   `(progn ,@body))
@@ -942,6 +945,14 @@
   (declare (ignore lock display whostate timeout))
   `(progn
      ,@body))
+
+#+(and ecl threads)
+(defmacro holding-lock ((lock display &optional (whostate "CLX wait")
+                              &key timeout)
+                        &body body)
+  (declare (ignore display))
+  `(mp::with-lock (,lock)
+      ,@body))
 
 #+sbcl
 (defmacro holding-lock ((lock display &optional (whostate "CLX wait")
@@ -1110,7 +1121,7 @@
 ;;; Caller guarantees that PROCESS-WAKEUP will be called after the predicate's
 ;;; value changes.
 
-#-(or lispm excl lcl3.0 Minima (and sb-thread sbcl) (and cmu mp))
+#-(or lispm excl lcl3.0 Minima (and sb-thread sbcl) (and cmu mp) (and ecl threads))
 (defun process-block (whostate predicate &rest predicate-args)
   (declare (ignore whostate))
   (or (apply predicate predicate-args)
@@ -1176,6 +1187,14 @@
      (return))
    (yield)))
 
+#+(and ecl threads)
+(defun process-block (whostate predicate &rest predicate-args)
+  (declare (ignore whostate))
+  (declare (type function predicate))
+  (loop
+   (when (apply predicate predicate-args)
+     (return))
+   (mp:process-yield)))
 
 ;;; FIXME: the below implementation for threaded PROCESS-BLOCK using
 ;;; queues and condition variables might seem better, but in fact it
@@ -1212,7 +1231,7 @@
 
 (declaim (inline process-wakeup))
 
-#-(or excl Genera Minima (and sbcl sb-thread) (and cmu mp))
+#-(or excl Genera Minima (and sbcl sb-thread) (and cmu mp) (and ecl threads))
 (defun process-wakeup (process)
   (declare (ignore process))
   nil)
@@ -1246,6 +1265,12 @@
 (defun process-wakeup (process)
   (declare (ignore process))
   (yield))
+
+#+(and ecl threads)
+(defun process-wakeup (process)
+  (declare (ignore process))
+  (mp:process-yield))
+
 #+(or)
 (defun process-wakeup (process)
   (declare (ignore process))
@@ -1264,7 +1289,7 @@
 
 ;;; Default return NIL, which is acceptable even if there is a scheduler.
 
-#-(or lispm excl lcl3.0 sbcl Minima (and cmu mp))
+#-(or lispm excl lcl3.0 sbcl Minima (and cmu mp) (and ecl threads))
 (defun current-process ()
   nil)
 
@@ -1285,7 +1310,7 @@
 (defun current-process ()
   (minima:current-process))
 
-#+(and cmu mp)
+#+(or (and cmu mp) (and ecl threads))
 (defun current-process ()
   mp:*current-process*)
 
@@ -1318,6 +1343,10 @@
 #+cmu
 (defmacro without-interrupts (&body body)
   `(system:without-interrupts ,@body))
+
+#+ecl
+(defmacro without-interrupts (&body body)
+  `(mp:without-interrupts ,@body))
 
 #+sbcl
 (defvar *without-interrupts-sic-lock*
@@ -1541,7 +1570,7 @@
 						  (cdr (host-address host)))
 			  :foreign-port (+ *x-tcp-port* display)))
 
-#+sbcl
+#+(or sbcl ecl)
 (defun open-x-stream (host display protocol)  
   (declare (ignore protocol)
            (type (integer 0) display))
@@ -1558,16 +1587,6 @@
                s)))))
    :element-type '(unsigned-byte 8)
    :input t :output t :buffering :none))
-
-#+ecl
-(defun open-x-stream (host display protocol)
-  (declare (ignore protocol)
-	   (type (integer 0) display))
-  (let (socket)
-    (if (or (string= host "") (string= host "unix")) ; AF_UNIX doamin socket
-	(sys::open-unix-socket-stream
-	 (format nil "~A~D" +X-unix-socket-path+ display))
-	(si::open-client-stream host (+ 6000 display)))))
 
 ;;; BUFFER-READ-DEFAULT - read data from the X stream
 
@@ -1800,7 +1819,7 @@
 ;;;	You are STRONGLY encouraged to write a specialized version
 ;;;	of buffer-write-default that does block transfers.
 
-#-(or Genera explorer excl lcl3.0 Minima CMU sbcl clisp)
+#-(or Genera explorer excl lcl3.0 Minima CMU sbcl clisp ecl)
 (defun buffer-write-default (vector display start end)
   ;; The default buffer write function for use with common-lisp streams
   (declare (type buffer-bytes vector)
@@ -2873,10 +2892,9 @@
   "Return the same hostname as gethostname(3) would"
   ;; machine-instance probably works on a lot of lisps, but clisp is not
   ;; one of them
-  #+(or cmu sbcl) (machine-instance)
+  #+(or cmu sbcl ecl) (machine-instance)
   ;; resources-pathname was using short-site-name for this purpose
   #+excl (short-site-name)
-  #+ecl (si:getenv "HOST")
   #+clisp (let ((s (machine-instance))) (subseq s 0 (position #\Space s)))
   #-(or excl cmu sbcl ecl clisp) (error "get-host-name not implemented"))
 
@@ -2980,7 +2998,7 @@ Returns a list of (host display-number screen protocol)."
 ;; WITH-STANDARD-IO-SYNTAX equivalent, used in (SETF WM-COMMAND)
 ;;-----------------------------------------------------------------------------
 
-#-(or clx-ansi-common-lisp Genera CMU sbcl)
+#-(or clx-ansi-common-lisp Genera CMU sbcl ecl)
 (defun with-standard-io-syntax-function (function)
   (declare #+lispm
 	   (sys:downward-funarg function))
@@ -3002,7 +3020,7 @@ Returns a list of (host display-number screen protocol)."
 	#+lucid (lucid::*print-structure* t))
     (funcall function)))
 
-#-(or clx-ansi-common-lisp Genera CMU sbcl)
+#-(or clx-ansi-common-lisp Genera CMU sbcl ecl)
 (defmacro with-standard-io-syntax (&body body)
   `(flet ((.with-standard-io-syntax-body. () ,@body))
      (with-standard-io-syntax-function #'.with-standard-io-syntax-body.)))
