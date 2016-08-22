@@ -1,8 +1,8 @@
-(defpackage "XMANDEL"
+(defpackage #:xlib-demo/mandel
   (:use "CL")
   (:export "NEW-WINDOW" "EVENT-LOOP"))
 
-(in-package "XMANDEL")
+(in-package #:xlib-demo/mandel)
 
 (defvar *display* (xlib:open-default-display))
 (defvar *screen* (xlib:display-default-screen *display*))

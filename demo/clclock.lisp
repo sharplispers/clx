@@ -1,8 +1,8 @@
-(defpackage "XCLCLOCK"
+(defpackage #:xlib-demo/clclock
   (:use "CL")
   (:export "CLOCK"))
 
-(in-package "XCLCLOCK")
+(in-package #:xlib-demo/clclock)
 
 (defvar *display* (xlib:open-default-display))
 (defvar *screen* (xlib:display-default-screen *display*))

@@ -228,7 +228,7 @@
 (common-lisp:in-package :common-lisp-user)
 
 #+clx-ansi-common-lisp
-(defpackage xlib
+(defpackage #:xlib
   (:use common-lisp)
   (:size 3000)
   #+(or kcl ibcl) (:shadow rational)

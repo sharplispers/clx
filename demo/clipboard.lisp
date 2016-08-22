@@ -59,11 +59,11 @@
 ;;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 ;;; DEALINGS IN THE SOFTWARE.
 
-(defpackage "CLIPBOARD"
+(defpackage #:xlib-demo/clipboard
   (:use "CL" "XLIB")
   (:export "MAIN"))
 
-(in-package "CLIPBOARD")
+(in-package #:xlib-demo/clipboard)
 
 ;;; This is "traditional" XLIB style; I don't really know if it's the
 ;;; best way -- in developing this program, style of XLIB programming

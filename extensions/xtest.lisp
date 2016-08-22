@@ -10,7 +10,7 @@
 ;;; * Implement XTestSetVisualIDOfVisual and XTestDiscard
 ;;; * Add the missing (declare (type ...
 
-(defpackage :xtest
+(defpackage #:xlib/xtest
   (:use :common-lisp :xlib)
   (:import-from :xlib
                 #:data
@@ -44,7 +44,7 @@
    #:fake-key-event
    #:grab-control))
 
-(in-package :xtest)
+(in-package #:xlib/xtest)
 
 (define-extension "XTEST")
 

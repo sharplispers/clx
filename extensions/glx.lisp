@@ -1,4 +1,4 @@
-(defpackage :glx
+(defpackage #:xlib/glx
   (:use :common-lisp :xlib)
   (:import-from :xlib
                 "DEFINE-ACCESSOR"
@@ -69,7 +69,7 @@
            ))
 
 
-(in-package :glx)
+(in-package #:xlib/glx)
 
 
 (declaim (optimize (debug 3) (safety 3)))
@@ -596,7 +596,7 @@ Example: '(:glx-rgba (:glx-alpha-size 4) :glx-double-buffer (:glx-class 4 =)."
   (let* ((ctx *current-context*)
          (display (context-display ctx)))
     ;; Make sure all rendering commands are sent away.
-    (glx:render)
+    (render)
     (with-buffer-request (display (extension-opcode display "GLX"))
       (data +swap-buffers+)
       ;; *** GLX_CONTEXT_TAG

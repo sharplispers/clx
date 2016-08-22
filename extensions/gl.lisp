@@ -1,6 +1,6 @@
-(defpackage :gl
+(defpackage #:xlib/gl
   (:use :common-lisp :xlib)
-  (:import-from :glx
+  (:import-from :xlib/glx
                 "*CURRENT-CONTEXT*"
                 "CONTEXT"
                 "CONTEXT-P"
@@ -1153,7 +1153,7 @@
            ))
 
 
-(in-package :gl)
+(in-package #:xlib/gl)
 
 
 
