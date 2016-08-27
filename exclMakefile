@@ -88,7 +88,6 @@ compile-no-clos-CLX:	$(C_OBJS)
 	$(ECHO) " \
 	(set-case-mode :case-sensitive-lower) \
 	(proclaim '(optimize (speed $(SPEED)) (safety $(SAFETY)))) \
-	#+(version>= 4 0) (pushnew :clx-ansi-common-lisp *features*) \
 	(load \"defsystem\") \
 	#+allegro (compile-system :clx) \
 	#-allegro (compile-clx) \
@@ -107,7 +106,6 @@ compile-partial-clos-CLX:	$(C_OBJS)
 	    (provide :pcl) \
 	    (gc) (gc) \
 	    (setf (sys:gsgc-parameter :generation-spread) spread))) \
-	#+(version>= 4 0) (pushnew :clx-ansi-common-lisp *features*) \
 	(load \"defsystem\") \
 	(load \"package\") \
 	(setq xlib::*def-clx-class-use-defclass* '(xlib:window xlib:pixmap xlib:drawable)) \
@@ -128,7 +126,6 @@ compile-full-clos-CLX:	$(C_OBJS)
 	    (provide :pcl) \
 	    (gc) (gc) \
 	    (setf (sys:gsgc-parameter :generation-spread) spread))) \
-	#+(version>= 4 0) (pushnew :clx-ansi-common-lisp *features*) \
 	(load \"defsystem\") \
 	(load \"package\") \
 	(setq xlib::*def-clx-class-use-defclass* t) \

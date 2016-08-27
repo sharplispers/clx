@@ -23,8 +23,6 @@
 (defpackage :clx-system (:use :cl :asdf))
 (in-package :clx-system)  
 
-(pushnew :clx-ansi-common-lisp *features*)
-
 (defclass clx-source-file (cl-source-file) ())
 (defclass xrender-source-file (clx-source-file) ())
 

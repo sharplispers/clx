@@ -388,10 +388,7 @@
 	   (type generalized-boolean force-output-p)
 	   (dynamic-extent predicate-args))
   (declare (type function predicate)
-	   #+clx-ansi-common-lisp
-	   (dynamic-extent predicate)
-	   #+(and lispm (not clx-ansi-common-lisp))
-	   (sys:downward-funarg predicate))
+	   (dynamic-extent predicate))
   (let ((reply-buffer nil)
 	(token (or (current-process) (cons nil nil))))
     (declare (type (or null reply-buffer) reply-buffer))
@@ -419,10 +416,7 @@
 			    (declare (type display display)
 				     (dynamic-extent predicate-args)
 				     (type function predicate)
-				     #+clx-ansi-common-lisp
-				     (dynamic-extent predicate)
-				     #+(and lispm (not clx-ansi-common-lisp))
-				     (sys:downward-funarg predicate))
+				     (dynamic-extent predicate))
 			    (or (apply predicate predicate-args)
 				(null (display-input-in-progress display))
 				(not (null (display-dead display)))))
@@ -763,10 +757,7 @@
 	     (declare (type display display)
 		      (type reply-buffer event))
 	     (declare (type function handler)
-		      #+clx-ansi-common-lisp
-		      (dynamic-extent handler)
-		      #+(and lispm (not clx-ansi-common-lisp))
-		      (sys:downward-funarg handler))
+		      (dynamic-extent handler))
 	     (reading-event (event :display display :sizes (8 16 ,@get-sizes))
 	       (funcall handler
 			:display display
@@ -1177,10 +1168,7 @@
 	   (type (or null number) timeout)
 	   (type generalized-boolean peek-p discard-p force-output-p))
   (declare (type t handler)
-	   #+clx-ansi-common-lisp
-	   (dynamic-extent handler)
-	   #+(and lispm (not clx-ansi-common-lisp))
-	   (sys:downward-funarg #+Genera * #-Genera handler))
+	   (dynamic-extent handler))
   (event-loop (display event timeout force-output-p discard-p)
     (let* ((event-code (event-code event)) ;; Event decoder defined by DECLARE-EVENT
 	   (event-decoder (and (index< event-code (length *event-handler-vector*))
@@ -1533,17 +1521,6 @@
       (when (= code (second extension))
 	(return (first extension))))))
 
-#-(or clx-ansi-common-lisp excl lcl3.0 CMU)
-(define-condition request-error (x-error)
-  ((display :reader request-error-display)
-   (error-key :reader request-error-error-key)
-   (major :reader request-error-major)
-   (minor :reader request-error-minor)
-   (sequence :reader request-error-sequence)
-   (current-sequence :reader request-error-current-sequence)
-   (asynchronous :reader request-error-asynchronous))
-  (:report report-request-error))
-
 (defun report-request-error (condition stream)
   (let ((error-key (request-error-error-key condition))
 	(asynchronous (request-error-asynchronous condition))
@@ -1558,7 +1535,6 @@
 
 ;; Since the :report arg is evaluated as (function report-request-error) the
 ;; define-condition must come after the function definition.
-#+(or clx-ansi-common-lisp excl lcl3.0 CMU)
 (define-condition request-error (x-error)
   ((display :reader request-error-display :initarg :display)
    (error-key :reader request-error-error-key :initarg :error-key)

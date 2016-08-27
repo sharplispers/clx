@@ -35,16 +35,6 @@
 	(lisp:rational x)))
   (deftype rational (&optional l u) `(lisp:rational ,l ,u)))
 
-;;; DECLAIM
-
-#-clx-ansi-common-lisp
-(defmacro declaim (&rest decl-specs)
-  (if (cdr decl-specs)
-      `(progn
-	 ,@(mapcar #'(lambda (decl-spec) `(proclaim ',decl-spec))
-		   decl-specs))
-    `(proclaim ',(car decl-specs))))
-
 ;;; CLX-VALUES value1 value2 ... -- Documents the values returned by the function.
 
 #-Genera
@@ -59,18 +49,6 @@
 
 #-(or lispm lcl3.0)
 (declaim (declaration arglist))
-
-;;; DYNAMIC-EXTENT var -- Tells the compiler that the rest arg var has
-;;; dynamic extent and therefore can be kept on the stack and not copied to
-;;; the heap, even though the value is passed out of the function.
-
-#-(or clx-ansi-common-lisp lcl3.0)
-(declaim (declaration dynamic-extent))
-
-;;; IGNORABLE var -- Tells the compiler that the variable might or might not be used.
-
-#-clx-ansi-common-lisp
-(declaim (declaration ignorable))
 
 ;;; INDENTATION argpos1 arginden1 argpos2 arginden2 --- Tells the lisp editor how to
 ;;; indent calls to the function or macro containing the declaration.  
@@ -419,14 +397,7 @@ used, since NIL is the empty list.")
 (defmacro def-clx-class ((name &rest options) &body slots)
   (if (or (not (listp *def-clx-class-use-defclass*))
 	  (member name *def-clx-class-use-defclass*))
-      (let ((clos-package #+clx-ansi-common-lisp
-			  (find-package :common-lisp)
-			  #-clx-ansi-common-lisp
-			  (or (find-package :clos)
-			      (find-package :pcl)
-			      (let ((lisp-pkg (find-package :lisp)))
-				(and (find-symbol (string 'defclass) lisp-pkg)
-				     lisp-pkg))))
+      (let ((clos-package (find-package :common-lisp))
 	    (constructor t)
 	    (constructor-args t)
 	    (include nil)
@@ -597,40 +568,6 @@ used, since NIL is the empty list.")
 ;;-----------------------------------------------------------------------------
 ;; Printing routines.
 ;;-----------------------------------------------------------------------------
-
-#-(or clx-ansi-common-lisp Genera)
-(defun print-unreadable-object-function (object stream type identity function)
-  (declare #+lispm
-	   (sys:downward-funarg function))
-  (princ "#<" stream)
-  (when type
-    (let ((type (type-of object))
-	  (pcl-package (find-package :pcl)))
-      ;; Handle pcl type-of lossage
-      (when (and pcl-package
-		 (symbolp type)
-		 (eq (symbol-package type) pcl-package)
-		 (string-equal (symbol-name type) "STD-INSTANCE"))
-	(setq type
-	      (funcall (intern (symbol-name 'class-name) pcl-package)
-		       (funcall (intern (symbol-name 'class-of) pcl-package)
-				object))))
-      (prin1 type stream)))
-  (when (and type function) (princ " " stream))
-  (when function (funcall function))
-  (when (and (or type function) identity) (princ " " stream))
-  (when identity (princ "???" stream))
-  (princ ">" stream)
-  nil)
-  
-#-(or clx-ansi-common-lisp Genera)
-(defmacro print-unreadable-object
-	  ((object stream &key type identity) &body body)
-  (if body
-      `(flet ((.print-unreadable-object-body. () ,@body))
-	 (print-unreadable-object-function
-	   ,object ,stream ,type ,identity #'.print-unreadable-object-body.))
-    `(print-unreadable-object-function ,object ,stream ,type ,identity nil)))
 
 
 ;;-----------------------------------------------------------------------------

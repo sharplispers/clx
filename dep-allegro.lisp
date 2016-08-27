@@ -863,7 +863,7 @@
   ;; therefore DISAPPEARS when WITH-STACK-LIST is exited.
   `(let ((,var (list ,@elements)))
      (declare (type cons ,var)
-	      #+clx-ansi-common-lisp (dynamic-extent ,var))
+              (dynamic-extent ,var))
      ,@body))
 
 #-lispm
@@ -874,7 +874,7 @@
   ;; therefore DISAPPEARS when WITH-STACK-LIST is exited.
   `(let ((,var (list* ,@elements)))
      (declare (type cons ,var)
-	      #+clx-ansi-common-lisp (dynamic-extent ,var))
+              (dynamic-extent ,var))
      ,@body))
 
 (declaim (inline buffer-replace))
@@ -1030,12 +1030,10 @@
       (apply #'x-cerror "Ignore" error-key :display display :error-key error-key key-vals)
       (apply #'x-error error-key :display display :error-key error-key key-vals)))
 
-#+(or clx-ansi-common-lisp excl lcl3.0 (and CMU mp))
 (defun x-error (condition &rest keyargs)
   (declare (dynamic-extent keyargs))
   (apply #'error condition keyargs))
 
-#+(or clx-ansi-common-lisp excl lcl3.0 CMU)
 (defun x-cerror (proceed-format-string condition &rest keyargs)
   (declare (dynamic-extent keyargs))
   (apply #'cerror proceed-format-string condition keyargs))
@@ -1058,32 +1056,7 @@
 	(ext::disable-clx-event-handling disp)))
     (error condx)))
 
-#-(or lispm ansi-common-lisp excl lcl3.0 CMU sbcl)
-(defun x-error (condition &rest keyargs)
-  (error "X-Error: ~a"
-	 (princ-to-string (apply #'make-condition condition keyargs))))
-
-#-(or lispm clx-ansi-common-lisp excl lcl3.0 CMU sbcl)
-(defun x-cerror (proceed-format-string condition &rest keyargs)
-  (cerror proceed-format-string "X-Error: ~a"
-	 (princ-to-string (apply #'make-condition condition keyargs))))
-
-;; version 15 of Pitman error handling defines the syntax for define-condition to be:
-;; DEFINE-CONDITION name (parent-type) [({slot}*) {option}*]
-;; Where option is one of: (:documentation doc-string) (:conc-name symbol-or-string)
-;; or (:report exp)
-
-#+(and excl (not clx-ansi-common-lisp))
-(defmacro define-condition (name parent-types &optional slots &rest args)
-  `(excl::define-condition
-     ,name (,(first parent-types))
-     ,(mapcar #'(lambda (slot) (if (consp slot) (car slot) slot))
-	      slots)
-     ,@args))
-
-#+(or clx-ansi-common-lisp excl lcl3.0 CMU sbcl)
 (define-condition x-error (error) ())
-
 
 
 ;;-----------------------------------------------------------------------------
@@ -1273,38 +1246,6 @@ Returns a list of (host display-number screen protocol)."
   (setq *temp-gcontext-cache* nil)
   nil)
 
-
-
-;;-----------------------------------------------------------------------------
-;; WITH-STANDARD-IO-SYNTAX equivalent, used in (SETF WM-COMMAND)
-;;-----------------------------------------------------------------------------
-
-#-(or clx-ansi-common-lisp Genera CMU sbcl)
-(defun with-standard-io-syntax-function (function)
-  (declare #+lispm
-	   (sys:downward-funarg function))
-  (let ((*package* (find-package :user))
-	(*print-array* t)
-	(*print-base* 10)
-	(*print-case* :upcase)
-	(*print-circle* nil)
-	(*print-escape* t)
-	(*print-gensym* t)
-	(*print-length* nil)
-	(*print-level* nil)
-	(*print-pretty* nil)
-	(*print-radix* nil)
-	(*read-base* 10)
-	(*read-default-float-format* 'single-float)
-	(*read-suppress* nil)
-	)
-    (funcall function)))
-
-#-(or clx-ansi-common-lisp Genera CMU sbcl)
-(defmacro with-standard-io-syntax (&body body)
-  `(flet ((.with-standard-io-syntax-body. () ,@body))
-     (with-standard-io-syntax-function #'.with-standard-io-syntax-body.)))
-
 
 ;;-----------------------------------------------------------------------------
 ;; DEFAULT-KEYSYM-TRANSLATE
@@ -1321,7 +1262,6 @@ Returns a list of (host display-number screen protocol)."
 ;;; When MASK-MODIFIERS is missing, all other modifiers are ignored.
 ;;; In ambiguous cases, the most specific translation is used.
 
-#-(or (and clx-ansi-common-lisp (not lispm) (not allegro)) CMU sbcl)
 (defun default-keysym-translate (display state object)
   (declare (type display display)
 	   (type card16 state)
