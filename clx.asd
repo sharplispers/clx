@@ -99,12 +99,6 @@ Independent FOSS developers"
 	       (:file "mandel")
 	       (:file "menu")
 	       (:file "zoid")))
-     (:module test
-	      :default-component-class example-source-file
-	      :components
-	      ((:file "image")
-	       ;; KLUDGE: again, this depends on "zoid"
-	       (:file "trapezoid")))
      (:static-file "NEWS")
      (:static-file "CHANGES")
      (:static-file "README.md")
