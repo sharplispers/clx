@@ -34,6 +34,8 @@
 
 (export '(screen-saver-query-version
 	  screen-saver-query-info
+	  screen-saver-select-input
+	  screen-saver-unset-attributes
 	  screen-saver-get-idle)
         :xlib)
 
@@ -54,13 +56,37 @@
   (with-buffer-request-and-reply (display (extension-opcode display "MIT-SCREEN-SAVER")
                                           nil)
     ((data 1)
-     (drawable drawable))
+     (drawable drawable)) ; drawable associated with screen
     (values
      (card8-get 1) ; state: off, on, disabled
      (window-get 8) ; screen saver window if active
      (card32-get 12) ; tilorsince msecs. how soon before the screen saver kicks in or how long has it been active
      (card32-get 16) ; idle msecs
      (card8-get 24)))) ; kind: Blanked, Internal, External
+
+(defun screen-saver-select-input (display drawable)
+  (with-buffer-request-and-reply (display (extension-opcode display "MIT-SCREEN-SAVER")
+                                          nil)
+    ((data 2)
+     (drawable drawable) ; drawable associated with screen
+     ;;4 SETofSCREENSAVEREVENT event mask
+     )))
+
+#|
+(defun screen-saver-set-attributes (display drawable x y )
+  (with-buffer-request-and-reply (display (extension-opcode display "MIT-SCREEN-SAVER")
+                                          nil)
+    ((data 3)
+     (drawable drawable) ; drawable associated with screen
+     
+     )))
+|#
+
+(defun screen-saver-unset-attributes (display drawable)
+  (with-buffer-request-and-reply (display (extension-opcode display "MIT-SCREEN-SAVER")
+                                          nil)
+    ((data 4)
+     (drawable drawable)))) ; drawable associated with screen
 
 (defun screen-saver-get-idle (display drawable)
   "How long has it been since the last keyboard or mouse input"
