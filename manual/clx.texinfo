@@ -11070,9 +11070,9 @@ Type @var{boolean}.
 
 Please note that CLX keeps a cache of the keyboard mapping. It is the
 responsibility of the user of CLX to invalidate this cache when
-receiving a @var{:mapping-notify} (@pxref{:mapping-notify}) event from
+receiving a @var{:mapping-notify} event from
 the X Server. To help the user with this task CLX provides the function
-@var{mapping-notify} (@pxref{mapping-notify}).
+@var{mapping-notify}.
 
 @end defun
 
