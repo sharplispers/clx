@@ -1,0 +1,16 @@
+language: bash
+sudo: required
+dist: trusty
+
+notifications:
+  - email: false
+
+addons:
+  apt:
+    packages:
+      - texinfo
+
+script:
+
+after_success:
+  - bash ci-doc-gh-pages.sh

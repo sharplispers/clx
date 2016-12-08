@@ -83,6 +83,13 @@ demo/, it's generally /not/ considered good style to switch to the
 language reference to familiarize yourself with USE-PACKAGE, or 
 better yet, the USE option to DEFPACKAGE.
 
+# Documentation
+
+An up to date version of the manual can be found at [sharplispers.github.io/clx](https://sharplispers.github.io/clx/)
+
+#Bug reports, new features, patches
+
+Please use github to track issues:
 # Contributing
 
 To contribute submit a [pull request](https://github.com/sharplispers/clx/pulls)
