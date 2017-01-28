@@ -316,7 +316,7 @@
             (setf (wm-size-hints-min-aspect hints) (/ (aref vector 11) low))))
         (let ((low (aref vector 14)))
           (unless (zerop low)
-            (setf (wm-size-hints-max-aspect hints) (/ (aref vector 13) low))))))
+            (setf (wm-size-hints-max-aspect hints) (/ (aref vector 13) low)))))
       (when (> (length vector) 15)
 	;; This test is for backwards compatibility since old Xlib programs
 	;; can set a size-hints structure that is too small.  See ICCCM.
