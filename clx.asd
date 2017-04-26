@@ -40,7 +40,7 @@ Independent FOSS developers"
     :maintainer "sharplispers"
     :license "MIT"
     :depends-on (#+(or ecl sbcl) sb-bsd-sockets)
-    :version "0.7.2"
+    :version "0.7.3"
     :serial t
     :default-component-class clx-source-file
     :components
