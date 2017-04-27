@@ -2,9 +2,9 @@
 
 ;;; Original copyright message from defsystem.lisp:
 
-;;;			 TEXAS INSTRUMENTS INCORPORATED
-;;;				  P.O. BOX 2909
-;;;			       AUSTIN, TEXAS 78769
+;;;                      TEXAS INSTRUMENTS INCORPORATED
+;;;                               P.O. BOX 2909
+;;;                            AUSTIN, TEXAS 78769
 ;;;
 ;;; Portions Copyright (C) 1987 Texas Instruments Incorporated.
 ;;; Portions Copyright (C) 1988, 1989 Franz Inc, Berkeley, Ca.
@@ -70,41 +70,41 @@ Independent FOSS developers"
      #+allegro
      (:file "excldep" :pathname "excldep.lisp")
      (:module extensions
-	      :components
-	      ((:file "shape")
-	       (:file "big-requests")
-	       (:file "xvidmode")
-	       (:xrender-source-file "xrender")
+              :components
+              ((:file "shape")
+               (:file "big-requests")
+               (:file "xvidmode")
+               (:xrender-source-file "xrender")
                (:file "glx")
                (:file "gl" :depends-on ("glx"))
-	       (:file "dpms")
+               (:file "dpms")
                (:file "xtest")
                (:file "screensaver")
                (:file "xinerama")))
      (:module demo
-	      :default-component-class example-source-file
-	      :components
-	      ((:file "bezier")
-	       ;; KLUDGE: this requires "bezier" for proper operation,
-	       ;; but we don't declare that dependency here, because
-	       ;; asdf doesn't load example files anyway.
-	       (:file "beziertest")
-	       (:file "clclock")
+              :default-component-class example-source-file
+              :components
+              ((:file "bezier")
+               ;; KLUDGE: this requires "bezier" for proper operation,
+               ;; but we don't declare that dependency here, because
+               ;; asdf doesn't load example files anyway.
+               (:file "beziertest")
+               (:file "clclock")
                (:file "clipboard")
-	       (:file "clx-demos")
-	       (:file "gl-test")
-	       ;; FIXME: compiling this generates 30-odd spurious code
-	       ;; deletion notes.  Find out why, and either fix or
-	       ;; workaround the problem.
-	       (:file "mandel")
-	       (:file "menu")
-	       (:file "zoid")))
+               (:file "clx-demos")
+               (:file "gl-test")
+               ;; FIXME: compiling this generates 30-odd spurious code
+               ;; deletion notes.  Find out why, and either fix or
+               ;; workaround the problem.
+               (:file "mandel")
+               (:file "menu")
+               (:file "zoid")))
      (:module test
-	      :default-component-class example-source-file
-	      :components
-	      ((:file "image")
-	       ;; KLUDGE: again, this depends on "zoid"
-	       (:file "trapezoid")))
+              :default-component-class example-source-file
+              :components
+              ((:file "image")
+               ;; KLUDGE: again, this depends on "zoid"
+               (:file "trapezoid")))
      (:static-file "NEWS")
      (:static-file "CHANGES")
      (:static-file "README.md")
@@ -119,17 +119,17 @@ Independent FOSS developers"
      (:legacy-file "provide" :pathname "provide.lisp")
      (:legacy-file "cmudep" :pathname "cmudep.lisp")
      (:module manual
-	      ;; TODO: teach asdf how to process texinfo files
-	      :components ((:static-file "clx.texinfo")))
+              ;; TODO: teach asdf how to process texinfo files
+              :components ((:static-file "clx.texinfo")))
      (:module debug
-	      :default-component-class legacy-file
-	      :components
-	      ((:file "debug" :pathname "debug.lisp")
-	       (:file "describe" :pathname "describe.lisp")
-	       (:file "event-test" :pathname "event-test.lisp")
-	       (:file "keytrans" :pathname "keytrans.lisp")
-	       (:file "trace" :pathname "trace.lisp")
-	       (:file "util" :pathname "util.lisp")))))
+              :default-component-class legacy-file
+              :components
+              ((:file "debug" :pathname "debug.lisp")
+               (:file "describe" :pathname "describe.lisp")
+               (:file "event-test" :pathname "event-test.lisp")
+               (:file "keytrans" :pathname "keytrans.lisp")
+               (:file "trace" :pathname "trace.lisp")
+               (:file "util" :pathname "util.lisp")))))
 
 (defmethod perform ((o load-op) (f example-source-file))
   ;; do nothing.  We want to compile them when CLX is compiled, but
@@ -179,31 +179,31 @@ Independent FOSS developers"
   ;; structured data is sufficiently equal.
   (handler-bind
       ((sb-ext:defconstant-uneql
-	   (lambda (c)
-	     ;; KLUDGE: this really means "don't warn me about
-	     ;; efficiency of generic array access, please"
-	     (declare (optimize (sb-ext:inhibit-warnings 3)))
-	     (let ((old (sb-ext:defconstant-uneql-old-value c))
-		   (new (sb-ext:defconstant-uneql-new-value c)))
-	       (typecase old
-		 (list (when (equal old new) (abort c)))
-		 (string (when (and (typep new 'string)
-				    (string= old new))
-			   (abort c)))
-		 (simple-vector
-		  (when (and (typep new 'simple-vector)
-			     (= (length old) (length new))
-			     (every #'eql old new))
-		    (abort c)))
-		 (array
-		  (when (and (typep new 'array)
-			     (equal (array-dimensions old)
-				    (array-dimensions new))
-			     (equal (array-element-type old)
-				    (array-element-type new))
-			     (dotimes (i (array-total-size old) t)
-			       (unless (eql (row-major-aref old i)
-					    (row-major-aref new i))
-				 (return nil))))
-		    (abort c))))))))
+           (lambda (c)
+             ;; KLUDGE: this really means "don't warn me about
+             ;; efficiency of generic array access, please"
+             (declare (optimize (sb-ext:inhibit-warnings 3)))
+             (let ((old (sb-ext:defconstant-uneql-old-value c))
+                   (new (sb-ext:defconstant-uneql-new-value c)))
+               (typecase old
+                 (list (when (equal old new) (abort c)))
+                 (string (when (and (typep new 'string)
+                                    (string= old new))
+                           (abort c)))
+                 (simple-vector
+                  (when (and (typep new 'simple-vector)
+                             (= (length old) (length new))
+                             (every #'eql old new))
+                    (abort c)))
+                 (array
+                  (when (and (typep new 'array)
+                             (equal (array-dimensions old)
+                                    (array-dimensions new))
+                             (equal (array-element-type old)
+                                    (array-element-type new))
+                             (dotimes (i (array-total-size old) t)
+                               (unless (eql (row-major-aref old i)
+                                            (row-major-aref new i))
+                                 (return nil))))
+                    (abort c))))))))
     (call-next-method)))
