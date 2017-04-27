@@ -8,8 +8,6 @@
 
 (in-package :xlib)
 
-(export '(image-test))
-
 (defvar *image-test-host* "")
 
 (defvar *image-test-nimages* 25)
