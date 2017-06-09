@@ -13,7 +13,7 @@ rev=$(git rev-parse --short HEAD)
 mkdir -p stage/_book
 
 command -v texi2any >/dev/null 2>&1 || { echo >&2 "texi2any is required but it's not installed. Aborting."; exit 1; }
-texi2any --html manual/clx.texinfo -css-ref=style.css -o stage/_book
+texi2any --html manual/clx.texinfo --css-ref=style.css -o stage/_book
 cp manual/style.css stage/_book
 
 cd stage/_book
