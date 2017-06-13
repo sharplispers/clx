@@ -329,10 +329,9 @@
 		;; so we need to bring it to within the correct range
 		;; ICCCM specifies a default gravity of NorthWest
 		(let ((gravity (aref vector 17)))
-		  (decode-type (member-vector +win-gravity-vector+)
-			       (if (< 0 gravity #.(length +win-gravity-vector+))
-				   gravity
-				   #.(position :north-west +win-gravity-vector+)))))))
+		  (if (< 0 gravity #.(length +win-gravity-vector+))
+		      (decode-type (member-vector +win-gravity-vector+) gravity)
+		      :north-west)))))
       ;; Obsolete fields
       (when (or (logbitp 0 flags) (logbitp 2 flags))
 	(setf (wm-size-hints-x hints) (card32->int32 (aref vector 1))
