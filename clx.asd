@@ -81,30 +81,6 @@ Independent FOSS developers"
                (:file "xtest")
                (:file "screensaver")
                (:file "xinerama")))
-     (:module demo
-	      :default-component-class example-source-file
-	      :components
-	      ((:file "bezier")
-	       ;; KLUDGE: this requires "bezier" for proper operation,
-	       ;; but we don't declare that dependency here, because
-	       ;; asdf doesn't load example files anyway.
-	       (:file "beziertest")
-	       (:file "clclock")
-               (:file "clipboard")
-	       (:file "clx-demos")
-	       (:file "gl-test")
-	       ;; FIXME: compiling this generates 30-odd spurious code
-	       ;; deletion notes.  Find out why, and either fix or
-	       ;; workaround the problem.
-	       (:file "mandel")
-	       (:file "menu")
-	       (:file "zoid")))
-     (:module test
-	      :default-component-class example-source-file
-	      :components
-	      ((:file "image")
-	       ;; KLUDGE: again, this depends on "zoid"
-	       (:file "trapezoid")))
      (:static-file "NEWS")
      (:static-file "CHANGES")
      (:static-file "README.md")
@@ -130,6 +106,38 @@ Independent FOSS developers"
 	       (:file "keytrans" :pathname "keytrans.lisp")
 	       (:file "trace" :pathname "trace.lisp")
 	       (:file "util" :pathname "util.lisp")))))
+
+(defsystem #:clx/demo
+  :depends-on ("clx")
+  :components
+  ((:module demo
+	    :default-component-class example-source-file
+	    :components
+	    ((:file "bezier")
+	     ;; KLUDGE: this requires "bezier" for proper operation,
+	     ;; but we don't declare that dependency here, because
+	     ;; asdf doesn't load example files anyway.
+	     (:file "beziertest")
+	     (:file "clclock")
+	     (:file "clipboard")
+	     (:file "clx-demos")
+	     (:file "gl-test")
+	     ;; FIXME: compiling this generates 30-odd spurious code
+	     ;; deletion notes.  Find out why, and either fix or
+	     ;; workaround the problem.
+	     (:file "mandel")
+	     (:file "menu")
+	     (:file "zoid")))))
+
+(defsystem #:clx/test
+  :depends-on ("clx/demo")
+  :components
+  ((:module test
+	    :default-component-class example-source-file
+	    :components
+	    ((:file "image")
+	     ;; KLUDGE: again, this depends on "zoid"
+	     (:file "trapezoid")))))
 
 (defmethod perform ((o load-op) (f example-source-file))
   ;; do nothing.  We want to compile them when CLX is compiled, but
