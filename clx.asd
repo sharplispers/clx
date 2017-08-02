@@ -111,10 +111,7 @@ Independent FOSS developers"
   ((:module demo
 	    :components
 	    ((:file "bezier")
-	     ;; KLUDGE: this requires "bezier" for proper operation,
-	     ;; but we don't declare that dependency here, because
-	     ;; asdf doesn't load example files anyway.
-	     (:file "beziertest")
+	     (:file "beziertest" :depends-on ("bezier"))
 	     (:file "clclock")
 	     (:file "clipboard")
 	     (:file "clx-demos")
@@ -126,8 +123,7 @@ Independent FOSS developers"
 	     (:file "menu")
 	     (:file "zoid")
 	     (:file "image")
-	     ;; KLUDGE: again, this depends on "zoid"
-	     (:file "trapezoid")))))
+	     (:file "trapezoid" :depends-on ("zoid"))))))
 
 #+sbcl
 (defmethod perform :around ((o compile-op) (f xrender-source-file))
