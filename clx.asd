@@ -28,8 +28,6 @@
 
 ;;; CL-SOURCE-FILE, not CLX-SOURCE-FILE, so that we're not accused of
 ;;; cheating by rebinding *DERIVE-FUNCTION-TYPES* :-)
-(defclass example-source-file (cl-source-file) ())
-
 (defclass legacy-file (static-file) ())
 
 (defsystem #:clx
@@ -111,7 +109,6 @@ Independent FOSS developers"
   :depends-on ("clx")
   :components
   ((:module demo
-	    :default-component-class example-source-file
 	    :components
 	    ((:file "bezier")
 	     ;; KLUDGE: this requires "bezier" for proper operation,
@@ -131,11 +128,6 @@ Independent FOSS developers"
 	     (:file "image")
 	     ;; KLUDGE: again, this depends on "zoid"
 	     (:file "trapezoid")))))
-
-(defmethod perform ((o load-op) (f example-source-file))
-  ;; do nothing.  We want to compile them when CLX is compiled, but
-  ;; not load them when CLX is loaded.
-  t)
 
 #+sbcl
 (defmethod perform :around ((o compile-op) (f xrender-source-file))
