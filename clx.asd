@@ -127,15 +127,8 @@ Independent FOSS developers"
 	     ;; workaround the problem.
 	     (:file "mandel")
 	     (:file "menu")
-	     (:file "zoid")))))
-
-(defsystem #:clx/test
-  :depends-on ("clx/demo")
-  :components
-  ((:module test
-	    :default-component-class example-source-file
-	    :components
-	    ((:file "image")
+	     (:file "zoid")
+	     (:file "image")
 	     ;; KLUDGE: again, this depends on "zoid"
 	     (:file "trapezoid")))))
 
