@@ -31,6 +31,12 @@ be found at [https://github.com/franzinc/clx](https://github.com/franzinc/clx)
 (ql:quickload 'clx)
 ```
 
+To load demos and tests as well:
+
+```lisp
+(ql:quickload 'clx/demo)
+```
+
 or if you want to use the latest version from git, clone this repository to
 your local-project and use `quickload` as described above
 
@@ -65,6 +71,12 @@ look in that directory by adding the directory to ASDF's central registry on eve
 ```
 
 or you can configure ASDF to look in your directory as described in the [ASDF Manual](https://common-lisp.net/project/asdf/asdf.html#Configuring-ASDF-to-find-your-systems)
+
+To load demo and test files as well:
+
+```lisp
+(asdf:load-system 'clx/demo)
+```
 
 
 # Demos
