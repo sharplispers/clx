@@ -67,7 +67,7 @@ Independent FOSS developers"
      (:file "resource")
      #+allegro
      (:file "excldep" :pathname "excldep.lisp")
-     (:module extensions
+     (:module "extensions"
 	      :components
 	      ((:file "shape")
 	       (:file "big-requests")
@@ -92,10 +92,10 @@ Independent FOSS developers"
      (:legacy-file "defsystem" :pathname "defsystem.lisp")
      (:legacy-file "provide" :pathname "provide.lisp")
      (:legacy-file "cmudep" :pathname "cmudep.lisp")
-     (:module manual
+     (:module "manual"
 	      ;; TODO: teach asdf how to process texinfo files
 	      :components ((:static-file "clx.texinfo")))
-     (:module debug
+     (:module "debug"
 	      :default-component-class legacy-file
 	      :components
 	      ((:file "debug" :pathname "debug.lisp")
@@ -108,7 +108,7 @@ Independent FOSS developers"
 (defsystem #:clx/demo
   :depends-on ("clx")
   :components
-  ((:module demo
+  ((:module "demo"
 	    :components
 	    ((:file "bezier")
 	     (:file "beziertest" :depends-on ("bezier"))
