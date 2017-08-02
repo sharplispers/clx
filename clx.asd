@@ -28,8 +28,6 @@
 
 ;;; CL-SOURCE-FILE, not CLX-SOURCE-FILE, so that we're not accused of
 ;;; cheating by rebinding *DERIVE-FUNCTION-TYPES* :-)
-(defclass example-source-file (cl-source-file) ())
-
 (defclass legacy-file (static-file) ())
 
 (defsystem #:clx
@@ -69,7 +67,7 @@ Independent FOSS developers"
      (:file "resource")
      #+allegro
      (:file "excldep" :pathname "excldep.lisp")
-     (:module extensions
+     (:module "extensions"
 	      :components
 	      ((:file "shape")
 	       (:file "big-requests")
@@ -81,30 +79,6 @@ Independent FOSS developers"
                (:file "xtest")
                (:file "screensaver")
                (:file "xinerama")))
-     (:module demo
-	      :default-component-class example-source-file
-	      :components
-	      ((:file "bezier")
-	       ;; KLUDGE: this requires "bezier" for proper operation,
-	       ;; but we don't declare that dependency here, because
-	       ;; asdf doesn't load example files anyway.
-	       (:file "beziertest")
-	       (:file "clclock")
-               (:file "clipboard")
-	       (:file "clx-demos")
-	       (:file "gl-test")
-	       ;; FIXME: compiling this generates 30-odd spurious code
-	       ;; deletion notes.  Find out why, and either fix or
-	       ;; workaround the problem.
-	       (:file "mandel")
-	       (:file "menu")
-	       (:file "zoid")))
-     (:module test
-	      :default-component-class example-source-file
-	      :components
-	      ((:file "image")
-	       ;; KLUDGE: again, this depends on "zoid"
-	       (:file "trapezoid")))
      (:static-file "NEWS")
      (:static-file "CHANGES")
      (:static-file "README.md")
@@ -118,10 +92,10 @@ Independent FOSS developers"
      (:legacy-file "defsystem" :pathname "defsystem.lisp")
      (:legacy-file "provide" :pathname "provide.lisp")
      (:legacy-file "cmudep" :pathname "cmudep.lisp")
-     (:module manual
+     (:module "manual"
 	      ;; TODO: teach asdf how to process texinfo files
 	      :components ((:static-file "clx.texinfo")))
-     (:module debug
+     (:module "debug"
 	      :default-component-class legacy-file
 	      :components
 	      ((:file "debug" :pathname "debug.lisp")
@@ -131,10 +105,25 @@ Independent FOSS developers"
 	       (:file "trace" :pathname "trace.lisp")
 	       (:file "util" :pathname "util.lisp")))))
 
-(defmethod perform ((o load-op) (f example-source-file))
-  ;; do nothing.  We want to compile them when CLX is compiled, but
-  ;; not load them when CLX is loaded.
-  t)
+(defsystem #:clx/demo
+  :depends-on ("clx")
+  :components
+  ((:module "demo"
+	    :components
+	    ((:file "bezier")
+	     (:file "beziertest" :depends-on ("bezier"))
+	     (:file "clclock")
+	     (:file "clipboard")
+	     (:file "clx-demos")
+	     (:file "gl-test")
+	     ;; FIXME: compiling this generates 30-odd spurious code
+	     ;; deletion notes.  Find out why, and either fix or
+	     ;; workaround the problem.
+	     (:file "mandel")
+	     (:file "menu")
+	     (:file "zoid")
+	     (:file "image")
+	     (:file "trapezoid" :depends-on ("zoid"))))))
 
 #+sbcl
 (defmethod perform :around ((o compile-op) (f xrender-source-file))
