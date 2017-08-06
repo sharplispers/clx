@@ -41,6 +41,7 @@ Independent FOSS developers"
     :version "0.7.3"
     :serial t
     :default-component-class clx-source-file
+    :in-order-to ((test-op (test-op "clx/test")))
     :components
     ((:file "package")
      (:file "depdefs")
@@ -127,6 +128,8 @@ Independent FOSS developers"
 
 (defsystem #:clx/test
   :depends-on ("clx" "fiasco")
+  :perform (test-op (o s)
+		    (uiop:symbol-call :xlib-test 'run-all-tests))
   :components
   ((:file "test")
    (:module "tests"
