@@ -180,4 +180,6 @@
     write-resources xatom))
 
 (defpackage :xlib-test
-  (:use :common-lisp))
+  (:use :common-lisp)
+  (:export :run-all-tests
+	   :define-test-suite))
