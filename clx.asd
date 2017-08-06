@@ -132,7 +132,7 @@ Independent FOSS developers"
    (:module "tests"
 	    :depends-on ("test")
 	    :components
-	    ())))
+	    ((:file "example")))))
 
 #+sbcl
 (defmethod perform :around ((o compile-op) (f xrender-source-file))
