@@ -125,6 +125,15 @@ Independent FOSS developers"
 	     (:file "image")
 	     (:file "trapezoid" :depends-on ("zoid"))))))
 
+(defsystem #:clx/test
+  :depends-on ("clx" "fiasco")
+  :components
+  ((:file "test")
+   (:module "tests"
+	    :depends-on ("test")
+	    :components
+	    ())))
+
 #+sbcl
 (defmethod perform :around ((o compile-op) (f xrender-source-file))
   ;; RENDER would appear to be an inherently slow protocol; further,
