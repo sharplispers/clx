@@ -1,4 +1,4 @@
-;;; -*- Mode:Lisp; Package:XLIB; Syntax:COMMON-LISP; Base:10; Lowercase:T -*-
+;;; -*- Mode:Lisp; Package:XLIB-TEST; Syntax:COMMON-LISP; Base:10; Lowercase:T -*-
 
 ;;; A placeholder example of how to define test suites.
 
