@@ -131,11 +131,11 @@ Independent FOSS developers"
   :perform (test-op (o s)
 		    (uiop:symbol-call :xlib-test :run-all-tests))
   :components
-  ((:file "test")
-   (:module "tests"
-	    :depends-on ("test")
+  ((:module "tests"
+	    :serial t
 	    :components
-	    ((:file "example")))))
+	    ((:file "test")
+	     (:file "example")))))
 
 #+sbcl
 (defmethod perform :around ((o compile-op) (f xrender-source-file))
