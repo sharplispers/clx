@@ -129,7 +129,7 @@ Independent FOSS developers"
 (defsystem #:clx/test
   :depends-on ("clx" "fiasco")
   :perform (test-op (o s)
-		    (uiop:symbol-call :xlib-test 'run-all-tests))
+		    (uiop:symbol-call :xlib-test :run-all-tests))
   :components
   ((:file "test")
    (:module "tests"
