@@ -178,8 +178,3 @@
     wm-size-hints-width wm-size-hints-width-inc wm-size-hints-win-gravity
     wm-size-hints-x wm-size-hints-y wm-zoom-hints write-bitmap-file
     write-resources xatom))
-
-(defpackage :xlib-test
-  (:use :common-lisp)
-  (:export :run-all-tests
-	   :define-test-suite))

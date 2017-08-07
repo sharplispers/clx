@@ -134,7 +134,8 @@ Independent FOSS developers"
   ((:module "tests"
 	    :serial t
 	    :components
-	    ((:file "test")
+	    ((:file "package")
+	     (:file "test")
 	     (:file "example")))))
 
 #+sbcl
