@@ -2,7 +2,9 @@
 
 ;;; A placeholder example of how to define test suites.
 
-(xlib-test:define-test-suite :xlib-test-example)
+(fiasco:define-test-package (:xlib-test-example :in xlib-test:xlib-all-tests))
+
+(in-package :xlib-test-example)
 
 (deftest this-should-pass ()
   (is t))
