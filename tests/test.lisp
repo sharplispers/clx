@@ -6,13 +6,15 @@
 
 (in-package :xlib-test)
 
+(fiasco:defsuite (test-suite :bind-to-package :xlib-test))
+
 (defvar *test-suites* nil)
 
 (defun run-all-tests (&rest fiasco-params)
   (apply #'fiasco:run-package-tests :packages *test-suites* fiasco-params))
 
 (defmacro define-test-suite (name &body package-options)
-  `(progn (fiasco:define-test-package ,name
+  `(progn (fiasco:define-test-package (,name :in test-suite)
             ,@package-options
             (:use :xlib-test))
           (in-package ,name)
