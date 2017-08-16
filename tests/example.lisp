@@ -1,5 +1,3 @@
-;;; -*- Mode:Lisp; Package:XLIB-TEST; Syntax:COMMON-LISP; Base:10; Lowercase:T -*-
-
 ;;; A placeholder example of how to define test suites.
 
 (fiasco:define-test-package (:xlib-test-example :in xlib-test:xlib-all-tests))
