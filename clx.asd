@@ -132,11 +132,12 @@ Independent FOSS developers"
 		    (uiop:symbol-call :fiasco :run-tests :xlib-test))
   :components
   ((:module "tests"
-	    :serial t
 	    :components
 	    ((:file "package")
-	     (:file "test")
-	     (:file "example")))))
+	     (:file "test"
+		    :depends-on ("package"))
+	     (:file "example"
+		    :depends-on ("test"))))))
 
 #+sbcl
 (defmethod perform :around ((o compile-op) (f xrender-source-file))
