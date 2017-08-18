@@ -38,9 +38,10 @@ Independent FOSS developers"
     :maintainer "sharplispers"
     :license "MIT"
     :depends-on (#+(or ecl sbcl) sb-bsd-sockets)
-    :version "0.7.3"
+    :version "0.7.4"
     :serial t
     :default-component-class clx-source-file
+    :in-order-to ((test-op (test-op "clx/test")))
     :components
     ((:file "package")
      (:file "depdefs")
@@ -124,6 +125,19 @@ Independent FOSS developers"
 	     (:file "zoid")
 	     (:file "image")
 	     (:file "trapezoid" :depends-on ("zoid"))))))
+
+(defsystem #:clx/test
+  :depends-on ("clx" "fiasco")
+  :perform (test-op (o s)
+		    (uiop:symbol-call :fiasco :run-tests :xlib-test))
+  :components
+  ((:module "tests"
+	    :components
+	    ((:file "package")
+	     (:file "test"
+		    :depends-on ("package"))
+	     (:file "example"
+		    :depends-on ("test"))))))
 
 #+sbcl
 (defmethod perform :around ((o compile-op) (f xrender-source-file))
