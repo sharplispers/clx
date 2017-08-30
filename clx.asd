@@ -79,7 +79,7 @@ Independent FOSS developers"
 	       (:file "dpms")
                (:file "xtest")
                (:file "screensaver")
-               (:file "xinerama")))
+               (:file "randr")))
      (:static-file "NEWS")
      (:static-file "CHANGES")
      (:static-file "README.md")
