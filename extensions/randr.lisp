@@ -61,6 +61,7 @@
 	  rr-set-provider-output-source
 	  rr-set-provider-offload-sink
 	  rr-list-provider-properties
+	  rr-select-input
 
 	  ;; mask related
 	  make-mode-flag-keys
