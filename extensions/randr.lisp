@@ -88,6 +88,8 @@
 	  make-rr-transform
 	  ))
 
+(pushnew :clx-ext-randr *features*)
+
 (define-extension "RANDR"
   :events (:rr-screen-change-notify
 	   :rr-crtc-change-notify
