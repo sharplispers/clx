@@ -61,6 +61,7 @@
 	  rr-set-provider-output-source
 	  rr-set-provider-offload-sink
 	  rr-list-provider-properties
+	  rr-select-input
 
 	  ;; mask related
 	  make-mode-flag-keys
@@ -86,6 +87,8 @@
 	  rr-panning
 	  make-rr-transform
 	  ))
+
+(pushnew :clx-ext-randr *features*)
 
 (define-extension "RANDR"
   :events (:rr-screen-change-notify
