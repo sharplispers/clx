@@ -378,17 +378,17 @@
 	 (length (length properties))
 	 (sequence (make-array length)))
     (declare (type display display)
-	     (type array-index length))
-    (with-vector (sequence vector)
-      ;; Atoms must be interned before the RotateProperties request
-      ;; is started to allow InternAtom requests to be made.
-      (dotimes (i length)
-	(setf (aref sequence i) (intern-atom display (elt properties i))))
-      (with-buffer-request (display +x-rotateproperties+)
-	(window window)
-	(card16 length)
-	(int16 (- delta))
-	((sequence :end length) sequence))))
+	     (type array-index length)
+	     (type vector sequence))
+    ;; Atoms must be interned before the RotateProperties request
+    ;; is started to allow InternAtom requests to be made.
+    (dotimes (i length)
+      (setf (aref sequence i) (intern-atom display (elt properties i))))
+    (with-buffer-request (display +x-rotateproperties+)
+      (window window)
+      (card16 length)
+      (int16 (- delta))
+      ((sequence :end length) sequence)))
   nil)
 
 (defun list-properties (window &key (result-type 'list))

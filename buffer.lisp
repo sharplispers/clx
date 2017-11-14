@@ -452,24 +452,23 @@
   (declare (type buffer-bytes buffer-bbuf)
 	   (type array-index length nitems buffer-boffset))
   length
-  (with-vector (buffer-bbuf buffer-bytes)
-    (let ((result (make-sequence result-type nitems)))
-      (do* ((index 0 (index+ index 1 string-length))
-	    (count 0 (index1+ count))
-	    (string-length 0)
-	    (string ""))
-	   ((index>= count nitems)
-	    result)
-	(declare (type array-index index count string-length)
-		 (type string string))
-	(setq string-length (read-card8 index)
-	      string (make-sequence 'string string-length))
-	(do ((i (index1+ index) (index1+ i))
-	     (j 0 (index1+ j)))
-	    ((index>= j string-length)
-	     (setf (elt result count) string))
-	  (declare (type array-index i j))
-	  (setf (aref string j) (card8->char (read-card8 i))))))))
+  (let ((result (make-sequence result-type nitems)))
+    (do* ((index 0 (index+ index 1 string-length))
+	  (count 0 (index1+ count))
+	  (string-length 0)
+	  (string ""))
+	 ((index>= count nitems)
+	  result)
+      (declare (type array-index index count string-length)
+	       (type string string))
+      (setq string-length (read-card8 index)
+	    string (make-sequence 'string string-length))
+      (do ((i (index1+ index) (index1+ i))
+	   (j 0 (index1+ j)))
+	  ((index>= j string-length)
+	   (setf (elt result count) string))
+	(declare (type array-index i j))
+	(setf (aref string j) (card8->char (read-card8 i)))))))
 
 ;;; Reading sequences of chars
 
@@ -529,9 +528,8 @@
   (declare (type reply-buffer reply-buffer)
 	   (type array-index nitems start index)
 	   (type (simple-array card8 (*)) data))
-  (with-vector (data (simple-array card8 (*)))
-    (with-buffer-input (reply-buffer :sizes (8))
-      (buffer-replace data buffer-bbuf start (index+ start nitems) index))))
+  (with-buffer-input (reply-buffer :sizes (8))
+    (buffer-replace data buffer-bbuf start (index+ start nitems) index)))
 
 #-lispm
 (defun read-simple-array-card8-with-transform (reply-buffer nitems data transform start index)
@@ -540,28 +538,26 @@
 	   (type (simple-array card8 (*)) data))
   (declare (type (function (card8) card8) transform)
 	   (dynamic-extent transform))
-  (with-vector (data (simple-array card8 (*)))
-    (with-buffer-input (reply-buffer :sizes (8) :index index)
-      (do* ((j start (index+ j 1))
-	    (end (index+ start nitems))
-	    (index 0 (index+ index 1)))
-	   ((index>= j end))
-	(declare (type array-index j end index))
-	(setf (aref data j) (the card8 (funcall transform (read-card8 index))))))))
+  (with-buffer-input (reply-buffer :sizes (8) :index index)
+    (do* ((j start (index+ j 1))
+	  (end (index+ start nitems))
+	  (index 0 (index+ index 1)))
+	 ((index>= j end))
+      (declare (type array-index j end index))
+      (setf (aref data j) (the card8 (funcall transform (read-card8 index)))))))
 
 (defun read-vector-card8 (reply-buffer nitems data start index)
   (declare (type reply-buffer reply-buffer)
 	   (type array-index nitems start index)
 	   (type vector data)
 	   (optimize #+cmu(ext:inhibit-warnings 3)))
-  (with-vector (data vector)
-    (with-buffer-input (reply-buffer :sizes (8) :index index)
-      (do* ((j start (index+ j 1))
-	    (end (index+ start nitems))
-	    (index 0 (index+ index 1)))
-	   ((index>= j end))
-	(declare (type array-index j end index))
-	(setf (aref data j) (read-card8 index))))))
+  (with-buffer-input (reply-buffer :sizes (8) :index index)
+    (do* ((j start (index+ j 1))
+	  (end (index+ start nitems))
+	  (index 0 (index+ index 1)))
+	 ((index>= j end))
+      (declare (type array-index j end index))
+      (setf (aref data j) (read-card8 index)))))
 
 (defun read-vector-card8-with-transform (reply-buffer nitems data transform start index)
   (declare (type reply-buffer reply-buffer)
@@ -570,14 +566,13 @@
 	   (optimize #+cmu(ext:inhibit-warnings 3)))
   (declare (type (function (card8) t) transform)
 	   (dynamic-extent transform))
-  (with-vector (data vector)
-    (with-buffer-input (reply-buffer :sizes (8) :index index)
-      (do* ((j start (index+ j 1))
-	    (end (index+ start nitems))
-	    (index 0 (index+ index 1)))
-	   ((index>= j end))
-	(declare (type array-index j end index))
-	(setf (aref data j) (funcall transform (read-card8 index)))))))
+  (with-buffer-input (reply-buffer :sizes (8) :index index)
+    (do* ((j start (index+ j 1))
+	  (end (index+ start nitems))
+	  (index 0 (index+ index 1)))
+	 ((index>= j end))
+      (declare (type array-index j end index))
+      (setf (aref data j) (funcall transform (read-card8 index))))))
 
 (defmacro define-sequence-reader (name type (list tlist) (sa tsa) (vec tvec))
   `(defun ,name (reply-buffer result-type nitems &optional transform data (start 0) (index 0))
@@ -624,17 +619,16 @@
   (declare (type reply-buffer reply-buffer)
 	   (type array-index nitems start index)
 	   (type (simple-array card16 (*)) data))
-  (with-vector (data (simple-array card16 (*)))
-    (with-buffer-input (reply-buffer :sizes (16) :index index)
-      #-clx-overlapping-arrays
-      (do* ((j start (index+ j 1))
-	    (end (index+ start nitems))
-	    (index 0 (index+ index 2)))
-	   ((index>= j end))
-	(declare (type array-index j end index))
-	(setf (aref data j) (the card16 (read-card16 index))))
-      #+clx-overlapping-arrays
-      (buffer-replace data buffer-wbuf start (index+ start nitems) (index-floor index 2)))))
+  (with-buffer-input (reply-buffer :sizes (16) :index index)
+    #-clx-overlapping-arrays
+    (do* ((j start (index+ j 1))
+	  (end (index+ start nitems))
+	  (index 0 (index+ index 2)))
+	 ((index>= j end))
+      (declare (type array-index j end index))
+      (setf (aref data j) (the card16 (read-card16 index))))
+    #+clx-overlapping-arrays
+    (buffer-replace data buffer-wbuf start (index+ start nitems) (index-floor index 2))))
 
 #-lispm
 (defun read-simple-array-card16-with-transform (reply-buffer nitems data transform start index)
@@ -643,31 +637,29 @@
 	   (type (simple-array card16 (*)) data))
   (declare (type (function (card16) card16) transform)
 	   (dynamic-extent transform))
-  (with-vector (data (simple-array card16 (*)))
-    (with-buffer-input (reply-buffer :sizes (16) :index index)
-      (do* ((j start (index+ j 1))
-	    (end (index+ start nitems))
-	    (index 0 (index+ index 2)))
-	   ((index>= j end))
-	(declare (type array-index j end index))
-	(setf (aref data j) (the card16 (funcall transform (read-card16 index))))))))
+  (with-buffer-input (reply-buffer :sizes (16) :index index)
+    (do* ((j start (index+ j 1))
+	  (end (index+ start nitems))
+	  (index 0 (index+ index 2)))
+	 ((index>= j end))
+      (declare (type array-index j end index))
+      (setf (aref data j) (the card16 (funcall transform (read-card16 index)))))))
 
 (defun read-vector-card16 (reply-buffer nitems data start index)
   (declare (type reply-buffer reply-buffer)
 	   (type array-index nitems start index)
 	   (type vector data)
 	   (optimize #+cmu(ext:inhibit-warnings 3)))
-  (with-vector (data vector)
-    (with-buffer-input (reply-buffer :sizes (16) :index index)
-      #-clx-overlapping-arrays
-      (do* ((j start (index+ j 1))
-	    (end (index+ start nitems))
-	    (index 0 (index+ index 2)))
-	   ((index>= j end))
-	(declare (type array-index j end index))
-	(setf (aref data j) (read-card16 index)))
-      #+clx-overlapping-arrays
-      (buffer-replace data buffer-wbuf start (index+ start nitems) (index-floor index 2)))))
+  (with-buffer-input (reply-buffer :sizes (16) :index index)
+    #-clx-overlapping-arrays
+    (do* ((j start (index+ j 1))
+	  (end (index+ start nitems))
+	  (index 0 (index+ index 2)))
+	 ((index>= j end))
+      (declare (type array-index j end index))
+      (setf (aref data j) (read-card16 index)))
+    #+clx-overlapping-arrays
+    (buffer-replace data buffer-wbuf start (index+ start nitems) (index-floor index 2))))
 
 (defun read-vector-card16-with-transform (reply-buffer nitems data transform start index)
   (declare (type reply-buffer reply-buffer)
@@ -676,14 +668,13 @@
 	   (optimize #+cmu(ext:inhibit-warnings 3)))
   (declare (type (function (card16) t) transform)
 	   (dynamic-extent transform))
-  (with-vector (data vector)
-    (with-buffer-input (reply-buffer :sizes (16) :index index)
-      (do* ((j start (index+ j 1))
-	    (end (index+ start nitems))
-	    (index 0 (index+ index 2)))
-	   ((index>= j end))
-	(declare (type array-index j end index))
-	(setf (aref data j) (funcall transform (read-card16 index)))))))
+  (with-buffer-input (reply-buffer :sizes (16) :index index)
+    (do* ((j start (index+ j 1))
+	  (end (index+ start nitems))
+	  (index 0 (index+ index 2)))
+	 ((index>= j end))
+      (declare (type array-index j end index))
+      (setf (aref data j) (funcall transform (read-card16 index))))))
 
 (define-sequence-reader read-sequence-card16 card16
   (read-list-card16 read-list-card16-with-transform)
@@ -703,17 +694,16 @@
   (declare (type reply-buffer reply-buffer)
 	   (type array-index nitems start index)
 	   (type (simple-array card32 (*)) data))
-  (with-vector (data (simple-array card32 (*)))
-    (with-buffer-input (reply-buffer :sizes (32) :index index)
-      #-clx-overlapping-arrays
-      (do* ((j start (index+ j 1))
-	    (end (index+ start nitems))
-	    (index 0 (index+ index 4)))
-	   ((index>= j end))
-	(declare (type array-index j end index))
-	(setf (aref data j) (the card32 (read-card32 index))))
-      #+clx-overlapping-arrays
-      (buffer-replace data buffer-lbuf start (index+ start nitems) (index-floor index 4)))))
+  (with-buffer-input (reply-buffer :sizes (32) :index index)
+    #-clx-overlapping-arrays
+    (do* ((j start (index+ j 1))
+	  (end (index+ start nitems))
+	  (index 0 (index+ index 4)))
+	 ((index>= j end))
+      (declare (type array-index j end index))
+      (setf (aref data j) (the card32 (read-card32 index))))
+    #+clx-overlapping-arrays
+    (buffer-replace data buffer-lbuf start (index+ start nitems) (index-floor index 4))))
 
 #-lispm
 (defun read-simple-array-card32-with-transform (reply-buffer nitems data transform start index)
@@ -722,31 +712,29 @@
 	   (type (simple-array card32 (*)) data))
   (declare (type (function (card32) card32) transform)
 	   (dynamic-extent transform))
-  (with-vector (data (simple-array card32 (*)))
-    (with-buffer-input (reply-buffer :sizes (32) :index index)
-      (do* ((j start (index+ j 1))
-	    (end (index+ start nitems))
-	    (index 0 (index+ index 4)))
-	   ((index>= j end))
-	(declare (type array-index j end index))
-	(setf (aref data j) (the card32 (funcall transform (read-card32 index))))))))
+  (with-buffer-input (reply-buffer :sizes (32) :index index)
+    (do* ((j start (index+ j 1))
+	  (end (index+ start nitems))
+	  (index 0 (index+ index 4)))
+	 ((index>= j end))
+      (declare (type array-index j end index))
+      (setf (aref data j) (the card32 (funcall transform (read-card32 index)))))))
 
 (defun read-vector-card32 (reply-buffer nitems data start index)
   (declare (type reply-buffer reply-buffer)
 	   (type array-index nitems start index)
 	   (type vector data)
 	   (optimize #+cmu(ext:inhibit-warnings 3)))
-  (with-vector (data vector)
-    (with-buffer-input (reply-buffer :sizes (32) :index index)
-      #-clx-overlapping-arrays
-      (do* ((j start (index+ j 1))
-	    (end (index+ start nitems))
-	    (index 0 (index+ index 4)))
-	   ((index>= j end))
-	(declare (type array-index j end index))
-	(setf (aref data j) (read-card32 index)))
-      #+clx-overlapping-arrays
-      (buffer-replace data buffer-lbuf start (index+ start nitems) (index-floor index 4)))))
+  (with-buffer-input (reply-buffer :sizes (32) :index index)
+    #-clx-overlapping-arrays
+    (do* ((j start (index+ j 1))
+	  (end (index+ start nitems))
+	  (index 0 (index+ index 4)))
+	 ((index>= j end))
+      (declare (type array-index j end index))
+      (setf (aref data j) (read-card32 index)))
+    #+clx-overlapping-arrays
+    (buffer-replace data buffer-lbuf start (index+ start nitems) (index-floor index 4))))
 
 (defun read-vector-card32-with-transform (reply-buffer nitems data transform start index)
   (declare (type reply-buffer reply-buffer)
@@ -755,14 +743,13 @@
 	   (optimize #+cmu(ext:inhibit-warnings 3)))
   (declare (type (function (card32) t) transform)
 	   (dynamic-extent transform))
-  (with-vector (data vector)
-    (with-buffer-input (reply-buffer :sizes (32) :index index)
-      (do* ((j start (index+ j 1))
-	    (end (index+ start nitems))
-	    (index 0 (index+ index 4)))
-	   ((index>= j end))
-	(declare (type array-index j end index))
-	(setf (aref data j) (funcall transform (read-card32 index)))))))
+  (with-buffer-input (reply-buffer :sizes (32) :index index)
+    (do* ((j start (index+ j 1))
+	  (end (index+ start nitems))
+	  (index 0 (index+ index 4)))
+	 ((index>= j end))
+      (declare (type array-index j end index))
+      (setf (aref data j) (funcall transform (read-card32 index))))))
 
 (define-sequence-reader read-sequence-card32 card32
   (read-list-card32 read-list-card32-with-transform)
@@ -850,14 +837,13 @@
   (declare (type buffer buffer)
 	   (type (simple-array card8 (*)) data)
 	   (type array-index boffset start end))
-  (with-vector (data (simple-array card8 (*)))
-    (writing-buffer-chunks card8
-			   ((index start (index+ index chunk)))
-			   ((type array-index index))
-      (buffer-replace buffer-bbuf data
-		      buffer-boffset
-		      (index+ buffer-boffset chunk)
-		      index)))
+  (writing-buffer-chunks card8
+      ((index start (index+ index chunk)))
+      ((type array-index index))
+    (buffer-replace buffer-bbuf data
+		    buffer-boffset
+		    (index+ buffer-boffset chunk)
+		    index))
   nil)
 
 #-lispm
@@ -867,14 +853,13 @@
 	   (type array-index boffset start end))
   (declare (type (function (card8) card8) transform)
 	   (dynamic-extent transform))
-  (with-vector (data (simple-array card8 (*)))
-    (writing-buffer-chunks card8
-			   ((index start))
-			   ((type array-index index))
-      (dotimes (j chunk)
-	(declare (type array-index j))
-	(write-card8 j (funcall transform (aref data index)))
-	(setq index (index+ index 1)))))
+  (writing-buffer-chunks card8
+      ((index start))
+      ((type array-index index))
+    (dotimes (j chunk)
+      (declare (type array-index j))
+      (write-card8 j (funcall transform (aref data index)))
+      (setq index (index+ index 1))))
   nil)
 
 (defun write-vector-card8 (buffer boffset data start end)
@@ -882,14 +867,13 @@
 	   (type vector data)
 	   (type array-index boffset start end)
 	   (optimize #+cmu(ext:inhibit-warnings 3)))
-  (with-vector (data vector)
-    (writing-buffer-chunks card8
-			   ((index start))
-			   ((type array-index index))
-      (dotimes (j chunk)
-	(declare (type array-index j))
-	(write-card8 j (aref data index))
-	(setq index (index+ index 1)))))
+  (writing-buffer-chunks card8
+      ((index start))
+      ((type array-index index))
+    (dotimes (j chunk)
+      (declare (type array-index j))
+      (write-card8 j (aref data index))
+      (setq index (index+ index 1))))
   nil)
 
 (defun write-vector-card8-with-transform (buffer boffset data start end transform)
@@ -898,14 +882,13 @@
 	   (type array-index boffset start end))
   (declare (type (function (t) card8) transform)
 	   (dynamic-extent transform))
-  (with-vector (data vector)
-    (writing-buffer-chunks card8
-			   ((index start))
-			   ((type array-index index))
-      (dotimes (j chunk)
-	(declare (type array-index j))
-	(write-card8 j (funcall transform (aref data index)))
-	(setq index (index+ index 1)))))
+  (writing-buffer-chunks card8
+      ((index start))
+      ((type array-index index))
+    (dotimes (j chunk)
+      (declare (type array-index j))
+      (write-card8 j (funcall transform (aref data index)))
+      (setq index (index+ index 1))))
   nil)
 
 (defmacro define-sequence-writer (name type (list tlist) (sa tsa) (vec tvec))
@@ -949,23 +932,22 @@
   (declare (type buffer buffer)
 	   (type (simple-array card16 (*)) data)
 	   (type array-index boffset start end))
-  (with-vector (data (simple-array card16 (*)))
-    (writing-buffer-chunks card16
-			   ((index start))
-			   ((type array-index index))
-      ;; Depends upon the chunks being an even multiple of card16's big
-      (do ((j 0 (index+ j 2)))
-	  ((index>= j chunk))
-	(declare (type array-index j))
-	(write-card16 j (aref data index))
-	(setq index (index+ index 1)))
-      ;; overlapping case
-      (let ((length (floor chunk 2)))
-	(buffer-replace buffer-wbuf data
-			buffer-woffset
-			(index+ buffer-woffset length)
-			index)
-	(setq index (index+ index length)))))
+  (writing-buffer-chunks card16
+      ((index start))
+      ((type array-index index))
+    ;; Depends upon the chunks being an even multiple of card16's big
+    (do ((j 0 (index+ j 2)))
+	((index>= j chunk))
+      (declare (type array-index j))
+      (write-card16 j (aref data index))
+      (setq index (index+ index 1)))
+    ;; overlapping case
+    (let ((length (floor chunk 2)))
+      (buffer-replace buffer-wbuf data
+		      buffer-woffset
+		      (index+ buffer-woffset length)
+		      index)
+      (setq index (index+ index length))))
   nil)
 
 #-lispm
@@ -975,16 +957,15 @@
 	   (type array-index boffset start end))
   (declare (type (function (card16) card16) transform)
 	   (dynamic-extent transform))
-  (with-vector (data (simple-array card16 (*)))
-    (writing-buffer-chunks card16
-			   ((index start))
-			   ((type array-index index))
-      ;; Depends upon the chunks being an even multiple of card16's big
-      (do ((j 0 (index+ j 2)))
-	  ((index>= j chunk))
-	(declare (type array-index j))
-	(write-card16 j (funcall transform (aref data index)))
-	(setq index (index+ index 1)))))
+  (writing-buffer-chunks card16
+      ((index start))
+      ((type array-index index))
+    ;; Depends upon the chunks being an even multiple of card16's big
+    (do ((j 0 (index+ j 2)))
+	((index>= j chunk))
+      (declare (type array-index j))
+      (write-card16 j (funcall transform (aref data index)))
+      (setq index (index+ index 1))))
   nil)
 
 (defun write-vector-card16 (buffer boffset data start end)
@@ -992,23 +973,22 @@
 	   (type vector data)
 	   (type array-index boffset start end)
 	   (optimize #+cmu(ext:inhibit-warnings 3)))
-  (with-vector (data vector)
-    (writing-buffer-chunks card16
-			   ((index start))
-			   ((type array-index index))
-      ;; Depends upon the chunks being an even multiple of card16's big
-      (do ((j 0 (index+ j 2)))
-	  ((index>= j chunk))
-	(declare (type array-index j))
-	(write-card16 j (aref data index))
-	(setq index (index+ index 1)))
-      ;; overlapping case
-      (let ((length (floor chunk 2)))
-	(buffer-replace buffer-wbuf data
-			buffer-woffset
-			(index+ buffer-woffset length)
-			index)
-	(setq index (index+ index length)))))
+  (writing-buffer-chunks card16
+      ((index start))
+      ((type array-index index))
+    ;; Depends upon the chunks being an even multiple of card16's big
+    (do ((j 0 (index+ j 2)))
+	((index>= j chunk))
+      (declare (type array-index j))
+      (write-card16 j (aref data index))
+      (setq index (index+ index 1)))
+    ;; overlapping case
+    (let ((length (floor chunk 2)))
+      (buffer-replace buffer-wbuf data
+		      buffer-woffset
+		      (index+ buffer-woffset length)
+		      index)
+      (setq index (index+ index length))))
   nil)
 
 (defun write-vector-card16-with-transform (buffer boffset data start end transform)
@@ -1018,16 +998,15 @@
 	   (optimize #+cmu(ext:inhibit-warnings 3)))
   (declare (type (function (t) card16) transform)
 	   (dynamic-extent transform))
-  (with-vector (data vector)
-    (writing-buffer-chunks card16
-			   ((index start))
-			   ((type array-index index))
-      ;; Depends upon the chunks being an even multiple of card16's big
-      (do ((j 0 (index+ j 2)))
-	  ((index>= j chunk))
-	(declare (type array-index j))
-	(write-card16 j (funcall transform (aref data index)))
-	(setq index (index+ index 1)))))
+  (writing-buffer-chunks card16
+      ((index start))
+      ((type array-index index))
+    ;; Depends upon the chunks being an even multiple of card16's big
+    (do ((j 0 (index+ j 2)))
+	((index>= j chunk))
+      (declare (type array-index j))
+      (write-card16 j (funcall transform (aref data index)))
+      (setq index (index+ index 1))))
   nil)
 
 (define-sequence-writer write-sequence-card16 card16
@@ -1045,23 +1024,22 @@
   (declare (type buffer buffer)
 	   (type (simple-array int16 (*)) data)
 	   (type array-index boffset start end))
-  (with-vector (data (simple-array int16 (*)))
-    (writing-buffer-chunks int16
-			   ((index start))
-			   ((type array-index index))
-      ;; Depends upon the chunks being an even multiple of int16's big
-      (do ((j 0 (index+ j 2)))
-	  ((index>= j chunk))
-	(declare (type array-index j))
-	(write-int16 j (aref data index))
-	(setq index (index+ index 1)))
-      ;; overlapping case
-      (let ((length (floor chunk 2)))
-	(buffer-replace buffer-wbuf data
-			buffer-woffset
-			(index+ buffer-woffset length)
-			index)
-	(setq index (index+ index length)))))
+  (writing-buffer-chunks int16
+      ((index start))
+      ((type array-index index))
+    ;; Depends upon the chunks being an even multiple of int16's big
+    (do ((j 0 (index+ j 2)))
+	((index>= j chunk))
+      (declare (type array-index j))
+      (write-int16 j (aref data index))
+      (setq index (index+ index 1)))
+    ;; overlapping case
+    (let ((length (floor chunk 2)))
+      (buffer-replace buffer-wbuf data
+		      buffer-woffset
+		      (index+ buffer-woffset length)
+		      index)
+      (setq index (index+ index length))))
   nil)
 
 #-lispm
@@ -1071,16 +1049,15 @@
 	   (type array-index boffset start end))
   (declare (type (function (int16) int16) transform)
 	   (dynamic-extent transform))
-  (with-vector (data (simple-array int16 (*)))
-    (writing-buffer-chunks int16
-			   ((index start))
-			   ((type array-index index))
-      ;; Depends upon the chunks being an even multiple of int16's big
-      (do ((j 0 (index+ j 2)))
-	  ((index>= j chunk))
-	(declare (type array-index j))
-	(write-int16 j (funcall transform (aref data index)))
-	(setq index (index+ index 1)))))
+  (writing-buffer-chunks int16
+      ((index start))
+      ((type array-index index))
+    ;; Depends upon the chunks being an even multiple of int16's big
+    (do ((j 0 (index+ j 2)))
+	((index>= j chunk))
+      (declare (type array-index j))
+      (write-int16 j (funcall transform (aref data index)))
+      (setq index (index+ index 1))))
   nil)
 
 (defun write-vector-int16 (buffer boffset data start end)
@@ -1088,23 +1065,22 @@
 	   (type vector data)
 	   (type array-index boffset start end)
 	   (optimize #+cmu(ext:inhibit-warnings 3)))
-  (with-vector (data vector)
-    (writing-buffer-chunks int16
-			   ((index start))
-			   ((type array-index index))
-      ;; Depends upon the chunks being an even multiple of int16's big
-      (do ((j 0 (index+ j 2)))
-	  ((index>= j chunk))
-	(declare (type array-index j))
-	(write-int16 j (aref data index))
-	(setq index (index+ index 1)))
-      ;; overlapping case
-      (let ((length (floor chunk 2)))
-	(buffer-replace buffer-wbuf data
-			buffer-woffset
-			(index+ buffer-woffset length)
-			index)
-	(setq index (index+ index length)))))
+  (writing-buffer-chunks int16
+      ((index start))
+      ((type array-index index))
+    ;; Depends upon the chunks being an even multiple of int16's big
+    (do ((j 0 (index+ j 2)))
+	((index>= j chunk))
+      (declare (type array-index j))
+      (write-int16 j (aref data index))
+      (setq index (index+ index 1)))
+    ;; overlapping case
+    (let ((length (floor chunk 2)))
+      (buffer-replace buffer-wbuf data
+		      buffer-woffset
+		      (index+ buffer-woffset length)
+		      index)
+      (setq index (index+ index length))))
   nil)
 
 (defun write-vector-int16-with-transform (buffer boffset data start end transform)
@@ -1114,16 +1090,15 @@
 	   (optimize #+cmu(ext:inhibit-warnings 3)))
   (declare (type (function (t) int16) transform)
 	   (dynamic-extent transform))
-  (with-vector (data vector)
-    (writing-buffer-chunks int16
-			   ((index start))
-			   ((type array-index index))
-      ;; Depends upon the chunks being an even multiple of int16's big
-      (do ((j 0 (index+ j 2)))
-	  ((index>= j chunk))
-	(declare (type array-index j))
-	(write-int16 j (funcall transform (aref data index)))
-	(setq index (index+ index 1)))))
+  (writing-buffer-chunks int16
+      ((index start))
+      ((type array-index index))
+    ;; Depends upon the chunks being an even multiple of int16's big
+    (do ((j 0 (index+ j 2)))
+	((index>= j chunk))
+      (declare (type array-index j))
+      (write-int16 j (funcall transform (aref data index)))
+      (setq index (index+ index 1))))
   nil)
 
 (define-sequence-writer write-sequence-int16 int16
@@ -1141,23 +1116,22 @@
   (declare (type buffer buffer)
 	   (type (simple-array card32 (*)) data)
 	   (type array-index boffset start end))
-  (with-vector (data (simple-array card32 (*)))
-    (writing-buffer-chunks card32
-			   ((index start))
-			   ((type array-index index))
-      ;; Depends upon the chunks being an even multiple of card32's big
-      (do ((j 0 (index+ j 4)))
-	  ((index>= j chunk))
-	(declare (type array-index j))
-	(write-card32 j (aref data index))
-	(setq index (index+ index 1)))
-      ;; overlapping case
-      (let ((length (floor chunk 4)))
-	(buffer-replace buffer-lbuf data
-			buffer-loffset
-			(index+ buffer-loffset length)
-			index)
-	(setq index (index+ index length)))))
+  (writing-buffer-chunks card32
+      ((index start))
+      ((type array-index index))
+    ;; Depends upon the chunks being an even multiple of card32's big
+    (do ((j 0 (index+ j 4)))
+	((index>= j chunk))
+      (declare (type array-index j))
+      (write-card32 j (aref data index))
+      (setq index (index+ index 1)))
+    ;; overlapping case
+    (let ((length (floor chunk 4)))
+      (buffer-replace buffer-lbuf data
+		      buffer-loffset
+		      (index+ buffer-loffset length)
+		      index)
+      (setq index (index+ index length))))
   nil)
 
 #-lispm
@@ -1167,16 +1141,15 @@
 	   (type array-index boffset start end))
   (declare (type (function (card32) card32) transform)
 	   (dynamic-extent transform))
-  (with-vector (data (simple-array card32 (*)))
-    (writing-buffer-chunks card32
-			   ((index start))
-			   ((type array-index index))
-      ;; Depends upon the chunks being an even multiple of card32's big
-      (do ((j 0 (index+ j 4)))
-	  ((index>= j chunk))
-	(declare (type array-index j))
-	(write-card32 j (funcall transform (aref data index)))
-	(setq index (index+ index 1)))))
+  (writing-buffer-chunks card32
+      ((index start))
+      ((type array-index index))
+    ;; Depends upon the chunks being an even multiple of card32's big
+    (do ((j 0 (index+ j 4)))
+	((index>= j chunk))
+      (declare (type array-index j))
+      (write-card32 j (funcall transform (aref data index)))
+      (setq index (index+ index 1))))
   nil)
 
 (defun write-vector-card32 (buffer boffset data start end)
@@ -1184,23 +1157,22 @@
 	   (type vector data)
 	   (type array-index boffset start end)
 	   (optimize #+cmu(ext:inhibit-warnings 3)))
-  (with-vector (data vector)
-    (writing-buffer-chunks card32
-			   ((index start))
-			   ((type array-index index))
-      ;; Depends upon the chunks being an even multiple of card32's big
-      (do ((j 0 (index+ j 4)))
-	  ((index>= j chunk))
-	(declare (type array-index j))
-	(write-card32 j (aref data index))
-	(setq index (index+ index 1)))
-      ;; overlapping case
-      (let ((length (floor chunk 4)))
-	(buffer-replace buffer-lbuf data
-			buffer-loffset
-			(index+ buffer-loffset length)
-			index)
-	(setq index (index+ index length)))))
+  (writing-buffer-chunks card32
+      ((index start))
+      ((type array-index index))
+    ;; Depends upon the chunks being an even multiple of card32's big
+    (do ((j 0 (index+ j 4)))
+	((index>= j chunk))
+      (declare (type array-index j))
+      (write-card32 j (aref data index))
+      (setq index (index+ index 1)))
+    ;; overlapping case
+    (let ((length (floor chunk 4)))
+      (buffer-replace buffer-lbuf data
+		      buffer-loffset
+		      (index+ buffer-loffset length)
+		      index)
+      (setq index (index+ index length))))
   nil)
 
 (defun write-vector-card32-with-transform (buffer boffset data start end transform)
@@ -1210,16 +1182,15 @@
 	   (optimize #+cmu(ext:inhibit-warnings 3)))
   (declare (type (function (t) card32) transform)
 	   (dynamic-extent transform))
-  (with-vector (data vector)
-    (writing-buffer-chunks card32
-			   ((index start))
-			   ((type array-index index))
-      ;; Depends upon the chunks being an even multiple of card32's big
-      (do ((j 0 (index+ j 4)))
-	  ((index>= j chunk))
-	(declare (type array-index j))
-	(write-card32 j (funcall transform (aref data index)))
-	(setq index (index+ index 1)))))
+  (writing-buffer-chunks card32
+      ((index start))
+      ((type array-index index))
+    ;; Depends upon the chunks being an even multiple of card32's big
+    (do ((j 0 (index+ j 4)))
+	((index>= j chunk))
+      (declare (type array-index j))
+      (write-card32 j (funcall transform (aref data index)))
+      (setq index (index+ index 1))))
   nil)
 
 (define-sequence-writer write-sequence-card32 card32
@@ -1281,15 +1252,14 @@
   (declare (type buffer buffer)
 	   (type (simple-array card16 (*)) data)
 	   (type array-index boffset start end))
-  (with-vector (data (simple-array card16 (*)))
-    (writing-buffer-chunks card16
-			   ((index start))
-			   ((type array-index index))
-      (do ((j 0 (index+ j 2)))
-	  ((index>= j (1- chunk)) (setf chunk j))
-	(declare (type array-index j))
-	(write-char2b j (aref data index))
-	(setq index (index+ index 1)))))
+  (writing-buffer-chunks card16
+      ((index start))
+      ((type array-index index))
+    (do ((j 0 (index+ j 2)))
+	((index>= j (1- chunk)) (setf chunk j))
+      (declare (type array-index j))
+      (write-char2b j (aref data index))
+      (setq index (index+ index 1))))
   nil)
 
 #-lispm
@@ -1299,15 +1269,14 @@
 	   (type array-index boffset start end))
   (declare (type (function (card16) card16) transform)
 	   (dynamic-extent transform))
-  (with-vector (data (simple-array card16 (*)))
-    (writing-buffer-chunks card16
-			   ((index start))
-			   ((type array-index index))
-      (do ((j 0 (index+ j 2)))
-	  ((index>= j (1- chunk)) (setf chunk j))
-	(declare (type array-index j))
-	(write-char2b j (funcall transform (aref data index)))
-	(setq index (index+ index 1)))))
+  (writing-buffer-chunks card16
+      ((index start))
+      ((type array-index index))
+    (do ((j 0 (index+ j 2)))
+	((index>= j (1- chunk)) (setf chunk j))
+      (declare (type array-index j))
+      (write-char2b j (funcall transform (aref data index)))
+      (setq index (index+ index 1))))
   nil)
 
 (defun write-vector-char2b (buffer boffset data start end)
@@ -1315,15 +1284,14 @@
 	   (type vector data)
 	   (type array-index boffset start end)
 	   (optimize #+cmu(ext:inhibit-warnings 3)))
-  (with-vector (data vector)
-    (writing-buffer-chunks card16
-			   ((index start))
-			   ((type array-index index))
-      (do ((j 0 (index+ j 2)))
-	  ((index>= j (1- chunk)) (setf chunk j))
-	(declare (type array-index j))
-	(write-char2b j (aref data index))
-	(setq index (index+ index 1)))))
+  (writing-buffer-chunks card16
+      ((index start))
+      ((type array-index index))
+    (do ((j 0 (index+ j 2)))
+	((index>= j (1- chunk)) (setf chunk j))
+      (declare (type array-index j))
+      (write-char2b j (aref data index))
+      (setq index (index+ index 1))))
   nil)
 
 (defun write-vector-char2b-with-transform (buffer boffset data start end transform)
@@ -1333,15 +1301,14 @@
 	   (optimize #+cmu(ext:inhibit-warnings 3)))
   (declare (type (function (t) card16) transform)
 	   (dynamic-extent transform))
-  (with-vector (data vector)
-    (writing-buffer-chunks card16
-			   ((index start))
-			   ((type array-index index))
-      (do ((j 0 (index+ j 2)))
-	  ((index>= j (1- chunk)) (setf chunk j))
-	(declare (type array-index j))
-	(write-char2b j (funcall transform (aref data index)))
-	(setq index (index+ index 1)))))
+  (writing-buffer-chunks card16
+      ((index start))
+      ((type array-index index))
+    (do ((j 0 (index+ j 2)))
+	((index>= j (1- chunk)) (setf chunk j))
+      (declare (type array-index j))
+      (write-char2b j (funcall transform (aref data index)))
+      (setq index (index+ index 1))))
   nil)
 
 (define-sequence-writer write-sequence-char2b card16

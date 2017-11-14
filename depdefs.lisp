@@ -60,13 +60,6 @@
 ;;; Declaration macros
 ;;;-------------------------------------------------------------------------
 
-;;; WITH-VECTOR (variable type) &body body --- ensures the variable is a local
-;;; and then does a type declaration and array register declaration
-(defmacro with-vector ((var type) &body body)
-  `(let ((,var ,var))
-     (declare (type ,type ,var))
-     ,@body))
-
 ;;; WITHIN-DEFINITION (name type) &body body --- Includes definitions for
 ;;; Meta-.
 
