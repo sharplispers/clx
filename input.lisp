@@ -738,7 +738,7 @@
 		      `((,(putify type) ,index
 			 (check-consistency ',names ,@item) ,@args)))))))
 	(declare (ignore put-index))
-	`(within-definition (,name declare-event)
+	`(progn
 	   (defun ,get-macro (display event-key variable)
 	     ;; Note: we take pains to macroexpand the get-code here to enable application
 	     ;; code to be compiled without having the CLX macros file loaded.

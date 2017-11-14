@@ -50,7 +50,7 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
 (defconstant +gcontext-fast-change-length+ #.(length +gcontext-components+))
 
-(macrolet ((def-gc-internals (name &rest extras)
+(macrolet ((def-gc-internals (&rest extras)
 	    (let ((macros nil)
 		  (indexes nil)
 		  (masks nil)
@@ -75,7 +75,7 @@
 				  0))
 		      masks)
 		(incf index))
-	      `(within-definition (def-gc-internals ,name)
+	      `(progn
 		 ,@(nreverse macros)
 		 (eval-when (:compile-toplevel :load-toplevel :execute)
 		   (defvar *gcontext-data-length* ,index)
@@ -83,7 +83,7 @@
 		   (defvar *gcontext-masks*
 		     ',(coerce (nreverse masks) 'simple-vector)
 		     ))))))
-  (def-gc-internals ignore
+  (def-gc-internals
     (:clip :clip-mask) (:dash :dashes) (:font-obj :font) (:timestamp)))
 
 ) ;; end EVAL-WHEN
@@ -182,7 +182,7 @@
   (let* ((gcontext-name (xintern 'gcontext- name))
 	 (internal-accessor (xintern 'gcontext-internal- name))
 	 (internal-setfer (xintern 'set- gcontext-name)))
-    `(within-definition (,name def-gc-accessor)
+    `(progn
 
        (defun ,gcontext-name (gcontext)
 	 (declare (type gcontext gcontext))

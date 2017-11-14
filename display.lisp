@@ -221,8 +221,8 @@
 
 ;; Define functions to find the CLX data types given a display and resource-id
 ;; If the data type is being cached, look there first.
-(macrolet ((generate-lookup-functions (useless-name &body types)
-	    `(within-definition (,useless-name generate-lookup-functions)
+(macrolet ((generate-lookup-functions (&body types)
+	    `(progn
 	       ,@(mapcar
 		   #'(lambda (type)
 		       `(defun ,(xintern 'lookup- type)
@@ -252,7 +252,7 @@
 			       `(,(xintern 'make- type)
 				 :display display :id id))))
 		   types))))
-  (generate-lookup-functions ignore
+  (generate-lookup-functions
     drawable
     window
     pixmap

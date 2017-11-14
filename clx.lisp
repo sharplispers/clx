@@ -776,8 +776,8 @@
 ;  (declare (type font font)
 ;	   (clx-values <type>)))
 
-(macrolet ((make-font-info-accessors (useless-name &body fields)
-	     `(within-definition (,useless-name make-font-info-accessors)
+(macrolet ((make-font-info-accessors (&body fields)
+	     `(progn
 		,@(mapcar
 		    #'(lambda (field)
 			(let* ((type (second field))
@@ -789,7 +789,7 @@
 			     (declare (clx-values ,type))
 			     (,accessor (font-font-info font)))))
 		    fields))))
-  (make-font-info-accessors ignore
+  (make-font-info-accessors
     (direction draw-direction)
     (min-char card16)
     (max-char card16)
@@ -818,12 +818,11 @@
 	     (let ((predicate (xintern type '-equal))
 		   (id (xintern type '-id))
 		   (dpy (xintern type '-display)))
-		`(within-definition (,type make-mumble-equal)
-		   (defun ,predicate (a b)
-		     (declare (type ,type a b))
-		     (or (eql a b)
-			 (and (= (,id a) (,id b))
-			      (eq (,dpy a) (,dpy b)))))))))
+	       `(defun ,predicate (a b)
+		  (declare (type ,type a b))
+		    (or (eql a b)
+			(and (= (,id a) (,id b))
+			     (eq (,dpy a) (,dpy b))))))))
   (make-mumble-equal window)
   (make-mumble-equal pixmap)
   (make-mumble-equal cursor)

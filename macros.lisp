@@ -90,7 +90,7 @@
     (error "Too many parameters to define-accessor: ~s" (cdddr get-put-macros)))
   (let ((get-macro (or (first get-put-macros) (error "No GET macro form for ~s" name)))
 	(put-macro (or (second get-put-macros) (error "No PUT macro form for ~s" name))))
-    `(within-definition (,name define-accessor)
+    `(progn
        (setf (get ',name 'byte-width) ,(and width (floor width 8)))
        (defmacro ,(getify name) ,(car get-macro)
 	 ,@(cdr get-macro))

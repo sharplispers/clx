@@ -47,8 +47,8 @@
 
 (deftype char-info-vec () '(simple-array int16 (*)))
 
-(macrolet ((def-char-info-accessors (useless-name &body fields)
-	    `(within-definition (,useless-name def-char-info-accessors)
+(macrolet ((def-char-info-accessors (&body fields)
+	    `(progn
 	       ,@(do ((field fields (cdr field))
 		      (n 0 (1+ n))
 		      (name) (type)
@@ -132,7 +132,7 @@
 					 `(,(xintern type '->int16) ,var)))
 			     result))
 		   result)))))
-  (def-char-info-accessors ignore
+  (def-char-info-accessors
     (left-bearing int16)
     (right-bearing int16)
     (width int16)

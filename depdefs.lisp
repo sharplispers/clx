@@ -57,26 +57,6 @@
 (declaim (declaration indentation))
 
 ;;;-------------------------------------------------------------------------
-;;; Declaration macros
-;;;-------------------------------------------------------------------------
-
-;;; WITHIN-DEFINITION (name type) &body body --- Includes definitions for
-;;; Meta-.
-
-#+lispm
-(defmacro within-definition ((name type) &body body)
-  `(zl:local-declare
-     ((sys:function-parent ,name ,type))
-     (sys:record-source-file-name ',name ',type)
-     ,@body))
-
-#-lispm
-(defmacro within-definition ((name type) &body body)
-  (declare (ignore name type))
-  `(progn ,@body))
-
-
-;;;-------------------------------------------------------------------------
 ;;; CLX can maintain a mapping from X server ID's to local data types.  If
 ;;; one takes the view that CLX objects will be instance variables of
 ;;; objects at the next higher level, then PROCESS-EVENT will typically map
@@ -442,58 +422,56 @@ used, since NIL is the empty list.")
 
 	       ;; From here down are the system-specific expansions:
 
-	       (within-definition (,name def-clx-class)
-		 (,(closintern 'defclass)
-		  ,name ,(and include `(,include))
-		  (,@(map 'list
-			  #'(lambda (slot-name slot-initform slot-type)
-			      `(,slot-name
-				:initform ,slot-initform :type ,slot-type
-				:accessor ,(cintern name '- slot-name)
-				,@(when (and constructor
-					     (or (eq constructor-args t)
-						 (member slot-name
-							 constructor-args)))
-				    `(:initarg ,(kintern slot-name)))
-				))
-			  slot-names slot-initforms slot-types)))
-		 ,(when constructor
-		    (if (eq constructor-args t)
-			`(defun ,constructor (&rest args)
-			   (apply #',(closintern 'make-instance)
-				  ',name args))
-			`(defun ,constructor ,constructor-args
-			   (,(closintern 'make-instance) ',name
-			    ,@(mapcan #'(lambda (slot-name)
-					  (and (member slot-name slot-names)
-					       `(,(kintern slot-name) ,slot-name)))
-				      constructor-args)))))
-		 ,(when predicate
-		    #+allegro
-		    `(progn
-		       (,(closintern 'defmethod) ,predicate (object)
-			 (declare (ignore object))
-			 nil)
-		       (,(closintern 'defmethod) ,predicate ((object ,name))
-			 t))
-		    #-allegro
-		    `(defun ,predicate (object)
-		       (typep object ',name)))
-		 ,(when copier
-		    `(,(closintern 'defmethod) ,copier ((.object. ,name))
-		      (,(closintern 'with-slots) ,slot-names .object.
-		       (,(closintern 'make-instance) ',name
-			,@(mapcan #'(lambda (slot-name)
-				      `(,(kintern slot-name) ,slot-name))
-				  slot-names)))))
-		 ,(when print-function
-		    `(,(closintern 'defmethod)
-		      ,(closintern 'print-object)
-		      ((object ,name) stream)
-		      (,print-function object stream 0))))))))
-      `(within-definition (,name def-clx-class)
-	 (defstruct (,name ,@options)
-	   ,@slots))))
+	       (,(closintern 'defclass)
+		,name ,(and include `(,include))
+		(,@(map 'list
+			#'(lambda (slot-name slot-initform slot-type)
+			    `(,slot-name
+			      :initform ,slot-initform :type ,slot-type
+			      :accessor ,(cintern name '- slot-name)
+			      ,@(when (and constructor
+					   (or (eq constructor-args t)
+					       (member slot-name
+						       constructor-args)))
+				  `(:initarg ,(kintern slot-name)))
+			      ))
+			slot-names slot-initforms slot-types)))
+	       ,(when constructor
+		  (if (eq constructor-args t)
+		      `(defun ,constructor (&rest args)
+			 (apply #',(closintern 'make-instance)
+				',name args))
+		      `(defun ,constructor ,constructor-args
+			 (,(closintern 'make-instance) ',name
+			  ,@(mapcan #'(lambda (slot-name)
+					(and (member slot-name slot-names)
+					     `(,(kintern slot-name) ,slot-name)))
+				    constructor-args)))))
+	       ,(when predicate
+		  #+allegro
+		  `(progn
+		     (,(closintern 'defmethod) ,predicate (object)
+		      (declare (ignore object))
+		      nil)
+		     (,(closintern 'defmethod) ,predicate ((object ,name))
+		      t))
+		  #-allegro
+		  `(defun ,predicate (object)
+		     (typep object ',name)))
+	       ,(when copier
+		  `(,(closintern 'defmethod) ,copier ((.object. ,name))
+		    (,(closintern 'with-slots) ,slot-names .object.
+		     (,(closintern 'make-instance) ',name
+		      ,@(mapcan #'(lambda (slot-name)
+				    `(,(kintern slot-name) ,slot-name))
+				slot-names)))))
+	       ,(when print-function
+		  `(,(closintern 'defmethod)
+		    ,(closintern 'print-object)
+		    ((object ,name) stream)
+		    (,print-function object stream 0)))))))
+      `(defstruct (,name ,@options)
+	,@slots)))
 
 #+Genera
 (progn
