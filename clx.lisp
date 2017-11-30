@@ -244,8 +244,10 @@
 (defparameter *resource-id-map-size* 500)
 
 (defclass display (buffer)
-  ((host :initarg :host :documentation "Server host")
-   (display :initarg :display :initform 0 :type integer :documentation "Display number on host")
+  ((host :initarg :host :reader display-host :documentation "Server host")
+   (display :initarg :display :initform 0 :type integer
+	    :reader display-display
+	    :documentation "Display number on host")
    (after-function :initform nil
 		   :reader display-after-function
 		   :documentation "Function to call after every request")
@@ -322,7 +324,7 @@
 		:accessor display-max-keycode
 		:documentation "Maximun key-code")
    (error-handler :initform #'default-error-handler
-		  :reader display-error-handler
+		  :accessor display-error-handler
 		  :documentation "Error handler function")
    (close-down-mode :initform :destroy :documentation "Close down mode saved by Set-Close-Down-Mode")
    (authorization-name :initform "" :type string :accessor display-authorization-name)
@@ -346,7 +348,9 @@
 		     :documentation "Vector mapping X event-codes to event keys")
    (performance-info :documentation "Hook for gathering performance info")
    (trace-history :documentation "Hook for debug trace")
-   (plist :initform nil :type list :documentation "Hook for extension to hang data")
+   (plist :initform nil :type list
+	  :accessor display-plist
+	  :documentation "Hook for extension to hang data")
    ;; These slots are used to manage multi-process input.
    (input-in-progress :initform nil
 		      :accessor display-input-in-progress
