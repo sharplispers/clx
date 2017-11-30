@@ -49,7 +49,7 @@ git clone git://github.com/sharplispers/clx.git
 
 If you don't have quicklisp installed you can use ASDF to load CLX. To do so clone this repository to either:
 
-* `~/.common-lisp`
+* `~/common-lisp`
 * `~/.local/share/common-lisp/source/.`
 
 where ASDF will look for system definitions by default
