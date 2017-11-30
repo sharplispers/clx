@@ -343,10 +343,9 @@
   ;; Internal function, MUST BE CALLED FROM WITHIN WITH-BUFFER
   (declare (type buffer buffer)
 	   (type array-index start end))
-  (when (buffer-dead buffer)
-    (x-error 'closed-display :display buffer))
-  (wrap-buf-output (buffer)
-    (funcall (buffer-write-function buffer) vector buffer start end))
+  (if (buffer-dead buffer)
+      (x-error 'closed-display :display buffer)
+      (funcall (buffer-write-function buffer) vector buffer start end))
   nil)
 
 (defun buffer-flush (buffer)

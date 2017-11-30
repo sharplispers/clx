@@ -395,7 +395,7 @@
     (unwind-protect 
 	(tagbody
 	  loop
-	     (when (display-dead display)
+	     (when (buffer-dead display)
 	       (x-error 'closed-display :display display))
 	     (when (apply predicate predicate-args)
 	       (return-from read-input nil))
@@ -419,7 +419,7 @@
 				     (dynamic-extent predicate))
 			    (or (apply predicate predicate-args)
 				(null (display-input-in-progress display))
-				(not (null (display-dead display)))))
+				(not (null (buffer-dead display)))))
 			display predicate predicate-args))
 	       (go loop))
 	     ;; Now start gobbling.
@@ -439,7 +439,7 @@
 			 (if force-output-p
 			     (go force-output)
 			   (return-from read-input :timeout)))
-		       (setf (display-dead display) t)
+		       (setf (buffer-dead display) t)
 		       (return-from read-input eof-p)))
 		   (setf (reply-data-size reply-buffer) +replysize+)
 		   (when (= (the card8 (setq type (read-card8 0))) 1)
@@ -770,7 +770,7 @@
 				 &allow-other-keys)
 	     (declare (type display display))
 	     ,(when (member 'sequence keywords)
-		`(unless sequence (setq sequence (display-request-number display))))
+		`(unless sequence (setq sequence (buffer-request-number display))))
 	     (with-buffer-output (display :sizes ,put-sizes
 					  :index (index+ (buffer-boffset display) 12))
 	       ,@put-code))
@@ -1480,7 +1480,7 @@
 	   (error-decode-function (get error-key 'error-decode-function))
 	   (params (funcall error-decode-function display event)))
       (list* error-code error-key
-	     :asynchronous asynchronous :current-sequence (display-request-number display)
+	     :asynchronous asynchronous :current-sequence (buffer-request-number display)
 	     params))))
 
 (defun report-error (display error-code error-key &rest params)

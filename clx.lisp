@@ -243,116 +243,162 @@
 (defparameter *atom-cache-size* 200)
 (defparameter *resource-id-map-size* 500)
 
-(def-clx-class (display (:include buffer)
-			(:constructor make-display-internal)
-			(:print-function print-display)
-			(:copier nil))
-  (host)					; Server Host
-  (display 0 :type integer)			; Display number on host
-  (after-function nil)				; Function to call after every request
-  (event-lock
-    (make-process-lock "CLX Event Lock"))	; with-event-queue lock
-  (event-queue-lock
-    (make-process-lock "CLX Event Queue Lock"))	; new-events/event-queue lock
-  (event-queue-tail				; last event in the event queue
-    nil :type (or null reply-buffer))
-  (event-queue-head				; Threaded queue of events
-    nil :type (or null reply-buffer))
-  (atom-cache (make-hash-table :test (atom-cache-map-test) :size *atom-cache-size*)
-	      :type hash-table)			; Hash table relating atoms keywords
-						; to atom id's
-  (font-cache nil)				; list of font
-  (protocol-major-version 0 :type card16)	; Major version of server's X protocol
-  (protocol-minor-version 0 :type card16)	; minor version of servers X protocol
-  (vendor-name "" :type string)			; vendor of the server hardware
-  (resource-id-base 0 :type resource-id)	; resouce ID base
-  (resource-id-mask 0 :type resource-id)	; resource ID mask bits
-  (resource-id-byte nil)			; resource ID mask field (used with DPB & LDB)
-  (resource-id-count 0 :type resource-id)	; resource ID mask count
-						; (used for allocating ID's)
-  (resource-id-map (make-hash-table :test (resource-id-map-test)
-				    :size *resource-id-map-size*)
-		   :type hash-table)		; hash table maps resource-id's to
-						; objects (used in lookup functions)
-  (xid 'resourcealloc)				; allocator function
-  (byte-order #+clx-little-endian :lsbfirst     ; connection byte order
-	      #-clx-little-endian :msbfirst)
-  (release-number 0 :type card32)		; release of the server
-  (max-request-length 0 :type card16)		; maximum number 32 bit words in request
-  (default-screen)				; default screen for operations
-  (roots nil :type list)			; List of screens
-  (motion-buffer-size 0 :type card32)		; size of motion buffer
-  (xdefaults)					; contents of defaults from server
-  (image-lsb-first-p nil :type generalized-boolean)
-  (bitmap-format (make-bitmap-format)		; Screen image info
-		 :type bitmap-format)
-  (pixmap-formats nil :type sequence)		; list of pixmap formats
-  (min-keycode 0 :type card8)			; minimum key-code
-  (max-keycode 0 :type card8)			; maximum key-code
-  (error-handler 'default-error-handler)	; Error handler function
-  (close-down-mode :destroy)  			; Close down mode saved by Set-Close-Down-Mode
-  (authorization-name "" :type string)
-  (authorization-data "" :type (or (array (unsigned-byte 8)) string))
-  (last-width nil :type (or null card29))	; Accumulated width of last string
-  (keysym-mapping nil				; Keysym mapping cached from server
-		  :type (or null (array * (* *))))
-  (modifier-mapping nil :type list)		; ALIST of (keysym . state-mask) for all modifier keysyms
-  (keysym-translation nil :type list)		; An alist of (keysym object function)
-						; for display-local keysyms
-  (extension-alist nil :type list)		; extension alist, which has elements:
-						; (name major-opcode first-event first-error)
-  (event-extensions '#() :type vector)		; Vector mapping X event-codes to event keys
-  (performance-info)				; Hook for gathering performance info
-  (trace-history)				; Hook for debug trace
-  (plist nil :type list)			; hook for extension to hang data
-  ;; These slots are used to manage multi-process input.
-  (input-in-progress nil)			; Some process reading from the stream.
-						; Updated with CONDITIONAL-STORE.
-  (pending-commands nil)			; Threaded list of PENDING-COMMAND objects 
-						; for all commands awaiting replies.
-						; Protected by WITH-EVENT-QUEUE-INTERNAL.
-  (asynchronous-errors nil)			; Threaded list of REPLY-BUFFER objects
-						; containing error messages for commands
-						; which did not expect replies.
-						; Protected by WITH-EVENT-QUEUE-INTERNAL.
-  (report-asynchronous-errors			; When to report asynchronous errors
-    '(:immediately) :type list)			; The keywords that can be on this list 
-						; are :IMMEDIATELY, :BEFORE-EVENT-HANDLING,
-						; and :AFTER-FINISH-OUTPUT
-  (event-process nil)				; Process ID of process awaiting events.
-						; Protected by WITH-EVENT-QUEUE.
-  (new-events nil :type (or null reply-buffer))	; Pointer to the first new event in the
-						; event queue.
-						; Protected by WITH-EVENT-QUEUE.
-  (current-event-symbol				; Bound with PROGV by event handling macros 
-    (list (gensym) (gensym)) :type cons)
-  (atom-id-map (make-hash-table :test (resource-id-map-test)
-				:size *atom-cache-size*)
-	       :type hash-table)
-  (extended-max-request-length 0 :type card32)
-  )
+(defclass display (buffer)
+  ((host :initarg :host :documentation "Server host")
+   (display :initarg :display :initform 0 :type integer :documentation "Display number on host")
+   (after-function :initform nil
+		   :reader display-after-function
+		   :documentation "Function to call after every request")
+   (event-lock :initform (make-process-lock "CLX Event Lock")
+	       :reader display-event-lock
+	       :documentation "with-event-queue lock")
+   (event-queue-lock :initform (make-process-lock "CLX Event Queue Lock")
+		     :reader display-event-queue-lock
+		     :documentation "new-events/event-queue lock")
+   (event-queue-tail :initform nil :type (or null reply-buffer)
+		     :accessor display-event-queue-tail
+		     :documentation "last event in the event queue")
+   (event-queue-head :initform nil :type (or null reply-buffer)
+		     :accessor display-event-queue-head
+		     :documentation "Threaded queue of events")
+   (atom-cache :initform (make-hash-table :test (atom-cache-map-test) :size *atom-cache-size*)
+	       :type hash-table
+	       :reader display-atom-cache
+	       :documentation "Hash table relating atoms keywords to atom id's")
+   (font-cache :initform nil :accessor display-font-cache :documentation "List of font")
+   (protocol-major-version :initform 0 :type card16
+			   :accessor display-protocol-major-version
+			   :documentation "Major version of server's X protocol")
+   (protocol-minor-version :initform 0 :type card16
+			   :accessor display-protocol-minor-version
+			   :documentation "minor version of servers X protocol")
+   (vendor-name :initform "" :type string
+		:accessor display-vendor-name
+		:documentation "Vendor of the server hardware")
+   (resource-id-base :initform 0 :type resource-id
+		     :accessor display-resource-id-base
+		     :documentation "resouce ID base")
+   (resource-id-mask :initform 0 :type resource-id
+		     :accessor display-resource-id-mask
+		     :documentation "resource ID mask bits")
+   (resource-id-byte :initform nil
+		     :accessor display-resource-id-byte
+		     :documentation "resource ID mask field (used with DPB & LDB)")
+   (resource-id-count :initform 0 :type resource-id
+		      :accessor display-resource-id-count
+		      :documentation "resource ID mask count (used for allocating ID's)")
+   (resource-id-map :initform (make-hash-table :test (resource-id-map-test) :size *resource-id-map-size*)
+		    :reader display-resource-id-map
+		    :type hash-table
+		    :documentation "hash table maps resource-id's to objects (used in lookup functions)")
+   (xid :initform #'resourcealloc :reader display-xid :documentation "allocator function")
+   (byte-order :initform #+clx-little-endian :lsbfirst #-clx-little-endian :msbfirst
+	       :reader display-byte-order
+	       :documentation "Connection byte order")
+   (release-number :initform 0 :type card32
+		   :accessor display-release-number
+		   :documentation "Release of the server")
+   (max-request-length :initform 0 :type card16
+		       :accessor display-max-request-length
+		       :documentation "Maximum number 32 bit words in request")
+   (default-screen :accessor display-default-screen :documentation "Default screen for operations")
+   (roots :initform nil :type list :accessor display-roots :documentation "List of screens")
+   (motion-buffer-size :initform 0 :type card32
+		       :accessor display-motion-buffer-size
+		       :documentation "Size of motion buffer")
+   (xdefaults :documentation "Contents of defaults from server")
+   (image-lsb-first-p :initform nil :type generalized-boolean
+		      :accessor display-image-lsb-first-p)
+   (bitmap-format :initform (make-bitmap-format) :type bitmap-format
+		  :reader display-bitmap-format
+		  :documentation "Screen image info")
+   (pixmap-formats :initform nil :type sequence
+		   :accessor display-pixmap-formats
+		   :documentation "List of pixmap formats")
+   (min-keycode :initform 0 :type card8
+		:accessor display-min-keycode
+		:documentation "Minimum key-code")
+   (max-keycode :initform 0 :type card8
+		:accessor display-max-keycode
+		:documentation "Maximun key-code")
+   (error-handler :initform #'default-error-handler
+		  :reader display-error-handler
+		  :documentation "Error handler function")
+   (close-down-mode :initform :destroy :documentation "Close down mode saved by Set-Close-Down-Mode")
+   (authorization-name :initform "" :type string :accessor display-authorization-name)
+   (authorization-data :initform "" :type (or (array (unsigned-byte 8)) string)
+		       :accessor display-authorization-data)
+   (last-width :initform nil :type (or null card29) :documentation "Accumulated width of last string")
+   (keysym-mapping :initform nil :type (or null (array * (* *)))
+		   :accessor display-keysym-mapping
+		   :documentation "Keysym mapping cached from server")
+   (modifier-mapping :initform nil :type list
+		     :accessor display-modifier-mapping
+		     :documentation "ALIST of (keysym . state-mask) for all modifier keysyms")
+   (keysym-translation :initform nil :type list
+		       :reader display-keysym-translation
+		       :documentation "An alist of (keysym object function) for display-local keysyms")
+   (extension-alist :initform nil :type list
+		    :accessor display-extension-alist
+		    :documentation "Extension alist, which has elements: (name major-opcode first-event first-error)")
+   (event-extensions :initform (vector) :type vector
+		     :accessor display-event-extensions
+		     :documentation "Vector mapping X event-codes to event keys")
+   (performance-info :documentation "Hook for gathering performance info")
+   (trace-history :documentation "Hook for debug trace")
+   (plist :initform nil :type list :documentation "Hook for extension to hang data")
+   ;; These slots are used to manage multi-process input.
+   (input-in-progress :initform nil
+		      :accessor display-input-in-progress
+		      :documentation "Some process
+		      reading from the stream. Updated with
+		      CONDITIONAL-STORE.")
+   (pending-commands :initform nil
+		     :accessor display-pending-commands
+		     :documentation "Threaded list of
+		     PENDING-COMMAND objects for all commands awaiting
+		     replies. Protected by
+		     WITH-EVENT-QUEUE-INTERNAL.")
+   (asynchronous-errors :initform nil
+			:reader display-asynchronous-errors
+			:documentation "Threaded list of REPLY-BUFFER
+			objects containing error messages for commands
+			which did not expect replies. Protected by
+			WITH-EVENT-QUEUE-INTERNAL.")
+   (report-asynchronous-errors :initform (list :immediately)
+			       :type list
+			       :reader display-report-asynchronous-errors
+			       :documentation "When to report
+			       asynchronous errors. The keywords that
+			       can be on this list are :IMMEDIATELY,
+			       :BEFORE-EVENT-HANDLING and
+			       :AFTER-FINISH-OUTPUT")
+   (event-process :initform nil :accessor display-event-process
+		  :documentation "Process ID of process awaiting
+		  events. Protected by WITH-EVENT-QUEUE.")
+   (new-events :initform nil :type (or null reply-buffer)
+	       :accessor display-new-events
+	       :documentation "Pointer to the first new event in the
+	       event queue. Protected by WITH-EVENT-QUEUE.")
+   (current-event-symbol :initform (list (gensym) (gensym)) :type cons
+			 :reader display-current-event-symbol
+			 :documentation "Bound with PROGV by event
+			 handling macros")
+   (atom-id-map :initform (make-hash-table :test (resource-id-map-test) :size *atom-cache-size*)
+		:type hash-table
+		:reader display-atom-id-map)
+   (extended-max-request-length :initform 0 :type card32
+				:accessor display-extended-max-request-length)))
 
-(defun print-display-name (display stream)
-  (declare (type (or null display) display))
-  (cond (display
-	 #-allegro (princ (display-host display) stream)
-	 #+allegro (write-string (string (display-host display)) stream)
-	 (write-string ":" stream)
-	 (princ (display-display display) stream))
-	(t
-	 (write-string "(no display)" stream)))
-  display)
+(defmethod print-display-name ((dpy display) stream)
+  (with-slots (host display) dpy
+    (format stream "~a:~a" host display)))
 
-(defun print-display (display stream depth)
-  (declare (type display display)
-	   (ignore depth))
-  (print-unreadable-object (display stream :type t)
-    (print-display-name display stream)
-    (write-string " (" stream)
-    (write-string (display-vendor-name display) stream)
-    (write-string " R" stream)
-    (prin1 (display-release-number display) stream)
-    (write-string ")" stream)))
+(defmethod print-object ((dpy display) stream)
+  (with-slots (vendor-name release-number) dpy
+    (print-unreadable-object (dpy stream :type t)
+      (print-display-name dpy stream)
+      (format stream " (~a R~d)" vendor-name release-number))))
 
 ;;(deftype drawable () '(or window pixmap))
 

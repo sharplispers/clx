@@ -394,9 +394,12 @@ gethostname(3) - is used instead."
 				  protocol))))
   ;; PROTOCOL is the network protocol (something like :TCP :DNA or :CHAOS). See OPEN-X-STREAM.
   (let* ((stream (open-x-stream host display protocol))
-	 (disp (make-buffer *output-buffer-size* #'make-display-internal
-			    :host host :display display
-			    :output-stream stream :input-stream stream))
+	 (disp (make-instance 'display :host host :display display
+				       :size *output-buffer-size*
+				       :obuf8 (make-array *output-buffer-size* :element-type 'card8
+									       :initial-element 0)
+				       :output-stream stream
+				       :input-stream stream))
 	 (ok-p nil))
     (unwind-protect
 	(progn
@@ -626,7 +629,7 @@ gethostname(3) - is used instead."
 (defvar *inside-display-after-function* nil)
 
 (defun display-invoke-after-function (display)
-  ; Called after every protocal request is generated
+  ; Called after every protocol request is generated
   (declare (type display display))
   (when (and (display-after-function display)
 	     (not *inside-display-after-function*))

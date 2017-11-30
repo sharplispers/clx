@@ -486,60 +486,66 @@ used, since NIL is the empty list.")
 ;; Overlapping (displaced) arrays are provided for byte
 ;; half-word and word access on both input and output.
 ;;
-(def-clx-class (buffer (:constructor nil) (:copier nil) (:predicate nil))
-  ;; Lock for multi-processing systems
-  (lock (make-process-lock "CLX Buffer Lock"))
-  #-excl (output-stream nil :type (or null stream))
-  #+excl (output-stream -1 :type fixnum)
-  ;; Buffer size
-  (size 0 :type array-index)
-  (request-number 0 :type (unsigned-byte 16))
-  ;; Byte position of start of last request
-  ;; used for appending requests and error recovery
-  (last-request nil :type (or null array-index))
-  ;; Byte position of start of last flushed request
-  (last-flushed-request nil :type (or null array-index))
-  ;; Current byte offset
-  (boffset 0 :type array-index)
-  ;; Byte (8 bit) output buffer
-  (obuf8 *empty-bytes* :type buffer-bytes)
-  ;; Word (16bit) output buffer
-  #+clx-overlapping-arrays
-  (obuf16 *empty-words* :type buffer-words)
-  ;; Long (32bit) output buffer
-  #+clx-overlapping-arrays
-  (obuf32 *empty-longs* :type buffer-longs)
-  ;; Holding buffer for 16-bit text
-  (tbuf16 (make-sequence 'buffer-text16 +buffer-text16-size+ :initial-element 0))
-  ;; Probably EQ to Output-Stream
-  #-excl (input-stream nil :type (or null stream))
-  #+excl (input-stream -1 :type fixnum)
-  ;; T when the host connection has gotten errors
-  (dead nil :type (or null (not null)))
-  ;; T makes buffer-flush a noop.  Manipulated with with-buffer-flush-inhibited.
-  (flush-inhibit nil :type (or null (not null)))
-  
-  ;; Change these functions when using shared memory buffers to the server
-  ;; Function to call when writing the buffer
-  (write-function 'buffer-write-default)
-  ;; Function to call when flushing the buffer
-  (force-output-function 'buffer-force-output-default)
-  ;; Function to call when closing a connection
-  (close-function 'buffer-close-default)
-  ;; Function to call when reading the buffer
-  (input-function 'buffer-read-default)
-  ;; Function to call to wait for data to be input
-  (input-wait-function 'buffer-input-wait-default)
-  ;; Function to call to listen for input data
-  (listen-function 'buffer-listen-default)
-
-  #+Genera (debug-io nil :type (or null stream))
-  ) 
-
-;;-----------------------------------------------------------------------------
-;; Printing routines.
-;;-----------------------------------------------------------------------------
-
+(defclass buffer ()
+  ((lock :initform (make-process-lock "CLX Buffer Lock") :reader buffer-lock)
+   (output-stream :initarg :output-stream :initform nil :type (or null stream)
+		  :accessor buffer-output-stream)
+   (size :initarg :size :initform 0 :type array-index :reader buffer-size
+	 :documentation "Buffer size")
+   (request-number :initform 0 :type (unsigned-byte 16) :accessor buffer-request-number)
+   (last-request :initform nil :type (or null array-index)
+		 :accessor buffer-last-request
+		 :documentation "Byte position of start of last
+		 request used for appending requests and error
+		 recovery")
+   (last-flushed-request :initform nil :type (or null array-index)
+			 :documentation "Byte position of start of
+			 last flushed request")
+   (boffset :initform 0 :type array-index :accessor buffer-boffset
+	    :documentation "Current byte offset")
+   (obuf8 :initarg :obuf8 :initform *empty-bytes* :type buffer-bytes :reader buffer-obuf8
+	  :documentation "Octet output buffer")
+   ;; Word (16bit) output buffer
+   #+clx-overlapping-arrays
+   (obuf16 :initform *empty-words* :type buffer-words)
+   ;; Long (32bit) output buffer
+   #+clx-overlapping-arrays
+   (obuf32 :initform *empty-longs* :type buffer-longs)
+   (tbuf16 :initform (make-sequence 'buffer-text16 +buffer-text16-size+ :initial-element 0)
+	   :reader buffer-tbuf16
+	   :documentation "Holding buffer for 16-bit text")
+   ;; Probably EQ to Output-Stream
+   (input-stream :initarg :input-stream :initform nil :type (or null stream)
+		 :accessor buffer-input-stream)
+   (dead :initform nil :type (or null (not null)) :accessor buffer-dead
+	 :documentation "T when the host connection has gotten errors")
+   (flush-inhibit :initform nil :type (or null (not null))
+		  :accessor buffer-flush-inhibit
+		  :documentation "T makes buffer-flush a noop.
+		  Manipulated with with-buffer-flush-inhibited.")
+   ;; Change these functions when using shared memory buffers to the server
+   (write-function :initform #'buffer-write-default :reader buffer-write-function
+		   :documentation "Function to call when writing the buffer")
+   (force-output-function :initform #'buffer-force-output-default
+			  :reader buffer-force-output-function
+			  :documentation "Function to call when
+			  flushing the buffer")
+   (close-function :initform #'buffer-close-default
+		   :reader buffer-close-function
+		   :documentation "Function to call when closing a
+		   connection")
+   (input-function :initform #'buffer-read-default
+		   :reader buffer-input-function
+		   :documentation "Function to call when reading the
+		   buffer")
+   (input-wait-function :initform #'buffer-input-wait-default
+			:reader buffer-input-wait-function
+			:documentation "Function to call to wait for
+			data to be input")
+   (listen-function :initform #'buffer-listen-default
+		    :reader buffer-listen-function
+		    :documentation "Function to call to listen for
+		    input data")))
 
 ;;-----------------------------------------------------------------------------
 ;; Image stuff
