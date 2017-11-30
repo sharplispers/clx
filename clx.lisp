@@ -186,59 +186,52 @@
 ; Note that we are explicitly using a different spectrum representation
 ; than what is actually transmitted in the protocol.
 
-(def-clx-class (color (:constructor make-color-internal (red green blue))
-		      (:copier nil) (:print-function print-color))
-  (red 0.0 :type rgb-val)
-  (green 0.0 :type rgb-val)
-  (blue 0.0 :type rgb-val))
+(defclass color ()
+  ((red :initarg :red :initform 0.0 :type rgb-val :reader color-red)
+   (green :initarg :green :initform 0.0 :type rgb-val :reader color-green)
+   (blue :initarg :blue :initform 0.0 :type rgb-val :reader color-blue)))
 
-(defun print-color (color stream depth)
-  (declare (type color color)
-	   (ignore depth))
-  (print-unreadable-object (color stream :type t)
-    (prin1 (color-red color) stream)
-    (write-string " " stream)
-    (prin1 (color-green color) stream)
-    (write-string " " stream)
-    (prin1 (color-blue color) stream)))
+(defmethod print-object ((color color) stream)
+  (with-slots (red green blue) color
+    (print-unreadable-object (color stream :type t)
+      (format stream "~@{~d~^ ~}" red green blue))))
 
 (defun make-color (&key (red 1.0) (green 1.0) (blue 1.0) &allow-other-keys)
   (declare (type rgb-val red green blue))
   (declare (clx-values color))
-  (make-color-internal red green blue))
+  (make-instance 'color :red red :green green :blue blue))
 
 (defun color-rgb (color)
   (declare (type color color))
   (declare (clx-values red green blue))
   (values (color-red color) (color-green color) (color-blue color)))
 
-(def-clx-class (bitmap-format (:copier nil) (:print-function print-bitmap-format))
-  (unit 8 :type (member 8 16 32))
-  (pad 8 :type (member 8 16 32))
-  (lsb-first-p nil :type generalized-boolean))
+(defclass bitmap-format ()
+  ((unit :initform 8 :type (member 8 16 32) :accessor bitmap-format-unit)
+   (pad :initform 8 :type (member 8 16 32) :accessor bitmap-format-pad)
+   (lsb-first-p :initform nil :type generalized-boolean
+		:accessor bitmap-format-lsb-first-p)))
 
-(defun print-bitmap-format (bitmap-format stream depth)
-  (declare (type bitmap-format bitmap-format)
-	   (ignore depth))
-  (print-unreadable-object (bitmap-format stream :type t)
-    (format stream "unit ~D pad ~D ~:[M~;L~]SB first"
-	    (bitmap-format-unit bitmap-format)
-	    (bitmap-format-pad bitmap-format)
-	    (bitmap-format-lsb-first-p bitmap-format))))
+(defmethod print-object ((bitmap-format bitmap-format) stream)
+  (with-slots (unit pad lsb-first-p) bitmap-format
+    (print-unreadable-object (bitmap-format stream :type t)
+      (format stream "unit ~d pad ~d ~:[M~;L~]SB first" unit pad lsb-first-p))))
 
-(def-clx-class (pixmap-format (:copier nil) (:print-function print-pixmap-format))
-  (depth 0 :type image-depth)
-  (bits-per-pixel 8 :type (member 1 4 8 12 16 24 32))
-  (scanline-pad 8 :type (member 8 16 32)))
+(defclass pixmap-format ()
+  ((depth :initarg :depth :initform 0 :type image-depth
+	  :reader pixmap-format-depth)
+   (bits-per-pixel :initarg :bits-per-pixel :initform 8
+		   :type (member 1 4 8 12 16 24 32)
+		   :reader pixmap-format-bits-per-pixel)
+   (scanline-pad :initarg :scanline-pad :initform 8
+		 :type (member 8 16 32)
+		 :reader pixmap-format-scanline-pad)))
 
-(defun print-pixmap-format (pixmap-format stream depth)
-  (declare (type pixmap-format pixmap-format)
-	   (ignore depth))
-  (print-unreadable-object (pixmap-format stream :type t)
-    (format stream "depth ~D bits-per-pixel ~D scanline-pad ~D"
-	    (pixmap-format-depth pixmap-format)
-	    (pixmap-format-bits-per-pixel pixmap-format)
-	    (pixmap-format-scanline-pad pixmap-format))))
+(defmethod print-object ((pixmap-format pixmap-format) stream)
+  (with-slots (depth bits-per-pixel scanline-pad) pixmap-format
+    (print-unreadable-object (pixmap-format stream :type t)
+      (format stream "depth ~d bits-per-pixel ~d scanline-pad ~d"
+	      depth bits-per-pixel scanline-pad))))
 
 (defparameter *atom-cache-size* 200)
 (defparameter *resource-id-map-size* 500)
@@ -311,7 +304,7 @@
    (xdefaults :documentation "Contents of defaults from server")
    (image-lsb-first-p :initform nil :type generalized-boolean
 		      :accessor display-image-lsb-first-p)
-   (bitmap-format :initform (make-bitmap-format) :type bitmap-format
+   (bitmap-format :initform (make-instance 'bitmap-format) :type bitmap-format
 		  :reader display-bitmap-format
 		  :documentation "Screen image info")
    (pixmap-formats :initform nil :type sequence

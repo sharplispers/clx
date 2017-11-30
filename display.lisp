@@ -501,9 +501,9 @@ gethostname(3) - is used instead."
 	      (dotimes (i num-formats) ;; loop gathering pixmap formats
 		(declare (ignorable i))
 		(buffer-input display buffer-bbuf 0 8)
-		(push (make-pixmap-format :depth (card8-get 0)
-					  :bits-per-pixel (card8-get 1)
-					  :scanline-pad (card8-get 2))
+		(push (make-instance 'pixmap-format :depth (card8-get 0)
+						    :bits-per-pixel (card8-get 1)
+						    :scanline-pad (card8-get 2))
 						; 5 unused bytes
 		      (display-pixmap-formats display)))
 	      (setf (display-pixmap-formats display)
