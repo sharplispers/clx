@@ -387,8 +387,8 @@
    (extended-max-request-length :initform 0 :type card32
 				:accessor display-extended-max-request-length)))
 
-(defmethod print-display-name ((dpy display) stream)
-  (with-slots (host display) dpy
+(defun print-display-name (display stream)
+  (with-slots (host display) display
     (format stream "~a:~a" host display)))
 
 (defmethod print-object ((dpy display) stream)
