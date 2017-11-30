@@ -140,7 +140,7 @@
   (declare (clx-values wm-hints))
   (let ((prop (get-property window :WM_HINTS :type :WM_HINTS :result-type 'vector)))
     (when prop
-      (decode-wm-hints prop (window-display window)))))
+      (decode-wm-hints prop (drawable-display window)))))
 
 (defsetf wm-hints set-wm-hints)
 (defun set-wm-hints (window wm-hints)
@@ -438,13 +438,13 @@
 ;; WM-Protocols
 
 (defun wm-protocols (window)
-  (map 'list #'(lambda (id) (atom-name (window-display window) id))
+  (map 'list #'(lambda (id) (atom-name (drawable-display window) id))
        (get-property window :WM_PROTOCOLS :type :ATOM)))
 
 (defsetf wm-protocols set-wm-protocols)
 (defun set-wm-protocols (window protocols)
   (change-property window :WM_PROTOCOLS
-		   (map 'list #'(lambda (atom) (intern-atom (window-display window) atom))
+		   (map 'list #'(lambda (atom) (intern-atom (drawable-display window) atom))
 			protocols)
 		   :ATOM 32)
   protocols)
@@ -455,12 +455,12 @@
 (defun wm-colormap-windows (window)
   (values (get-property window :WM_COLORMAP_WINDOWS :type :WINDOW
 			:transform #'(lambda (id)
-				       (lookup-window (window-display window) id)))))
+				       (lookup-window (drawable-display window) id)))))
 
 (defsetf wm-colormap-windows set-wm-colormap-windows)
 (defun set-wm-colormap-windows (window colormap-windows)
   (change-property window :WM_COLORMAP_WINDOWS colormap-windows :WINDOW 32
-		   :transform #'window-id)
+		   :transform #'drawable-id)
   colormap-windows)
 
 ;;-----------------------------------------------------------------------------
@@ -468,12 +468,12 @@
 
 (defun transient-for (window)
   (let ((prop (get-property window :WM_TRANSIENT_FOR :type :WINDOW :result-type 'list)))
-    (and prop (lookup-window (window-display window) (car prop)))))
+    (and prop (lookup-window (drawable-display window) (car prop)))))
 
 (defsetf transient-for set-transient-for)
 (defun set-transient-for (window transient)
   (declare (type window window transient))
-  (change-property window :WM_TRANSIENT_FOR (list (window-id transient)) :WINDOW 32)
+  (change-property window :WM_TRANSIENT_FOR (list (drawable-id transient)) :WINDOW 32)
   transient)
 
 ;;-----------------------------------------------------------------------------
@@ -627,7 +627,7 @@
     (declare (type (or null simple-vector) prop))
     (when prop
       (list (make-standard-colormap
-	      :colormap (lookup-colormap (window-display window) (aref prop 0))
+	      :colormap (lookup-colormap (drawable-display window) (aref prop 0))
 	      :base-pixel (aref prop 7)
 	      :max-color (make-color :red   (card16->rgb-val (aref prop 1))
 				     :green (card16->rgb-val (aref prop 3))
@@ -636,12 +636,12 @@
 				      :green (card16->rgb-val (aref prop 4))
 				      :blue  (card16->rgb-val (aref prop 6)))
 	      :visual (and (<= 9 (length prop))
-			   (visual-info (window-display window) (aref prop 8)))
+			   (visual-info (drawable-display window) (aref prop 8)))
 	      :kill (and (<= 10 (length prop))
 			 (let ((killid (aref prop 9)))
 			   (if (= killid 1)
 			       :release-by-freeing-colormap
-			       (lookup-resource-id (window-display window) killid)))))))))
+			       (lookup-resource-id (drawable-display window) killid)))))))))
 
 (defsetf rgb-colormaps set-rgb-colormaps)
 (defun set-rgb-colormaps (window property maps)
@@ -693,7 +693,7 @@
   (let ((prop (get-property window property :type :RGB_COLOR_MAP :result-type 'vector)))
     (declare (type (or null simple-vector) prop))
     (when prop
-      (values (lookup-colormap (window-display window) (aref prop 0))
+      (values (lookup-colormap (drawable-display window) (aref prop 0))
 	      (aref prop 7)			;Base Pixel
 	      (make-color :red   (card16->rgb-val (aref prop 1))	;Max Color
 			  :green (card16->rgb-val (aref prop 3))

@@ -161,12 +161,12 @@
 (define-accessor window (32)
   ((index &optional (buffer '%buffer))
    `(lookup-window ,buffer (read-card29 ,index)))
-  ((index thing) `(write-card29 ,index (window-id ,thing))))
+  ((index thing) `(write-card29 ,index (drawable-id ,thing))))
 
 (define-accessor pixmap (32)
   ((index &optional (buffer '%buffer))
    `(lookup-pixmap ,buffer (read-card29 ,index)))
-  ((index thing) `(write-card29 ,index (pixmap-id ,thing))))
+  ((index thing) `(write-card29 ,index (drawable-id ,thing))))
 
 (define-accessor gcontext (32)
   ((index &optional (buffer '%buffer))

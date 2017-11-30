@@ -222,7 +222,7 @@
 ;; Define functions to find the CLX data types given a display and resource-id
 ;; If the data type is being cached, look there first.
 (macrolet ((generate-lookup-functions (&body types)
-	    `(progn
+	     `(progn
 	       ,@(mapcar
 		   #'(lambda (type)
 		       `(defun ,(xintern 'lookup- type)
@@ -233,8 +233,8 @@
 			  ,(if (member type +clx-cached-types+)
 			       `(let ((,type (lookup-resource-id display id)))
 				  (cond ((null ,type) ;; Not found, create and save it.
-					 (setq ,type (,(xintern 'make- type)
-						      :display display :id id))
+					 (setq ,type (make-instance ',type
+								    :display display :id id))
 					 (save-id display id ,type))
 					;; Found.  Check the type
 					,(cond ((null +type-check?+)
@@ -249,8 +249,7 @@
 							  :type ',type
 							  :object ,type))))))
 			       ;; Not being cached.  Create a new one each time.
-			       `(,(xintern 'make- type)
-				 :display display :id id))))
+			       `(make-instance ',type :display display :id id))))
 		   types))))
   (generate-lookup-functions
     drawable
@@ -513,11 +512,11 @@ gethostname(3) - is used instead."
 		(declare (ignorable i))
 		(buffer-input display buffer-bbuf 0 40)
 		(let* ((root-id (card32-get 0))
-		       (root (make-window :id root-id :display display))
+		       (root (make-instance 'window :id root-id :display display))
 		       (root-visual (card32-get 32))
 		       (default-colormap-id (card32-get 4))
 		       (default-colormap
-			 (make-colormap :id default-colormap-id :display display))
+			 (make-instance 'colormap :id default-colormap-id :display display))
 		       (screen
 			 (make-screen
 			   :root root

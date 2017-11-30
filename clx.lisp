@@ -397,29 +397,27 @@
       (print-display-name dpy stream)
       (format stream " (~a R~d)" vendor-name release-number))))
 
-;;(deftype drawable () '(or window pixmap))
+(defclass drawable ()
+  ((id :initarg :id :initform 0 :type resource-id :accessor drawable-id)
+   (display :initarg :display :initform nil :type (or null display)
+	    :reader drawable-display)
+   (plist :initform nil :type list
+	  :accessor drawable-plist
+	  :documentation "Extension hook")))
 
-(def-clx-class (drawable (:copier nil) (:print-function print-drawable))
-  (id 0 :type resource-id)
-  (display nil :type (or null display))
-  (plist nil :type list)			; Extension hook
-  )
+(defmethod print-object ((drawable drawable) stream)
+  (with-slots (id display) drawable
+    (print-unreadable-object (drawable stream :type t)
+      (print-display-name display stream)
+      (format stream " ~x" id))))
 
-(defun print-drawable (drawable stream depth)
-  (declare (type drawable drawable)
-	   (ignore depth))
-  (print-unreadable-object (drawable stream :type t)
-    (print-display-name (drawable-display drawable) stream)
-    (write-string " " stream)
-    (let ((*print-base* 16)) (prin1 (drawable-id drawable) stream))))
+(defclass window (drawable) ())
+(defclass pixmap (drawable) ())
 
-(def-clx-class (window (:include drawable) (:copier nil)
-		       (:print-function print-drawable))
-  )
-
-(def-clx-class (pixmap (:include drawable) (:copier nil)
-		       (:print-function print-drawable))
-  )
+;; window-id and window-display are used as interface everywhere
+;; downstream so we have to keep'em
+(defun window-id (window) (drawable-id window))
+(defun window-display (window) (drawable-display window))
 
 (def-clx-class (visual-info (:copier nil) (:print-function print-visual-info))
   (id 0 :type resource-id)
@@ -446,35 +444,31 @@
     (write-string " " stream)
     (prin1 (visual-info-id visual-info) stream)))
 
-(def-clx-class (colormap (:copier nil) (:print-function print-colormap))
-  (id 0 :type resource-id)
-  (display nil :type (or null display))
-  (visual-info nil :type (or null visual-info))
-  )
+(defclass colormap ()
+  ((id :initarg :id :initform 0 :type resource-id
+       :reader colormap-id)
+   (display :initarg :display :initform nil :type (or null display)
+	    :reader colormap-display)
+   (visual-info :initform nil :type (or null visual-info)
+		:accessor colormap-visual-info)))
 
-(defun print-colormap (colormap stream depth)
-  (declare (type colormap colormap)
-	   (ignore depth))
-  (print-unreadable-object (colormap stream :type t)
-    (when (colormap-visual-info colormap)
-      (princ (visual-info-class (colormap-visual-info colormap)) stream)
-      (write-string " " stream))
-    (print-display-name (colormap-display colormap) stream)
-    (write-string " " stream)
-    (prin1 (colormap-id colormap) stream)))
+(defmethod print-object ((colormap colormap) stream)
+  (with-slots (id display visual-info) colormap
+    (print-unreadable-object (colormap stream :type t)
+      (when visual-info
+	(format stream "~a " (visual-info-class visual-info)))
+      (print-display-name display stream)
+      (format stream " ~d" id))))
 
-(def-clx-class (cursor (:copier nil) (:print-function print-cursor))
-  (id 0 :type resource-id)
-  (display nil :type (or null display))
-  )
+(defclass cursor ()
+  ((id :initform 0 :type resource-id :accessor cursor-id)
+   (display :initarg :display :initform nil :type (or null display))))
 
-(defun print-cursor (cursor stream depth)
-  (declare (type cursor cursor)
-	   (ignore depth))
-  (print-unreadable-object (cursor stream :type t)
-    (print-display-name (cursor-display cursor) stream)
-    (write-string " " stream)
-    (prin1 (cursor-id cursor) stream)))
+(defmethod print-object ((cursor cursor) stream)
+  (with-slots (id display) cursor
+    (print-unreadable-object (cursor stream :type t)
+      (print-display-name display stream)
+      (format stream " ~d" id))))
 
 ; Atoms are accepted as strings or symbols, and are always returned as keywords.
 ; Protocol-level integer atom ids are hidden, using a cache in the display object.
@@ -570,25 +564,29 @@
 
 (deftype gcontext-state () 'simple-vector)
 
-(def-clx-class (gcontext (:copier nil) (:print-function print-gcontext))
-  ;; The accessors convert to CLX data types.
-  (id 0 :type resource-id)
-  (display nil :type (or null display))
-  (drawable nil :type (or null drawable))
-  (cache-p t :type generalized-boolean)
-  (server-state (allocate-gcontext-state) :type gcontext-state)
-  (local-state (allocate-gcontext-state) :type gcontext-state)
-  (plist nil :type list)			; Extension hook
-  (next nil #-explorer :type #-explorer (or null gcontext))
-  )
+(defclass gcontext ()
+  ((id :initarg :id :initform 0 :type resource-id
+       :accessor gcontext-id)
+   (display :initarg :display :initform nil :type (or null display)
+	    :reader gcontext-display)
+   (drawable :initarg :drawable :initform nil :type (or null drawable))
+   (cache-p :initarg :cache-p :initform t :type generalized-boolean)
+   (server-state :initarg :server-state :initform (allocate-gcontext-state)
+		 :type gcontext-state
+		 :reader gcontext-server-state)
+   (local-state :initarg :local-state :initform (allocate-gcontext-state)
+		:type gcontext-state
+		:reader gcontext-local-state)
+   (plist :initform nil :type list
+	  :accessor gcontext-plist
+	  :documentation "Extension hook")
+   (next :initform nil :type (or null gcontext))))
 
-(defun print-gcontext (gcontext stream depth)
-  (declare (type gcontext gcontext)
-	   (ignore depth))
-  (print-unreadable-object (gcontext stream :type t)
-    (print-display-name (gcontext-display gcontext) stream)
-    (write-string " " stream)
-    (prin1 (gcontext-id gcontext) stream)))
+(defmethod print-object ((gcontext gcontext) stream)
+  (with-slots (id display) gcontext
+    (print-unreadable-object (gcontext stream :type t)
+      (print-display-name display stream)
+      (format stream " ~d" id))))
 
 (defconstant +event-mask-vector+
  '#(:key-press :key-release :button-press :button-release
@@ -760,30 +758,38 @@
   (descent 0 :type int16)
   (properties nil :type font-props))
 
-(def-clx-class (font (:constructor make-font-internal) (:copier nil)
-		     (:print-function print-font))
-  (id-internal nil :type (or null resource-id)) ;; NIL when not opened
-  (display nil :type (or null display))
-  (reference-count 0 :type fixnum)
-  (name "" :type (or null string)) ;; NIL when ID is for a GContext
-  (font-info-internal nil :type (or null font-info))
-  (char-infos-internal nil :type (or null (simple-array int16 (*))))
-  (local-only-p t :type generalized-boolean) ;; When T, always calculate text extents locally
-  (plist nil :type list)			; Extension hook
-  )
+(defclass font ()
+  ((id-internal :initarg :id-internal :initform nil :type (or null resource-id)
+		:accessor font-id-internal)
+   (display :initarg :display :initform nil :type (or null display)
+	    :reader font-display)
+   (reference-count :initarg :reference-count :initform 0 :type fixnum
+		    :accessor font-reference-count)
+   (name :initarg :name :initform "" :type (or null string)
+	 :reader font-name
+	 :documentation "NIL when ID is for a GContext")
+   (font-info-internal :initarg :font-info-internal :initform nil
+		       :type (or null font-info)
+		       :accessor font-font-info-internal)
+   (char-infos-internal :initform nil :type (or null (simple-array int16 (*)))
+			:accessor font-char-infos-internal)
+   (local-only-p :initarg :local-only-p :initform t :type generalized-boolean
+		 :documentation "When T, always calculate text extents locally")
+   (plist :initform nil :type list :documentation "Extension hook")))
 
-(defun print-font (font stream depth)
-  (declare (type font font)
-	   (ignore depth))
-  (print-unreadable-object (font stream :type t)
-    (if (font-name font)
-	(princ (font-name font) stream)
-      (write-string "(gcontext)" stream))
-    (write-string " " stream)
-    (print-display-name (font-display font) stream)
-    (when (font-id-internal font)
+(defmethod print-object ((font font) stream)
+  (with-accessors ((name font-name)
+		   (display font-display)
+		   (id font-id)) font
+    (print-unreadable-object (font stream :type t)
+      (if name
+	  (princ name stream)
+	  (write-string "(gcontext)" stream))
       (write-string " " stream)
-      (prin1 (font-id font) stream))))
+      (print-display-name display stream)
+      (when id
+	(write-string " " stream)
+	(prin1 id stream)))))
 
 (defun font-id (font)
   ;; Get font-id, opening font if needed
@@ -805,12 +811,12 @@
 		  (name "")
 		  (local-only-p t)
 		  font-info-internal)
-  (make-font-internal :id-internal id
-		      :display display
-		      :reference-count reference-count
-		      :name name
-		      :local-only-p local-only-p
-		      :font-info-internal font-info-internal))
+  (make-instance 'font :id-internal id
+		       :display display
+		       :reference-count reference-count
+		       :name name
+		       :local-only-p local-only-p
+		       :font-info-internal font-info-internal))
 
 ; For each component (<name> <unspec> :type <type>) of font-info,
 ; there is a corresponding function:

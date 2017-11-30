@@ -139,7 +139,7 @@
 
 (defun allocate-temp-gcontext ()
   (or (threaded-atomic-pop *temp-gcontext-cache* gcontext-next gcontext)
-      (make-gcontext :local-state '#() :server-state '#())))
+      (make-instance 'gcontext :local-state '#() :server-state '#())))
 
 (defun deallocate-temp-gcontext (gc)
   (declare (type gcontext gc))
@@ -277,7 +277,7 @@
   (unless clip-mask (x-type-error clip-mask '(or (member :none) pixmap rect-seq)))
   (multiple-value-bind (clip-mask clip)
       (typecase clip-mask
-	(pixmap (values (pixmap-id clip-mask) nil))
+	(pixmap (values (drawable-id clip-mask) nil))
 	((member :none) (values 0 nil))
 	(sequence
 	  (values nil
@@ -702,7 +702,7 @@
 	   (type generalized-boolean cache-p))
   (declare (clx-values gcontext))
   (let* ((display (drawable-display drawable))
-	 (gcontext (make-gcontext :display display :drawable drawable :cache-p cache-p))
+	 (gcontext (make-instance 'gcontext :display display :drawable drawable :cache-p cache-p))
 	 (local-state (gcontext-local-state gcontext))
 	 (server-state (gcontext-server-state gcontext))
 	 (gcontextid (allocate-resource-id display gcontext 'gcontext)))
