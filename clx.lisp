@@ -414,10 +414,14 @@
 (defclass window (drawable) ())
 (defclass pixmap (drawable) ())
 
-;; window-id and window-display are used as interface everywhere
+;; Those window-* functions are used as interface everywhere
 ;; downstream so we have to keep'em
 (defun window-id (window) (drawable-id window))
+(defun (setf window-id) (value window) (setf (drawable-id window) value))
 (defun window-display (window) (drawable-display window))
+(defun (setf window-display) (value window) (setf (drawable-display window) value))
+(defun window-plist (window) (drawable-plist window))
+(defun (setf window-plist) (value window) (setf (drawable-plist window) value))
 
 (def-clx-class (visual-info (:copier nil) (:print-function print-visual-info))
   (id 0 :type resource-id)
