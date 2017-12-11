@@ -135,10 +135,7 @@ Independent FOSS developers"
   ((:module "tests"
 	    :components
 	    ((:file "package")
-	     (:file "test"
-		    :depends-on ("package"))
-	     (:file "example"
-		    :depends-on ("test"))))))
+             (:file "core-protocol" :depends-on ("package"))))))
 
 #+sbcl
 (defmethod perform :around ((o compile-op) (f xrender-source-file))
