@@ -186,10 +186,11 @@
 				   ((data +dri2-wait-msc+))
       (values))))
 
-(defun dri2-swap-interval ()
+(defun dri2-swap-interval (drawable)
   ""
-  (with-buffer-request (display (dri2-opcode display))
-    (data +dri2-swap-interval+)))
+  (let ((display (drawable-display drawable)))
+    (with-buffer-request (display (dri2-opcode display))
+      (data +dri2-swap-interval+))))
 
 (defun dri2-get-param (drawable)
 ""

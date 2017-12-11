@@ -696,16 +696,17 @@
 	 value-length
 	 (when (not (eql value-length 0)) 
 	   (case byte-format 
-	     ('card8 ( sequence-get :format card8 :index +replysize+ :length value-length :result-type result-type))
-	     ('card16 ( sequence-get :format card16 :index +replysize+ :length value-length :result-type result-type))
-	     ('card32 ( sequence-get :format card32 :index +replysize+ :length value-length :result-type result-type))))
-	 )
-	))))
+	     (card8 (sequence-get :format card8 :index +replysize+
+                                  :length value-length :result-type result-type))
+	     (card16 (sequence-get :format card16 :index +replysize+
+                                   :length value-length :result-type result-type))
+	     (card32 (sequence-get :format card32 :index +replysize+
+                                   :length value-length :result-type result-type)))))))))
 
 
 
 (defun rr-create-mode (window mode-info name)
-"FIXME"
+  "FIXME"
   (let ((display (window-display window)))
     (declare (type display display)
 	     (type window window)
