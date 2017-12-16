@@ -2355,7 +2355,7 @@ paragraphs.
 A @var{display} object.
 @end table
 
-Returns the authorization data string for @var{display} that was
+Returns the authorization data vector for @var{display} that was
 transmitted to the server by @var{open-display} during connection
 setup. The data is specific to the particular authorization protocol
 that was used. The @var{display-authorization-name} function returns
@@ -2363,7 +2363,7 @@ the protocol used.
 
 @table @var
 @item authorization-data
-Type @var{string}.
+Type @var{vector}.
 @end table
 
 @end defun
@@ -2473,15 +2473,16 @@ and error handling, refer to the section entitled Common Lisp
 Condition System in the @emph{Lisp Reference} manual.
 
 If the value of @var{error-handler} is a sequence, it is expected to
-contain a handler function for each specific error. The error code is
-used as an index into the sequence to fetch the appropriate handler
-function. If this element is a function, it is called for all
-errors. Any results returned by the handler are ignored since it is
-assumed the handler either takes care of the error completely or else
-signals. The arguments passed to the handler function are the
-@var{display} object, a symbol naming the type of error, and a set of
-keyword-value argument pairs that vary depending on the type of
-error. For all core errors, the keyword-value argument pairs are:
+contain a handler function designator for each specific error. The
+error code is used as an index into the sequence to fetch the
+appropriate handler function. If this element is a function
+designator, it is called for all errors. Any results returned by the
+handler are ignored since it is assumed the handler either takes care
+of the error completely or else signals. The arguments passed to the
+handler function are the @var{display} object, a symbol naming the
+type of error, and a set of keyword-value argument pairs that vary
+depending on the type of error. For all core errors, the keyword-value
+argument pairs are:
 
 @multitable @columnfractions 0.5 0.5
 @item @var{:current-sequence} @tab @var{card16}
@@ -2514,7 +2515,7 @@ pairs plus:
 
 @table @var
 @item error-handler
-Type @var{function} or @var{sequence}.
+Type @var{function} or @var{symbol} or @var{sequence}.
 @end table
 
 @end defun
@@ -2874,7 +2875,7 @@ Type @var{string}.
 @end defun
 
 
-@defun display-version-number display
+@defun display-release-number display
 
 @table @var
 @item display
@@ -2884,7 +2885,7 @@ A @var{display} object.
 Returns the X protocol version number for this implementation of CLX.
 @table @var
 @item version-number
-Type @var{card16}.
+Type @var{card32}.
 @end table
 
 @end defun
@@ -2896,11 +2897,11 @@ Type @var{card16}.
 A @var{display} object.
 @end table
 
-Returns the function that is used to allocate server resource IDs for
-this @emph{display}.
+Returns the function designator that is used to allocate server
+resource IDs for this @emph{display}.
 @table @var
 @item resource-allocator
-Type @var{function}.
+Type @var{function} or @var{symbol}.
 @end table
 
 @end defun
@@ -17526,9 +17527,6 @@ A @var{display}.
 Explicitly invokes the @emph{after-function} of the display.
 (see @var{display-after-function}). This function is
 internally called after every request.
-@end defun
-
-@defun display-release-number object
 @end defun
 
 @defun event-handler handlers event-key

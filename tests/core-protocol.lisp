@@ -4,30 +4,15 @@
 
 ;;; Manual notes:
 ;;;
-;;; - Manual claims xlib:display-authorization-data returns a string. Either
-;;;   review manual or fix this;
-;;;
-;;; - xlib:display-error-handler documentation says, that it returns function,
-;;;   yet by default it returns symbol (denoting a function) [minor];
-;;;
 ;;; - xlib:display-error-handler documentation has broken reference "See
 ;;;   <undefined> [Errors], page <undefined>";
-;;;
-;;; - `xlib:display-vendor' returns 2 values, second is release. It is said,
-;;;   that second value type card16, but it is card32. Also it is mentioned,
-;;;   that function to probe second value is named `xlib:display-release-number'
-;;;   (and this is implemented), but later we have documentation for
-;;;   `xlib:display-version-number' – function which doesn't exist;
-;;;
-;;; - `xlib:display-xid' is documented to return a function, but default value
-;;;   is a symbol (denoting a function) [minor];
 
 ;;; This test will fail the day "FOO" extension is written.
 (deftest display-protocol ()
   "Opens display, checks its attributes and closes it."
   (let ((display (xlib:open-default-display)))
     (is (null (xlib:query-extension display "FOO")))
-    (is (typep (xlib:display-authorization-data display) 'string))
+    (is (typep (xlib:display-authorization-data display) 'vector))
     (is (typep (xlib:display-authorization-name display) 'string))
     (is (typep (xlib:display-bitmap-format display) 'xlib:bitmap-format))
     (is (typep (xlib:display-byte-order display) '(member :lsbfirst :msbfirst)))
