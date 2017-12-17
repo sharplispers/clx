@@ -80,7 +80,11 @@ Independent FOSS developers"
                (:file "xtest")
                (:file "screensaver")
                (:file "randr")
-               (:file "xinerama")))
+               (:file "xinerama")
+               (:file "dbe")
+               (:file "xc-misc")
+               (:file "dri2")
+               (:file "composite")))
      (:static-file "NEWS")
      (:static-file "CHANGES")
      (:static-file "README.md")
@@ -135,10 +139,7 @@ Independent FOSS developers"
   ((:module "tests"
 	    :components
 	    ((:file "package")
-	     (:file "test"
-		    :depends-on ("package"))
-	     (:file "example"
-		    :depends-on ("test"))))))
+             (:file "core-protocol" :depends-on ("package"))))))
 
 #+sbcl
 (defmethod perform :around ((o compile-op) (f xrender-source-file))

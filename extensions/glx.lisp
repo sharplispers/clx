@@ -71,9 +71,9 @@
 
 (in-package #:xlib/glx)
 
-
-(declaim (optimize (debug 3) (safety 3)))
-
+;;; Generally don't want this declamation to have load-time effects
+(eval-when (:compile-toplevel)
+  (declaim (optimize (debug 3) (safety 3))))
 
 (define-extension "GLX"
     :events (:glx-pbuffer-clobber)

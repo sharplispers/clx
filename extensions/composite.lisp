@@ -133,9 +133,9 @@
     (declare (type display display)
 	     (type window window))
     (with-buffer-request (display (composite-opcode display))
-      ((data +composite-namewindowpixmap+)
-       (window window)
-       (drawable drawable)))))
+      (data +composite-namewindowpixmap+)
+      (window window)
+      (drawable drawable))))
 
 (defun composite-get-overlay-window (window)
   ""
@@ -151,9 +151,9 @@
 
 (defun composite-release-overlay-window (window)
   ""
-  (let ((display (window-display window))))
-  (declare (type display display)
-	   (type window window))
-  (with-buffer-request (display (composite-opcode display))
-				 ((data +composite-releaseoverlaywindow+)
-				  (window window))))
+  (let ((display (window-display window)))
+    (declare (type display display)
+             (type window window))
+    (with-buffer-request (display (composite-opcode display))
+      (data +composite-releaseoverlaywindow+)
+      (window window))))
