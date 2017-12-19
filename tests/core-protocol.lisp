@@ -1,5 +1,5 @@
 (fiasco:define-test-package (#:xlib-test-displays :in xlib-test:xlib-all-tests)
-  (:documentation "Tests for `3. Displays' section of the manual."))
+  (:documentation "Tests the core protocol."))
 (in-package #:xlib-test-displays)
 
 ;;; Manual notes:
@@ -66,3 +66,43 @@
     (is (null (xlib:close-display display)))
     ;; We can't query closed display.
     (signals xlib:closed-display (xlib:query-extension display "FOO"))))
+
+(defmacro with-default-display (display &body body)
+  `(let ((,display (xlib:open-default-display)))
+     (unwind-protect
+          (progn ,@body)
+       (xlib:close-display ,display))))
+
+(deftest screen-protocol ()
+  "Gets the default screen of the default display and validates its attributes."
+  (with-default-display display
+    (let ((screen (xlib:display-default-screen display)))
+      (is (member (xlib:screen-backing-stores screen) '(:always :never :when-mapped)))
+      (is (typep (xlib:screen-black-pixel screen) 'xlib:pixel))
+      (is (typep (xlib:screen-default-colormap screen) 'xlib:colormap))
+      (let ((depths (xlib:screen-depths screen)))
+        (loop for depth in depths do
+             (is (consp depth))
+             (is (< 0 (car depth)))
+             (is (listp (cdr depth)))
+             (loop for visual in (cdr depth) do
+                  (is (typep visual 'xlib:visual-info)))))
+      (is (typep (xlib:screen-event-mask-at-open screen) 'xlib:mask32))
+      (is (typep (xlib:screen-height screen) 'xlib:card16))
+      (is (typep (xlib:screen-height-in-millimeters screen) 'xlib:card16))
+      (is (typep (xlib:screen-max-installed-maps screen) 'xlib:card16))
+      (is (typep (xlib:screen-min-installed-maps screen) 'xlib:card16))
+
+      ;; Test whether we can insert and retrieve a property.
+      (is (xlib:screen-p screen))
+      (is (typep (xlib:screen-plist screen) 'list))
+      (finishes (setf (getf (xlib:screen-plist screen) 'foo) "hell is empty"))
+      (is (string= "hell is empty" (getf (xlib:screen-plist screen) 'foo)))
+
+      (is (typep (xlib:screen-root screen) '(or null xlib:window)))
+      (is (typep (xlib:screen-root-depth screen) 'xlib:image-depth))
+      (is (typep (xlib:screen-root-visual screen) 'xlib:card29))
+      (is (typep (xlib:screen-save-unders-p screen) 'boolean))
+      (is (typep (xlib:screen-white-pixel screen) 'xlib:pixel))
+      (is (typep (xlib:screen-width screen) 'xlib:card16))
+      (is (typep (xlib:screen-width-in-millimeters screen) 'xlib:card16)))))
