@@ -1,5 +1,5 @@
 (fiasco:define-test-package (#:xlib-test-displays :in xlib-test:xlib-all-tests)
-  (:documentation "Tests the core protocol."))
+  (:documentation "Tests for the core protocol."))
 (in-package #:xlib-test-displays)
 
 ;;; Manual notes:
