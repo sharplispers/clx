@@ -518,7 +518,7 @@ gethostname(3) - is used instead."
 		       (default-colormap
 			 (make-instance 'colormap :id default-colormap-id :display display))
 		       (screen
-			 (make-screen
+			 (make-instance 'screen
 			   :root root
 			   :default-colormap default-colormap
 			   :white-pixel (card32-get 8)
@@ -549,7 +549,7 @@ gethostname(3) - is used instead."
 			(declare (ignorable k))
 			(buffer-input display buffer-bbuf 0 24)
 			(let* ((visual (card32-get 0))
-			       (visual-info (make-visual-info
+			       (visual-info (make-instance 'visual-info
 					      :id visual
 					      :display display
 					      :class (member8-get 4 :static-gray :gray-scale
