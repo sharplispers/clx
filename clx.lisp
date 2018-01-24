@@ -744,21 +744,41 @@
 ;; The list contains alternating keywords and integers.
 (deftype font-props () 'list)
 
-(def-clx-class (font-info (:copier nil) (:predicate nil))
-  (direction :left-to-right :type draw-direction)
-  (min-char 0 :type card16)   ;; First character in font
-  (max-char 0 :type card16)   ;; Last character in font
-  (min-byte1 0 :type card8)   ;; The following are for 16 bit fonts
-  (max-byte1 0 :type card8)   ;; and specify min&max values for
-  (min-byte2 0 :type card8)   ;; the two character bytes
-  (max-byte2 0 :type card8)
-  (all-chars-exist-p nil :type generalized-boolean)
-  (default-char 0 :type card16)
-  (min-bounds nil :type (or null vector))
-  (max-bounds nil :type (or null vector))
-  (ascent 0 :type int16)
-  (descent 0 :type int16)
-  (properties nil :type font-props))
+(defclass font-info ()
+  ((direction :initarg :direction :initform :left-to-right :type draw-direction
+	      :reader font-info-direction)
+   (min-char :initarg :min-char :initform 0 :type card16
+	     :reader font-info-min-char
+	     :documentation "First character in font.")
+   (max-char :initarg :max-char :initform 0 :type card16
+	     :reader font-info-max-char
+	     :documentation "Last character in font.")
+   ;; The following are for 16 bit fonts
+   ;; and specify min&max values for
+   ;; the two character bytes
+   (min-byte1 :initarg :min-byte1 :initform 0 :type card8
+	      :reader font-info-min-byte1)
+   (max-byte1 :initarg :max-byte1 :initform 0 :type card8
+	      :reader font-info-max-byte1)
+   (min-byte2 :initarg :min-byte2 :initform 0 :type card8
+	      :reader font-info-min-byte2)
+   (max-byte2 :initarg :max-byte2 :initform 0 :type card8
+	      :reader font-info-max-byte2)
+   (all-chars-exist-p :initarg :all-chars-exist-p :initform nil
+		      :type generalized-boolean
+		      :reader font-info-all-chars-exist-p)
+   (default-char :initarg :default-char :initform 0 :type card16
+		 :reader font-info-default-char)
+   (min-bounds :initarg :min-bounds :initform nil :type (or null vector)
+	       :reader font-info-min-bounds)
+   (max-bounds :initarg :max-bounds :initform nil :type (or null vector)
+	       :reader font-info-max-bounds)
+   (ascent :initarg :ascent :initform 0 :type int16
+	   :reader font-info-ascent)
+   (descent :initarg :descent :initform 0 :type int16
+	    :reader font-info-descent)
+   (properties :initarg :properties :initform nil :type font-props
+	       :accessor font-info-properties)))
 
 (defclass font ()
   ((id-internal :initarg :id-internal :initform nil :type (or null resource-id)

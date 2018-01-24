@@ -212,7 +212,7 @@
 	     (nchar-infos (index* (card32-get 56) 6))
 	     (char-info (make-array nchar-infos :element-type 'int16)))
 	(setq font-info
-	      (make-font-info
+	      (make-instance 'font-info
 		:direction (member8-get 48 :left-to-right :right-to-left)
 		:min-char min-char
 		:max-char max-char
@@ -302,7 +302,7 @@
 		   :display display
 		   :name nil
 		   :font-info-internal
-		   (make-font-info
+		   (make-instance 'font-info
 		     :direction (member8-get 48 :left-to-right :right-to-left)
 		     :min-char min-char
 		     :max-char max-char
