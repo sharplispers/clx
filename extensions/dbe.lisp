@@ -69,12 +69,11 @@
 
 ;; class and structure definitions
 
-;; use def-clx-class instead of deftype to be consistent with clx and be able to submit
+;; use defclass instead of deftype to be consistent with clx and be able to submit
 ;; back-buffers to other x-requests that accept drawables, for convenience should probably just
 ;; have get-visual-info return visual-ids or visual-info structs
 
-(def-clx-class (back-buffer (:include drawable) (:copier nil)
-			    (:print-function print-drawable)))
+(defclass back-buffer (drawable) ())
 
 (defstruct visinfo 
   (visual-id 0 :type (unsigned-byte 32))
@@ -88,12 +87,12 @@
   "Returns a back-buffer structure associated with the given window"
   
   (let* ((display (window-display window))
-	 (bb (make-back-buffer :display display))
+	 (bb (make-instance 'back-buffer :display display))
 	 (id (allocate-resource-id display bb 'back-buffer)))
     (declare (type display display)
 	     (type window window)
 	     (type drawable bb))
-    (setf (back-buffer-id bb) id)
+    (setf (drawable-id bb) id)
     (if (window-p window)
 	(dbe-allocate-back-buffer-name window bb))
     bb))
@@ -128,7 +127,7 @@
 
 (defun dbe-deallocate-back-buffer-name (back-buffer)
   "disconnects back-buffer from window, does not free xid from the server allowing buffer to be associated with another window"
-  (let ((display (back-buffer-display back-buffer)))
+  (let ((display (drawable-display back-buffer)))
     (declare (type display display)
 	     (type back-buffer back-buffer))
     (with-buffer-request (display (extension-opcode display "DOUBLE-BUFFER"))
@@ -184,7 +183,7 @@
 (defun dbe-get-back-buffer-attributes (back-buffer)
   "Returns the window that a back-buffer outputs to or nil if not associated with any window"
   (declare (type back-buffer back-buffer))
-  (let ((display (back-buffer-display back-buffer)))
+  (let ((display (drawable-display back-buffer)))
     (declare (type display display))
     (with-buffer-request-and-reply (display (extension-opcode display "DOUBLE-BUFFER") nil :sizes 32)
 				   ((data +get-back-buffer-attributes+)
