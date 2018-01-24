@@ -360,7 +360,7 @@
 (defun set-gcontext-font (gcontext font)
   (declare (type gcontext gcontext)
 	   (type fontable font))
-  (let* ((font-object (if (font-p font) font (open-font (gcontext-display gcontext) font)))
+  (let* ((font-object (if (typep font 'font) font (open-font (gcontext-display gcontext) font)))
 	 (font (and font-object (font-id font-object))))
     ;; XXX need to check font has id (and name?)
     (modify-gcontext (gcontext local-state)

@@ -83,7 +83,7 @@
     font-default-char font-descent font-direction font-display
     font-equal font-error font-id font-max-byte1 font-max-byte2
     font-max-char font-min-byte1 font-min-byte2 font-min-char
-    font-name font-p font-path font-plist font-properties
+    font-name font-path font-plist font-properties
     font-property fontable force-gcontext-changes free-colormap
     free-colors free-cursor free-gcontext free-pixmap gcontext
     gcontext-arc-mode gcontext-background
