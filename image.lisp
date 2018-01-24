@@ -30,12 +30,12 @@
 	   ,@body)
        (deallocate-reply-buffer .reply-buffer.))))
 
-(def-clx-class (image (:constructor nil) (:copier nil) (:predicate nil))
-  ;; Public structure
-  (width 0 :type card16 :read-only t)
-  (height 0 :type card16 :read-only t)
-  (depth 1 :type card8 :read-only t)
-  (plist nil :type list))
+(defclass image ()
+  ((width :initarg :width :initform 0 :type card16 :reader image-width)
+   (height :initarg :height :initform 0 :type card16 :reader image-height)
+   (depth :initarg :depth :initform 1 :type card8 :reader image-depth)
+   (plist :initarg :plist :initform nil :type list :accessor image-plist))
+  (:documentation "Public image class."))
 
 ;; Image-Plist accessors:
 (defmacro image-name (image) `(getf (image-plist ,image) :name))
@@ -45,50 +45,53 @@
 (defmacro image-blue-mask (image) `(getf (image-plist ,image) :blue-mask))
 (defmacro image-green-mask (image) `(getf (image-plist ,image) :green-mask))
 
-(defun print-image (image stream depth)
-  (declare (type image image)
-	   (ignore depth))
-  (print-unreadable-object (image stream :type t)
-    (when (image-name image)
-      (write-string (string (image-name image)) stream)
-      (write-string " " stream))
-    (prin1 (image-width image) stream)
-    (write-string "x" stream)
-    (prin1 (image-height image) stream)
-    (write-string "x" stream)
-    (prin1 (image-depth image) stream)))
+(defmethod print-object ((image image) stream)
+  (with-slots (width height depth) image
+    (let ((name (image-name image)))
+      (format stream "~@[~a ~]~dx~dx~d" name width height depth))))
 
 (defconstant +empty-data-x+ '#.(make-sequence '(array card8 (*)) 0))
 
 (defconstant +empty-data-z+
   '#.(make-array '(0 0) :element-type 'pixarray-1-element-type))
 
-(def-clx-class (image-x (:include image) (:copier nil)
-			(:print-function print-image))
-  ;; Use this format for shoveling image data
-  ;; Private structure. Accessors for these NOT exported.
-  (format :z-pixmap :type (member :bitmap :xy-pixmap :z-pixmap))
-  (bytes-per-line 0 :type card16)
-  (bits-per-pixel 1 :type (member 1 4 8 16 24 32))
-  (bit-lsb-first-p +image-bit-lsb-first-p+ :type generalized-boolean)	; Bit order
-  (byte-lsb-first-p +image-byte-lsb-first-p+ :type generalized-boolean)	; Byte order
-  (data +empty-data-x+ :type (array card8 (*)))			; row-major
-  (unit +image-unit+ :type (member 8 16 32))			; Bitmap unit
-  (pad +image-pad+ :type (member 8 16 32))			; Scanline pad
-  (left-pad 0 :type card8))					; Left pad
+(defclass image-x (image)
+  ((format :initarg :format :initform :z-pixmap
+	   :type (member :bitmap :xy-pixmap :z-pixmap) :reader image-x-format)
+   (bytes-per-line :initarg :bytes-per-line :initform 0 :type card16
+		   :reader image-x-bytes-per-line)
+   (bits-per-pixel :initarg :bits-per-pixel :initform 1
+		   :type (member 1 4 8 16 24 32)
+		   :reader image-x-bits-per-pixel)
+   (bit-lsb-first-p :initarg :bit-lsb-first-p :initform +image-bit-lsb-first-p+
+		    :type generalized-boolean :reader image-x-bit-lsb-first-p
+		    :documentation "Bit order")
+   (byte-lsb-first-p :initarg :byte-lsb-first-p :initform +image-byte-lsb-first-p+
+		     :type generalized-boolean :reader image-x-byte-lsb-first-p
+		     :documentation "Byte order")
+   (data :initarg :data :initform +empty-data-x+
+	 :type (array card8 (*)) :reader image-x-data
+	 :documentation "Row-major image data")
+   (unit :initarg :unit :initform +image-unit+ :type (member 8 16 32)
+	 :reader image-x-unit :documentation "Bitmap unit")
+   (pad :initarg :pad :initform +image-pad+ :type (member 8 16 32)
+	:reader image-x-pad :documentation "Scanline pad")
+   (left-pad :initarg :left-pad :initform 0 :type card8
+	     :reader image-x-left-pad :documentation "Left pad"))
+  (:documentation "Use this format for shoveling image data. Accessors
+for these NOT exported."))
 
-(def-clx-class (image-xy (:include image) (:copier nil)
-			 (:print-function print-image))
-  ;; Public structure
-  ;; Use this format for image processing
-  (bitmap-list nil :type list)) ;; list of bitmaps
+(defclass image-xy (image)
+  ((bitmap-list :initarg :bitmap-list :initform nil :type list
+		:reader image-xy-bitmap-list))
+  (:documentation "Public class. Use this format for image processing."))
 
-(def-clx-class (image-z (:include image) (:copier nil)
-			(:print-function print-image))
-  ;; Public structure
-  ;; Use this format for image processing
-  (bits-per-pixel 1 :type (member 1 4 8 16 24 32))
-  (pixarray +empty-data-z+ :type pixarray))
+(defclass image-z (image)
+  ((bits-per-pixel :initarg :bits-per-pixel :initform 1
+		   :type (member 1 4 8 16 24 32) :reader image-z-bits-per-pixel)
+   (pixarray :initarg :pixarray :initform +empty-data-z+ :type pixarray
+	     :reader image-z-pixarray))
+  (:documentation "Public class. Use this format for image processing."))
 
 (defun create-image (&key width height depth
 		     (data (required-arg data))
@@ -161,7 +164,7 @@
 					 (index* bytes-per-line 8) pad)))
 			    (return pad)))))
 		(unless left-pad (setq left-pad 0))
-		(make-image-x
+		(make-instance 'image-x
 		  :width width :height height :depth depth :plist plist
 		  :format format :data data
 		  :bits-per-pixel bits-per-pixel 
@@ -176,7 +179,7 @@
 		(when data
 		  (unless width (setq width (array-dimension (car data) 1)))
 		  (unless height (setq height (array-dimension (car data) 0))))
-		(make-image-xy
+		(make-instance 'image-xy
 		  :width width :height height :plist plist :depth depth
 		  :bitmap-list data)))
 	    (pixarray				; image-z
@@ -194,7 +197,7 @@
 			  (pixarray-4   4)
 			  (pixarray-1   1)))))
 	      (unless depth (setq depth bits-per-pixel))
-	      (make-image-z
+	      (make-instance 'image-z
 		:width width :height height :depth depth :plist plist
 		:bits-per-pixel bits-per-pixel :pixarray data)))))
     (declare (type image image))
@@ -1913,7 +1916,7 @@
 	     (image-xy :xy-pixmap)
 	     (image-z :z-pixmap)))
 	 (src-x
-	   (if (image-x-p image)
+	   (if (typep image 'image-x)
 	       (index+ src-x (image-x-left-pad (the image-x image)))
 	     src-x))
 	 (image-width (image-width image))

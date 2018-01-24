@@ -102,8 +102,8 @@
     icon-sizes iconify-window id-choice-error illegal-request-error
     image image-blue-mask image-depth image-green-mask image-height
     image-name image-pixmap image-plist image-red-mask image-width
-    image-x image-x-hot image-x-p image-xy image-xy-bitmap-list
-    image-xy-p image-y-hot image-z image-z-bits-per-pixel image-z-p
+    image-x image-x-hot image-xy image-xy-bitmap-list
+    image-y-hot image-z image-z-bits-per-pixel
     image-z-pixarray implementation-error input-focus install-colormap
     installed-colormaps int16 int32 int8 intern-atom invalid-font
     keyboard-control keyboard-mapping keycode->character keycode->keysym
