@@ -233,6 +233,9 @@
       (format stream "depth ~d bits-per-pixel ~d scanline-pad ~d"
 	      depth bits-per-pixel scanline-pad))))
 
+(defun pixmap-format-p (object)
+  (typep object 'pixmap-format))
+
 (defparameter *atom-cache-size* 200)
 (defparameter *resource-id-map-size* 500)
 
@@ -242,7 +245,7 @@
 	    :reader display-display
 	    :documentation "Display number on host")
    (after-function :initform nil
-		   :reader display-after-function
+		   :accessor display-after-function
 		   :documentation "Function to call after every request")
    (event-lock :initform (make-process-lock "CLX Event Lock")
 	       :reader display-event-lock
@@ -396,6 +399,9 @@
     (print-unreadable-object (dpy stream :type t)
       (print-display-name dpy stream)
       (format stream " (~a R~d)" vendor-name release-number))))
+
+(defun display-p (thing)
+  (typep thing 'display))
 
 (defclass drawable ()
   ((id :initarg :id :initform 0 :type resource-id :accessor drawable-id)
@@ -722,7 +728,8 @@
 		  :reader screen-save-unders-p)
    (event-mask-at-open :initarg :event-mask-at-open :initform 0 :type mask32
 		       :reader screen-event-mask-at-open)
-   (plist :initform nil :type list :documentation "Extension hook" :reader screen-plist)))
+   (plist :initform nil :type list :documentation "Extension hook"
+	  :accessor screen-plist)))
 
 (defmethod print-object ((screen screen) stream)
   (with-slots (root width height root-depth root-visual-info) screen
@@ -740,6 +747,9 @@
   (declare (type screen screen)
 	   (clx-values resource-id))
   (visual-info-id (screen-root-visual-info screen)))
+
+(defun screen-p (object)
+  (typep object 'screen))
 
 ;; The list contains alternating keywords and integers.
 (deftype font-props () 'list)
