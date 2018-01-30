@@ -704,8 +704,8 @@
 
 (defclass screen ()
   ((root :initarg :root :initform nil :type (or null window) :reader screen-root)
-   (width :initarg :width :initform 0 :type card16 :reader screen-width)
-   (height :initarg :height :initform 0 :type card16 :reader screen-height)
+   (width :initarg :width :initform 0 :type card16 :accessor screen-width)
+   (height :initarg :height :initform 0 :type card16 :accessor screen-height)
    (width-in-millimeters :initarg :width-in-millimeters :initform 0 :type card16
 			 :reader screen-width-in-millimeters)
    (height-in-millimeters :initarg :height-in-millimeters :initform 0 :type card16
