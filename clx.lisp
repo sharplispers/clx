@@ -187,9 +187,9 @@
 ; than what is actually transmitted in the protocol.
 
 (defclass color ()
-  ((red :initarg :red :initform 0.0 :type rgb-val :reader color-red)
-   (green :initarg :green :initform 0.0 :type rgb-val :reader color-green)
-   (blue :initarg :blue :initform 0.0 :type rgb-val :reader color-blue)))
+  ((red :initarg :red :initform 0.0 :type rgb-val :accessor color-red)
+   (green :initarg :green :initform 0.0 :type rgb-val :accessor color-green)
+   (blue :initarg :blue :initform 0.0 :type rgb-val :accessor color-blue)))
 
 (defmethod print-object ((color color) stream)
   (with-slots (red green blue) color
@@ -403,6 +403,9 @@
 (defun display-p (thing)
   (typep thing 'display))
 
+(defun display-input-stream (display)
+  (buffer-input-stream display))
+
 (defclass drawable ()
   ((id :initarg :id :initform 0 :type resource-id :accessor drawable-id)
    (display :initarg :display :initform nil :type (or null display)
@@ -422,6 +425,7 @@
 
 ;; Those window-* functions are used as interface everywhere
 ;; downstream so we have to keep'em
+(defun window-p (thing) (typep thing 'window))
 (defun window-id (window) (drawable-id window))
 (defun (setf window-id) (value window) (setf (drawable-id window) value))
 (defun window-display (window) (drawable-display window))
@@ -576,7 +580,8 @@
    (display :initarg :display :initform nil :type (or null display)
 	    :reader gcontext-display)
    (drawable :initarg :drawable :initform nil :type (or null drawable))
-   (cache-p :initarg :cache-p :initform t :type generalized-boolean)
+   (cache-p :initarg :cache-p :initform t :type generalized-boolean
+	    :reader gcontext-cache-p)
    (server-state :initarg :server-state :initform (allocate-gcontext-state)
 		 :type gcontext-state
 		 :reader gcontext-server-state)
