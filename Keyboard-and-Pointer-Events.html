@@ -1,0 +1,479 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Keyboard and Pointer Events</title>
+
+<meta name="description" content="Common LISP X Interface: Keyboard and Pointer Events">
+<meta name="keywords" content="Common LISP X Interface: Keyboard and Pointer Events">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Event-Types.html#Event-Types" rel="up" title="Event Types">
+<link href="Input-Focus-Events.html#Input-Focus-Events" rel="next" title="Input Focus Events">
+<link href="Event-Types.html#Event-Types" rel="prev" title="Event Types">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Keyboard-and-Pointer-Events"></a>
+<div class="header">
+<p>
+Next: <a href="Input-Focus-Events.html#Input-Focus-Events" accesskey="n" rel="next">Input Focus Events</a>, Previous: <a href="Event-Types.html#Event-Types" accesskey="p" rel="prev">Event Types</a>, Up: <a href="Event-Types.html#Event-Types" accesskey="u" rel="up">Event Types</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Keyboard-and-Pointer-Events-1"></a>
+<h4 class="subsection">13.11.1 Keyboard and Pointer Events</h4>
+
+
+<p>The keyboard and pointer events are: <var>:key-press</var> <var>:key-release</var>,
+<var>:button-press</var>, <var>:button-release</var>, <var>:motion-notify</var>,
+<var>:enter-notify</var>, and <var>:leave-notify</var>.
+</p>
+<dl>
+<dt><a name="index-_003akey_002dpress"></a>Event Type: <strong>:key-press</strong></dt>
+<dt><a name="index-_003akey_002drelease"></a>Event Type: <strong>:key-release</strong></dt>
+<dt><a name="index-_003abutton_002dpress"></a>Event Type: <strong>:button-press</strong></dt>
+<dt><a name="index-_003abutton_002drelease"></a>Event Type: <strong>:button-release</strong></dt>
+<dd>
+<p>Selected by <var>:key-press</var>, <var>:key-release</var>, <var>:button-press</var>,
+or <var>:button-release</var>.
+</p>
+<p><var>:key-press</var>, and <var>:key-release</var> events are generated when
+a key or pointer button changes state. Note that <var>:key-press</var>
+and <var>:key-release</var> are generated for all keys, even those
+mapped to modifiers. All of these event types have the same
+slots. The window containing the pointer at the time of the event is
+referred to as the <em>source</em> window. The <em>event</em>
+<em>window</em> is the window to which the event is actually
+reported. The event window is found by starting with the source
+window and looking up the hierarchy for the first window on which
+any client has selected interest in the event (provided no
+intervening window prohibits event generation by including the event
+type in its do-not-propagate-mask). The actual window used for
+reporting can be modified by active grabs and, in the case of
+keyboard events, can be modified by the focus window.
+</p>
+<p>A <var>:button-press</var> event has the effect of a temporary
+<var>grab-button</var>. When a pointer button is pressed and no active
+pointer grab is in progress, the ancestors of the source window are
+searched from the <em>root</em> down, looking for a passive grab to
+activate. If no matching passive grab on the button exists, then an
+active grab is started automatically for the client receiving the
+<var>:button-press</var> event, and the last-pointer-grab time is set to
+the current server time. The effect is essentially equivalent to
+calling <var>grab-button</var> with the following arguments:
+</p>
+<dl compact="compact">
+<dt><var><em>window</em></var></dt>
+<dd><p>The event window.
+</p></dd>
+<dt><var><em>button</em></var></dt>
+<dd><p>The button that was pressed.
+</p></dd>
+<dt><var><em>event-mask</em></var></dt>
+<dd><p>The client&rsquo;s selected pointer events on the event window.
+</p></dd>
+<dt><var><var>:modifiers</var></var></dt>
+<dd><p>0
+</p></dd>
+<dt><var><var>:owner-p</var></var></dt>
+<dd><p><var>t</var> if the client has <var>:owner-grab-button</var> selected on the event window; otherwise <var>nil</var>.
+</p></dd>
+<dt><var><var>:sync-pointer-p</var></var></dt>
+<dd><p><var>nil</var>
+</p></dd>
+<dt><var><var>:sync-keyboard-p</var></var></dt>
+<dd><p><var>nil</var>
+</p></dd>
+<dt><var><var>:confine-to</var></var></dt>
+<dd><p><var>nil</var>
+</p></dd>
+<dt><var><var>:cursor</var></var></dt>
+<dd><p><var>nil</var>
+</p></dd>
+</dl>
+
+
+<p>The <var>:button-press</var> grab is terminated automatically when all
+buttons are released. The functions <var>ungrab-pointer</var> and
+<var>change-active-pointer-grab</var> can both be used to modify the
+<var>:button-press</var> grab.
+</p>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dt><var>event-window</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The window receiving the event.
+</p>
+</dd>
+<dt><var>code</var></dt>
+<dd><p>Type <var>card8</var>.
+</p>
+<p>The <em>code</em> argument varies with the event type. For <var>:key-press</var> and
+<var>:key-release</var>, <em>code</em> is the keycode (see <a href="Keyboard-Encodings.html#Keyboard-Encodings">Keyboard Encodings</a>). For
+<var>:button-press</var> and <var>:button-release</var>, <em>code</em> is the pointer button number.
+</p>
+</dd>
+<dt><var>x</var></dt>
+<dd><p>Type <var>int16</var>.
+</p>
+<p>If <em>event-window</em> is on the same screen as root, then <em>x</em> and <em>y</em> are the pointer
+coordinates relative to the <em>event-window</em>; otherwise <em>x</em> and <em>y</em> are zero.
+</p>
+</dd>
+<dt><var>y</var></dt>
+<dd><p>Type <var>int16</var>.
+</p>
+<p>If <em>event-window</em> is on the same screen as root, then <em>x</em> and <em>y</em> are the pointer
+coordinates relative to the <em>event-window</em>; otherwise <em>x</em> and <em>y</em> are zero.
+</p>
+</dd>
+<dt><var>state</var></dt>
+<dd><p>Type <var>card16</var>.
+</p>
+<p>A mask that gives the state of the buttons and modifier keys just before the
+event.
+</p>
+</dd>
+<dt><var>time</var></dt>
+<dd><p>Type <var>card32</var>.
+</p>
+<p>A timestamp for the moment when the event occurred.
+</p>
+</dd>
+<dt><var>root</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The root window of the source window.
+</p>
+</dd>
+<dt><var>root-x</var></dt>
+<dd><p>Type <var>int16</var>.
+</p>
+<p>The x coordinate of the pointer position relative to root at the time of the event.
+</p>
+</dd>
+<dt><var>root-y</var></dt>
+<dd><p>Type <var>int16</var>.
+</p>
+<p>The y coordinate of the pointer position relative to root at the time of the event<em>.</em>
+</p>
+</dd>
+<dt><var>child</var></dt>
+<dd><p>Type (<var>or null window</var>).
+</p>
+<p>If the source window is an inferior of the <em>event-window</em>, <em>child</em> is set to the child
+of <em>event-window</em> that is an ancestor of (or is) the source window; otherwise, it is
+set to <var>nil</var><em>.</em>
+</p>
+</dd>
+<dt><var>same-screen-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p>
+<p>True if <em>event-window</em> and root are on the same screen.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-_003amotion_002dnotify"></a>Event Type: <strong>:motion-notify</strong></dt>
+<dd>
+<p>Selected by: <var>:button-1-motion</var>, <var>:button-2-motion</var>,
+<var>:button-3-motion</var>, <var>:button-4-motion</var>,
+<var>:button-5-motion</var>, <var>:button-motion</var>, or
+<var>:pointer-motion</var>.
+</p>
+
+<p>The <var>:motion-notify</var> event is generated when the pointer
+moves. A <var>:motion-notify</var> event has the same slots as
+<var>:button-press</var> <var>:button-release</var>, <var>:key-press</var>, and
+<var>:key-release</var> events, with the exception that the <em>code</em>
+slot is replaced by the <em>hint-p</em> slot. As with these other
+events, the event window for <var>:motion-notify</var> is found by
+starting with the source window and looking up the hierarchy for the
+first window on which any client has selected interest in the event
+(provided no intervening window prohibits event generation by
+including <var>:motion-notify</var> in its do-not-propagate-mask).The
+actual window used for reporting can be modified by active grabs.
+</p>
+<p><var>:motion-notify</var> events are generated only when the motion
+begins and ends in the window. The granularity of motion events is
+not guaranteed, but a client selecting for motion events is
+guaranteed to get at least one event when the pointer moves and
+comes to rest. Selecting <var>:pointer-motion</var> generates
+<var>:motion-notify</var> events regardless of the state of the pointer
+buttons. By selecting some subset of <var>:button[1-5]-motion</var>
+instead, <var>:motion-notify</var> events are only received when one or
+more of the specified buttons are pressed. By selecting
+<var>:button-motion</var>, <var>:motion-notify</var> events are only
+received when at least one button is pressed. If
+<var>:pointer-motion-hint</var> is also selected, the server is free to
+send only one <var>:motion-notify</var>, until either the key or button
+state changes, the pointer leaves the event window, or the client
+calls <var>query-pointer</var> or <var>motion-events</var>.
+</p>
+<dl compact="compact">
+<dt><var>hint-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p>
+<p>True if the event is a hint generated by selecting <var>:pointer-motion-hint</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+
+<dl>
+<dt><a name="index-_003aenter_002dnotify"></a>Event Type: <strong>:enter-notify</strong></dt>
+<dt><a name="index-_003aleave_002dnotify"></a>Event Type: <strong>:leave-notify</strong></dt>
+<dd><a name="enter_002dnotify"></a>
+<p>Selected by: <var>:enter-window</var> or <var>:leave-window</var>.
+</p>
+<p>If pointer motion or a window hierarchy change causes the pointer to
+be in a different window than before, <var>:enter-notify</var> and
+<var>:leave-notify</var> events are generated instead of a
+<var>:motion-notify</var> event. All <var>:enter-notify</var> and
+<var>:leave-notify</var> events caused by a hierarchy change are
+generated after any hierarchy event (<var>:unmap-notify</var>,
+<var>:map-notify</var>, <var>:configure-notify</var>,
+<var>:gravity-notify</var>, or <var>:circulate-notify</var>) caused by that
+change, but the ordering of <var>:enter-notify</var> and
+<var>:leave-notify</var> events with respect to <var>:focus-out</var>,
+<var>:visibility-notify</var>, and <var>:exposure</var> events is not
+constrained by the X protocol. An <var>:enter-notify</var> or
+<var>:leave-notify</var> event can also be generated when a client
+application calls <var>change-active-pointer-grab</var>,
+<var>grab-pointer</var>, or <var>ungrab-pointer</var>.
+</p>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dt><var>event-window</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The window receiving the event.
+</p>
+</dd>
+<dt><var>x</var></dt>
+<dd><p>Type <var>int16</var>.
+</p>
+<p>The final pointer position. If <em>event-window</em> is on the same screen as root, then <em>x</em>
+and <em>y</em> are the pointer coordinates relative to the <em>event-window</em>; otherwise <em>x</em> and
+<em>y</em> are zero.
+</p>
+</dd>
+<dt><var>y</var></dt>
+<dd><p>Type <var>int16</var>.
+</p>
+<p>The final pointer position. If <em>event-window</em> is on the same screen as root, then <em>x</em>
+and <em>y</em> are the pointer coordinates relative to the <em>event-window</em>; otherwise <em>x</em> and
+<em>y</em> are zero.
+</p>
+</dd>
+<dt><var>mode</var></dt>
+<dd><p>Type (<var>member :normal :grab :ungrab</var>).
+</p>
+<p>Events caused when the pointer is actively grabbed have mode <var>:grab</var>. Events
+caused when an active pointer grab deactivates have mode <var>:ungrab</var>. In all
+other cases, mode is <var>:normal</var>.
+</p>
+</dd>
+<dt><var>kind</var></dt>
+<dd><p>Type (<var>member :ancestor :virtual :inferior :nonlinear</var> <var>:nonlinear-virtual</var>).
+</p>
+<p>When the pointer moves from window A to window B, and A is an inferior of
+B:
+</p><ul>
+<li> <var>:leave-notify</var> with <em>kind</em> <var>:ancestor</var> is generated on A
+
+</li><li> <var>:leave-notify</var> with <em>kind</em> <var>:virtual</var> is generated on each window between A
+and B exclusive (in that order)
+
+</li><li> <var>:enter-notify</var> with <em>kind</em> <var>:inferior</var> is generated on B
+</li></ul>
+
+<p>When the pointer moves from window A to window B, and
+B is an inferior of A:
+</p><ul>
+<li> <var>:leave-notify</var> with <em>kind</em> <var>:inferior</var> is generated on A
+
+</li><li> <var>:enter-notify</var> with <em>kind</em>
+<var>:virtual</var> is generated on each window between
+A and B exclusive (in that order)
+
+</li><li> <var>:enter-notify</var> with <em>kind</em> <var>:ancestor</var> is generated on B
+</li></ul>
+
+<p>When the pointer moves from window A to window B, with
+window C being their least common ancestor:
+</p><ul>
+<li> <var>:leave-notify</var> with <em>kind</em> <var>:nonlinear</var> is generated on A
+
+</li><li> <var>:leave-notify</var> with <em>kind</em>
+<var>:nonlinear-virtual</var> is generated on each
+window between A and C exclusive (in that order)
+
+</li><li> <var>:enter-notify</var> with <em>kind</em>
+<var>:nonlinear-virtual</var> is generated on each
+window between C and B exclusive (in that order)
+
+</li><li> <var>:enter-notify</var> with <em>kind</em>
+<var>:nonlinear</var> is generated on B
+</li></ul>
+
+<p>When the pointer moves from window A to window B, on different screens:
+</p><ul>
+<li> <var>:leave-notify</var> with <em>kind</em> <var>:nonlinear</var> is generated on A
+
+</li><li> If A is not a root window, <var>:leave-notify</var> with <em>kind</em> <var>:nonlinear-virtual</var> is
+generated on each window above A up to and including its root (in order)
+
+</li><li> If B is not a root window, <var>:enter-notify</var> with
+<em>kind</em> <var>:nonlinear-virtual</var> is generated
+on each window from B&rsquo;s root down to but not
+including B (in order)
+
+</li><li> <var>:enter-notify</var> with <em>kind</em> <var>:nonlinear</var> is generated on B
+</li></ul>
+
+<p>When a pointer grab activates (but after any initial warp into a
+confine-to window, and before generating any actual
+<var>:button-press</var> event that activates the grab), with
+<em>G</em> the <var>grab-window</var> for the grab and <em>P</em> the
+window the pointer is in, then <var>:enter-notify</var> and
+<var>:leave-notify</var> events with mode <var>:grab</var> are generated
+(as for <var>:normal</var> above) as if the pointer were to suddenly
+warp from its current position in <em>P</em> to some position in
+<em>G</em>. However, the pointer does not warp, and the pointer
+position is used as both the <em>initial</em> and <em>final</em>
+positions for the events.
+</p>
+<p>When a pointer grab deactivates (but after generating any actual
+<var>:button-release</var> event that deactivates the grab), with
+<em>G</em> the <var>grab-window</var> for the grab and <em>P</em> the
+window the pointer is in, then <var>:enter-notify</var> and
+<var>:leave-notify</var> events with mode <var>:ungrab</var> are
+generated (as for <var>:normal</var> above) as if the pointer were
+to suddenly warp from from some position in <em>G</em> to its
+current position in <em>P</em>.  However, the pointer does not
+warp, and the current pointer position is used as both the
+<em>initial</em> and <em>final</em> positions for the events.
+</p>
+</dd>
+<dt><var>focus-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p>
+<p>If <em>event-window</em> is the focus window or an inferior of the focus window, then
+<em>focus-p</em> is <var>t</var>; otherwise, <em>focus-p</em> is <var>nil</var>.
+</p>
+</dd>
+<dt><var>state</var></dt>
+<dd><p>Type <var>card16</var>.
+</p>
+<p>A mask that gives the state of the buttons and modifier keys just before the
+event.
+</p>
+</dd>
+<dt><var>time</var></dt>
+<dd><p>Type <var>card32</var>.
+</p>
+<p>A timestamp for the moment when the event occurred.
+</p>
+</dd>
+<dt><var>root</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The root window containing the final pointer position.
+</p>
+</dd>
+<dt><var>root-x</var></dt>
+<dd><p>Type <var>int16</var>.
+</p>
+<p>The x coordinate of the pointer position relative to root at the time of the event.
+</p>
+</dd>
+<dt><var>root-y</var></dt>
+<dd><p>Type <var>int16</var>.
+</p>
+<p>The y coordinate of the pointer position relative to root at the time of the event.
+</p>
+</dd>
+<dt><var>child</var></dt>
+<dd><p>Type (<var>or null window</var>).
+</p>
+<p>In a <var>:leave-notify</var> event, if a child of the <em>event-window</em> contains the initial
+position of the pointer, the <em>child</em> slot is set to that child; otherwise, the <em>child</em> slot is
+<var>nil</var>. For an <var>:enter-notify</var> event, if a child of the <em>event-window</em> contains the final
+pointer position, the <em>child</em> slot is set to that child; otherwise, the <em>child</em> slot is <var>nil</var>.
+</p>
+</dd>
+<dt><var>same-screen-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p>
+<p>True if <em>event-window</em> and root are on the same screen.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Input-Focus-Events.html#Input-Focus-Events" accesskey="n" rel="next">Input Focus Events</a>, Previous: <a href="Event-Types.html#Event-Types" accesskey="p" rel="prev">Event Types</a>, Up: <a href="Event-Types.html#Event-Types" accesskey="u" rel="up">Event Types</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

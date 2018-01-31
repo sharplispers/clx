@@ -1,0 +1,312 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Structure Control Events</title>
+
+<meta name="description" content="Common LISP X Interface: Structure Control Events">
+<meta name="keywords" content="Common LISP X Interface: Structure Control Events">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Event-Types.html#Event-Types" rel="up" title="Event Types">
+<link href="Client-Communications-Events.html#Client-Communications-Events" rel="next" title="Client Communications Events">
+<link href="Window-State-Events.html#Window-State-Events" rel="prev" title="Window State Events">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Structure-Control-Events"></a>
+<div class="header">
+<p>
+Next: <a href="Client-Communications-Events.html#Client-Communications-Events" accesskey="n" rel="next">Client Communications Events</a>, Previous: <a href="Window-State-Events.html#Window-State-Events" accesskey="p" rel="prev">Window State Events</a>, Up: <a href="Event-Types.html#Event-Types" accesskey="u" rel="up">Event Types</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Structure-Control-Events-1"></a>
+<h4 class="subsection">13.11.6 Structure Control Events</h4>
+
+
+<p>The following paragraphs describe events used to <em>redirect</em>
+client requests that reconfigure, restack, or map a window. Structure
+control events are typically used only by window managers and not by
+ordinary client applications. Structure control events report
+redirected requests, allowing a window manager to modify the requests
+before they are actually performed. However, if the override-redirect
+attribute of a window is <var>:on</var>, then no requests are redirected
+and no structure control events are generated.
+</p>
+<dl>
+<dt><a name="index-_003acirculate_002drequest"></a>Event Type: <strong>:circulate-request</strong></dt>
+<dd>
+<p>The <var>:circulate-request</var> event is generated when a client
+application calls <var>circulate-window-up</var> or
+<var>circulate-window-down</var> with a window that has the
+override-redirect attribute <var>:off</var>. The <em>window</em> argument
+specifies the window to be restacked, and <em>place</em> specifies
+what the new position in the stacking order should be (either
+<var>:top</var> or <var>:bottom</var>).
+</p>
+<p>Selected by: <var>:substructure-redirect</var> on <em>parent</em>.
+</p>
+<dl compact="compact">
+<dt><var>parent</var></dt>
+<dt><var>event-window</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The window receiving the event. The receiving client must have selected
+<var>:substructure-redirect</var> on this window.
+</p>
+</dd>
+<dt><var>window</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The window to be restacked.
+</p>
+</dd>
+<dt><var>place</var></dt>
+<dd><p>Type <code>(member :top :bottom)</code>.
+</p>
+<p>The new stacking priority requested for <em>window</em>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-_003acolormap_002dnotify"></a>Event Type: <strong>:colormap-notify</strong></dt>
+<dd><p>Selected by: <var>:colormap-change</var>.
+</p>
+<p>The <var>:colormap-notify</var> event is generated with <em>new-p</em>
+<var>t</var> when the <em>colormap</em> associated with a <em>window</em> is
+changed, installed, or uninstalled.
+</p>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dt><var>event-window</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The window receiving the event.
+</p>
+</dd>
+<dt><var>colormap</var></dt>
+<dd><p>Type <code>(or null colormap)</code>.
+</p>
+<p>The colormap attribute of the window.
+</p>
+</dd>
+<dt><var>new-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p>
+<p>If <em>new-p</em> is true, then the <em>window</em>&rsquo;s colormap attribute has changed to the given
+<em>colormap</em>. Otherwise, the <em>window</em>&rsquo;s colormap attribute has not, but the
+<em>colormap</em> has been installed or uninstalled.
+</p>
+</dd>
+<dt><var>installed-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p>
+<p>If <em>installed-p</em> is true, then the <em>colormap</em> is currently installed.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-_003aconfigure_002drequest"></a>Event Type: <strong>:configure-request</strong></dt>
+<dd>
+<p>Selected by:<var>:substructure-redirect</var> on parent.
+</p>
+<p>The <var>:configure-request</var> event is generated when a client
+program sets the <em>x</em>, <em>y</em>, <em>width</em>, <em>heigh</em>t,
+<em>border-width</em> or stacking priority attributes of a window that
+has the override-redirect attribute <var>:off</var>.
+</p>
+<dl compact="compact">
+<dt><var>parent</var></dt>
+<dt><var>event-window</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The window receiving the event. The receiving client must have selected
+<var>:substructure-redirect</var> on this window.
+</p>
+</dd>
+<dt><var>window</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The window to be reconfigured.
+</p>
+</dd>
+<dt><var>x</var></dt>
+<dd><p>Type <var>int16</var>.
+</p>
+<p><em>x</em> and <em>y</em> specify the requested upper-left corner position of the <em>window</em> relative
+to the parent. If either <em>x</em> or <em>y</em> is not specified in the value-mask, then it is set to
+the current window position.
+</p>
+</dd>
+<dt><var>y</var></dt>
+<dd><p>Type <var>int16</var>.
+</p>
+<p><em>x</em> and <em>y</em> specify the requested upper-left corner position of the <em>window</em> relative
+to the <em>parent</em>. If either <em>x</em> or <em>y</em> is not specified in the <em>value-mask</em>, then it is set to
+the current window position.
+</p>
+</dd>
+<dt><var>width</var></dt>
+<dt><var>height</var></dt>
+<dd><p>Type <var>card16</var>.
+</p>
+<p><em>width</em> and <em>height</em> specify the requested size of the <em>window</em> interior. If either
+<em>width</em> or <em>height</em> is not specified in the <em>value-mask</em>, then it is set to the current
+window size.
+</p>
+</dd>
+<dt><var>border-width</var></dt>
+<dd><p>Type <var>card16</var>
+</p>
+<p>The requested <em>window</em> border width. If <em>border-width</em> is not specified in the
+<em>value-mask</em>, then it is set to the current window <em>border-width</em>.
+</p>
+</dd>
+<dt><var>stack-mode</var></dt>
+<dd><p>Type <code>(member :above :below :top-if :bottom-if :opposite)</code>.
+</p>
+<p><em>stack-mode</em> and <em>above-sibling</em> specify the requested stacking priority of the
+<em>window</em>. If <em>stack-mode</em> is not specified in the <em>value-mask</em>, then it is set to
+<var>:above</var>.
+</p>
+</dd>
+<dt><var>above-sibling</var></dt>
+<dd><p>Type (<var>or null window</var>).
+</p>
+<p><em>stack-mode</em> and <em>above-sibling</em> specify the requested stacking priority of the
+<em>window</em>. If <em>above-sibling</em> is not specified in the <em>value-mask</em>, then it is set to <var>nil</var>.
+</p>
+</dd>
+<dt><var>value-mask</var></dt>
+<dd><p>Type <var>mask16</var>.
+</p>
+<p>Specifies the changed <em>window</em> attributes contained in the redirected client
+request. Each 1 bit specifies that the corresponding attribute was changed.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-_003amap_002drequest"></a>Event Type: <strong>:map-request</strong></dt>
+<dd>
+<p>Selected by: <var>:substructure-redirect</var> on parent.
+</p>
+<p>The <var>:map-request</var> event is generated when a client application
+maps a <em>window</em> that has the override-redirect attribute
+<var>:off</var>.
+</p>
+<dl compact="compact">
+<dt><var>parent</var></dt>
+<dt><var>event-window</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The window receiving the event. The receiving client must have selected
+<var>:substructure-redirect</var> on this window.
+</p>
+</dd>
+<dt><var>window</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The window to be mapped.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-_003aresize_002drequest"></a>Event Type: <strong>:resize-request</strong></dt>
+<dd>
+<p>Selected by: <var>:resize-redirect</var>.
+</p>
+<p>The <var>:resize-request</var> event is generated when a client program
+sets the <em>width</em> or <em>height</em> attributes of a <em>window</em>
+that has the override-redirect attribute <var>:off</var>.
+</p>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dt><var>event-window</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The window to be resized.
+</p>
+</dd>
+<dt><var>width</var></dt>
+<dt><var>height</var></dt>
+<dd><p>Type <var>card16</var>.
+</p>
+<p><em>width</em> and <em>height</em> specify the requested size of the wi<em>ndow</em> interior. If either
+<em>width</em> or <em>height</em> was unchanged in the client request, then it is set to the current
+window size.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Client-Communications-Events.html#Client-Communications-Events" accesskey="n" rel="next">Client Communications Events</a>, Previous: <a href="Window-State-Events.html#Window-State-Events" accesskey="p" rel="prev">Window State Events</a>, Up: <a href="Event-Types.html#Event-Types" accesskey="u" rel="up">Event Types</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

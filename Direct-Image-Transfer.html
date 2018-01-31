@@ -1,0 +1,234 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Direct Image Transfer</title>
+
+<meta name="description" content="Common LISP X Interface: Direct Image Transfer">
+<meta name="keywords" content="Common LISP X Interface: Direct Image Transfer">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Images.html#Images" rel="up" title="Images">
+<link href="Font-and-Characters.html#Font-and-Characters" rel="next" title="Font and Characters">
+<link href="Image-Files.html#Image-Files" rel="prev" title="Image Files">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Direct-Image-Transfer"></a>
+<div class="header">
+<p>
+Previous: <a href="Image-Files.html#Image-Files" accesskey="p" rel="prev">Image Files</a>, Up: <a href="Images.html#Images" accesskey="u" rel="up">Images</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Direct-Image-Transfer-1"></a>
+<h3 class="section">8.4 Direct Image Transfer</h3>
+
+
+<p>For cases where the <var>image</var> representation is not needed,
+CLX provides functions to read and display image data
+directly.
+</p><dl>
+<dt><a name="index-get_002draw_002dimage"></a>Function: <strong>get-raw-image</strong> <em>drawable &amp;key :data (:start 0) :x :y :width :height :plane-mask (:format :z-format) (:result-type '(vector card8))</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>drawable</var></dt>
+<dd><p>A <var>drawable</var>.
+</p></dd>
+<dt><var>:data</var></dt>
+<dd><p>An optional <var>sequence</var> of <var>card8</var>.
+</p></dd>
+<dt><var>:start</var></dt>
+<dd><p>The index of the first <var>:data</var> element modified.
+</p></dd>
+<dt><var>:x</var></dt>
+<dt><var>:y</var></dt>
+<dd><p><var>card16</var> values defining the size of the <var>image</var> returned. These arguments are
+required.
+</p></dd>
+<dt><var>:width</var></dt>
+<dt><var>:height</var></dt>
+<dd><p><var>card16</var> values defining the size of the image returned.These
+arguments are required.
+</p></dd>
+<dt><var>:plane-mask</var></dt>
+<dd><p>A pixel mask.
+</p></dd>
+<dt><var>:format</var></dt>
+<dd><p>Either <var>:xy-pixmap</var> or <var>:z-pixmap</var>. This argument is required.
+</p></dd>
+<dt><var>:result-type</var></dt>
+<dd><p>The type of image data sequence to return.
+</p></dd>
+</dl>
+
+
+<p>Returns a sequence of image data from the region of the
+<em>drawable</em> given by <var>:x</var>, <var>:y</var>,
+<var>:width</var>, and <var>:height</var>. If <var>:data</var> is
+given, it is modified beginning with the element at the
+<var>:start</var> index and returned. The <em>depth</em> and
+<em>visua</em>l type ID of the <em>drawable</em> are also
+returned.
+</p>
+<p>The bits for all planes selected by 1 bits in the
+<var>:plane-mask</var> are returned as zero; the default
+<var>:plane-mask</var> is all 1 bits. The <var>:format</var> of
+the returned pixel values may be either
+<var>:xy-format</var> or <var>:z-format</var>. The
+<var>:result-type</var> defines the type of image data
+returned.
+</p>
+<p>The calling program is responsible for handling the
+byte-order and bit-order returned by the server for the
+<em>drawable</em>&rsquo;s display (see <var>display-byte-order</var>
+and <var>display-image-lsb-first-p</var>).
+</p><dl compact="compact">
+<dt><var>data</var></dt>
+<dd><p>Type <var>sequence</var> or <var>card8</var>.
+</p></dd>
+<dt><var>depth</var></dt>
+<dd><p>Type <var>card8</var>.
+</p></dd>
+<dt><var>visual</var></dt>
+<dd><p>Type <var>card29</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-put_002draw_002dimage"></a>Function: <strong>put-raw-image</strong> <em>drawable gcontext data &amp;key (:start 0) :depth :x :y :width :height (:left-pad 0) :format</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>drawable</var></dt>
+<dd><p>The destination <var>drawable</var>.
+</p></dd>
+<dt><var>gcontext</var></dt>
+<dd><p>The graphics context used to display the image.
+</p></dd>
+<dt><var>data</var></dt>
+<dd><p>A sequence of integers.
+</p></dd>
+<dt><var>:start</var></dt>
+<dd><p>The index of the first element of <em>data</em> displayed.
+</p></dd>
+<dt><var>:depth</var></dt>
+<dd><p>The number of bits per pixel displayed. This argument is required.
+</p></dd>
+<dt><var>:x</var></dt>
+<dt><var>:y</var></dt>
+<dd><p>The position in the <em>drawable</em> where the image region is displayed. These
+arguments are required.
+</p></dd>
+<dt><var>:width</var></dt>
+<dt><var>:height</var></dt>
+<dd><p><var>card16</var> values defining the size of the image region displayed. These
+arguments are required.
+</p></dd>
+<dt><var>:left-pad</var></dt>
+<dd><p>A <var>card8</var> specifying the number of leading bits to discard for each image
+scanline.
+</p></dd>
+<dt><var>:format</var></dt>
+<dd><p>One of <var>:bitmap</var>, <var>:xy-pixmap</var>, or <var>:z-pixmap</var>.
+</p></dd>
+</dl>
+
+<p>Displays a region of the image data defined by <var>:start</var>,
+<var>:left-pad</var>, <var>:width</var>, and <var>:height</var> on the
+destination <em>drawable</em>, with the upper-left pixel of the image
+region displayed at the <em>drawable</em> position given by <var>:x</var>
+and <var>:y</var>.
+</p>
+<p>The <var>:format</var> can be either <var>:xy-pixmap</var>,
+<var>:z-pixmap</var>, or <var>:bitmap</var>. If <var>:xy-pixmap</var> or
+<var>:z-pixmap</var> formats are used, <var>:depth</var> must match the
+depth of the destination <em>drawable</em>. For <var>:xy-pixmap</var>, the
+data must be in XY format. For <var>:z-pixmap</var>, the data must be in
+Z format for the given <var>:depth</var>.
+</p>
+<p>If the <var>:format</var> is <var>:bitmap</var>, the <var>:depth</var> must be
+1. In this case, the image is combined with the foreground and
+background pixels of the <em>gcontext</em>. 1 bits of the image are
+displayed in the foreground pixel and 0 bits are displayed in the
+background pixel.
+</p>
+<p>The <var>:left-pad</var> must be zero for <var>:z-pixmap</var> format. For
+<var>:bitmap</var> and <var>:xy-pixmap</var> formats, the <var>:left-pad</var>
+must be less than the bitmap-scanline-pad for the <em>drawable</em>&rsquo;s
+display (see <a href="Display-Attributes.html#display_002dbitmap_002dformat">display-bitmap-format</a>). The first
+<var>:left-pad</var> bits in every scanline are to be ignored by the
+server; the actual image begins that many bits into the data.
+</p>
+<p>The following attributes of the <em>gcontext</em> are used to display
+the <var>image</var>: clip-mask, clip-x, clip-y, function, plane-mask,
+and subwindow-mode.
+</p>
+<p>The calling program is responsible for handling the byte-order and
+bit-order required by the server for the <em>drawable</em>&rsquo;s display
+(see <var>display-byte-order</var> and
+<var>display-image-lsb-first-p</var>).
+</p>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Previous: <a href="Image-Files.html#Image-Files" accesskey="p" rel="prev">Image Files</a>, Up: <a href="Images.html#Images" accesskey="u" rel="up">Images</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,299 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Basic Images</title>
+
+<meta name="description" content="Common LISP X Interface: Basic Images">
+<meta name="keywords" content="Common LISP X Interface: Basic Images">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Image-Types.html#Image-Types" rel="up" title="Image Types">
+<link href="XY_002dFormat-Images.html#XY_002dFormat-Images" rel="next" title="XY-Format Images">
+<link href="Image-Types.html#Image-Types" rel="prev" title="Image Types">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Basic-Images"></a>
+<div class="header">
+<p>
+Next: <a href="XY_002dFormat-Images.html#XY_002dFormat-Images" accesskey="n" rel="next">XY-Format Images</a>, Previous: <a href="Image-Types.html#Image-Types" accesskey="p" rel="prev">Image Types</a>, Up: <a href="Image-Types.html#Image-Types" accesskey="u" rel="up">Image Types</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Basic-Images-1"></a>
+<h4 class="subsection">8.1.1 Basic Images</h4>
+
+<p>The following paragraphs describe the CLX functions that can be used to
+access all types of <var>image</var> objects.
+</p>
+<dl>
+<dt><a name="index-image_002dblue_002dmask"></a>Function: <strong>image-blue-mask</strong> <em>image</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>image</var></dt>
+<dd><p>An <var>image</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns (and with <code>setf</code>) changes the <em>mask</em> that
+selects the pixel subfield for blue intensity values. The
+<em>mask</em> is non-<var>nil</var> only for images for
+<var>:direct-color</var> or <var>:true-color</var> visual types.
+</p>
+<dl compact="compact">
+<dt><var>mask</var></dt>
+<dd><p>Type <var>pixel</var> or <var>null</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-image_002ddepth"></a>Function: <strong>image-depth</strong> <em>image</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>image</var></dt>
+<dd><p>An <var>image</var> object.
+</p></dd>
+</dl>
+
+<p>Returns the <em>depth</em> (that is, the number of bits per pixel)
+for the <em>image</em>.
+</p><dl compact="compact">
+<dt><var>depth</var></dt>
+<dd><p>Type <var>card8</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-image_002dgreen_002dmask"></a>Function: <strong>image-green-mask</strong> <em>image</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>image</var></dt>
+<dd><p>An <var>image</var> object.
+</p></dd>
+</dl>
+
+<p>Returns (and with <code>setf</code>) changes the mask that selects the
+pixel subfield for green intensity values. The mask is
+non-<var>nil</var> only for images for <var>:direct-color</var> or
+<var>:true-color</var> visual types.
+</p><dl compact="compact">
+<dt><var>mask</var></dt>
+<dd><p>Type <var>pixel</var> or <var>null</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-image_002dheight"></a>Function: <strong>image-height</strong> <em>image</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>image</var></dt>
+<dd><p>An <var>image</var> object.
+</p></dd>
+</dl>
+
+<p>Returns the <em>height</em> of the <em>image</em> in pixels.
+</p><dl compact="compact">
+<dt><var>height</var></dt>
+<dd><p>Type <var>card16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-image_002dname"></a>Function: <strong>image-name</strong> <em>image</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>image</var></dt>
+<dd><p>An <var>image</var> object.
+</p></dd>
+</dl>
+
+<p>Returns and (with <code>setf</code>) changes the <em>name</em> string
+optionally associated with the <em>image</em>.
+</p><dl compact="compact">
+<dt><var>name</var></dt>
+<dd><p>Type <var>stringable</var> or <var>null</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-image_002dplist"></a>Function: <strong>image-plist</strong> <em>image</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>image</var></dt>
+<dd><p>An <var>image</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns and (with <code>setf</code>) changes the <em>image</em> property
+list. The property list is a hook for added application
+extensions.
+</p><dl compact="compact">
+<dt><var>plist</var></dt>
+<dd><p>Type <var>list</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-image_002dred_002dmask"></a>Function: <strong>image-red-mask</strong> <em>image</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>image</var></dt>
+<dd><p>An <var>image</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns (and with <code>setf</code>) changes the <em>mask</em> which
+selects the pixel subfield for red intensity values. The
+<em>mask</em> is non-<var>nil</var> only for images for
+<var>:direct-color</var> or <var>:true-color</var> visual types.
+</p><dl compact="compact">
+<dt><var>mask</var></dt>
+<dd><p>Type <var>pixel</var> or <var>null</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-image_002dwidth"></a>Function: <strong>image-width</strong> <em>image</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>image</var></dt>
+<dd><p>An <var>image</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns the <em>width</em> of the <em>image</em> in pixels.
+</p><dl compact="compact">
+<dt><var>width</var></dt>
+<dd><p>Type <var>card16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-image_002dx_002dhot"></a>Function: <strong>image-x-hot</strong> <em>image</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>image</var></dt>
+<dd><p>An <var>image</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns and (with <code>setf</code>) changes the x position of the hot
+spot for an image used as a cursor glyph. The hot spot position is
+specified relative to the upper-left origin of the <em>image</em>.
+</p><dl compact="compact">
+<dt><var>x-position</var></dt>
+<dd><p>Type <var>card16</var> or <var>null</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-image_002dy_002dhot"></a>Function: <strong>image-y-hot</strong> <em>image</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>image</var></dt>
+<dd><p>An <var>image</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns and (with <code>setf</code>) changes the y position of the hot
+spot for an image used as a cursor glyph. The hot spot position is
+specified relative to the upper-left origin of the <em>image</em>.
+</p><dl compact="compact">
+<dt><var>y-position</var></dt>
+<dd><p>Type <var>card16</var> or <var>null</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="XY_002dFormat-Images.html#XY_002dFormat-Images" accesskey="n" rel="next">XY-Format Images</a>, Previous: <a href="Image-Types.html#Image-Types" accesskey="p" rel="prev">Image Types</a>, Up: <a href="Image-Types.html#Image-Types" accesskey="u" rel="up">Image Types</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

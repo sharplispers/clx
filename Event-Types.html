@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Event Types</title>
+
+<meta name="description" content="Common LISP X Interface: Event Types">
+<meta name="keywords" content="Common LISP X Interface: Event Types">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Events-and-Input.html#Events-and-Input" rel="up" title="Events and Input">
+<link href="Keyboard-and-Pointer-Events.html#Keyboard-and-Pointer-Events" rel="next" title="Keyboard and Pointer Events">
+<link href="Grabbing-a-Key.html#Grabbing-a-Key" rel="prev" title="Grabbing a Key">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Event-Types"></a>
+<div class="header">
+<p>
+Next: <a href="Releasing-Queued-Events.html#Releasing-Queued-Events" accesskey="n" rel="next">Releasing Queued Events</a>, Previous: <a href="Grabbing-a-Key.html#Grabbing-a-Key" accesskey="p" rel="prev">Grabbing a Key</a>, Up: <a href="Events-and-Input.html#Events-and-Input" accesskey="u" rel="up">Events and Input</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Event-Types-1"></a>
+<h3 class="section">13.11 Event Types</h3>
+
+
+<p>The following paragraphs contain detailed descriptions of the contents
+of each event type. In CLX, events are not actually represented by
+structures, but rather by lists of keyword values passed to handler
+functions or by values bound to symbols within the clauses of
+<var>event-case</var> and <var>event-cond</var> forms. Nevertheless, it is
+convenient to describe event contents in terms of slots and to
+identify the components of events with slot name symbols. In fact, CLX
+uses the <var>declare-event</var> macro to define event slot symbols and to
+map these symbols to specific event data items returned by the X
+server (see <a href="Declaring-Event-Types.html#Declaring-Event-Types">Declaring Event Types</a>).
+</p>
+<p>The following paragraphs describe each event type, listing its
+<var>event-key</var> keyword symbol and its slot name symbols. An event
+keyword symbol identifies a specific event type.  An event keyword
+symbol can be given as an argument to <var>send-event</var> or to an event
+handler function; it can also appear in the <em>event-match</em> form of
+an <var>event-case</var> clause. An event slot name symbol identifies a
+specific event data item. Event slot names appear as keywords with
+associated values among the arguments passed to <var>send-event</var> or to
+an event handler function; as non-keyword symbols, they can also be in
+the <em>event-slots</em> form of an <var>event-case</var> clause.
+</p>
+<p>In certain cases, more than one name symbol is defined for the same
+event slot. For example, in <var>:key-press</var> events, the symbols
+<em>window</em> and <em>event-window</em> both refer to the same event data
+item.
+</p>
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top">&bull; <a href="Keyboard-and-Pointer-Events.html#Keyboard-and-Pointer-Events" accesskey="1">Keyboard and Pointer Events</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Input-Focus-Events.html#Input-Focus-Events" accesskey="2">Input Focus Events</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Keyboard-and-Pointer-State-Events.html#Keyboard-and-Pointer-State-Events" accesskey="3">Keyboard and Pointer State Events</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Exposure-Events.html#Exposure-Events" accesskey="4">Exposure Events</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Window-State-Events.html#Window-State-Events" accesskey="5">Window State Events</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Structure-Control-Events.html#Structure-Control-Events" accesskey="6">Structure Control Events</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Client-Communications-Events.html#Client-Communications-Events" accesskey="7">Client Communications Events</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Declaring-Event-Types.html#Declaring-Event-Types" accesskey="8">Declaring Event Types</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+</table>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Releasing-Queued-Events.html#Releasing-Queued-Events" accesskey="n" rel="next">Releasing Queued Events</a>, Previous: <a href="Grabbing-a-Key.html#Grabbing-a-Key" accesskey="p" rel="prev">Grabbing a Key</a>, Up: <a href="Events-and-Input.html#Events-and-Input" accesskey="u" rel="up">Events and Input</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

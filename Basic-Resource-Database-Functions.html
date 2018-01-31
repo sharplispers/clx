@@ -1,0 +1,210 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Basic Resource Database Functions</title>
+
+<meta name="description" content="Common LISP X Interface: Basic Resource Database Functions">
+<meta name="keywords" content="Common LISP X Interface: Basic Resource Database Functions">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Resources.html#Resources" rel="up" title="Resources">
+<link href="Accessing-Resource-Values.html#Accessing-Resource-Values" rel="next" title="Accessing Resource Values">
+<link href="Resource-Binings.html#Resource-Binings" rel="prev" title="Resource Binings">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Basic-Resource-Database-Functions"></a>
+<div class="header">
+<p>
+Next: <a href="Accessing-Resource-Values.html#Accessing-Resource-Values" accesskey="n" rel="next">Accessing Resource Values</a>, Previous: <a href="Resource-Binings.html#Resource-Binings" accesskey="p" rel="prev">Resource Binings</a>, Up: <a href="Resources.html#Resources" accesskey="u" rel="up">Resources</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Basic-Resource-Database-Functions-1"></a>
+<h3 class="section">14.2 Basic Resource Database Functions</h3>
+
+
+<p>A <var>resource-database</var> structure is a CLX object that represents a
+set of resource bindings. The following paragraphs describe the CLX
+functions used to:
+</p><ul>
+<li> Create a resource database
+
+</li><li> Add a resource binding
+
+</li><li> Remove a resource binding
+
+</li><li> Merge two resource databases
+
+</li><li> Map a function over the contents of a resource database
+</li></ul>
+
+<dl>
+<dt><a name="index-make_002dresource_002ddatabase"></a>Function: <strong>make-resource-database</strong></dt>
+<dd>
+<dl compact="compact">
+<dt><var>resource-database</var></dt>
+<dd><p>Type <var>resource-database</var>.
+</p></dd>
+</dl>
+
+<p>Returns an empty resource database.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-add_002dresource"></a>Function: <strong>add-resource</strong> <em>database name-list value</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>database</var></dt>
+<dd><p>The <var>resource-database</var> for the new resource binding.
+</p></dd>
+<dt><var>name-list</var></dt>
+<dd><p>A list containing strings or symbols specifying the name for the resource binding.
+</p></dd>
+<dt><var>value</var></dt>
+<dd><p>The value associated with the <em>name-list</em> in the resource binding. This can be an object of any type.
+</p></dd>
+</dl>
+
+<p>Adds the resource binding specified by <em>name-list</em> and
+<em>value</em> to the given <em>database</em>. Only one value can be
+associated with the <em>name-list</em> in the <em>database</em>. This
+function replaces any value previously associated with the
+<em>name-list</em>.
+</p>
+
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-delete_002dresource"></a>Function: <strong>delete-resource</strong> <em>database name-list</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>database</var></dt>
+<dd><p>The <var>resource-database</var> containing the resource binding.
+</p></dd>
+<dt><var>name-list</var></dt>
+<dd><p>A list containing strings or symbols specifying the name for the deleted resource binding.
+</p></dd>
+</dl>
+
+<p>Removes the resource binding specified by <em>name-list</em> from the given <em>database</em>.
+</p>
+
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-map_002dresource"></a>Function: <strong>map-resource</strong> <em>database function &amp;rest args</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>database</var></dt>
+<dd><p>A <var>resource-database</var>.
+</p></dd>
+<dt><var>function</var></dt>
+<dd><p>A <var>function</var> object or function symbol.
+</p></dd>
+<dt><var>args</var></dt>
+<dd><p>A list of arguments to the <em>function</em>.
+</p></dd>
+</dl>
+
+<p>Calls the function for each resource binding in the
+<em>database</em>. For each resource binding consisting of a
+<em>name-list</em> and a <em>value</em>, the form
+(<var>apply</var> <em>function name-list value args</em>)
+is executed.
+</p>
+
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-merge_002dresources"></a>Function: <strong>merge-resources</strong> <em>from-database to-database</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>from-database</var></dt>
+<dd><p>The <var>resource-database</var> from which resource bindings are read.
+</p></dd>
+<dt><var>to-database</var></dt>
+<dd><p>The <var>resource-database</var> to which resource bindings are added.
+</p></dd>
+</dl>
+
+
+<p>Merges the contents of the <em>from-database</em> with the
+<em>to-database</em>. <var>map-resource</var> invokes <var>add-resource</var>
+in order to add each resource binding in the <em>from-database</em> to
+the <em>to-database</em>. The updated <em>to-database</em> is returned.
+</p>
+<dl compact="compact">
+<dt><var>to-database</var></dt>
+<dd><p>Type <var>resource-database</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Accessing-Resource-Values.html#Accessing-Resource-Values" accesskey="n" rel="next">Accessing Resource Values</a>, Previous: <a href="Resource-Binings.html#Resource-Binings" accesskey="p" rel="prev">Resource Binings</a>, Up: <a href="Resources.html#Resources" accesskey="u" rel="up">Resources</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

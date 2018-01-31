@@ -1,0 +1,217 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Drawing Lines</title>
+
+<meta name="description" content="Common LISP X Interface: Drawing Lines">
+<meta name="keywords" content="Common LISP X Interface: Drawing Lines">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Graphic-Operations.html#Graphic-Operations" rel="up" title="Graphic Operations">
+<link href="Drawing-Rectangles.html#Drawing-Rectangles" rel="next" title="Drawing Rectangles">
+<link href="Drawing-Points.html#Drawing-Points" rel="prev" title="Drawing Points">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Drawing-Lines"></a>
+<div class="header">
+<p>
+Next: <a href="Drawing-Rectangles.html#Drawing-Rectangles" accesskey="n" rel="next">Drawing Rectangles</a>, Previous: <a href="Drawing-Points.html#Drawing-Points" accesskey="p" rel="prev">Drawing Points</a>, Up: <a href="Graphic-Operations.html#Graphic-Operations" accesskey="u" rel="up">Graphic Operations</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Drawing-Lines-1"></a>
+<h3 class="section">7.3 Drawing Lines</h3>
+
+
+<p>The <var>draw-line</var>, <var>draw-lines</var>, and <var>draw-segments</var> functions use the following
+graphics context components: background, cap-style, clip-x-origin, clip-y-origin,
+clip-mask, dash-list, dash-offset, fill-style, foreground, function, plane-mask, line-width,
+line-style, stipple, subwindow-mode, tile, ts-x-origin, and ts-y-origin.
+</p>
+<p>The <var>draw-lines</var> function also uses the join-style graphics context component.
+</p>
+<dl>
+<dt><a name="index-draw_002dline"></a>Function: <strong>draw-line</strong> <em>drawable gcontext x1 y1 x2 y2 &amp;optional relative-p</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>drawable</var></dt>
+<dd><p>The destination <var>drawable</var>.
+</p></dd>
+<dt><var>gcontext</var></dt>
+<dd><p>The graphics context for drawing the line.
+</p></dd>
+<dt><var>x1</var></dt>
+<dt><var>y1</var></dt>
+<dt><var>x2</var></dt>
+<dt><var>y2</var></dt>
+<dd><p>The end points of the line.
+</p></dd>
+<dt><var>relative-p</var></dt>
+<dd><p>Specifies the coordinate mode used for drawing the line either relative to
+the origin or the previous point. In either case, the first point is always drawn
+relative to the <em>drawable</em>&rsquo;s origin.
+</p></dd>
+</dl>
+
+<p>Draws a line from the point <em>x1</em>,<em>y1</em> to the point
+<em>x2</em>,<em>y2</em>. When <em>relative-p</em> is true, the first point
+is relative to the destination origin but the second point is relative
+to the first point.  When <em>relative-p</em> is <var>nil</var>, both points
+are relative to the destination origin.
+</p>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-draw_002dlines"></a>Function: <strong>draw-lines</strong> <em>drawable gcontext points &amp;key :relative-p :fill-p (:shape :complex)</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>drawable</var></dt>
+<dd><p>The destination <var>drawable</var>.
+</p></dd>
+<dt><var>gcontext</var></dt>
+<dd><p>The graphics context for drawing the lines.
+</p></dd>
+<dt><var>points</var></dt>
+<dd><p>A list of points that define the lines. Type is <var>point-seq</var>.
+</p></dd>
+<dt><var>:relative-p</var></dt>
+<dd><p>The coordinate mode of the points.
+</p></dd>
+<dt><var>:fill-p</var></dt>
+<dd><p>When true, a filled polygon is drawn instead of a polyline.
+</p></dd>
+<dt><var>:shape</var></dt>
+<dd><p>A hint that allows the server to use the most efficient area fill algorithm.
+Either <var>:convex</var>, <var>:non-convex</var>, or <var>:complex</var>.
+</p></dd>
+</dl>
+
+<p>Draws a line between each pair of <em>points</em> in the points
+list. The lines are drawn in the order listed and join correctly at
+all intermediate points. The join-style graphics context component
+defines the type of joint to use. When the first and last points
+coincide, the first and last lines also join correctly to produce a
+hollow polygon.
+</p>
+<p>When <var>:relative-p</var> is true, the first point is always relative to
+the destination origin, but the rest are relative to the previous
+point. When <var>:relative-p</var> is <var>nil</var>, the rest of the points
+are drawn relative to the destination origin.
+</p>
+<p>When <var>:fill-p</var> is true, the polygon defined by the <em>points</em>
+list is filled. The <var>:shape</var> keyword provides the server with a
+hint about how to fill the polygon. <var>:shape</var> can be either
+<var>:complex</var> (by default), <var>:convex</var>, or <var>:non-convex</var>.
+</p>
+<p>The <var>:convex</var> operand is the simplest type of area and the
+fastest to fill. A fill area is convex if every straight line
+connecting any two interior points is entirely inside the area.  For
+example, triangles and rectangles are convex polygons.
+</p>
+<p>The <var>:non-convex</var> operand is for filling an area that is not
+convex and is also not self-intersecting. Filling this type of area is
+harder than filling a convex area, but easier than filling one that is
+self-intersecting. For example, the shape of the letter &quot;T&quot; is
+non-convex and non-self-intersecting.
+</p>
+<p>The <var>:complex</var> operand is the most general (and therefore the
+hardest) type of fill area. A complex fill area can be non-convex and
+self-intersecting. For example, draw the outline of a bow tie, without
+lifting your pencil or tracing over an edge twice. This shape is
+non-convex and intersects itself at the knot in the middle.
+</p>
+<p><var>NOTE:</var> Unless you are sure that a shape is <var>:convex</var> or
+<var>:non-convex</var>, it should always be drawn as a <var>:complex</var>
+shape. If <var>:convex</var> or <var>:non-convex</var> is specified
+incorrectly, the graphics result is undefined.
+</p>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-draw_002dsegments"></a>Function: <strong>draw-segments</strong> <em>drawable gcontext segments</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>drawable</var></dt>
+<dd><p>The destination <var>drawable</var> to receive the line segments.
+</p></dd>
+<dt><var>gcontext</var></dt>
+<dd><p>Specifies the graphics context for drawing the lines.
+</p></dd>
+<dt><var>segments</var></dt>
+<dd><p>The points list for the segments to draw. Type is <var>seq</var>.
+</p></dd>
+</dl>
+
+<p>Draws multiple lines, not necessarily connected. <em>segments</em> is a
+sequence of the form {x1 y1 x2 y2}*, in which each subsequence
+specifies the end points of a line segment. Line segments are drawn in
+the order given by <em>segments</em>. Unlike <var>draw-lines</var>, no
+joining is performed at coincident end points.
+</p>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Drawing-Rectangles.html#Drawing-Rectangles" accesskey="n" rel="next">Drawing Rectangles</a>, Previous: <a href="Drawing-Points.html#Drawing-Points" accesskey="p" rel="prev">Drawing Points</a>, Up: <a href="Graphic-Operations.html#Graphic-Operations" accesskey="u" rel="up">Graphic Operations</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

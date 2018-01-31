@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: RENDER - A new rendering system for X11</title>
+
+<meta name="description" content="Common LISP X Interface: RENDER - A new rendering system for X11">
+<meta name="keywords" content="Common LISP X Interface: RENDER - A new rendering system for X11">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Extensions.html#Extensions" rel="up" title="Extensions">
+<link href="Picture-formats.html#Picture-formats" rel="next" title="Picture formats">
+<link href="SHAPE-_002d-The-X11-Nonrectangular-Window-Shape-Extension.html#SHAPE-_002d-The-X11-Nonrectangular-Window-Shape-Extension" rel="prev" title="SHAPE - The X11 Nonrectangular Window Shape Extension">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="RENDER-_002d-A-new-rendering-system-for-X11"></a>
+<div class="header">
+<p>
+Next: <a href="DPMS-_002d-The-X11-Display-Power-Management-Signaling-Extension.html#DPMS-_002d-The-X11-Display-Power-Management-Signaling-Extension" accesskey="n" rel="next">DPMS - The X11 Display Power Management Signaling Extension</a>, Previous: <a href="SHAPE-_002d-The-X11-Nonrectangular-Window-Shape-Extension.html#SHAPE-_002d-The-X11-Nonrectangular-Window-Shape-Extension" accesskey="p" rel="prev">SHAPE - The X11 Nonrectangular Window Shape Extension</a>, Up: <a href="Extensions.html#Extensions" accesskey="u" rel="up">Extensions</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="RENDER-_002d-A-new-rendering-system-for-X11-1"></a>
+<h3 class="section">16.3 RENDER - A new rendering system for X11</h3>
+
+
+<p>XRENDER is an experimental step in building a newer and modern graphics rendering
+system that can keep up with the demands of visual appearance on current user
+interfaces.
+</p>
+<p>The X Rendering Extension (Render) introduces digital image composition as
+the foundation of a new rendering model within the X Window System.
+Rendering geometric figures is accomplished by client-side tesselation into
+either triangles or trapezoids.  Text is drawn by loading glyphs into the
+server and rendering sets of them.
+</p>
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top">&bull; <a href="Picture-formats.html#Picture-formats" accesskey="1">Picture formats</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="The-picture-object.html#The-picture-object" accesskey="2">The picture object</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Glyphs-and-Glyphsets.html#Glyphs-and-Glyphsets" accesskey="3">Glyphs and Glyphsets</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Using-glyphs.html#Using-glyphs" accesskey="4">Using glyphs</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Using-cursors.html#Using-cursors" accesskey="5">Using cursors</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Errors-_0028Extensions_0029.html#Errors-_0028Extensions_0029" accesskey="6">Errors (Extensions)</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+</table>
+
+
+
+
+</body>
+</html>

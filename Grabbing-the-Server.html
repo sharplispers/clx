@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Grabbing the Server</title>
+
+<meta name="description" content="Common LISP X Interface: Grabbing the Server">
+<meta name="keywords" content="Common LISP X Interface: Grabbing the Server">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Control-Functions.html#Control-Functions" rel="up" title="Control Functions">
+<link href="Pointer-Control.html#Pointer-Control" rel="next" title="Pointer Control">
+<link href="Control-Functions.html#Control-Functions" rel="prev" title="Control Functions">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Grabbing-the-Server"></a>
+<div class="header">
+<p>
+Next: <a href="Pointer-Control.html#Pointer-Control" accesskey="n" rel="next">Pointer Control</a>, Previous: <a href="Control-Functions.html#Control-Functions" accesskey="p" rel="prev">Control Functions</a>, Up: <a href="Control-Functions.html#Control-Functions" accesskey="u" rel="up">Control Functions</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Grabbing-the-Server-1"></a>
+<h3 class="section">15.1 Grabbing the Server</h3>
+
+
+<p>Certain cases may require that a client demand exclusive access to the
+server, causing the processing for all other clients to be
+suspended. Such exclusive access is referred to as <em>grabbing the
+server</em>. CLX provides functions to grab and release exclusive access
+to the server. These function should be used rarely and always with
+extreme caution, since they have the potential to disrupt the entire
+window system for all clients.
+</p>
+<dl>
+<dt><a name="index-grab_002dserver"></a>Function: <strong>grab-server</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+</dl>
+
+<p>Disables processing of requests and close-downs on all connections
+other than the one on which this request arrived.
+</p>
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-ungrab_002dserver"></a>Function: <strong>ungrab-server</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+</dl>
+
+<p>Restarts processing of requests and close-downs on other
+connections.
+</p>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-with_002dserver_002dgrabbed"></a>Macro: <strong>with-server-grabbed</strong> <em>display &amp;body body</em></dt>
+<dd>
+<p>Grabs the <em>display</em> server only within the dynamic extent of
+the <em>body</em>. <var>ungrab-server</var> is automatically called upon
+exit from the <em>body</em>. This macro provides the most reliable way
+for CLX clients to grab the server.
+</p>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+<dt><var>body</var></dt>
+<dd><p>The forms to execute while the server is grabbed.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+
+
+
+</body>
+</html>

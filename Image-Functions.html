@@ -1,0 +1,424 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Image Functions</title>
+
+<meta name="description" content="Common LISP X Interface: Image Functions">
+<meta name="keywords" content="Common LISP X Interface: Image Functions">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Images.html#Images" rel="up" title="Images">
+<link href="Image-Files.html#Image-Files" rel="next" title="Image Files">
+<link href="Z_002dFormat-Images.html#Z_002dFormat-Images" rel="prev" title="Z-Format Images">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Image-Functions"></a>
+<div class="header">
+<p>
+Next: <a href="Image-Files.html#Image-Files" accesskey="n" rel="next">Image Files</a>, Previous: <a href="Image-Types.html#Image-Types" accesskey="p" rel="prev">Image Types</a>, Up: <a href="Images.html#Images" accesskey="u" rel="up">Images</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Image-Functions-1"></a>
+<h3 class="section">8.2 Image Functions</h3>
+
+<p>The following paragraphs describe the CLX functions used to:
+</p>
+<ul>
+<li> Create an <var>image</var> object.
+
+</li><li> Copy an image or a subimage.
+
+</li><li> Read an image from a <var>drawable</var>.
+
+</li><li> Display an image to a <var>drawable</var>.
+</li></ul>
+
+
+<dl>
+<dt><a name="index-create_002dimage"></a>Function: <strong>create-image</strong> <em>&amp;key :bit-lsb-first-p :bits-per-pixel :blue-mask :byte-lsb-first-p :bytes-per-line :data :depth :format :green-mask :height :name :plist :red-mask :width :x-hot :y-hot Function</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>:bit-lsb-first-p</var></dt>
+<dd><p>For a returned image, true if the order of bits in each <var>:data</var>
+byte is least-significant bit first.
+</p></dd>
+<dt><var>:bits-per-pixel</var></dt>
+<dd><p>One of 1, 4, 8, 16, 24, or 32.
+</p></dd>
+<dt><var>:blue-mask</var></dt>
+<dd><p>For <var>:true-color</var> or <var>:direct-color</var> images, a pixel mask.
+</p></dd>
+<dt><var>:byte-lsb-first-p</var></dt>
+<dd><p>For a returned <em>image</em>, true if the <var>:data</var> byte order is
+least-significant byte first.
+</p></dd>
+<dt><var>:bytes-per-line</var></dt>
+<dd><p>For a returned <em>image</em>, the number of <var>:data</var> bytes per scanline.
+</p></dd>
+<dt><var>:data</var></dt>
+<dd><p>Either a <var>list</var> of <var>bitmaps</var>, a <var>pixarray</var>, or an array of <var>card8</var> bytes.
+</p></dd>
+<dt><var>:depth</var></dt>
+<dd><p>The number of bits per displayed pixel.
+</p></dd>
+<dt><var>:format</var></dt>
+<dd><p>One of <var>:bitmap</var>, <var>:xy-format</var>, or <var>:z-format</var>.
+</p></dd>
+<dt><var>:green-mask</var></dt>
+<dd><p>For <var>:true-color</var> or <var>:direct-color</var> images, a pixel mask.
+</p></dd>
+<dt><var>:height</var></dt>
+<dd><p>A <var>card16</var> for the image height in pixels.
+</p></dd>
+<dt><var>:name</var></dt>
+<dd><p>An optional <var>stringable</var> for the image name.
+</p></dd>
+<dt><var>:plist</var></dt>
+<dd><p>An optional image property list.
+</p></dd>
+<dt><var>:red-mask</var></dt>
+<dd><p>For <var>:true-color</var> or <var>:direct-color</var> images, a pixel mask.
+</p></dd>
+<dt><var>:width</var></dt>
+<dd><p>A <var>card16</var> for the image width in pixels.
+</p></dd>
+<dt><var>:x-hot</var></dt>
+<dd><p>For a <var>cursor</var> image, the x position of the hot spot.
+</p></dd>
+<dt><var>:y-hot</var></dt>
+<dd><p>For a cursor image, the y position of the hot spot.
+</p></dd>
+</dl>
+
+<p>Creates an <var>image</var> object from the given <var>:data</var> and
+returns either an <var>image</var>, <var>image-xy</var>, or an
+<var>image-z</var>, depending on the type of image <var>:data</var>. If the
+<var>:data</var> is a list, it is assumed to be a <var>list</var> of
+<var>bitmaps</var> and an <var>image-xy</var> is created. If the
+<var>:data</var> is a <var>pixarray</var>, an <var>image-z</var> is
+created. Otherwise, the <var>:data</var> must be an array of bytes
+(<var>card8</var>), in which case a basic <var>image</var> object is
+created.
+</p>
+<p>If the <var>:data</var> is a list, each element must be a bitmap of
+equal size. <var>:width</var> and <var>:height</var> default to the bitmap
+width &ndash; (<var>array-dimension bitmap</var> 1) &ndash; and the bitmap height
+&ndash; (<var>array-dimension bitmap</var> 0) &ndash; respectively. <var>:depth</var>
+defaults to the number of bitmaps.
+</p>
+<p>If the <var>:data</var> is a <var>pixarray</var>, <var>:width</var> and
+<var>:height</var> default to the <var>pixarray</var> width &ndash;
+(<var>array-dimension pixarray</var> 1), and the pixarray height &ndash;
+(<var>array-dimension pixarray</var> 0), respectively. <var>:depth</var>
+defaults to (<var>pixarray-depth</var> <var>:data</var>). The
+<var>:bits-per-pixel</var> is rounded to a valid size, if necessary. By
+default, the <var>:bits-per-pixel</var> is equal to the <var>:depth</var>.
+</p>
+<p>If the <var>:data</var> is an array of <var>card8</var>, the <var>:width</var>
+and <var>:height</var> are required to interpret the image data
+correctly. The <var>:bits-per-pixel</var> defaults to the <var>:depth</var>,
+and the <var>:depth</var> defaults to 1. <var>:bytes-per-line</var> defaults
+to:
+</p>
+<div class="lisp">
+<pre class="lisp">(<var>floor</var> (<var>length :data</var>) (* <var>:bits-per-pixel :height</var>))
+</pre></div>
+
+<p>The <var>:format</var> defines the storage format of image data bytes
+and can be one of the following values:
+</p>
+<dl compact="compact">
+<dt><var>:xy-pixmap</var></dt>
+<dd><p>The <var>:data</var> is organized as a set of bitmaps representing image
+bit planes, appearing in most-significant to least-significant bit
+order.
+</p>
+</dd>
+<dt><var>:z-pixmap</var></dt>
+<dd><p>The <var>:data</var> is organized as a set of pixel values in scanline
+order.
+</p>
+</dd>
+<dt><var>:bitmap</var></dt>
+<dd><p>Similar to <var>:xy-pixmap</var>, except that the <var>:depth</var> must be 1,
+and 1 and 0 bits represent the foreground and background pixels,
+respectively.
+</p></dd>
+</dl>
+
+<p>By default, the <var>:format</var> is <var>:bitmap</var> if <var>:depth</var> is
+1; otherwise, <var>:z-pixmap</var>.
+</p>
+<dl compact="compact">
+<dt><var>Type <var>image</var>.</var></dt>
+</dl>
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-bitmap_002dimage"></a>Function: <strong>bitmap-image</strong> <em>&amp;optional plist &amp;rest patterns</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>plist</var></dt>
+<dd><p>A list or a pattern.
+</p></dd>
+<dt><var>pattern</var></dt>
+<dd><p>A pattern.
+</p></dd>
+</dl>
+
+<p>Creates an <var>image</var> object from the given <var>patterns</var> and
+returns an <var>image-z</var> of depth 1.  Each pattern is a bit-vector.
+If the first argument is a list, then it is used to initialize the
+property list of the image being created.
+</p>
+<p>The consequences are undefined if the <var>patterns</var> are not of the
+same length.
+</p>
+</dd></dl>
+
+<dl>
+<dt><a name="index-copy_002dimage"></a>Function: <strong>copy-image</strong> <em>image &amp;key (:x 0) (:y 0) :width :height :result-type</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>image</var></dt>
+<dd><p>An <var>image</var> object.
+</p></dd>
+<dt><var>:x</var></dt>
+<dt><var>:y</var></dt>
+<dd><p><var>card16</var> values defining the position of the upper-left corner of the subimage
+copied.
+</p></dd>
+<dt><var>:width</var></dt>
+<dt><var>:height</var></dt>
+<dd><p><var>card16</var> values defining the size of subimage copied.
+</p></dd>
+<dt><var>:result-type</var></dt>
+<dd><p>One of <var>&rsquo;image-x</var>, <var>&rsquo;image-xy</var>, or <var>&rsquo;image-z</var>.
+</p></dd>
+</dl>
+
+
+<p>Returns a new image, of the given <var>:result-type</var>, containing a
+copy of the portion of the <em>image</em> defined by <var>:x</var>,
+<var>:y</var>, <var>:width</var>, and <var>:height</var>. By default,
+<var>:width</var> is:
+</p>
+<div class="lisp">
+<pre class="lisp">(- (<var>image-width</var> <em>image</em>) <var>:x</var>)
+</pre></div>
+
+<p>and <var>:height</var> is:
+</p>
+<div class="lisp">
+<pre class="lisp">(- (<var>image-height</var> <em>image</em>) <var>:y</var>)
+</pre></div>
+
+<p>If necessary, the new image is converted to the <var>:result-type</var>,
+that can be one of the following values:
+</p>
+<dl compact="compact">
+<dt><code>'image-x</code></dt>
+<dd><p>A basic <var>image</var> object is returned.
+</p></dd>
+<dt><code>'image-xy</code></dt>
+<dd><p>An <var>image-xy</var> is returned.
+</p></dd>
+<dt><code>'image-z</code></dt>
+<dd><p>An <var>image-z</var> is returned.
+</p></dd>
+</dl>
+
+<dl compact="compact">
+<dt><var>new-image</var></dt>
+<dd><p>Type <var>image</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-get_002dimage"></a>Function: <strong>get-image</strong> <em>drawable &amp;key :x :y :width :height :plane-mask (:format :z-format) :result-type Function</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>drawable</var></dt>
+<dd><p>A <var>drawable</var>.
+</p></dd>
+<dt><var>:x</var></dt>
+<dt><var>:y</var></dt>
+<dd><p><var>card16</var> values defining the upper-left <var>drawable</var> pixel returned. These
+arguments are required.
+</p></dd>
+<dt><var>:width</var></dt>
+<dt><var>:height</var></dt>
+<dd><p><var>card16</var> values defining the size of the <em>image</em> returned. These
+arguments are required.
+</p></dd>
+<dt><var>:plane-mask</var></dt>
+<dd><p>A pixel mask.
+</p></dd>
+<dt><var>:format</var></dt>
+<dd><p>Either <var>:xy-pixmap</var> or <var>:z-pixmap</var>.
+</p></dd>
+<dt><var>:result-type</var></dt>
+<dd><p>One of <var>&rsquo;image-x</var>, <var>&rsquo;image-xy</var>, or <var>&rsquo;image-z</var>.
+</p></dd>
+</dl>
+
+
+<p>Returns an <em>image</em> containing pixel values from the region of
+the <em>drawable</em> given by <var>:x</var>, <var>:y</var>, <var>:width</var>,
+and <var>:height</var>. The bits for all planes selected by 1 bits in
+the <var>:plane-mask</var> are returned as zero; the default
+<var>:plane-mask</var> is all 1 bits. The <var>:format</var> of the returned
+pixel values may be either <var>:xy-format</var> or <var>:z-format</var>.
+</p>
+<p>The <var>:result-type</var> defines the type of image object returned:
+</p>
+<dl compact="compact">
+<dt><code>'image-x</code></dt>
+<dd><p>A basic <var>image</var> object is returned.
+</p></dd>
+<dt><code>'image-xy</code></dt>
+<dd><p>An <var>image-xy</var> is returned.
+</p></dd>
+<dt><code>'image-z</code></dt>
+<dd><p>An <var>image-z</var> is returned.
+</p></dd>
+</dl>
+
+
+<p>By default, <var>:result-type</var> is <var>&rsquo;image-z</var> if <var>:format</var>
+is <var>:z-format</var> and <var>&rsquo;image-xy</var> if <var>:format</var> is
+<var>:xy-format</var>.
+</p><dl compact="compact">
+<dt><var>Type <var>image</var>.</var></dt>
+</dl>
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-put_002dimage"></a>Function: <strong>put-image</strong> <em>drawable gcontext image &amp;key (:src-x 0) (:src-y 0) :x :y :width :height :bitmap-p</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>drawable</var></dt>
+<dd><p>The destination <var>drawable</var>.
+</p></dd>
+<dt><var>gcontext</var></dt>
+<dd><p>The graphics context used to display the <em>image</em>.
+</p></dd>
+<dt><var>image</var></dt>
+<dd><p>An <var>image</var> object.
+</p></dd>
+<dt><var>:src-x</var></dt>
+<dt><var>:src-y</var></dt>
+<dd><p><var>card16</var> values defining the upper-left position of the <em>image</em> region to
+display.
+</p></dd>
+<dt><var>:x</var></dt>
+<dt><var>:y</var></dt>
+<dd><p>The position in the <em>drawable</em> where the <em>image</em> region is displayed. These
+arguments are required.
+</p></dd>
+<dt><var>:width :height</var></dt>
+<dd><p><var>card16</var> values defining the size of the <em>image</em> region displayed.
+</p></dd>
+<dt><var>:bitmap-p</var></dt>
+<dd><p>If <em>image</em> is depth 1, then if true, foreground and background pixels are
+used to display 1 and 0 bits of the <em>image</em>.
+</p></dd>
+</dl>
+
+<p>Displays a region of the <em>image</em> defined by <var>:src-x</var>,
+<var>:src-y</var>, <var>:width</var>, and <var>:height</var> on the destination
+d<em>rawable</em>, with the upper-left pixel of the <em>image</em>
+region displayed at the <em>drawable</em> position given by <var>:x</var>
+and <var>:y</var>. By default, <var>:width</var> is:
+</p>
+<div class="lisp">
+<pre class="lisp">(- (<var>image-width</var> <em>image</em>) <var>:src-x</var>)
+</pre></div>
+
+<p>and <var>:height</var> is:
+</p>
+<div class="lisp">
+<pre class="lisp">(- (<var>image-height</var> <em>image</em>) <var>:src-y</var>)
+</pre></div>
+
+<p>The following attributes of the <em>gcontext</em> are used to display
+the <var>image</var>: clip-mask, clip-x, clip-y, function, plane-mask,
+and subwindow-mode.
+</p>
+<p>The <var>:bitmap-p</var> argument applies only to images of depth 1. In
+this case, if <var>:bitmap-p</var> is true or if the <em>image</em> is a
+basic <var>image</var> object created with <var>:format :bitmap</var>, the
+<em>image</em> is combined with the foreground and background pixels
+of the <var>gcontext</var>. 1 bits of the <em>image</em> are displayed in
+the foreground pixel and 0 bits are displayed in the background
+pixel.
+</p>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Image-Files.html#Image-Files" accesskey="n" rel="next">Image Files</a>, Previous: <a href="Image-Types.html#Image-Types" accesskey="p" rel="prev">Image Types</a>, Up: <a href="Images.html#Images" accesskey="u" rel="up">Images</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

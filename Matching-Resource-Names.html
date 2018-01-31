@@ -1,0 +1,139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Matching Resource Names</title>
+
+<meta name="description" content="Common LISP X Interface: Matching Resource Names">
+<meta name="keywords" content="Common LISP X Interface: Matching Resource Names">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Accessing-Resource-Values.html#Accessing-Resource-Values" rel="up" title="Accessing Resource Values">
+<link href="Resource-Access-Functions.html#Resource-Access-Functions" rel="next" title="Resource Access Functions">
+<link href="Complete-Names-and-Classes.html#Complete-Names-and-Classes" rel="prev" title="Complete Names and Classes">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Matching-Resource-Names"></a>
+<div class="header">
+<p>
+Next: <a href="Resource-Access-Functions.html#Resource-Access-Functions" accesskey="n" rel="next">Resource Access Functions</a>, Previous: <a href="Complete-Names-and-Classes.html#Complete-Names-and-Classes" accesskey="p" rel="prev">Complete Names and Classes</a>, Up: <a href="Accessing-Resource-Values.html#Accessing-Resource-Values" accesskey="u" rel="up">Accessing Resource Values</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Matching-Resource-Names-1"></a>
+<h4 class="subsection">14.3.2 Matching Resource Names</h4>
+
+
+<p>The resource lookup algorithm searches a specified resource data base
+and returns the value for the resource binding whose resource name is
+the closest match to a given complete resource name and class. The
+intent of the lookup algorithm is to formalize an intuitive notion of
+the closest match.
+</p>
+<p>Precedence is given to a match which begins <em>higher</em> in the
+parent-child contact hierarchy. This allows a resource binding with a
+partial name to define a resource value shared by all members of a
+window subtree. For example, suppose the resource database contained the
+following resource bindings:
+</p>
+<table>
+<tr><td><code>(mail * background)</code></td><td><code>'red</code></td></tr>
+<tr><td><code>(* reply background)</code></td><td><code>'blue</code></td></tr>
+</table>
+
+
+<p>Suppose an application program searched by using the following complete
+resource name:
+</p>
+<div class="lisp">
+<pre class="lisp">(mail screen-1 reply background)
+</pre></div>
+
+
+<p>then the closest matching value returned would be <code>'red</code>.
+</p>
+<p>Precedence is given to the more specific match. A name match is more
+specific than a class match. Either a name or class match is more
+specific than a wildcard match. For example, suppose the resource
+database contained the following resource bindings:
+</p>
+<table>
+<tr><td><code>(mail * background)</code></td><td><code>'red</code></td></tr>
+<tr><td><code>(mail * fill)</code></td><td><code>'blue</code></td></tr>
+</table>
+
+
+<p>Suppose an application program searched by using the following complete
+resource name and complete resource class:
+</p>
+<div class="lisp">
+<pre class="lisp">(mail screen-1 reply background)
+(application root button fill)
+</pre></div>
+
+
+<p>then the closest matching value returned would be
+<code>'red</code>. However, suppose the resource database contained the
+following resource bindings:
+</p>
+<table>
+<tr><td><code>(mail * background)</code></td><td><code>'red</code></td></tr>
+<tr><td><code>(mail * button background)</code></td><td><code>'blue</code></td></tr>
+</table>
+
+
+<p>then the closest matching value returned would be <code>'blue</code>.
+</p>
+
+
+
+</body>
+</html>

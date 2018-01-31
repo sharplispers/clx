@@ -1,0 +1,215 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Releasing Queued Events</title>
+
+<meta name="description" content="Common LISP X Interface: Releasing Queued Events">
+<meta name="keywords" content="Common LISP X Interface: Releasing Queued Events">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Events-and-Input.html#Events-and-Input" rel="up" title="Events and Input">
+<link href="Resources.html#Resources" rel="next" title="Resources">
+<link href="Declaring-Event-Types.html#Declaring-Event-Types" rel="prev" title="Declaring Event Types">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Releasing-Queued-Events"></a>
+<div class="header">
+<p>
+Previous: <a href="Event-Types.html#Event-Types" accesskey="p" rel="prev">Event Types</a>, Up: <a href="Events-and-Input.html#Events-and-Input" accesskey="u" rel="up">Events and Input</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Releasing-Queued-Events-1"></a>
+<h3 class="section">13.12 Releasing Queued Events</h3>
+
+
+<p>A client grabbing the keyboard or pointer can freeze the reporting of
+events on that device. When an input device is thus frozen, the server
+queues events until explicitly requested to release them by the grabbing
+client. CLX programs can use the <var>allow-events</var> function to release
+queued events from a frozen input device.
+</p>
+<dl>
+<dt><a name="index-allow_002devents"></a>Function: <strong>allow-events</strong> <em>display mode &amp;optional time</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p>
+</dd>
+<dt><var>mode</var></dt>
+<dd><p>One of: <var>:async-pointer</var>, <var>:sync-pointer</var>,
+<var>:reply-pointer</var>, <var>:async-keyboard</var>, <var>:sync-keyboard</var>,
+<var>:replay-keyboard</var>, <var>:async-both</var>, <var>:sync-both</var>.
+</p>
+</dd>
+<dt><var>time</var></dt>
+<dd><p>A <var>timestamp</var>.
+</p></dd>
+</dl>
+
+<p>Releases some queued events if the client has caused a device to
+freeze. The request has no effect if the <em>time</em> is earlier than
+the last-grab time of the most recent active grab for the client, or
+if the <em>time</em> is later than the current server time. If
+<em>time</em> is <var>nil</var>, the current server time is used. The
+effect of this function depends on the specified <em>mode</em>.
+</p><ul>
+<li> <var>:async-pointer</var> &ndash; If the pointer is frozen by the client,
+pointer event processing continues normally. If the pointer is
+frozen twice by the client on behalf of two separate grabs,
+<var>:async-pointer</var> releases events for both
+grab<em>s</em>. <var>:async-pointer</var> has no effect if the pointer
+is not frozen by the client, but the pointer need not be grabbed
+by the client.
+
+</li><li> <var>:sync-pointer</var> &ndash; If the pointer is frozen and actively
+grabbed by the client, pointer event processing continues normally
+until the next <var>:button-press</var> or <var>:button-release</var>
+event is reported to the client, at which time the pointer again
+appears to freeze. However, if the reported event causes the
+pointer grab to be released, the pointer does not
+freeze. <var>:sync-pointer</var> has no effect if the pointer is not
+frozen by the client, or if the pointer is not grabbed by the
+client.
+
+</li><li> <var>:replay-pointer</var> &ndash; If the pointer is actively grabbed by
+the client and is frozen as the result of an event having been
+sent to the client (either from the activation of a
+<var>grab-button</var>, or from a previous <var>allow-events</var> with
+mode <var>:sync-pointer</var>, but not from a <var>grab-pointer</var>),
+the pointer grab is released and that event is completely
+reprocessed, but this time ignoring any passive grabs at or above
+(towards the root) the <var>grab-window</var> of the grab just
+released. The request has no effect if the pointer is not grabbed
+by the client, or if the pointer is not frozen as the result of an
+event.
+
+</li><li> <var>:async-keyboard</var> &ndash; If the keyboard is frozen by the client,
+keyboard event processing continues normally. If the keyboard is
+frozen twice by the client on behalf of two separate grabs,
+<var>:async-keyboard</var> releases events for both grabs.
+<var>:async-keyboard</var> has no effect if the keyboard is not frozen
+by the client, but the keyboard need not be grabbed by the client.
+
+</li><li> <var>:sync-keyboard</var> &ndash; If the keyboard is frozen and actively
+grabbed by the client, keyboard event processing continues
+normally until the next <var>:key-press</var> or <var>:key-release</var>
+event is reported to the client, at which time the keyboard again
+appears to freeze. However if the reported event causes the
+keyboard grab to be released, the keyboard does not
+freeze. <var>:sync-keyboard</var> has no effect if the keyboard is not
+frozen by the client, or if the keyboard is not grabbed by the
+client.
+
+</li><li> <var>:replay-keyboard</var> &ndash; If the keyboard is actively grabbed by
+the client and is frozen as the result of an event having been
+sent to the client (either from the activation of a grab-key, or
+from a previous <var>allow-events</var> with mode
+<var>:sync-keyboard</var>, but not from a <var>grab-keyboard</var>), the
+keyboard grab is released and that event is completely
+reprocessed, but this time ignoring any passive grabs at or above
+(towards the root) the <var>grab-window</var> of the grab just
+released. The request has no effect if the keyboard is not grabbed
+by the client, or if the keyboard is not frozen as the result of
+an event.
+
+</li><li> <var>:sync-both</var> &ndash; If both pointer and keyboard are frozen by
+the client, event processing (for both devices) continues normally
+until the next <var>:button-press</var>, <var>:button-release</var>,
+<var>:key-press</var>, or <var>:key-release</var> event is reported to the
+client for a grabbed device (button event for the pointer, key
+event for the keyboard). At this time, the devices again appear to
+freeze. If the reported event causes the grab to be released, the
+devices do not freeze. However, if the other device is still
+grabbed, then a subsequent event for it will still cause both
+devices to freeze. <var>:sync-both</var> has no effect unless both
+pointer and keyboard are frozen by the client. If the pointer of
+keyboard is frozen twice by the client on behalf of two separate
+grabs, <var>:sync-both</var> <em>thaws</em> for both, but a subsequent
+freeze for <var>:sync-both</var> will only freeze each device once.
+
+</li><li> <var>:async-both</var> &ndash; If the pointer and the keyboard are frozen
+by the client, event processing for both devices continues
+normally. If a device is frozen twice by the client on behalf of
+two separate grabs, <var>:async-both</var> <em>thaws</em> for
+both. <var>:async-both</var> has no effect unless both pointer and
+keyboard are frozen by the client.
+</li></ul>
+
+<p><var>:async-pointer</var>, <var>:sync-pointer</var>, and
+<var>:replay-pointer</var> have no effect on processing of keyboard
+events. <var>:async-keyboard</var>, <var>:sync-keyboard</var>, and
+<var>:replay-keyboard</var> have no effect on processing of pointer
+events.
+</p>
+<p>It is possible for both a pointer grab and a keyboard grab to be
+active simultaneously by the same or different clients. When a
+device is frozen on behalf of either grab, no event processing is
+performed for the device. It is possible for a single device to be
+frozen due to both grabs. In this case, the freeze must be released
+on behalf of both grabs before events can again be processed.
+</p>
+
+
+</dd></dl>
+
+<hr>
+<div class="header">
+<p>
+Previous: <a href="Event-Types.html#Event-Types" accesskey="p" rel="prev">Event Types</a>, Up: <a href="Events-and-Input.html#Events-and-Input" accesskey="u" rel="up">Events and Input</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Displaying the Menu</title>
+
+<meta name="description" content="Common LISP X Interface: Displaying the Menu">
+<meta name="keywords" content="Common LISP X Interface: Displaying the Menu">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="A-Quick-Tour-of-CLX.html#A-Quick-Tour-of-CLX" rel="up" title="A Quick Tour of CLX">
+<link href="Menu-Input.html#Menu-Input" rel="next" title="Menu Input">
+<link href="A-Simple-Menu.html#A-Simple-Menu" rel="prev" title="A Simple Menu">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Displaying-the-Menu"></a>
+<div class="header">
+<p>
+Next: <a href="Menu-Input.html#Menu-Input" accesskey="n" rel="next">Menu Input</a>, Previous: <a href="A-Simple-Menu.html#A-Simple-Menu" accesskey="p" rel="prev">A Simple Menu</a>, Up: <a href="A-Quick-Tour-of-CLX.html#A-Quick-Tour-of-CLX" accesskey="u" rel="up">A Quick Tour of CLX</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Displaying-the-Menu-1"></a>
+<h4 class="subsection">2.2.2 Displaying the Menu</h4>
+
+<p>The <code>menu-recompute-geometry</code> function (shown in the
+following example) handles the job of calculating the size of the menu,
+based on its current item list and its current text font. CLX provides a
+way to inquire the geometrical properties of a font object (for example,
+its ascent and descent from the baseline) and also a
+<var>text-extents</var> (see <a href="Querying-Text-Size.html#text_002dextents">text-extents</a>)
+function.
+<var>text-extents</var> (see <a href="Querying-Text-Size.html#text_002dextents">text-extents</a>)
+returns the geometry of a given string as displayed in a given font.
+Notice the use of the
+<var>with-state</var> (see <a href="Window-Attributes.html#with_002dstate">with-state</a>)
+macro when setting a window&rsquo;s geometry attributes. CLX strives to
+preserve the familiar <code>setf</code> style of accessing individual window
+attributes, even though an attribute access actually involves sending a
+request to a (possibly remote) server and/or waiting for a reply.
+<var>with-state</var> (see <a href="Window-Attributes.html#with_002dstate">with-state</a>)
+tells CLX to batch together all read and write accesses to a given
+window, using a local cache to minimize the number of server requests.
+This CLX feature can result in a dramatic improvement in client
+performance without burdening the programmer interface.
+</p>
+<p><code>menu-recompute-geometry</code> causes all the item subwindows to
+become <em>mapped</em>. Mapping a window means attempting to make it
+visible on the screen. However, a subwindow will not actually be
+<em>visible</em> until it and all of its ancestors are mapped. Even then,
+another window might be covering up the subwindow.
+</p>
+<div class="lisp">
+<pre class="lisp">(defun menu-recompute-geometry (menu)
+  (when (menu-geometry-changed-p menu)
+    (let* ((menu-font   (GCONTEXT-FONT (menu-gcontext menu)))
+	   (title-width (TEXT-EXTENTS menu-font (menu-title menu)))
+	   (item-height (+ (FONT-ASCENT menu-font)
+			   (FONT-DESCENT menu-font)
+			   *menu-item-margin*))
+	   (item-width     0)
+	   (items          (menu-item-alist menu))
+	   menu-width)
+
+      ;; Find max item string width
+      (setf item-width
+	    (+ *menu-item-margin*
+	       (dolist (next-item items item-width)
+		 (setf item-width (max item-width
+				       (TEXT-EXTENTS menu-font (second next-item)))))))
+
+      ;; Compute final menu width, taking margins into account
+      (setf menu-width (max title-width (+ item-width *menu-item-margin*)))
+      (let ((window     (menu-window menu)))
+
+	;; Update width and height of menu window
+	(WITH-STATE (window)
+		    (setf (DRAWABLE-WIDTH      window) menu-width
+			  (DRAWABLE-HEIGHT window) (* (1+ (length items)) item-height)))
+
+	;; Update width, height, position of item         windows
+	(let ((item-left         (round (- menu-width item-width) 2))
+	      (next-item-top (- item-height (round *menu-item-margin* 2))))
+	  (dolist (next-item items)
+	    (let ((window (first next-item)))
+	      (WITH-STATE (window)
+			  (setf (DRAWABLE-HEIGHT window) item-height
+				(DRAWABLE-WIDTH      window) item-width
+				(DRAWABLE-X          window) item-left
+				(DRAWABLE-Y          window) next-item-top)))
+	    (incf next-item-top item-height))))
+
+      ;; Map all item windows
+      (MAP-SUBWINDOWS (menu-window menu))
+
+      ;; Save item geometry
+      (setf (menu-item-width menu)         item-width
+	    (menu-item-height menu)        item-height
+	    (menu-width menu)              menu-width
+	    (menu-title-width menu)        title-width
+	    (menu-geometry-changed-p menu) nil))))
+</pre></div>
+
+<p>Of course, the sample client must know how to draw/redraw the menu and
+its items, so the function <code>menu-refresh</code> is defined next to
+handle that task (shown in the following example). Note that the
+location of window output is given relative to the window origin.
+Windows and subwindows have different coordinate systems. The location
+of the origin (upper-left corner) of a subwindow&rsquo;s coordinate system is
+given with respect to its parent window&rsquo;s coordinate system. Negative
+coordinates are valid, although only output to the +x/+y quadrant of a
+window&rsquo;s coordinate system will ever be visible.
+</p>
+<div class="lisp">
+<pre class="lisp">(defun menu-refresh (menu)
+  (let* ((gcontext   (menu-gcontext menu))
+	 (baseline-y (FONT-ASCENT (GCONTEXT-FONT gcontext))))
+    ;; Show title centered in &quot;reverse-video&quot;
+    (let ((fg (GCONTEXT-BACKGROUND gcontext))
+	  (bg (GCONTEXT-FOREGROUND gcontext)))
+      (WITH-GCONTEXT (gcontext :foreground fg :background bg)
+		     (DRAW-IMAGE-GLYPHS
+		      (menu-window menu)
+		      gcontext
+		      (round (- (menu-width menu)
+				(menu-title-width menu)) 2) ;start x
+		      baseline-y	;start y
+		      (menu-title menu))))
+
+    ;; Show each menu item (position is relative to item window)
+    (let ((box-margin (round *menu-item-margin* 2)))
+      (dolist (item (menu-item-alist menu))
+	(DRAW-IMAGE-GLYPHS
+	 (first item) gcontext
+	 box-margin			;start x
+	 (+ baseline-y box-margin)	;start y
+	 (second item))))))
+</pre></div>
+
+<p><var>with-gcontext</var> (see <a href="Graphics-Context-Cache.html#with_002dgcontext">with-gcontext</a>)
+is a CLX macro that allows you temporarily to modify a graphics context
+within the dynamic scope of the macro body.
+<var>draw-image-glyphs</var> (see <a href="Drawing-Text.html#draw_002dimage_002dglyphs">draw-image-glyphs</a>)
+is a CLX text drawing function which produces a terminal-like rendering:
+foreground character on a background block. (More sophisticated text
+rendering functions are also available.) The strange use of
+<em>glyphs</em> instead of <em>string</em> here actually highlights an
+important fact: X and Common Lisp have totally different concepts of a
+character. A Common Lisp character is an object whose implementation can
+comprehend a vast universe of text complexities (typefaces, type styles,
+international character sets, symbols, and so forth). However, to X, a
+string is just a sequence of integer indexes into the array of bitmaps
+represented by a CLX font object. In general,
+<var>draw-image-glyphs</var> (see <a href="Drawing-Text.html#draw_002dimage_002dglyphs">draw-image-glyphs</a>),
+<var>text-extents</var> (see <a href="Querying-Text-Size.html#text_002dextents">text-extents</a>),
+and other CLX text functions accept a <var>:translate</var> keyword
+argument. Its value is a function which translates the characters of a
+string argument into the appropriate font-and-index pairs needed by CLX.
+This example relies upon the default translation function, which simply
+uses <var>char-code</var> to compute an index into the current font.
+</p>
+<hr>
+<div class="header">
+<p>
+Next: <a href="Menu-Input.html#Menu-Input" accesskey="n" rel="next">Menu Input</a>, Previous: <a href="A-Simple-Menu.html#A-Simple-Menu" accesskey="p" rel="prev">A Simple Menu</a>, Up: <a href="A-Quick-Tour-of-CLX.html#A-Quick-Tour-of-CLX" accesskey="u" rel="up">A Quick Tour of CLX</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,252 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Grabbing the Pointer</title>
+
+<meta name="description" content="Common LISP X Interface: Grabbing the Pointer">
+<meta name="keywords" content="Common LISP X Interface: Grabbing the Pointer">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Events-and-Input.html#Events-and-Input" rel="up" title="Events and Input">
+<link href="Grabbing-a-Button.html#Grabbing-a-Button" rel="next" title="Grabbing a Button">
+<link href="Managing-Input-Focus.html#Managing-Input-Focus" rel="prev" title="Managing Input Focus">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Grabbing-the-Pointer"></a>
+<div class="header">
+<p>
+Next: <a href="Grabbing-a-Button.html#Grabbing-a-Button" accesskey="n" rel="next">Grabbing a Button</a>, Previous: <a href="Managing-Input-Focus.html#Managing-Input-Focus" accesskey="p" rel="prev">Managing Input Focus</a>, Up: <a href="Events-and-Input.html#Events-and-Input" accesskey="u" rel="up">Events and Input</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Grabbing-the-Pointer-1"></a>
+<h3 class="section">13.7 Grabbing the Pointer</h3>
+
+
+<p>CLX provides the <var>grab-pointer</var> and <var>ungrab-pointer</var> functions
+for grabbing and releasing pointer control.
+</p>
+<dl>
+<dt><a name="index-grab_002dpointer"></a>Function: <strong>grab-pointer</strong> <em>window event-mask &amp;key :owner-p :sync-pointer-p :sync-keyboard-p :confine-to :cursor :time</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>The <var>window</var> grabbing the pointer.
+</p></dd>
+<dt><var>event-mask</var></dt>
+<dd><p>A <var>pointer-event-mask</var>.
+</p></dd>
+<dt><var>:owner-p</var></dt>
+<dd><p>If true, all client windows receive pointer events normally.
+</p></dd>
+<dt><var>:sync-pointer-p</var></dt>
+<dd><p>Indicates whether the pointer is in synchronous or asynchronous mode.
+</p></dd>
+<dt><var>:sync-keyboard-p</var></dt>
+<dd><p>Indicates whether the keyboard is in synchronous or asynchronous mode.
+</p></dd>
+<dt><var>:confine-to</var></dt>
+<dd><p>A <var>window</var> to which the pointer is confined.
+</p></dd>
+<dt><var>:cursor</var></dt>
+<dd><p>A <var>cursor</var>.
+</p></dd>
+<dt><var>:time</var></dt>
+<dd><p>A <var>timestamp</var>. A <var>nil</var> value means the current server time is used.
+</p></dd>
+</dl>
+
+
+<p>Actively grabs control of the pointer. Further pointer events are
+only reported to the grabbing client. The request overrides any
+active pointer grab by this client.
+</p>
+<p>If <var>:owner-p</var> is <var>nil</var>, all generated pointer events are
+reported with respect to <em>window</em>, and are only reported if
+selected by <em>event-mask</em>. If <var>:owner-p</var> is true, and if a
+generated pointer event would normally be reported to this client,
+it is reported normally; otherwise the event is reported with
+respect to the <em>window</em>, and is only reported if selected by
+<em>event-mask</em>. For either value of <var>:owner-p</var>, unreported
+events are simply discarded.
+</p>
+<p>If <var>:sync-pointer-p</var> is <var>nil</var>, pointer event processing
+continues normally (asynchronously); if the pointer is currently
+frozen by this client, then processing of pointer events is
+resumed. If <var>:sync-pointer-p</var> is true (indicating a synchronous
+action), the pointer (as seen via the protocol) appears to freeze,
+and no further pointer events are generated by the server until the
+grabbing client issues a releasing <var>allow-events</var> request.
+Actual pointer changes are not lost while the pointer is frozen;
+they are simply queued for later processing.
+</p>
+<p>If <var>:sync-keyboard-p</var> is <var>nil</var>, keyboard event processing
+is unaffected by activation of the grab. If <var>:sync-keyboard-p</var>
+is true, the keyboard (as seen via the protocol) appears to freeze,
+and no further keyboard events are generated by the server until the
+grabbing client issues a releasing <var>allow-events</var>
+request. Actual keyboard changes are not lost while the keyboard is
+frozen; they are simply queued for later processing.
+</p>
+<p>If <var>:cursor</var> is specified, it is displayed regardless of what
+window the pointer is in.  Otherwise, the normal cursor for the
+<em>window</em> is displayed.
+</p>
+<p>If a <var>:confine-to</var> window is specified, the pointer is
+restricted to stay within that window.  The <var>:confine-to</var>
+window does not need to have any relationship to the
+<em>window</em>. If the pointer is not initially in the
+<var>:confine-to</var> window, it is warped automatically to the closest
+edge (with <var>:enter</var>/<var>:leave-events</var> generated normally)
+just before the grab activates.  If the <var>:confine-to</var> window is
+subsequently reconfigured, the pointer is warped automatically as
+necessary to keep it contained in the window.
+</p>
+<p><var>grab-pointer</var> generates <var>:enter-notify</var> and
+<var>:leave-notify</var> events. <var>grab-pointer</var> can fail with a
+status of:
+</p><ul>
+<li> <var>:already-grabbed</var> if the pointer is actively grabbed by some
+other client
+
+</li><li> <var>:frozen</var> if the pointer is frozen by an active grab of
+another client
+
+</li><li> <var>:not-viewable</var> if the <em>window</em> or the
+<var>:confine-to</var> window is not viewable, or if the
+<var>:confine-to</var> window lies completely outside the boundaries
+of the root window.
+
+</li><li> <var>:invalid-time</var> if the specified time is earlier than the
+last-pointer-grab time or later than the current server
+time. Otherwise, the last-pointer-grab time is set to the
+specified time, with current-time replaced by the current server
+time, and a value of <var>:success</var> is returned by
+<var>grab-pointer</var>.
+</li></ul>
+<dl compact="compact">
+<dt><var>grab-status</var></dt>
+<dd><p>One of <var>:already-grabbed</var>, <var>:frozen</var>, <var>:invalid-time</var>,
+<var>:not-viewable</var>, or <var>:success</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-ungrab_002dpointer"></a>Function: <strong>ungrab-pointer</strong> <em>display &amp;key :time</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+<dt><var>:time</var></dt>
+<dd><p>A <var>timestamp</var>.
+</p></dd>
+</dl>
+
+<p>Releases the pointer if this client has it actively grabbed (from
+either <var>grab-pointer</var>, <var>grab-button</var>, or from a normal
+button press), and releases any queued events. The request has no
+effect if the specified <var>:time</var> is earlier than the
+last-pointer-grab time or is later than the current server time. An
+<var>ungrabpointer</var> is performed automatically if the event window
+or <var>:confine-to</var> window for an active pointer grab becomes not
+viewable.
+</p>
+<p>This request generates <var>:enter-notify</var> and <var>:leave-notify</var>
+events.
+</p>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-change_002dactive_002dpointer_002dgrab"></a>Function: <strong>change-active-pointer-grab</strong> <em>display event-mask &amp;optional cursor time</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+<dt><var>event-mask</var></dt>
+<dd><p>A <var>pointer-event-mask</var>.
+</p></dd>
+<dt><var>cursor</var></dt>
+<dd><p>A <var>cursor</var> or <var>nil</var>.
+</p></dd>
+<dt><var>time</var></dt>
+<dd><p>A <var>timestamp</var>.
+</p></dd>
+</dl>
+
+<p>Changes the specified dynamic parameters if the pointer is actively
+grabbed by the client and the specified <em>time</em> is no earlier
+than the last-pointer-grab time and no later than the current server
+time. The interpretation of <em>event-mask</em> and <em>cursor</em> are
+as in <var>grab-pointer</var>.  <var>change-active-pointer-grab</var> has no
+effect on the passive parameters of a <var>grab-button</var>.
+</p>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Grabbing-a-Button.html#Grabbing-a-Button" accesskey="n" rel="next">Grabbing a Button</a>, Previous: <a href="Managing-Input-Focus.html#Managing-Input-Focus" accesskey="p" rel="prev">Managing Input Focus</a>, Up: <a href="Events-and-Input.html#Events-and-Input" accesskey="u" rel="up">Events and Input</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

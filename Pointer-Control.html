@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Pointer Control</title>
+
+<meta name="description" content="Common LISP X Interface: Pointer Control">
+<meta name="keywords" content="Common LISP X Interface: Pointer Control">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Control-Functions.html#Control-Functions" rel="up" title="Control Functions">
+<link href="Keyboard-Control.html#Keyboard-Control" rel="next" title="Keyboard Control">
+<link href="Grabbing-the-Server.html#Grabbing-the-Server" rel="prev" title="Grabbing the Server">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Pointer-Control"></a>
+<div class="header">
+<p>
+Next: <a href="Keyboard-Control.html#Keyboard-Control" accesskey="n" rel="next">Keyboard Control</a>, Previous: <a href="Grabbing-the-Server.html#Grabbing-the-Server" accesskey="p" rel="prev">Grabbing the Server</a>, Up: <a href="Control-Functions.html#Control-Functions" accesskey="u" rel="up">Control Functions</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Pointer-Control-1"></a>
+<h3 class="section">15.2 Pointer Control</h3>
+
+
+<p>The following paragraphs describe the CLX functions used to:
+</p><ul>
+<li> Return or change the pointer acceleration and acceleration threshold
+
+</li><li> Return or change the mapping of pointer button numbers
+</li></ul>
+
+<dl>
+<dt><a name="index-change_002dpointer_002dcontrol"></a>Function: <strong>change-pointer-control</strong> <em>display &amp;key :acceleration :threshold</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+<dt><var>:acceleration</var></dt>
+<dd><p>A number for the acceleration ratio.
+</p></dd>
+<dt><var>:threshold</var></dt>
+<dd><p>The number of pixels required for acceleration to take effect.
+</p></dd>
+</dl>
+
+<p>Changes the acceleration and/or the acceleration threshold of the
+pointer for the <em>display</em>.  The <var>:acceleration</var> number is
+used as a multiplier, typically specified as a rational number of
+the form <em>C/P</em>, where <em>C</em> is the number of pixel positions
+of cursor motion displayed for <em>P</em> units of pointer device
+motion. The acceleration only occurs if the pointer moves more that
+<var>:threshold</var> pixels at once, and only applies to the motion
+beyond the <var>:threshold</var>. Either <var>:acceleration</var> or
+<var>:threshold</var> can be set to <var>:default</var>, that restores the
+default settings of the server.
+</p>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-pointer_002dcontrol"></a>Function: <strong>pointer-control</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+</dl>
+
+
+<p>Returns the acceleration and threshold for the <em>display</em>
+pointer.
+</p><dl compact="compact">
+<dt><var>acceleration</var></dt>
+<dt><var>threshold</var></dt>
+<dd><p>Type <var>number</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-pointer_002dmapping"></a>Function: <strong>pointer-mapping</strong> <em>display &amp;key (:result-type 'list)</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+<dt><var>:result-type</var></dt>
+<dd><p>The type of sequence to return.
+</p></dd>
+</dl>
+
+
+<p>Returns or (with <code>setf</code>) changes the mapping of button numbers
+for the <em>display</em> pointer.  The <var>:result-type</var> is not used
+when changing the mapping. If element <em>i</em> of the mapping
+sequence is <em>j</em>, then the events from pointer button <em>j</em>
+are reported by the server as events for button <em>i</em>+1. (Note
+that pointer buttons are numbered beginning with one, while the
+mapping sequence itself is indexed normally from zero.) If element
+<em>i</em> of the mapping sequence is zero, then button <em>i</em>+1 is
+disabled and can no longer generate input events. No two elements of
+the mapping can have the same non-zero value.
+</p>
+<p>The length of the mapping sequence indicates the actual number of
+buttons on the device. When changing the mapping, the new mapping
+must have this same length.
+</p><dl compact="compact">
+<dt><var>mapping</var></dt>
+<dd><p>Type <var>sequence</var> or <var>card8</var><em>.</em>
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Keyboard-Control.html#Keyboard-Control" accesskey="n" rel="next">Keyboard Control</a>, Previous: <a href="Grabbing-the-Server.html#Grabbing-the-Server" accesskey="p" rel="prev">Grabbing the Server</a>, Up: <a href="Control-Functions.html#Control-Functions" accesskey="u" rel="up">Control Functions</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

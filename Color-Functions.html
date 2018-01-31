@@ -1,0 +1,223 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Color Functions</title>
+
+<meta name="description" content="Common LISP X Interface: Color Functions">
+<meta name="keywords" content="Common LISP X Interface: Color Functions">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Colors.html#Colors" rel="up" title="Colors">
+<link href="Colormap-Functions.html#Colormap-Functions" rel="next" title="Colormap Functions">
+<link href="Colormaps-and-Colors.html#Colormaps-and-Colors" rel="prev" title="Colormaps and Colors">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Color-Functions"></a>
+<div class="header">
+<p>
+Next: <a href="Colormap-Functions.html#Colormap-Functions" accesskey="n" rel="next">Colormap Functions</a>, Previous: <a href="Colormaps-and-Colors.html#Colormaps-and-Colors" accesskey="p" rel="prev">Colormaps and Colors</a>, Up: <a href="Colors.html#Colors" accesskey="u" rel="up">Colors</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Color-Functions-1"></a>
+<h3 class="section">10.2 Color Functions</h3>
+
+
+<p>A color is represented by a CLX color object, in which each of the red,
+green, and blue values is specified by an <var>rgb-val</var> &ndash; a floating
+point number between 0.0 and 1.0.  (see <a href="Data-Types.html#Data-Types">Data Types</a>). The
+value 0.0 represents the minimum intensity, while 1.0 represents the
+maximum intensity. CLX automatically converts <var>rgb-val</var> values into
+16-bit integers when sending colors to an X server. The X server, in
+turn, scales 16-bit color values to match the actual intensity range
+supported by the screen.
+</p>
+<p>Colors used on <var>:gray-scale</var> screens must have the same value for
+each of red, green, and blue. Only one of these values is used by screen
+hardware to determine intensity; however, CLX does not define which of
+red, green, or blue is actually used.
+</p>
+<p>The following paragraphs describe the CLX functions used to create,
+access, and modify colors.
+</p>
+<dl>
+<dt><a name="index-make_002dcolor"></a>Function: <strong>make-color</strong> <em>&amp;key (:blue 1.0) (:green 1.0) (:red 1.0) &amp;allow-other-keys</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>:blue</var></dt>
+<dt><var>:green</var></dt>
+<dt><var>:red</var></dt>
+<dd><p><var>rgb-val</var> values that specify the saturation for each primary.
+</p></dd>
+</dl>
+
+
+<p>Creates, initializes, and returns a new <var>color</var> object with the
+specified values for red, green, and blue.
+</p><dl compact="compact">
+<dt><var>color</var></dt>
+<dd><p>Type <var>color</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-color_002dblue"></a>Function: <strong>color-blue</strong> <em>color</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>color</var></dt>
+<dd><p>A <var>color</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns and (with <code>setf</code>) sets the value for blue in the
+<em>color</em>.
+</p><dl compact="compact">
+<dt><var>blue-intensity</var></dt>
+<dd><p>Type <var>rgb-val</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-color_002dgreen"></a>Function: <strong>color-green</strong> <em>color</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>color</var></dt>
+<dd><p>A <var>color</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns and (with <code>setf</code>) sets the value for green in the
+<em>color</em>.
+</p><dl compact="compact">
+<dt><var>green-intensity</var></dt>
+<dd><p>Type <var>rgb-val</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-color_002dp"></a>Function: <strong>color-p</strong> <em>color</em></dt>
+<dd>
+<p>Returns non-<var>nil</var> if the argument is a <var>color</var> object and
+<var>nil</var> otherwise.
+</p>
+<dl compact="compact">
+<dt><var>color-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-color_002dred"></a>Function: <strong>color-red</strong> <em>color</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>color</var></dt>
+<dd><p>A <var>color</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns and (with <code>setf</code>) sets the value for red in the
+<em>color</em>.
+</p><dl compact="compact">
+<dt><var>red-intensity</var></dt>
+<dd><p>Type <var>rgb-val</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-color_002drgb"></a>Function: <strong>color-rgb</strong> <em>color</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>color</var></dt>
+<dd><p>A <var>color</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns the values for red, green, and blue in the <em>color</em>.
+</p><dl compact="compact">
+<dt><var>red</var></dt>
+<dt><var>green</var></dt>
+<dt><var>blue</var></dt>
+<dd><p>Type <var>rgb-val</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Colormap-Functions.html#Colormap-Functions" accesskey="n" rel="next">Colormap Functions</a>, Previous: <a href="Colormaps-and-Colors.html#Colormaps-and-Colors" accesskey="p" rel="prev">Colormaps and Colors</a>, Up: <a href="Colors.html#Colors" accesskey="u" rel="up">Colors</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

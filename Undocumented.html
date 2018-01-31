@@ -1,0 +1,332 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Undocumented</title>
+
+<meta name="description" content="Common LISP X Interface: Undocumented">
+<meta name="keywords" content="Common LISP X Interface: Undocumented">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="index.html#Top" rel="up" title="Top">
+<link href="Glossary.html#Glossary" rel="next" title="Glossary">
+<link href="Introduction-_0028Errors_0029.html#Introduction-_0028Errors_0029" rel="prev" title="Introduction (Errors)">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Undocumented"></a>
+<div class="header">
+<p>
+Next: <a href="Glossary.html#Glossary" accesskey="n" rel="next">Glossary</a>, Previous: <a href="Errors.html#Errors" accesskey="p" rel="prev">Errors</a>, Up: <a href="index.html#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Undocumented-1"></a>
+<h2 class="chapter">18 Undocumented</h2>
+
+<p>This section just lists all symbols exported from the
+<var>XLIB</var> package but not documented in this manual.
+</p>
+<dl>
+<dt><a name="index-character_002din_002dmap_002dp"></a>Function: <strong>character-in-map-p</strong> <em>display character keymap</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-decode_002dcore_002derror"></a>Function: <strong>decode-core-error</strong> <em>display event &amp;optional arg</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-default_002derror_002dhandler"></a>Function: <strong>default-error-handler</strong> <em>display error-key &amp;rest key-vals &amp;key asynchronous &amp;allow-other-keys</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-default_002dkeysym_002dindex"></a>Function: <strong>default-keysym-index</strong> <em>display keycode state</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-default_002dkeysym_002dtranslate"></a>Function: <strong>default-keysym-translate</strong> <em>display state object</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-define_002dkeysym"></a>Function: <strong>define-keysym</strong> <em>object keysym &amp;key lowercase translate modifiers mask display</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-define_002dkeysym_002dset"></a>Function: <strong>define-keysym-set</strong> <em>set first-keysym last-keysym</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-display_002dinvoke_002dafter_002dfunction"></a>Function: <strong>display-invoke-after-function</strong> <em>display</em></dt>
+<dd>
+
+<p>Explicitly invokes the <em>after-function</em> of the display.
+(see <var>display-after-function</var>). This function is
+internally called after every request.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-event_002dhandler"></a>Function: <strong>event-handler</strong> <em>handlers event-key</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-get_002dexternal_002devent_002dcode"></a>Function: <strong>get-external-event-code</strong> <em>display event</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-get_002dstandard_002dcolormap"></a>Function: <strong>get-standard-colormap</strong> <em>window property</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-get_002dwm_002dclass"></a>Function: <strong>get-wm-class</strong> <em>window</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-icon_002dsizes"></a>Function: <strong>icon-sizes</strong> <em>window</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-iconify_002dwindow"></a>Function: <strong>iconify-window</strong> <em>window screen</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-keysym_002d_003ekeycodes"></a>Function: <strong>keysym-&gt;keycodes</strong> <em>display keysym</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-keysym_002din_002dmap_002dp"></a>Function: <strong>keysym-in-map-p</strong> <em>display keysym keymap</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-keysym_002dset"></a>Function: <strong>keysym-set</strong> <em>keysym</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-mapping_002dnotify"></a>Function: <strong>mapping-notify</strong> <em>display request start count</em></dt>
+<dd>
+<p>Called on a <var>:mapping-notify</var> event to update
+the keyboard-mapping cache in <em>display</em>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-no_002doperation"></a>Function: <strong>no-operation</strong> <em>display</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-parse_002dcolor"></a>Function: <strong>parse-color</strong> <em>colormap spec</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-resource_002ddatabase_002dtimestamp"></a>Function: <strong>resource-database-timestamp</strong> <em>database</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-resource_002dkey"></a>Function: <strong>resource-key</strong> <em>stringable</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-rgb_002dcolormaps"></a>Function: <strong>rgb-colormaps</strong> <em>window property</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-root_002dresources"></a>Function: <strong>root-resources</strong> <em>screen &amp;key database key test test-not</em></dt>
+<dd>
+<p>Returns a resource database containing the contents of the
+root window <var>RESOURCE_MANAGER</var> property for the given
+<em>screen</em>. If <em>screen</em> is a display, then its
+default screen is used. If an existing <em>database</em> is
+given, then resource values are merged with the
+<em>database</em> and the modified <em>database</em> is
+returned.
+</p>
+<p><em>test</em> and <em>test-not</em> are predicates for selecting
+which resources are read. Arguments are a resource name list
+and a resource value. The <em>key</em> function, if given, is
+called to convert a resource value string to the value given
+to <em>test</em> or <em>test-not</em>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-rotate_002dcut_002dbuffers"></a>Function: <strong>rotate-cut-buffers</strong> <em>display &amp;optional (delta 1) (careful-p t)</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-set_002daccess_002dcontrol"></a>Function: <strong>set-access-control</strong> <em>display enabled-p</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-set_002dclose_002ddown_002dmode"></a>Function: <strong>set-close-down-mode</strong> <em>display mode</em></dt>
+<dd><a name="set_002dclose_002ddown_002dmode"></a></dd></dl>
+
+<dl>
+<dt><a name="index-set_002dpointer_002dmapping"></a>Function: <strong>set-pointer-mapping</strong> <em>display map</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-set_002dselection_002downer"></a>Function: <strong>set-selection-owner</strong> <em>display selection owner &amp;optional time</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-set_002dstandard_002dcolormap"></a>Function: <strong>set-standard-colormap</strong> <em>window property colormap base-pixel max-color mult-color</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-set_002dstandard_002dproperties"></a>Function: <strong>set-standard-properties</strong> <em>window &amp;rest options</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-set_002dwm_002dclass"></a>Function: <strong>set-wm-class</strong> <em>window resource-name resource-class</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-set_002dwm_002dproperties"></a>Function: <strong>set-wm-properties</strong> <em>window &amp;rest options &amp;key name icon-name resource-name resource-class command client-machine hints normal-hints zoom-hints (user-specified-position-p nil usppp) (user-specified-size-p nil usspp) (program-specified-position-p nil psppp) (program-specified-size-p nil psspp) x y width height min-width min-height max-width max-height width-inc height-inc min-aspect max-aspect base-width base-height win-gravity input initial-state icon-pixmap icon-window icon-x icon-y icon-mask window-group</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-set_002dwm_002dresources"></a>Function: <strong>set-wm-resources</strong> <em>database window &amp;key write test test-not</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-transient_002dfor"></a>Function: <strong>transient-for</strong> <em>window</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-translate_002ddefault"></a>Function: <strong>translate-default</strong> <em>src src-start src-end font dst dst-start</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-undefine_002dkeysym"></a>Function: <strong>undefine-keysym</strong> <em>object keysym &amp;key display modifiers &amp;allow-other-keys</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-visual_002dinfo_002dblue_002dmask"></a>Function: <strong>visual-info-blue-mask</strong> <em>object</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-visual_002dinfo_002dgreen_002dmask"></a>Function: <strong>visual-info-green-mask</strong> <em>object</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-visual_002dinfo_002dred_002dmask"></a>Function: <strong>visual-info-red-mask</strong> <em>object</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-window_002dcursor"></a>Function: <strong>window-cursor</strong> <em>window</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-window_002dvisual_002dinfo"></a>Function: <strong>window-visual-info</strong> <em>window</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-withdraw_002dwindow"></a>Function: <strong>withdraw-window</strong> <em>window screen</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-wm_002dclient_002dmachine"></a>Function: <strong>wm-client-machine</strong> <em>window</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-wm_002dcolormap_002dwindows"></a>Function: <strong>wm-colormap-windows</strong> <em>window</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-wm_002dcommand"></a>Function: <strong>wm-command</strong> <em>window</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-wm_002dhints"></a>Function: <strong>wm-hints</strong> <em>window</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-wm_002dhints_002dflags"></a>Function: <strong>wm-hints-flags</strong> <em>object</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-wm_002dicon_002dname"></a>Function: <strong>wm-icon-name</strong> <em>window</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-wm_002dname"></a>Function: <strong>wm-name</strong> <em>window</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-wm_002dnormal_002dhints"></a>Function: <strong>wm-normal-hints</strong> <em>window</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-wm_002dprotocols"></a>Function: <strong>wm-protocols</strong> <em>window</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-wm_002dresources"></a>Function: <strong>wm-resources</strong> <em>database window &amp;key key test test-not</em></dt>
+</dl>
+
+<dl>
+<dt><a name="index-wm_002dzoom_002dhints"></a>Function: <strong>wm-zoom-hints</strong> <em>window</em></dt>
+</dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Glossary.html#Glossary" accesskey="n" rel="next">Glossary</a>, Previous: <a href="Errors.html#Errors" accesskey="p" rel="prev">Errors</a>, Up: <a href="index.html#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

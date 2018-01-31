@@ -1,0 +1,1180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Graphics Context Attributes</title>
+
+<meta name="description" content="Common LISP X Interface: Graphics Context Attributes">
+<meta name="keywords" content="Common LISP X Interface: Graphics Context Attributes">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Graphics-Contexts.html#Graphics-Contexts" rel="up" title="Graphics Contexts">
+<link href="Copying-Graphics-Contexts.html#Copying-Graphics-Contexts" rel="next" title="Copying Graphics Contexts">
+<link href="Creating-Graphics-Contexts.html#Creating-Graphics-Contexts" rel="prev" title="Creating Graphics Contexts">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Graphics-Context-Attributes"></a>
+<div class="header">
+<p>
+Next: <a href="Copying-Graphics-Contexts.html#Copying-Graphics-Contexts" accesskey="n" rel="next">Copying Graphics Contexts</a>, Previous: <a href="Creating-Graphics-Contexts.html#Creating-Graphics-Contexts" accesskey="p" rel="prev">Creating Graphics Contexts</a>, Up: <a href="Graphics-Contexts.html#Graphics-Contexts" accesskey="u" rel="up">Graphics Contexts</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Graphics-Context-Attributes-1"></a>
+<h3 class="section">6.2 Graphics Context Attributes</h3>
+
+<p>The following paragraphs describe the CLX functions used to return or
+change the attributes of a <var>gcontext</var>. Functions that return the
+contents of a <var>gcontext</var> return <var>nil</var> if the last value stored
+is unknown (for example, if the <var>gcontext</var> was not cached or if
+the <var>gcontext</var> was not created by the inquiring client).
+</p>
+<dl>
+<dt><a name="index-gcontext_002darc_002dmode"></a>Function: <strong>gcontext-arc-mode</strong> <em>gcontext</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>gcontext</var></dt>
+<dd><p>A <var>gcontext</var>.
+</p></dd>
+</dl>
+
+<p>Returns and (with <code>setf</code>) changes the arc-mode attribute of the
+specified graphics context.
+</p>
+<p>The arc-mode attribute of a graphics context controls the kind of
+filling, if any, to be done by the <var>draw-arcs</var> function. A value
+of <var>:chord</var> specifies that arcs are filled inward to the chord
+between the end points of the arc. <var>:pie-slice</var> specifies that
+arcs are filled inward to the center point of the arc, creating a pie
+slice effect.
+</p>
+<dl compact="compact">
+<dt><var>arc-mode</var></dt>
+<dd><p>Either <var>:chord</var> or <var>:pie-slice</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-gcontext_002dbackground"></a>Function: <strong>gcontext-background</strong> <em>gcontext</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>gcontext</var></dt>
+<dd><p>A <var>gcontext</var>.
+</p></dd>
+</dl>
+
+<p>Returns and (with <code>setf</code>) changes the background attribute of the
+specified graphics context.
+</p>
+<p>The background attribute specifies the pixel value drawn for pixels
+that are not set in a bitmap and for pixels that are cleared by a
+graphics operation, such as the gaps in dashed lines.
+</p>
+<dl compact="compact">
+<dt><var>background</var></dt>
+<dd><p>Type <var>card32</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-gcontext_002dcache_002dp"></a>Function: <strong>gcontext-cache-p</strong> <em>gcontext</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>gcontext</var></dt>
+<dd><p>A <var>gcontext</var>.
+</p></dd>
+</dl>
+
+<p>Returns and (with <code>setf</code>) changes the local cache mode for the
+<em>gcontext</em>. If true, the state of the <em>gcontext</em> is cached
+by CLX and changes to its attributes have no effect unless the new
+value differs from its cached value.
+</p>
+<dl compact="compact">
+<dt><var>cache-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p></dd>
+</dl>
+
+<dl>
+<dt><a name="index-gcontext_002dcap_002dstyle"></a>Function: <strong>gcontext-cap-style</strong> <em>gcontext</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>gcontext</var></dt>
+<dd><p>A <var>gcontext</var>.
+</p></dd>
+</dl>
+
+<p>Returns and (with <code>setf</code>) changes the cap-style attribute of the
+specified graphics context.
+</p>
+<p>The cap-style attribute of a graphics context defines how the end
+points of a path are drawn. The possible values and their
+interpretations are as follows:
+</p><table>
+<tr><td><var>:butt</var></td><td>Square at the end point (perpendicular to the slope of the line) with no projection beyond.</td></tr>
+<tr><td><var>:not-last</var></td><td>Equivalent to <var>:butt</var>, except that for a line-width of zero or one
+the final end point is not drawn.</td></tr>
+<tr><td><var>:projecting</var></td><td>Square at the end, but the path continues beyond the end point for a
+distance equal to half the line-width. This is equivalent to
+<var>:butt</var> for line-width zero or one.</td></tr>
+<tr><td><var>:round</var></td><td>A circular arc with the radius equal to 1/2 of the line-width,
+centered on the end point. This is equivalent to <var>:butt</var> for
+line-width zero or one.</td></tr>
+</table>
+
+<p>The following table describes what happens when the end points of a
+line are identical.  The effect depends on both the cap style and line
+width.
+</p>
+<table>
+<tr><td><var>:butt</var></td><td>thin</td><td>Device dependent, but the desired effect is that a single pixel is
+drawn.</td></tr>
+<tr><td><var>:butt</var></td><td>wide</td><td>Nothing is drawn.</td></tr>
+<tr><td><var>:not-last</var></td><td>thin</td><td>Device dependent, but the desired effect is that nothing is drawn.</td></tr>
+<tr><td><var>:projecting</var></td><td>thin</td><td>Same as <var>:butt</var> with thin line-width.</td></tr>
+<tr><td><var>:projecting</var></td><td>wide</td><td>The closed path is a square, aligned with the coordinate axes,
+centered at the end point, with sides equal to the line-width.</td></tr>
+<tr><td><var>:round</var></td><td>wide</td><td>The closed path is a circle, centered at the end point, with diameter equal to the line-width.</td></tr>
+<tr><td><var>:round</var></td><td>thin</td><td>Same as <var>:butt</var> with thin line-width.</td></tr>
+</table>
+
+<dl compact="compact">
+<dt><var>cap-style</var></dt>
+<dd><p>One of <var>:butt</var>, <var>:not-last</var>, <var>:projecting</var>, or <var>:round</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-gcontext_002dclip_002dmask"></a>Function: <strong>gcontext-clip-mask</strong> <em>gcontext &amp;optional ordering</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>gcontext</var></dt>
+<dd><p>A <var>gcontext</var>.
+</p></dd>
+<dt><var>ordering</var></dt>
+<dd><p>One of <var>:unsorted</var>, <var>:y-sorted</var>, <var>:yx-banded</var>, <var>:yx-sorted</var>, or <var>nil</var>.
+</p></dd>
+</dl>
+
+<p>Returns and (with <code>setf</code>) changes the clip-mask attribute of the
+graphics context.
+</p>
+<p>When changing the clip-mask attribute, the new clip-mask can be
+specified as a pixmap or a <var>rect-seq</var> or as the values <var>:none</var>
+or <var>nil</var>. The ordering argument can be specified only with
+<code>setf</code> when the new clip-mask is a <var>rect-seq</var>.
+</p>
+<p>The clip-mask attribute of a graphics context affects all graphics
+operations and is used to restrict output to the destination
+drawable. The clip-mask does not clip the source of a graphics
+operation. A value of <var>:none</var> for clip-mask indicates that no
+clipping is to be done.
+</p>
+<p>If a pixmap is specified as the clip-mask, it must have depth one and
+the same root as the specified graphics context. Pixels where the
+clip-mask has a one bit are drawn. Pixels outside the area covered by
+the clip-mask or where the clip-mask has a zero bit are not drawn.
+</p>
+<p>If a sequence of rectangles is specified as the clip-mask, the output
+is clipped to remain contained within the rectangles. The rectangles
+should be non-intersecting, or the results of graphics operations will
+be undefined. The rectangle coordinates are interpreted relative to
+the clip origin. Note that the sequence of rectangles can be empty,
+which effectively disables output. This is the opposite of setting the
+clip-mask to <var>:none</var>.
+</p>
+<p>If known by the client, the ordering of clip-mask rectangles can be
+specified to provide faster operation by the server. A value of
+<var>:unsorted</var> means the rectangles are in arbitrary order. A value
+of <var>:y-sorted</var> means that the rectangles are non-decreasing in
+their Y origin. A <var>:yx-sorted</var> value is like <var>:y-sorted</var> with
+the additional constraint that all rectangles with an equal Y origin
+are non-decreasing in their X origin. A <var>:yx-banded</var> value
+additionally constrains <var>:yx-sorted</var> by requiring that, for every
+possible Y scan line, all rectangles that include that scan line have
+an identical Y origins and Y extents. If incorrect ordering is
+specified, the X server may generate an error, but it is not required
+to do so. If no error is generated, the results of the graphics
+operations are undefined.
+</p>
+
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-gcontext_002dclip_002dx"></a>Function: <strong>gcontext-clip-x</strong> <em>gcontext</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>gcontext</var></dt>
+<dd><p>A <var>gcontext</var>.
+</p></dd>
+</dl>
+
+<p>Returns and (with <code>setf</code>) changes the clip-x attribute of the
+specified graphics context.
+</p>
+<p>The clip-x and clip-y attributes specify the origin for the clip-mask,
+whether it is a pixmap or a sequence of rectangles. These coordinates
+are interpreted relative to the origin of whatever destination
+drawable is specified in a graphics operation.
+</p>
+<dl compact="compact">
+<dt><var>clip-x</var></dt>
+<dd><p>Type <var>int16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-gcontext_002dclip_002dy"></a>Function: <strong>gcontext-clip-y</strong> <em>gcontext</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>gcontext</var></dt>
+<dd><p>A <var>gcontext</var>.
+</p></dd>
+</dl>
+
+<p>Returns and (with <code>setf</code>) changes the clip-y attribute of the
+specified graphics context.
+</p>
+<p>The clip-x and clip-y attributes specify the origin for the clip-mask,
+whether it is a pixmap or a sequence of rectangles. These coordinates
+are interpreted relative to the origin of whatever destination
+drawable is specified in a graphics operation.
+</p><dl compact="compact">
+<dt><var>clip-y</var></dt>
+<dd><p>Type <var>int16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-gcontext_002ddash_002doffset"></a>Function: <strong>gcontext-dash-offset</strong> <em>gcontext</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>gcontext</var></dt>
+<dd><p>A <var>gcontext</var>.
+</p></dd>
+</dl>
+
+<p>Returns and (with <code>setf</code>) changes the dash-offset attribute of the
+specified graphics context.
+</p>
+<p>The dash-offset attribute of a graphics context defines the phase of
+the pattern contained in the dashes attribute. This phase specifies
+how many elements (pixels) into the path the pattern should actually
+begin in any single graphics operation. Dashing is continuous through
+path elements combined with a join-style, but is reset to the
+dash-offset each time a cap-style is applied at a line end point.
+</p><dl compact="compact">
+<dt><var>dash-offset</var></dt>
+<dd><p>Type <var>card16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-gcontext_002ddashes"></a>Function: <strong>gcontext-dashes</strong> <em>gcontext</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>gcontext</var></dt>
+<dd><p>A <var>gcontext</var>.
+</p></dd>
+</dl>
+
+<p>Returns and (with <code>setf</code>) changes the dashes attribute of the
+specified graphics context.  The sequence must be non-empty and the
+elements must be non-zero <var>card8</var> values.
+</p>
+<p>The dashes attribute in a graphics context specifies the pattern that
+is used for graphics operations which use the dashed line styles. It
+is a non-<var>nil</var> sequence with each element representing the length
+of a single dash or space. The initial and alternating elements of the
+dashes are the even dashes, while the others are the odd dashes. An
+odd length sequence is equivalent to the same sequence concatenated
+with itself to produce an even length sequence. All of the elements of
+a dashes sequence must be non-zero.
+</p>
+<p>Specifying a single integer value, <em>N</em>, for the dashes attribute
+is an abbreviated way of specifying a two element sequence with both
+elements equal to the specified value [<em>N</em>, <em>N</em>].
+</p>
+<p>The unit of measure for dashes is the same as in the ordinary
+coordinate system. Ideally, a dash length is measured along the slope
+of the line, but server implementations are only required to match
+this ideal for horizontal and vertical lines.
+</p><dl compact="compact">
+<dt><var>dashes</var></dt>
+<dd><p>Type <var>sequence</var> or <var>card8</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-gcontext_002ddisplay"></a>Function: <strong>gcontext-display</strong> <em>gcontext</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>gcontext</var></dt>
+<dd><p>A <var>gcontext</var>.
+</p></dd>
+</dl>
+
+<p>Returns the <var>display</var> object associated with the specified
+<em>gcontext</em>.
+</p><dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>Type <var>display</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-gcontext_002dequal"></a>Function: <strong>gcontext-equal</strong> <em>gcontext-1 gcontext-2</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>gcontext-1</var></dt>
+<dt><var>gcontext-2</var></dt>
+<dd><p>A <var>gcontext</var>.
+</p></dd>
+</dl>
+
+<p>Returns true if the two arguments refer to the same server resource,
+and <var>nil</var> if they do not.
+</p><dl compact="compact">
+<dt><var>equal-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-gcontext_002dexposures"></a>Function: <strong>gcontext-exposures</strong> <em>gcontext</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>gcontext</var></dt>
+<dd><p>A <var>gcontext</var>.
+</p></dd>
+</dl>
+
+<p>Returns and (with <code>setf</code>) changes the exposures attribute of the
+specified graphics context.
+</p>
+<p>The exposures attribute in a graphics context controls the generation
+of <var>:graphics-exposure</var> events for calls to the <var>copy-area</var>
+and <var>copy-plane</var> functions. If <var>:on</var>,
+<var>:graphics-exposure</var> events will be reported when calling the
+<var>copy-area</var> and <var>copy-plane</var> functions with this graphics
+context. Otherwise, if <var>:off</var>, the events will not be reported.
+</p><dl compact="compact">
+<dt><var>exposures</var></dt>
+<dd><p>Either <var>:off</var> or <var>:on</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-gcontext_002dfill_002drule"></a>Function: <strong>gcontext-fill-rule</strong> <em>gcontext</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>gcontext</var></dt>
+<dd><p>A <var>gcontext</var>.
+</p></dd>
+</dl>
+
+<p>Returns and (with <code>setf</code>) changes the fill-rule attribute of the
+specified graphics context.
+</p>
+<p>The fill-rule attribute in a graphics context specifies the rule used
+to determine the interior of a filled area. It can be specified as
+either <var>:even-odd</var> or <var>:winding</var>.
+</p>
+<p>The <var>:even-odd</var> rule defines a point to be inside if any infinite
+ray starting at the point crosses the border an odd number of
+times. Tangencies do not count as a crossing.
+</p>
+<p>The <var>:winding</var> rule defines a point to be inside if any infinite
+ray starting at the point crosses an unequal number of clockwise and
+counterclockwise directed border segments. A clockwise directed border
+segment crosses the ray from left to right as observed from the
+point. A counterclockwise segment crosses the ray from right to left
+as observed from the point. The case where a directed line segment is
+coincident with the ray is uninteresting because you can simply choose
+a different ray that is not coincident with a segment.
+</p>
+<p>For both <var>:even-odd</var> and <var>:winding</var>, a point is infinitely small, and the border is an
+infinitely thin line. A pixel is inside if the center point of the pixel is inside, and the center
+point is not on the border. If the center point is on the border, the pixel is inside if, and
+only if, the polygon interior is immediately to its right (x increasing direction). Pixels
+with centers along a horizontal edge are a special case and are inside if, and only if, the
+polygon interior is immediately below (y increasing direction).
+</p><dl compact="compact">
+<dt><var>fill-rule</var></dt>
+<dd><p>Either <var>:even-odd</var> or <var>:winding</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-gcontext_002dfill_002dstyle"></a>Function: <strong>gcontext-fill-style</strong> <em>gcontext</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>gcontext</var></dt>
+<dd><p>A <var>gcontext</var>.
+</p></dd>
+</dl>
+
+<p>Returns and (with <code>setf</code>) changes the fill-style attribute of the
+specified graphics context.
+</p>
+<p>The fill-style attribute of a graphics context defines the contents of
+the source for line, text, and fill graphics operations. It determines
+whether the source image is drawn with a solid color, a tile, or a
+stippled tile. The possible values and their meanings are as follows:
+</p>
+<dl compact="compact">
+<dt><var>:opaque-stippled</var></dt>
+<dd><p>Filled with a tile with the same width and height as stipple, but with
+the background value used everywhere stipple has a zero and the
+foreground pixel value used everywhere stipple has a one.
+</p>
+</dd>
+<dt><var>:solid</var></dt>
+<dd><p>Filled with the foreground pixel value.
+</p>
+</dd>
+<dt><var>:stippled</var></dt>
+<dd><p>Filled with the foreground pixel value masked by stipple.
+</p>
+</dd>
+<dt><var>:tiled</var></dt>
+<dd><p>Filled with tile.
+</p></dd>
+</dl>
+
+
+<p>When drawing lines with line-style <var>:double-dash</var>, the filling of
+the odd dashes are controlled by the fill-style in the following
+manner:
+</p>
+<dl compact="compact">
+<dt><var>:opaque-stippled</var></dt>
+<dd><p>Same as for even dashes.
+</p>
+</dd>
+<dt><var>:solid</var></dt>
+<dd><p>Filled with the background pixel value.
+</p>
+</dd>
+<dt><var>:stippled</var></dt>
+<dd><p>Filled with the background pixel value masked by stipple.
+</p>
+</dd>
+<dt><var>:tiled</var></dt>
+<dd><p>Filled the same as the even dashes.
+</p></dd>
+</dl>
+
+<dl compact="compact">
+<dt><var>fill-style</var></dt>
+<dd><p>One of <var>:opaque-stippled</var>, <var>:solid</var>, <var>:stippled</var>, or <var>:tiled</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-gcontext_002dfont"></a>Function: <strong>gcontext-font</strong> <em>gcontext &amp;optional metrics-p</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>gcontext</var></dt>
+<dd><p>A <var>gcontext</var>.
+</p>
+</dd>
+<dt><var>metrics-p</var></dt>
+<dd><p>Specifies whether a pseudo-font is returned when the real font stored
+in the graphics context is not known. The default is <var>nil</var>, which
+means do not return a pseudo-font.
+</p></dd>
+</dl>
+
+<p>Returns and (with <code>setf</code>) changes the <em>font</em> attribute of the
+specified graphics context. If the stored font is known, it is
+returned. If it is not known and the <em>metrics-p</em> argument is
+<var>nil</var>, then <var>nil</var> is returned. If the font is not known and
+<em>metrics-p</em> is true, then a pseudo-font is constructed and
+returned. For a constructed pseudo-font, full metric and property
+information can be obtained, but it does not have a name or a resource
+ID, and attempts to use it where a resource ID is required results in
+an invalid-font error.
+</p>
+<p>The font attribute in a graphics context defines the default text font
+used in text drawing operations. When setting the value of the font
+attribute, either a <var>font</var> object or a font name can be used. If a
+font name is passed, <var>open-font</var> is call automatically to get the
+<var>font</var> object.
+</p>
+<dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>Type <var>font</var> or <var>null</var>.
+</p></dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+
+
+<dl>
+<dt><a name="index-gcontext_002dforeground"></a>Function: <strong>gcontext-foreground</strong> <em>gcontext</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>gcontext</var></dt>
+<dd><p>A <var>gcontext</var>.
+</p></dd>
+</dl>
+
+<p>Returns and (with <code>setf</code>) changes the foreground attribute of the
+specified graphics context.
+</p>
+<p>The foreground attribute of a graphics context specifies the pixel
+value drawn for set bits in a bitmap and for bits set by a graphics
+operation.
+</p><dl compact="compact">
+<dt><var>foreground</var></dt>
+<dd><p>Type <var>card32</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-gcontext_002dfunction"></a>Function: <strong>gcontext-function</strong> <em>gcontext</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>gcontext</var></dt>
+<dd><p>A <var>gcontext</var>.
+</p></dd>
+</dl>
+
+<p>Returns the <em>function</em> of the specified graphics context.
+</p>
+<p>In all graphic operations, given a source pixel and a corresponding
+destination pixel, the resulting pixel drawn is computed bitwise on
+the bits of the source and destination pixels. That is, a logical
+operation is used to combine each bit plane of corresponding source
+and destination pixels. The graphics context function attribute
+specifies the logical operation used via one of the 16 operation codes
+defined by Common Lisp for the <var>boole</var> function.
+</p>
+<p>The following table shows each of the logical operation codes that can
+be given by the function attribute. For each operation code, its
+result is shown as a logical function of a source pixel <em>S</em> and a
+destination pixel <em>D</em>.
+</p>
+<table>
+<tr><td><var>boole-1</var></td><td><em>S</em></td></tr>
+<tr><td><var>boole-2</var></td><td><em>D</em></td></tr>
+<tr><td><var>boole-andc1</var></td><td>(logandc1 <em>S D</em>)</td></tr>
+<tr><td><var>boole-andc2</var></td><td>(logandc2 <em>S D</em>)</td></tr>
+<tr><td><var>boole-and</var></td><td>(logand <em>S D</em>)</td></tr>
+<tr><td><var>boole-c1</var></td><td>(lognot <em>S</em>)</td></tr>
+<tr><td><var>boole-c2</var></td><td>(lognot <em>D</em>)</td></tr>
+<tr><td><var>boole-clr</var></td><td>0</td></tr>
+<tr><td><var>boole-eqv</var></td><td>(logeqv <em>S D</em>)</td></tr>
+<tr><td><var>boole-ior</var></td><td>(logior <em>S D</em>)</td></tr>
+<tr><td><var>boole-nand</var></td><td>(lognand <em>S D</em>)</td></tr>
+<tr><td><var>boole-nor</var></td><td>(lognor <em>S D</em>)</td></tr>
+<tr><td><var>boole-orc1</var></td><td>(logorc1 <em>S D</em>)</td></tr>
+<tr><td><var>boole-orc2</var></td><td>(logorc2 <em>S D</em>)</td></tr>
+<tr><td><var>boole-set</var></td><td>1</td></tr>
+<tr><td><var>boole-xor</var></td><td>(logxor <em>S D</em>)</td></tr>
+</table>
+
+<dl compact="compact">
+<dt><var>function</var></dt>
+<dd><p>Type <var>boole-constant</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-gcontext_002did"></a>Function: <strong>gcontext-id</strong> <em>gcontext</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>gcontext</var></dt>
+<dd><p>A <var>gcontext</var>.
+</p></dd>
+</dl>
+
+<p>Returns the unique ID that has been assigned to the specified graphics
+context.
+</p><dl compact="compact">
+<dt><var>id</var></dt>
+<dd><p>Type <var>resource-id</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-gcontext_002djoin_002dstyle"></a>Function: <strong>gcontext-join-style</strong> <em>gcontext</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>gcontext</var></dt>
+<dd><p>A <var>gcontext</var>.
+</p></dd>
+</dl>
+
+<p>Returns and (with <code>setf</code>) changes the join-style attribute of the
+specified graphics context.
+</p>
+<p>The join-style attribute of a graphics context defines how the segment
+intersections are drawn for wide polylines. The possible values and
+their interpretations are as follows:
+</p>
+<dl compact="compact">
+<dt><var>:bevel</var></dt>
+<dd><p>Uses <var>:butt</var> end point styles with the triangular notch filled.
+</p></dd>
+<dt><var>:miter</var></dt>
+<dd><p>The outer edges of two lines extend to meet at an angle.
+</p></dd>
+<dt><var>:round</var></dt>
+<dd><p>A circular arc with diameter equal to the line-width, centered on the join point.
+</p></dd>
+</dl>
+
+<p>When the end points of a polyline segment are identical, the effect is
+as if the segment was removed from the polyline. When a polyline is a
+single point, the effect is the same as when the cap-style is applied
+at both end points.
+</p>
+<dl compact="compact">
+<dt><var>join-style</var></dt>
+<dd><p>One of <var>:bevel</var>, <var>:miter</var>, or <var>:round</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-gcontext_002dline_002dstyle"></a>Function: <strong>gcontext-line-style</strong> <em>gcontext</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>gcontext</var></dt>
+<dd><p>A <var>gcontext</var>.
+</p></dd>
+</dl>
+
+<p>Returns and (with <code>setf</code>) changes the line-style attribute of the
+specified graphics context.
+</p>
+<p>The line-style attribute of a graphics context specifies how (which
+sections of) lines are drawn for a path in graphics operations. The
+possible values and their meanings are as follows:
+</p>
+<dl compact="compact">
+<dt><var>:solid</var></dt>
+<dd><p>The full path is drawn.
+</p>
+</dd>
+<dt><var>:double-dash</var></dt>
+<dd><p>The full path is drawn, but the even dashes are filled differently
+than the odd dashes. The <var>:butt</var> style is used where even and odd
+dashes meet (see paragraph 5.4.7, Fill-Rule and
+Fill-Style).
+</p>
+</dd>
+<dt><var>:on-off-dash</var></dt>
+<dd><p>Only the even dashes are drawn, with cap-style applied to all internal
+ends of the individual dashes, except <var>:not-last</var> is treated as
+<var>:butt</var>.
+</p></dd>
+</dl>
+
+<dl compact="compact">
+<dt><var>line-style</var></dt>
+<dd><p>One of <var>:dash</var>, <var>:double-dash</var>, or <var>:solid</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-gcontext_002dline_002dwidth"></a>Function: <strong>gcontext-line-width</strong> <em>gcontext</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>gcontext</var></dt>
+<dd><p>A <var>gcontext</var>.
+</p></dd>
+</dl>
+
+<p>Returns the <em>line-width</em> of the specified graphics context.
+</p>
+<p>The line-width is measured in pixels and can be greater than or equal
+to one (wide line) or can be the special value zero (thin line).
+</p>
+<p>Wide lines are drawn centered on the path described by the graphics
+operation. Unless otherwise specified by the join-style or cap-style,
+the bounding box of a wide line with end points [x1, y1], [x2, y2],
+and width w is a rectangle with vertices at the following real
+coordinates:
+</p>
+<p>[x1 - (w*<em>sin</em>/2), y1 + (w*<em>cos</em>/2)], [x1+ (w*<em>sin</em>/2), y1 - (w*<em>cos</em>/2)],<br>
+[x2 - (w*<em>sin</em>/2), y2 + (w*<em>cos</em>/2)], [x2 + (w*<em>sin</em>/2), y2 - (w*<em>cos</em>/2)]
+</p>
+<p>where <em>sin</em> is the sine of the angle of the line and <em>cos</em>
+is the cosine of the angle of the line. A pixel is part of the line
+and, hence, is drawn if the center of the pixel is fully inside the
+bounding box (which is viewed as having infinitely thin edges). If the
+center of the pixel is exactly on the bounding box, it is part of the
+line if, and only if, the interior is immediately to its right (x
+increasing direction). Pixels with centers on a horizontal edge are a
+special case and are part of the line if, and only if, the interior is
+immediately below (y increasing direction).
+</p>
+<p>Thin lines (zero line-width) are always one pixel wide lines drawn
+using an unspecified, device dependent algorithm. There are only two
+constraints on this algorithm.
+</p>
+<ol>
+<li> If a line is drawn unclipped from [x1,y1] to [x2,y2] and if another
+line is drawn unclipped from [x1+dx,y1+dy] to [x2+dx,y2+dy], a point
+[x,y] is touched by drawing the first line if, and only if, the
+point [x+dx,y+dy] is touched by drawing the second line.
+
+</li><li> The effective set of points comprising a line cannot be affected by
+clipping. That is, a point is touched in a clipped line if, and only
+if, the point lies inside the clipping region and the point would be
+touched by the line when drawn unclipped.
+</li></ol>
+
+
+<p>A wide line drawn from [x1,y1] to [x2,y2] always draws the same pixels
+as a wide line drawn from [x2,y2] to [x1,y1], not counting cap-style
+and join-style. Implementors are encouraged to make this property true
+for thin lines, but it is not required. A line-width of zero may
+differ from a line-width of one in which pixels are drawn. This
+permits the use of many manufacturer&rsquo;s line drawing hardware, which
+may run much faster than the more precisely specified wide lines.
+</p>
+<p>In general, drawing a thin line is faster than drawing a wide line of
+width one. However, because of their different drawing algorithms,
+thin lines may not mix well, aesthetically speaking, with wide
+lines. If it is desirable to obtain precise and uniform results across
+all displays, a client should always use a line-width of one, rather
+than a line-width of zero.
+</p><dl compact="compact">
+<dt><var>line-width</var></dt>
+<dd><p>Type <var>card16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-gcontext_002dp"></a>Function: <strong>gcontext-p</strong> <em>gcontext</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>gcontext</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p></dd>
+</dl>
+
+
+
+<p>Returns non-<var>nil</var> if the argument is a graphics context and
+</p>
+</dd></dl>
+
+
+
+
+<dl>
+<dt><a name="index-gcontext_002dplane_002dmask"></a>Function: <strong>gcontext-plane-mask</strong> <em>gcontext</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>gcontext</var></dt>
+<dd><p>A <var>gcontext</var>.
+</p></dd>
+</dl>
+
+<p>Returns the <em>plane-mask</em> of the specified graphics context.
+</p>
+<p>The plane-mask attribute of a graphics context specifies which bit
+planes of the destination drawable are modified during a graphic
+operation. The plane-mask is a pixel value in which a 1 bit means that
+the corresponding bit plane will be modified and a 0 bit means that
+the corresponding bit plane will not be affected during a graphic
+operations. Thus, the actual result of a graphic operation depends on
+both the function and plane-mask attributes of the graphics context
+and is given by the following expression:
+</p>
+<div class="lisp">
+<pre class="lisp">(logior (logand
+	 (boole function source destination)
+	 plane-mask)
+
+	(logandc2
+	 destination
+	 plane-mask))
+</pre></div>
+
+<dl compact="compact">
+<dt><var>plane-mask</var></dt>
+<dd><p>Type <var>card32</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-gcontext_002dplist"></a>Function: <strong>gcontext-plist</strong> <em>gcontext</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>gcontext</var></dt>
+<dd><p>A <var>gcontext</var>.
+</p></dd>
+</dl>
+
+
+
+<p>Returns and (with <code>setf</code>) sets the property list for the specified
+<em>gcontext</em>. This function provides a hook where extensions can
+add data.
+</p>
+<dl compact="compact">
+<dt><var>gcontext-p</var></dt>
+<dd><p>Type <var>list</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-gcontext_002dstipple"></a>Function: <strong>gcontext-stipple</strong> <em>gcontext</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>gcontext</var></dt>
+<dd><p>A <var>gcontext</var>.
+</p></dd>
+</dl>
+
+<p>Returns the <em>stipple</em> of the specified graphics context.
+</p>
+<p>The stipple attribute of a graphics context is a bitmap used to
+prevent certain pixels in the destination of graphics operations from
+being affected by tiling.
+</p>
+<p>The stipple and tile have the same origin. This origin point is
+interpreted relative to the origin of whatever destination drawable is
+specified in a graphics request. The stipple pixmap must have depth
+one and must have the same root as the graphics context. The tile
+pixmap must have the same root and depth as the graphics context. For
+stipple operations where the fill-style is <var>:stippled</var> (but not
+<var>:opaque-stippled</var>), the stipple pattern is tiled in a single
+plane and acts as an additional clip mask to be <var>and</var>ed with the
+clip-mask.  Any size pixmap can be used for stipple or tile, although
+some sizes may be faster to use than others.
+</p>
+<p>Specifying a pixmap for stipple or tile in a graphics context might or
+might not result in a copy being made. If the pixmap is later used as
+the destination for a graphics operation, the change might or might
+not be reflected in the graphics context. If the pixmap is used both
+as the destination for a graphics operation and as a stipple or tile,
+the results are not defined.
+</p>
+<p>Some displays have hardware support for tiling or stippling with
+patterns of specific sizes. Tiling and stippling operations that
+restrict themselves to those sizes may run much faster than such
+operations with arbitrary size patterns. CLX provides functions to
+determine the best size for stipple or tile (see
+<var>query-best-stipple</var> and <var>query-best-tile</var>).
+</p>
+<dl compact="compact">
+<dt><var>stipple</var></dt>
+<dd><p>Type <var>pixmap</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-gcontext_002dsubwindow_002dmode"></a>Function: <strong>gcontext-subwindow-mode</strong> <em>gcontext</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>gcontext</var></dt>
+<dd><p>A <var>gcontext</var>.
+</p></dd>
+</dl>
+
+<p>Returns and (with <code>setf</code>) changes the subwindow-mode attribute of
+the specified graphics context.
+</p>
+<p>The subwindow-mode attribute of a graphics context specifies whether
+subwindows obscure the contents of their parent window during a
+graphics operation. For a value of <var>:clip-by-children</var>, both
+source and destination windows are clipped by all viewable
+<var>:input-output</var> class children. This clipping is in addition to
+the clipping provided by the clip-mode attribute. For a value of
+<var>:include-inferiors</var>, neither the source nor destination window
+is clipped by its inferiors. This results in the inclusion of
+subwindow contents in the source and the drawing through of subwindow
+boundaries of the destination. The use of <var>:include-inferiors</var> on
+a window of one depth with mapped inferiors of differing depth is not
+illegal, but the semantics are not defined by the core protocol.
+</p><dl compact="compact">
+<dt><var>subwindow-mode</var></dt>
+<dd><p>One of <var>:clip-by-children</var> or <var>:include-inferiors</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-gcontext_002dtile"></a>Function: <strong>gcontext-tile</strong> <em>gcontext</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>gcontext</var></dt>
+<dd><p>A <var>gcontext</var>.
+</p></dd>
+</dl>
+
+<p>Returns the <em>tile</em> of the specified graphics context.
+</p>
+<p>The tile attribute is a pixmap used to fill in areas for graphics
+operations. It is so named because copies of it are laid out side by
+side to fill the area.
+</p>
+<p>The stipple and tile have the same origin. This origin point is
+interpreted relative to the origin of whatever destination drawable is
+specified in a graphics request. The stipple pixmap must have depth
+one and must have the same root as the graphics context. The tile
+pixmap must have the same root and depth as the graphics context. For
+stipple operations where the fill-style is <var>:stippled</var> (but not
+<var>:opaque-stippled</var>), the stipple pattern is tiled in a single
+plane and acts as an additional clip mask to be <var>and</var>ed with the
+clip-mask.  Any size pixmap can be used for stipple or tile, although
+some sizes may be faster to use than others.
+</p>
+<p>Specifying a pixmap for stipple or tile in a graphics context might or
+might not result in a copy being made. If the pixmap is later used as
+the destination for a graphics operation, the change might or might
+not be reflected in the graphics context. If the pixmap is used both
+as the destination for a graphics operation and as a stipple or tile,
+the results are not defined.
+</p>
+<p>Some displays have hardware support for tiling or stippling with
+patterns of specific sizes. Tiling and stippling operations that
+restrict themselves to those sizes may run much faster than such
+operations with arbitrary size patterns. CLX provides functions to
+determine the best size for stipple or tile (see
+<var>query-best-stipple</var> and <var>query-best-tile</var>).
+</p><dl compact="compact">
+<dt><var>tile</var></dt>
+<dd><p>Type <var>pixmap</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-gcontext_002dts_002dx"></a>Function: <strong>gcontext-ts-x</strong> <em>gcontext</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>gcontext</var></dt>
+<dd><p>A <var>gcontext</var>.
+</p></dd>
+</dl>
+
+<p>Returns the <em>ts-x</em> attribute of the specified graphics context.
+</p>
+<p>The ts-x and ts-y attributes of a graphics context are the coordinates
+of the origin for tile pixmaps and the stipple.
+</p><dl compact="compact">
+<dt><var>ts-x</var></dt>
+<dd><p>Type <var>int16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-gcontext_002dts_002dy"></a>Function: <strong>gcontext-ts-y</strong> <em>gcontext</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>gcontext</var></dt>
+<dd><p>A <var>gcontext</var>.
+</p></dd>
+</dl>
+
+<p>Returns the <em>ts-y</em> attribute of the specified graphics context.
+</p>
+<p>The ts-x and ts-y attributes of a graphics context are the coordinates
+of the origin for tile pixmaps and the stipple.
+</p><dl compact="compact">
+<dt><var>ts-y</var></dt>
+<dd><p>Type <var>int16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-query_002dbest_002dstipple"></a>Function: <strong>query-best-stipple</strong> <em>width height drawable</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>width</var></dt>
+<dt><var>height</var></dt>
+<dd><p>Specifies the width and height of the desired stipple pattern.
+</p></dd>
+<dt><var>drawable</var></dt>
+<dd><p>A <var>drawable</var>.
+</p></dd>
+</dl>
+
+<p>Returns the <em>best-width</em> and <em>best-height</em> for stipple
+pixmaps on the <em>drawable</em>.
+</p>
+<p>The <em>drawable</em> indicates the screen and possibly the window class
+and depth. An <var>:input-only</var> window cannot be specified as the
+<em>drawable</em>. The size is returned as width and height values.
+</p>
+<dl compact="compact">
+<dt><var>best-width</var></dt>
+<dt><var>best-height</var></dt>
+<dd><p>Type <var>card16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-query_002dbest_002dtile"></a>Function: <strong>query-best-tile</strong> <em>width height drawable</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>width</var></dt>
+<dt><var>height</var></dt>
+<dd><p>Specifies the width and height of the desired tile pattern.
+</p></dd>
+<dt><var>drawable</var></dt>
+<dd><p>A <var>drawable</var>.
+</p></dd>
+</dl>
+
+<p>Returns the <em>best-width</em> and <em>best-height</em> for tile pixmaps
+on the <em>drawable</em>.
+</p>
+<p>The <em>drawable</em> indicates the screen and possibly the window class
+and depth. An <var>:input-only</var> window cannot be specified as the
+<em>drawable</em>. The size is returned as width and height values.
+</p>
+<dl compact="compact">
+<dt><var>best-width</var></dt>
+<dt><var>best-height</var></dt>
+<dd><p>Type <var>card16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Copying-Graphics-Contexts.html#Copying-Graphics-Contexts" accesskey="n" rel="next">Copying Graphics Contexts</a>, Previous: <a href="Creating-Graphics-Contexts.html#Creating-Graphics-Contexts" accesskey="p" rel="prev">Creating Graphics Contexts</a>, Up: <a href="Graphics-Contexts.html#Graphics-Contexts" accesskey="u" rel="up">Graphics Contexts</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

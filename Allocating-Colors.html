@@ -1,0 +1,303 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Allocating Colors</title>
+
+<meta name="description" content="Common LISP X Interface: Allocating Colors">
+<meta name="keywords" content="Common LISP X Interface: Allocating Colors">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Colormap-Functions.html#Colormap-Functions" rel="up" title="Colormap Functions">
+<link href="Finding-Colors.html#Finding-Colors" rel="next" title="Finding Colors">
+<link href="Installing-Colormaps.html#Installing-Colormaps" rel="prev" title="Installing Colormaps">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Allocating-Colors"></a>
+<div class="header">
+<p>
+Next: <a href="Finding-Colors.html#Finding-Colors" accesskey="n" rel="next">Finding Colors</a>, Previous: <a href="Installing-Colormaps.html#Installing-Colormaps" accesskey="p" rel="prev">Installing Colormaps</a>, Up: <a href="Colormap-Functions.html#Colormap-Functions" accesskey="u" rel="up">Colormap Functions</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Allocating-Colors-1"></a>
+<h4 class="subsection">10.3.3 Allocating Colors</h4>
+
+
+<p>The following paragraphs describe the functions for allocating read-only
+and read-write color cells, allocating color planes, and freeing color
+cells.
+</p>
+<dl>
+<dt><a name="index-alloc_002dcolor"></a>Function: <strong>alloc-color</strong> <em>colormap color</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>colormap</var></dt>
+<dd><p>A <var>colormap</var>.
+</p></dd>
+<dt><var>color</var></dt>
+<dd><p>A <var>color</var> object or a <var>stringable</var> containing a color name.
+</p></dd>
+</dl>
+
+
+<p>Returns a <em>pixel</em> for a read-only color cell in the
+<em>colormap</em>. The color in the allocated cell is the closest
+approximation to the requested <em>color</em> possible for the screen
+hardware. The other values returned give both the approximate color
+stored in the cell and the exact color requested.
+</p>
+<p>The requested <em>color</em> can be either a <var>color</var> object or a
+<var>stringable</var> containing a color name.  If a color name is
+given, a corresponding color value is looked up (see
+<var>lookup-color</var>) and used. Color name strings must contain only
+ISO Latin-1 characters; case is not significant.
+</p>
+<dl compact="compact">
+<dt><var>pixel</var></dt>
+<dd><p>Type <var>pixel</var>.
+</p></dd>
+<dt><var>screen-color</var></dt>
+<dt><var>exact-color</var></dt>
+<dd><p>Type <var>color</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-alloc_002dcolor_002dcells"></a>Function: <strong>alloc-color-cells</strong> <em>colormap colors &amp;key (:planes 0) :contiguous-p (:result-type 'list)</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>colormap</var></dt>
+<dd><p>A <var>colormap</var>.
+</p></dd>
+<dt><var>colors</var></dt>
+<dd><p>A positive number defining the length of the pixels sequence returned.
+</p></dd>
+<dt><var>:planes</var></dt>
+<dd><p>A non-negative number defining the length of the masks sequence returned.
+</p></dd>
+<dt><var>:contiguous-p</var></dt>
+<dd><p>If true, the masks form contiguous sets of bits.
+</p></dd>
+<dt><var>:result-type</var></dt>
+<dd><p>A subtype of <var>sequence</var> that indicates the type of sequences returned.
+</p></dd>
+</dl>
+
+
+<p>Returns a <var>sequence</var> of <em>pixels</em> for read-write color
+cells in the <em>colormap</em>. The allocated cells contain undefined
+color values. The visual type class of the <var>colormap</var> must be
+either <var>:gray-scale</var>, <var>:pseudo-color</var>, or
+<var>:direct-color</var>.
+</p>
+<p>The <em>colors</em> argument and the <var>:planes</var> argument define
+the number of pixels and the number of masks returned,
+respectively. The number of colors must be positive, and the number
+of planes must be non-negative. A total of (* <em>colors</em>
+(<var>expt</var> 2 <em>planes</em>)) color cells are allocated. The pixel
+values for the allocated cells can be computed by combining the
+returned pixels and masks.
+</p>
+<p>The length of the returned masks sequence is equal to
+<var>:planes</var>. Each mask of the returned masks sequence defines a
+single bitplane. None of the masks have any 1 bits in common. Thus,
+by selectively combining masks with <var>logior</var>, (<var>expt</var> 2
+<em>planes</em>) distinct combined plane masks can be computed.
+</p>
+<p>The length of the returned <em>pixels</em> sequence is equal to
+<em>colors</em>. None of the pixels have any 1 bits in common with
+each other or with any of the returned masks. By combining pixels
+and plane masks with <var>logior</var>, (* <em>colors</em> (<var>expt</var> 2
+<em>planes</em>)) distinct pixel values can be produced.
+</p>
+<p>If the <em>colormap</em> class is <var>:gray-scale</var> or
+<var>:pseudo-color</var>, each <em>mask</em> will have exactly one bit
+set. If the <var>colormap</var> class is <var>:direct-color</var>, each
+<em>mask</em> will have exactly three bits set.  If
+<var>:contiguous-p</var> is true, combining all masks with <var>logior</var>
+produces a plane mask with either one set of contiguous bits (for
+<var>:gray-scale</var> and <var>:pseudo-color</var>) or three sets of
+contiguous bits (for <var>:direct-color</var>).
+</p>
+<dl compact="compact">
+<dt><var>pixels</var></dt>
+<dt><var>mask</var></dt>
+<dd><p>Type <var>sequence</var> of <var>pixels</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-alloc_002dcolor_002dplanes"></a>Function: <strong>alloc-color-planes</strong> <em>colormap colors &amp;key (:reds 0) (:greens 0) (:blues 0) :contiguous-p (:result-type 'list)</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>colormap</var></dt>
+<dd><p>A <var>colormap</var>.
+</p></dd>
+<dt><var>colors</var></dt>
+<dd><p>A positive number defining the length of the pixels sequence returned.
+</p></dd>
+<dt><var>:planes</var></dt>
+<dd><p>A non-negative number defining the length of the masks sequence returned.
+</p></dd>
+<dt><var>:contiguous-p</var></dt>
+<dd><p>If true, then the masks form contiguous sets of bits.
+</p></dd>
+<dt><var>:result-type</var></dt>
+<dd><p>A subtype of <var>sequence</var> that indicates the type of sequences returned.
+</p></dd>
+</dl>
+
+
+<p>Returns a <var>sequence</var> of <em>pixels</em> for read-write color
+cells in the <em>colormap</em>. The allocated cells contain undefined
+color values. The visual type class of the <em>colormap</em> must be
+either <var>:gray-scale</var>, <var>:pseudo-color</var>, or
+<var>:direct-color</var>.
+</p>
+<p>The <em>colors</em> argument defines the number of pixels
+returned. The <var>:reds</var>, <var>:greens</var>, and <var>:blues</var>
+arguments define the number of bits set in the returned red, green,
+and blue masks, respectively. The number of colors must be positive,
+and the number of bits for each mask must be non-negative. A total
+of (* <em>colors</em> (<var>expt</var> 2 (+ <em>reds greens</em>
+<em>blues</em>))) color cells are allocated. The pixel values for the
+allocated cells can be computed by combining the returned
+<em>pixels</em> and masks.
+</p>
+<p>Each mask of the returned masks defines a pixel subfield for the
+corresponding primary.  None of the masks have any 1 bits in
+common. By selectively combining subsets of the red, green, and blue
+masks with <var>logior</var>, (<var>expt</var> 2 (+ <em>reds greens
+blues</em>) distinct combined plane masks can be computed.
+</p>
+<p>The length of the returned <em>pixels</em> <var>sequence</var> is equal to
+<em>colors</em>. None of the pixels have any 1 bits in common with
+each other or with any of the returned masks. By combining pixels
+and plane masks with <var>logior</var>, (* <em>colors</em> (<var>expt</var> 2
+(+ <em>reds greens blues</em>)) distinct pixel values can be produced.
+</p>
+<p>If <var>:contiguous-p</var> is true, each of returned masks consists of
+a set of contiguous bits. If the <var>colormap</var> class is
+<var>:direct-color</var>, each returned mask lies within the pixel
+subfield for its primary.
+</p>
+<dl compact="compact">
+<dt><var>pixels</var></dt>
+<dd><p>Type <var>sequence</var> of <var>pixel</var>.
+</p></dd>
+<dt><var>red-mask</var></dt>
+<dt><var>green-mask</var></dt>
+<dt><var>blue-mask</var></dt>
+<dd><p>Type <var>pixel</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-free_002dcolors"></a>Function: <strong>free-colors</strong> <em>colormap pixels &amp;optional (plane-mask 0)</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>colormap</var></dt>
+<dd><p>A <var>colormap</var>.
+</p></dd>
+<dt><var>pixels</var></dt>
+<dd><p>A <var>sequence</var> of pixel values.
+</p></dd>
+<dt><var>plane-mask</var></dt>
+<dd><p>A pixel value with no bits in common with any of the <em>pixels</em>.
+</p></dd>
+</dl>
+
+<p>Frees a set of allocated color cells from the <em>colormap</em>. The
+pixel values for the freed cells are computed by combining the given
+<em>pixels</em> sequence and <var>:plane-mask</var>. The total number of
+cells freed is:
+</p>
+<div class="lisp">
+<pre class="lisp">(* (<var>length</var> <em>pixels</em>) (<var>expt</var> 2 (<var>logcount</var> <em>plane-mask</em>)))
+</pre></div>
+
+<p>The <var>:plane-mask</var> must not have any bits in common with any of
+the given <em>pixels</em>. The pixel values for the freed cells are
+produced by using <var>logior</var> to combine each of the given pixels
+with all subsets of the <var>:plane-mask</var>.
+</p>
+<p>Note that freeing an individual pixel allocated by
+<var>alloc-color-planes</var> may not allow it to be reused until all
+related pixels computed from the same plane mask are also freed.
+</p>
+<p>A single error is generated if any computed pixel is invalid or if
+its color cell is not allocated by the client. Even if an error is
+generated, all valid pixel values are freed.
+</p>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Finding-Colors.html#Finding-Colors" accesskey="n" rel="next">Finding Colors</a>, Previous: <a href="Installing-Colormaps.html#Installing-Colormaps" accesskey="p" rel="prev">Installing Colormaps</a>, Up: <a href="Colormap-Functions.html#Colormap-Functions" accesskey="u" rel="up">Colormap Functions</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

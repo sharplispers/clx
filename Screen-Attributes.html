@@ -1,0 +1,490 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Screen Attributes</title>
+
+<meta name="description" content="Common LISP X Interface: Screen Attributes">
+<meta name="keywords" content="Common LISP X Interface: Screen Attributes">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Screens.html#Screens" rel="up" title="Screens">
+<link href="Windows-and-Pixmaps.html#Windows-and-Pixmaps" rel="next" title="Windows and Pixmaps">
+<link href="Screens-and-Visuals.html#Screens-and-Visuals" rel="prev" title="Screens and Visuals">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Screen-Attributes"></a>
+<div class="header">
+<p>
+Previous: <a href="Screens-and-Visuals.html#Screens-and-Visuals" accesskey="p" rel="prev">Screens and Visuals</a>, Up: <a href="Screens.html#Screens" accesskey="u" rel="up">Screens</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Screen-Attributes-1"></a>
+<h3 class="section">4.2 Screen Attributes</h3>
+
+<p>In CLX, each display screen is represented by a <var>screen</var>
+structure. The <var>display-roots</var> function returns the list of
+<var>screen</var> structures for the display. The following paragraphs
+discuss the attributes of CLX <var>screen</var> structures.
+</p>
+<dl>
+<dt><a name="index-screen_002dbacking_002dstores"></a>Function: <strong>screen-backing-stores</strong> <em>screen</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>screen</var></dt>
+<dd><p>A <var>screen</var>.
+</p></dd>
+</dl>
+
+<p>Returns a value indicating when the <em>screen</em> supports backing
+stores, although it may be storage limited in the number of windows it
+can support at once. The value returned can be one of <var>:always</var>,
+<var>:never</var>, or <var>:when-mapped</var>.
+</p>
+<dl compact="compact">
+<dt><var>backing-stores-type</var></dt>
+<dd><p>One of <var>:always</var>, <var>:never</var>, or <var>:when-mapped</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-screen_002dblack_002dpixel"></a>Function: <strong>screen-black-pixel</strong> <em>screen</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>screen</var></dt>
+<dd><p>A <var>screen</var>.
+</p></dd>
+</dl>
+
+<p>Returns the black pixel value for the specified <em>screen</em>.
+</p>
+<dl compact="compact">
+<dt><var>black-pixel</var></dt>
+<dd><p>Type <var>pixel</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-screen_002ddefault_002dcolormap"></a>Function: <strong>screen-default-colormap</strong> <em>screen</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>screen</var></dt>
+<dd><p>A <var>screen</var>.
+</p></dd>
+</dl>
+
+<p>Returns the <em>default-colormap</em> for the specified
+<em>screen</em>. The <em>default-colormap</em> is initially associated
+with the root window. Clients with minimal color requirements creating
+windows of the same depth as the root may want to allocate from this
+map by default. Most routine allocations of color should be made out
+of this colormap.
+</p>
+<dl compact="compact">
+<dt><var>default-colormap</var></dt>
+<dd><p>Type <var>colormap</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-screen_002ddepths"></a>Function: <strong>screen-depths</strong> <em>screen</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>screen</var></dt>
+<dd><p>A <var>screen</var>.
+</p></dd>
+</dl>
+
+
+<p>Returns an association list that specifies what drawable
+depths are supported on the specified <em>screen</em>. Elements of the
+returned association list have the form (depth <em>visual</em>*), where
+each <em>visual</em> is a <var>visual-info</var> structure. Pixmaps are
+supported for each depth listed, and windows of that depth are
+supported if at least one visual type is listed for the depth.  A
+pixmap depth of one is always supported and listed, but windows of
+depth one might not be supported. A depth of zero is never listed, but
+zero-depth <var>:input-only</var> windows are always supported.
+</p>
+<dl compact="compact">
+<dt><var>depths</var></dt>
+<dd><p>Type <var>alist</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-screen_002devent_002dmask_002dat_002dopen"></a>Function: <strong>screen-event-mask-at-open</strong> <em>screen</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>screen</var></dt>
+<dd><p>A <var>screen</var>.
+</p></dd>
+</dl>
+
+
+<p>Returns the initial root event mask for the specified
+<em>screen</em>.
+</p>
+<dl compact="compact">
+<dt><var>event-mask-at-open</var></dt>
+<dd><p>Type <var>mask32</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-screen_002dheight"></a>Function: <strong>screen-height</strong> <em>screen</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>screen</var></dt>
+<dd><p>A <var>screen</var>.
+</p></dd>
+</dl>
+
+
+<p>Returns the <em>height</em> of the specified <em>screen</em> in
+pixel units.
+</p>
+<dl compact="compact">
+<dt><var>height</var></dt>
+<dd><p>Type <var>card16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-screen_002dheight_002din_002dmillimeters"></a>Function: <strong>screen-height-in-millimeters</strong> <em>screen</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>screen</var></dt>
+<dd><p>A <var>screen</var>.
+</p></dd>
+</dl>
+
+
+<p>Returns the height of the specified <em>screen</em> in
+millimeters. The returned height can be used with the width in
+millimeters to determine the physical size and the aspect ratio of the
+screen.
+</p>
+<dl compact="compact">
+<dt><var>height-in-millimeters</var></dt>
+<dd><p>Type <var>card16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-screen_002dmax_002dinstalled_002dmaps"></a>Function: <strong>screen-max-installed-maps</strong> <em>screen</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>screen</var></dt>
+<dd><p>A <var>screen</var>.
+</p></dd>
+</dl>
+
+
+<p>Returns the maximum number of colormaps that can be
+installed simultaneously with <var>install-colormap</var>.
+</p>
+<dl compact="compact">
+<dt><var>max-installed-colormaps</var></dt>
+<dd><p>Type <var>card16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-screen_002dmin_002dinstalled_002dmaps"></a>Function: <strong>screen-min-installed-maps</strong> <em>screen</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>screen</var></dt>
+<dd><p>A <var>screen</var>.
+</p></dd>
+</dl>
+
+<p>Returns the minimum number of colormaps that can be guaranteed to be
+installed simultaneously.
+</p>
+<dl compact="compact">
+<dt><var>min-installed-colormaps</var></dt>
+<dd><p>Type <var>card16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-screen_002dp"></a>Function: <strong>screen-p</strong> <em>screen</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>screen-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p></dd>
+</dl>
+
+
+<p>Returns non-<code>nil</code> if the <em>screen</em> argument is a
+</p></dd></dl>
+
+
+
+<dl>
+<dt><a name="index-screen_002dplist"></a>Function: <strong>screen-plist</strong> <em>screen</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>screen</var></dt>
+<dd><p>A <var>screen</var>.
+</p></dd>
+</dl>
+
+
+<p>Returns and (with <code>setf</code>) sets the property list for the
+specified <em>screen</em>. This function provides a hook where
+extensions can add data.
+</p>
+<dl compact="compact">
+<dt><var>plist</var></dt>
+<dd><p>Type <var>list</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-screen_002droot"></a>Function: <strong>screen-root</strong> <em>screen</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>screen</var></dt>
+<dd><p>A <var>screen</var>.
+</p></dd>
+</dl>
+
+
+<p>Returns the <em>root-window</em> for the specified
+<em>screen</em>. This function is useful with functions that take a
+parent window as an argument. The class of the root window is always
+<var>:input-output</var>.
+</p>
+<dl compact="compact">
+<dt><var>root-window</var></dt>
+<dd><p>Type <var>window</var> or <var>null</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-screen_002droot_002ddepth"></a>Function: <strong>screen-root-depth</strong> <em>screen</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>screen</var></dt>
+<dd><p>A <var>screen</var>.
+</p></dd>
+</dl>
+
+<p>Returns the depth of the root window for the specified
+<em>screen</em>. Other depths can also be supported on this
+<em>screen</em>.
+</p>
+<dl compact="compact">
+<dt><var>root-window-depth</var></dt>
+<dd><p>Type <var>image-depth</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-screen_002droot_002dvisual"></a>Function: <strong>screen-root-visual</strong> <em>screen</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>screen</var></dt>
+<dd><p>A <var>screen</var>.
+</p></dd>
+</dl>
+
+
+<p>Returns the default visual type for the root window for the
+specified <em>screen</em>.
+</p>
+<dl compact="compact">
+<dt><var>root-window-visual</var></dt>
+<dd><p>Type <var>card29</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-screen_002dsave_002dunders_002dp"></a>Function: <strong>screen-save-unders-p</strong> <em>screen</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>screen</var></dt>
+<dd><p>A screen.
+</p></dd>
+</dl>
+
+
+<p>If true, the server can support the save-under mode in
+<var>create-window</var> and in changing window attributes.
+</p>
+<dl compact="compact">
+<dt><var>save-unders-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-screen_002dwhite_002dpixel"></a>Function: <strong>screen-white-pixel</strong> <em>screen</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>screen</var></dt>
+<dd><p>A screen.
+</p></dd>
+</dl>
+
+
+<p>Returns the white pixel value for the specified
+<em>screen</em>.
+</p>
+<dl compact="compact">
+<dt><var>white-pixel</var></dt>
+<dd><p>Type <var>pixel</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-screen_002dwidth"></a>Function: <strong>screen-width</strong> <em>screen</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>screen</var></dt>
+<dd><p>A screen.
+</p></dd>
+</dl>
+
+
+<p>Returns the width of the specified <em>screen</em> in pixel
+units.
+</p>
+<dl compact="compact">
+<dt><var>width</var></dt>
+<dd><p>Type <var>card16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-screen_002dwidth_002din_002dmillimeters"></a>Function: <strong>screen-width-in-millimeters</strong> <em>screen</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>screen</var></dt>
+<dd><p>A screen.
+</p></dd>
+</dl>
+
+
+<p>Returns the width of the specified <em>screen</em> in millimeters. The
+returned width can be used with the height in millimeters to determine
+the physical size and the aspect ratio of the screen.
+</p>
+<dl compact="compact">
+<dt><var>width-in-millimeters</var></dt>
+<dd><p>Type <var>card16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Previous: <a href="Screens-and-Visuals.html#Screens-and-Visuals" accesskey="p" rel="prev">Screens and Visuals</a>, Up: <a href="Screens.html#Screens" accesskey="u" rel="up">Screens</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

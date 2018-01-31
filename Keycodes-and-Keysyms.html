@@ -1,0 +1,129 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Keycodes and Keysyms</title>
+
+<meta name="description" content="Common LISP X Interface: Keycodes and Keysyms">
+<meta name="keywords" content="Common LISP X Interface: Keycodes and Keysyms">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Keyboard-Encodings.html#Keyboard-Encodings" rel="up" title="Keyboard Encodings">
+<link href="Keyboard-Mapping.html#Keyboard-Mapping" rel="next" title="Keyboard Mapping">
+<link href="Keyboard-Encodings.html#Keyboard-Encodings" rel="prev" title="Keyboard Encodings">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Keycodes-and-Keysyms"></a>
+<div class="header">
+<p>
+Next: <a href="Keyboard-Mapping.html#Keyboard-Mapping" accesskey="n" rel="next">Keyboard Mapping</a>, Previous: <a href="Keyboard-Encodings.html#Keyboard-Encodings" accesskey="p" rel="prev">Keyboard Encodings</a>, Up: <a href="Keyboard-Encodings.html#Keyboard-Encodings" accesskey="u" rel="up">Keyboard Encodings</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Keycodes-and-Keysyms-1"></a>
+<h4 class="subsection">15.4.1 Keycodes and Keysyms</h4>
+
+
+<p>A <em>keycode</em> represents a physical (or logical) key. In CLX,
+keycodes are values of type (<var>integer</var> 8 255). A keycode value
+carries no intrinsic information, although server implementors may
+attempt to encode geometry (for example, matrix) information in some
+fashion so it can be interpreted in a server- dependent fashion. The
+mapping between keys and keycodes cannot be changed.
+</p>
+<p>A <em>keysym</em> is an encoding of a symbol on the cap of a key. In CLX,
+keysyms are values of type <var>card32</var>. The set of defined keysyms
+include the ISO Latin character sets (1-4), Katakana, Arabic, Cyrillic,
+Greek, Technical, Special, Publishing, APL, Hebrew, and miscellaneous
+keys found on keyboards (RETURN, HELP, TAB, and so on). The encoding of
+keysyms is defined by the X Protocol.
+</p>
+<p>A list of keysyms is associated with each keycode. The length of the
+list can vary with each keycode. The list is intended to convey the set
+of symbols on the corresponding key. By convention, if the list contains
+a single keysym and if that keysym is alphabetic and case distinction is
+relevant, then it should be treated as equivalent to a two-element list
+of the lowercase and uppercase keysyms. For example, if the list
+contains the single keysym for uppercase A, the client should treat it
+as if it were a pair with lowercase as the first keysym and uppercase A
+as the second keysym.
+</p>
+<p>For any keycode, the first keysym in the list should be chosen as the
+interpretation of a key press when no modifier keys are down. The second
+keysym in the list normally should be chosen when the <var>:shift</var>
+modifier is on, or when the <var>:lock</var> modifier is on and <var>:lock</var>
+is interpreted as <var>:shift-lock</var>. When the <var>:lock</var> modifier is
+on and is interpreted as <var>:caps-lock</var>, it is suggested that the
+<var>:shift</var> modifier first be applied to choose a keysym, but if that
+keysym is lowercase alphabetic, the corresponding uppercase keysym
+should be used instead.
+</p>
+<p>Other interpretations of <var>:caps-lock</var> are possible; for example, it
+may be viewed as equivalent to <var>:shift-lock</var>, but only applying
+when the first keysym is lowercase alphabetic and the second keysym is
+the corresponding uppercase alphabetic. No interpretation of keysyms
+beyond the first two in a list is suggested here. No spatial geometry of
+the symbols on the key is defined by their order in the keysym list,
+although a geometry might be defined on a vendor-specific basis. The X
+server does not use the mapping between keycodes and keysyms. Rather,
+the X server stores the mapping merely for reading and writing by
+clients.
+</p>
+<hr>
+<div class="header">
+<p>
+Next: <a href="Keyboard-Mapping.html#Keyboard-Mapping" accesskey="n" rel="next">Keyboard Mapping</a>, Previous: <a href="Keyboard-Encodings.html#Keyboard-Encodings" accesskey="p" rel="prev">Keyboard Encodings</a>, Up: <a href="Keyboard-Encodings.html#Keyboard-Encodings" accesskey="u" rel="up">Keyboard Encodings</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

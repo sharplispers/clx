@@ -1,0 +1,479 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Drawing Text</title>
+
+<meta name="description" content="Common LISP X Interface: Drawing Text">
+<meta name="keywords" content="Common LISP X Interface: Drawing Text">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Graphic-Operations.html#Graphic-Operations" rel="up" title="Graphic Operations">
+<link href="Images.html#Images" rel="next" title="Images">
+<link href="Drawing-Arcs.html#Drawing-Arcs" rel="prev" title="Drawing Arcs">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Drawing-Text"></a>
+<div class="header">
+<p>
+Previous: <a href="Drawing-Arcs.html#Drawing-Arcs" accesskey="p" rel="prev">Drawing Arcs</a>, Up: <a href="Graphic-Operations.html#Graphic-Operations" accesskey="u" rel="up">Graphic Operations</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Drawing-Text-1"></a>
+<h3 class="section">7.6 Drawing Text</h3>
+
+<p>CLX provides functions for drawing text using text fonts provided by
+the X server.  An X font is array of character bit maps indexed by
+integer codes. See <a href="Font-and-Characters.html#Font-and-Characters">Font and Characters</a>, for a complete discussion
+of the CLX functions used to manage fonts and characters.
+</p>
+<p>Since Common Lisp programs typically represent text as sequences of
+characters (that is, strings), CLX text functions must be prepared to
+convert a Common Lisp character into the integer code used to index the
+appropriate character bitmap in a given font. The <var>:translate</var>
+argument to a text function is a function which performs this
+conversion. The default <var>:translate</var> function handles all
+characters that satisfy <var>graphic-char-p</var> by converting each
+character into its ASCII code. Note that the assumption made by the
+default <var>:translate</var> function&ndash;that is, that an X font indexes
+bitmaps by ASCII codes&ndash;is often valid, but other encodings are
+possible. In general, a <var>:translate</var> function can perform complex
+transformations. It can be used to convert non-character input, to
+handle non-ASCII character encodings, and to change the fonts used to
+access character bitmaps.  The complete behavior of a <var>:translate</var>
+function is given below by describing a prototypical
+<var>translate-function</var>.
+</p>
+<p>CLX offers two different ways to draw text&ndash;filled text and block
+text. The <var>draw-glyph</var> and <var>draw-glyphs</var> functions create
+filled text, in which each character image is treated as an area to be
+filled according to the fill-style of the given graphics context,
+without otherwise disturbing the surrounding background. In addition,
+filled text sends a complex type of server request which allows a series
+of font indices, font changes, and horizontal position changes to be
+compiled into a single request. Filled text functions use the following
+graphics context attributes: background, clip-mask, clip-x-origin,
+clip-y-origin, fill-style, font, foreground, function, plane-mask,
+stipple, subwindow-mode, tile, ts-x-origin, ts-y-origin.
+</p>
+<p>Block text is a rendering style commonly used by display terminals, in
+which each character image appears in the foreground pixel inside a
+rectangular character cell drawn in the graphics context background
+pixel. The <var>draw-image-glyph</var> and <var>draw-image-glyphs</var>
+functions create block text. Block text functions use the following
+graphics context attributes: background, clip-mask, clip-x-origin,
+clip-y-origin, font, foreground, plane-mask, stipple, subwindow-mode,
+tile, ts-x-origin, ts-y-origin.
+</p>
+
+<dl>
+<dt><a name="index-draw_002dglyph"></a>Function: <strong>draw-glyph</strong> <em>drawable gcontext x y element &amp;key :translate :width (:size :default)</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>drawable</var></dt>
+<dd><p>The destination <var>drawable</var>.
+</p>
+</dd>
+<dt><var>gcontext</var></dt>
+<dd><p>The graphics context for drawing text.
+</p>
+</dd>
+<dt><var>x</var></dt>
+<dt><var>y</var></dt>
+<dd><p>The left baseline position for the character drawn.
+</p>
+</dd>
+<dt><var>element</var></dt>
+<dd><p>A character or other object to be translated into a font index.
+</p>
+</dd>
+<dt><var>:translate</var></dt>
+<dd><p>A function to translate text to font indexes. Default is <var>#&rsquo;translate-default</var>.
+</p>
+</dd>
+<dt><var>:width</var></dt>
+<dd><p>The total pixel width of the character actually drawn, if known.
+</p>
+</dd>
+<dt><var>:size</var></dt>
+<dd><p>Specifies the element size of the destination buffer given to <var>:translate</var> (8, 16, or
+<var>:default</var>).
+</p></dd>
+</dl>
+
+<p>Draws a single character of filled text represented by the given
+<em>element</em>. The given <em>x</em> and <em>y</em> specify the left
+baseline position for the character. The first return value is true if
+the character is successfully translated and drawn, or <var>nil</var> if
+the <var>:translate</var> function did not translate it. The second return
+value gives the total pixel width of the character actually drawn, if
+known.
+</p>
+<p>Specifying a <var>:width</var> is a hint to improve performance. The
+<var>:width</var> is assumed to be the total pixel width of the character
+actually drawn. Specifying <var>:width</var> permits appending the output
+of subsequent calls to the same protocol request, provided
+<em>gcontext</em> has not been modified in the interim. If <var>:width</var>
+is not specified, appending of subsequent output might not occur
+(unless <var>:translate</var> returns the character width).
+</p>
+<p>The <var>:size</var> specifies the element size of the destination buffer
+given to <var>:translate</var> (either 8, 16, or <var>:default</var>). If
+<var>:default</var> is specified, the size is based on the current font,
+if known; otherwise, 16 is used.
+</p>
+<dl compact="compact">
+<dt><var>output-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p></dd>
+<dt><var>width</var></dt>
+<dd><p>Type <var>int32</var> or <var>null</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-draw_002dglyphs"></a>Function: <strong>draw-glyphs</strong> <em>drawable gcontext x y sequence &amp;key (:start 0) :end :translate :width (:size :default)</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>drawable</var></dt>
+<dd><p>The destination <var>drawable</var>.
+</p></dd>
+<dt><var>gcontext</var></dt>
+<dd><p>The graphics context for drawing text.
+</p></dd>
+<dt><var>x</var></dt>
+<dt><var>y</var></dt>
+<dd><p>The left baseline position for the character drawn.
+</p></dd>
+<dt><var>sequence</var></dt>
+<dd><p>A sequence of characters or other objects to be translated into font indexes.
+</p></dd>
+<dt><var>:start</var></dt>
+<dt><var>:end</var></dt>
+<dd><p>Start and end indexes defining the elements to draw.
+</p></dd>
+<dt><var>:translate</var></dt>
+<dd><p>A function to translate text to font indexes. Default is
+<var>#&rsquo;translate-default</var>.
+</p></dd>
+<dt><var>:width</var></dt>
+<dd><p>The total total pixel width of the character actually drawn, if known.
+</p></dd>
+<dt><var>:size</var></dt>
+<dd><p>The element size of the destination buffer given to <var>:translate</var> (8, 16, or
+<var>:default</var>).
+</p></dd>
+</dl>
+
+
+<p>Draws the filled text characters represented by the given
+sequence. <var>:start</var> and <var>:end</var> define the elements of the
+sequence which are drawn. The given <em>x</em> and <em>y</em> specify the
+left baseline position for the first character. The first return value
+is <var>nil</var> if all characters are successfully translated and drawn;
+otherwise, the index of the first untranslated sequence element is
+returned. The second return value gives the total pixel width of the
+characters actually drawn, if known.
+</p>
+<p>Specifying a <var>:width</var> is a hint to improve performance. The
+<var>:width</var> is assumed to be the total pixel width of the character
+sequence actually drawn. Specifying <var>:width</var> permits appending
+the output of subsequent calls to the same protocol request, provided
+<em>gcontext</em> has not been modified in the interim. If <var>:width</var>
+is not specified, appending of subsequent output might not occur
+(unless <var>:translate</var> returns the character width).
+</p>
+<p>The <var>:size</var> specifies the element size of the destination buffer
+given to<var> :translate</var> (either 8, 16, or <var>:default</var>). If
+<var>:default</var> is specified, the size is based on the current font,
+if known; otherwise, 16 is used.
+</p><dl compact="compact">
+<dt><var>new-start</var></dt>
+<dd><p>Type <var>array-index</var> or <var>null</var>.
+</p></dd>
+<dt><var>width</var></dt>
+<dd><p>Type <var>int32</var> or <var>null</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-draw_002dimage_002dglyph"></a>Function: <strong>draw-image-glyph</strong> <em>drawable gcontext x y element &amp;key :translate :width (:size :default)</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>drawable</var></dt>
+<dd><p>The destination <var>drawable</var>.
+</p></dd>
+<dt><var>gcontext</var></dt>
+<dd><p>The graphics context for drawing text.
+</p></dd>
+<dt><var>x</var></dt>
+<dt><var>y</var></dt>
+<dd><p>The left baseline position for the character drawn.
+</p></dd>
+<dt><var>element</var></dt>
+<dd><p>A character or other object to be translated into a font index.
+</p></dd>
+<dt><var>:translate</var></dt>
+<dd><p>A function to translate text to font indexes. Default is
+<var>#&rsquo;translate-default</var>.
+</p></dd>
+<dt><var>:width</var></dt>
+<dd><p>The total pixel width of the character actually drawn, if known.
+</p></dd>
+<dt><var>:size</var></dt>
+<dd><p>Specifies the element size of the destination buffer given to <var>:translate</var> (8, 16, or
+<var>:default</var>).
+</p></dd>
+</dl>
+
+
+<p>Draws a single character of block text represented by the given
+<em>element</em>. The given <em>x</em> and <em>y</em> specify the left
+baseline position for the character. The first return value is true if
+the character is successfully translated and drawn, or <var>nil</var> if
+the <var>:translate</var> function did not translate it. The
+<var>:translate</var> function is allowed to return an initial font
+change. The second return value gives the total pixel width of the
+character actually drawn, if known.
+</p>
+<p>The <var>:translate</var> function may not return a horizontal position
+change, since <var>draw-image-glyph</var> does not generate complex output
+requests.
+</p>
+<p>Specifying a <var>:width</var> is a hint to improve performance. The
+<var>:width</var> is assumed to be the total pixel width of the character
+actually drawn. Specifying <var>:width</var> permits appending the output
+of subsequent calls to the same protocol request, provided
+<em>gcontext</em> has not been modified in the interim. If <var>:width</var>
+is not specified, appending of subsequent output might not occur
+(unless <var>:translate</var> returns the character width).
+</p>
+<p>The <var>:size</var> specifies the element size of the destination buffer
+given to <var>:translate</var> (either 8, 16, or <var>:default</var>). If
+<var>:default</var> is specified, the size is based on the current font,
+if known; otherwise, 16 is used.
+</p><dl compact="compact">
+<dt><var>output-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p></dd>
+<dt><var>width</var></dt>
+<dd><p>Type <var>int32</var> or <var>null</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+
+<dl>
+<dt><a name="index-draw_002dimage_002dglyphs"></a>Function: <strong>draw-image-glyphs</strong> <em>drawable gcontext x y sequence &amp;key (:start 0) :end :translate :width (:size :default)</em></dt>
+<dd><a name="draw_002dimage_002dglyphs"></a>
+<dl compact="compact">
+<dt><var>drawable</var></dt>
+<dd><p>The destination <var>drawable</var>.
+</p></dd>
+<dt><var>x</var></dt>
+<dt><var>y</var></dt>
+<dd><p>The left baseline position for the character drawn.
+</p></dd>
+<dt><var>gcontext</var></dt>
+<dd><p>The graphics context for drawing text.
+</p></dd>
+<dt><var>sequence</var></dt>
+<dd><p>A sequence of characters or other objects to be translated into font indexes.
+</p></dd>
+<dt><var>:start</var></dt>
+<dt><var>:end</var></dt>
+<dd><p>Start and end indexes defining the elements to draw.
+</p></dd>
+<dt><var>:translate</var></dt>
+<dd><p>A function to translate text to font indexes. Default is
+<var>#&rsquo;translate-default</var>.
+</p></dd>
+<dt><var>:width</var></dt>
+<dd><p>The total total pixel width of the character actually drawn, if known.
+</p></dd>
+<dt><var>:size</var></dt>
+<dd><p>The element size of the destination buffer given to <var>:translate</var> (8, 16, or
+<var>:default</var>).
+</p></dd>
+</dl>
+
+
+<p>Draws the block text characters represented by the given
+<var>sequence</var>. <var>:start</var> and <var>:end</var> define the elements of
+the <em>sequence</em> which are drawn. The given <em>x</em> and <em>y</em>
+specify the left baseline position for the first character. The first
+return value is <var>nil</var> if all characters are successfully
+translated and drawn; otherwise, the index of the first untranslated
+sequence element is returned. The <var>:translate</var> function is
+allowed to return an initial font change. The second return value
+gives the total pixel width of the characters actually drawn, if
+known.
+</p>
+<p>The <var>:translate</var> function may not return a horizontal position
+change, since <var>draw-image-glyphs</var> does not generate complex
+output requests.
+</p>
+<p>Specifying a <var>:width</var> is a hint to improve performance. The
+<var>:width</var> is assumed to be the total pixel width of the character
+sequence actually drawn. Specifying <var>:width</var> permits appending
+the output of subsequent calls to the same protocol request, provided
+<em>gcontext</em> has not been modified in the interim. If <var>:width</var>
+is not specified, appending of subsequent output might not occur
+(unless <var>:translate</var> returns the character width).
+</p>
+<p>The <var>:size</var> specifies the element size of the destination buffer
+given to <var>:translate</var> (either 8, 16, or <var>:default</var>). If
+<var>:default</var> is specified, the size will be based on the current
+font, if known; otherwise, 16 is used.
+</p>
+<dl compact="compact">
+<dt><var>new-start</var></dt>
+<dd><p>Type <var>array-index</var> or <var>null</var>.
+</p></dd>
+<dt><var>width</var></dt>
+<dd><p>Type <var>int32</var> or <var>null</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-translate_002dfunction"></a>Function: <strong>translate-function</strong> <em>source source-start source-end font destination destination-start</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>source</var></dt>
+<dd><p>A sequence of characters or other objects to be translated.
+</p></dd>
+<dt><var>source-start</var></dt>
+<dd><p>An array-index specifying the first <em>source</em> element to be translated.
+</p></dd>
+<dt><var>source-end</var></dt>
+<dd><p>An array-index specifying the end of the <em>source</em> subsequence to be
+translated.
+</p></dd>
+<dt><var>font</var></dt>
+<dd><p>The font indexed by translated <em>source</em> elements.
+</p></dd>
+<dt><var>destination</var></dt>
+<dd><p>A vector where translated <em>source</em> elements are stored.
+</p></dd>
+<dt><var>destination-start</var></dt>
+<dd><p>An array-index specifying the position to begin storing
+translated <em>source</em> elements.
+</p></dd>
+</dl>
+
+
+<p>A function used as the <var>:translate</var> argument for text
+functions. Converts elements of the <em>source</em> (sub)sequence
+into font indexes for the given <em>font</em> and stores them into
+the <em>destination</em> vector.
+</p>
+<p>The <em>destination</em> vector is created automatically by
+CLX. <em>destination</em> is guaranteed to have room for (-
+<em>source-end source-star</em>t) integer elements, starting at
+<em>destination-start</em>. Elements of <em>destination</em> can be
+either <var>card8</var> or <var>card16</var> integers, depending on the
+context. <em>font</em> is the current font, if known, or <var>nil</var>
+otherwise. Starting with the element at <em>source-start</em>,
+<var>translate-function</var> should translate as many elements of
+<em>source</em> as possible (up to the <em>source-end</em> element)
+into indexes in the current <em>font</em>, and store them into
+<em>destination</em>. The first return value should be the source
+index of the first untranslated element.
+</p>
+<p>The second return value indicates the changes which should be made
+to the current text output request before translating the
+remaining <em>source</em> elements. If no further elements need to
+be translated, the second return value should be <var>nil</var>. If a
+horizontal motion is required before further translation, the
+second return value should be the change in x position. If a font
+change is required for further translation, the second return
+value should be the new font.
+</p>
+<p>If known, the pixel width of the translated text can be returned as the third value; this can
+allow for appending of subsequent output to the same protocol request, if no overall
+width has been specified at the higher level.
+</p><dl compact="compact">
+<dt><var>first-not-done</var></dt>
+<dd><p>Type <var>array-index</var>.
+</p></dd>
+<dt><var>to-continue</var></dt>
+<dd><p>Type <var>int16</var>, <var>font</var>, or <var>null</var>.
+</p></dd>
+<dt><var>current-width</var></dt>
+<dd><p>Type <var>int32</var> or <var>null</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+
+<hr>
+<div class="header">
+<p>
+Previous: <a href="Drawing-Arcs.html#Drawing-Arcs" accesskey="p" rel="prev">Drawing Arcs</a>, Up: <a href="Graphic-Operations.html#Graphic-Operations" accesskey="u" rel="up">Graphic Operations</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

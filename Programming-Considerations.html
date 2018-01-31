@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Programming Considerations</title>
+
+<meta name="description" content="Common LISP X Interface: Programming Considerations">
+<meta name="keywords" content="Common LISP X Interface: Programming Considerations">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Introduction-to-CLX.html#Introduction-to-CLX" rel="up" title="Introduction to CLX">
+<link href="Data-Types.html#Data-Types" rel="next" title="Data Types">
+<link href="Naming-and-Argument-Conventions.html#Naming-and-Argument-Conventions" rel="prev" title="Naming and Argument Conventions">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Programming-Considerations"></a>
+<div class="header">
+<p>
+Next: <a href="Data-Types.html#Data-Types" accesskey="n" rel="next">Data Types</a>, Previous: <a href="Naming-and-Argument-Conventions.html#Naming-and-Argument-Conventions" accesskey="p" rel="prev">Naming and Argument Conventions</a>, Up: <a href="Introduction-to-CLX.html#Introduction-to-CLX" accesskey="u" rel="up">Introduction to CLX</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Programming-Considerations-1"></a>
+<h3 class="section">2.4 Programming Considerations</h3>
+
+<p>The major programming considerations are as follows:
+</p>
+<ul>
+<li> Keyboards are the greatest variable between different manufacturer&rsquo;s
+workstations. If you want your program to be portable, you should be
+particularly conservative here.
+
+</li><li> Many display systems have limited amounts of off-screen memory. If you
+can, you should minimize use of pixmaps and backing store.
+
+</li><li> The user should have control of his screen real-estate. Therefore, you
+should write your applications to react to window management, rather
+than presume control of the entire screen. What you do inside of your
+top level window, however, is up to your application.
+
+</li><li> Coordinates and sizes in X are actually 16-bit quantities. They
+usually are declared as an
+<var>int16</var> (see <a href="Data-Types.html#int16">int16</a>) in
+the functions. Values larger than 16 bits can be truncated silently.
+Sizes (width and height) are unsigned quantities.
+
+</li><li> The types
+<var>color</var> (see <a href="Data-Types.html#color">color</a>),
+<var>colormap</var> (see <a href="Data-Types.html#colormap">colormap</a>),
+<var>cursor</var> (see <a href="Data-Types.html#cursor">cursor</a>),
+<var>display</var> (see <a href="Data-Types.html#display">display</a>),
+<var>font</var> (see <a href="Data-Types.html#font">font</a>),
+<var>gcontext</var> (see <a href="Data-Types.html#gcontext">gcontext</a>),
+<var>pixmap</var> (see <a href="Data-Types.html#pixmap">pixmap</a>),
+<var>screen</var> (see <a href="Data-Types.html#screen">screen</a>),
+and
+<var>window</var> (see <a href="Data-Types.html#window">window</a>)
+are defined solely by a functional interface. Even though they are
+treated like structures in this document, it is not specified whether
+they are implemented as structures or classes. Although some
+interfaces are described as functions, they are not required to be
+defined using <var>defun.</var> (It is a requirement that they be
+functions as opposed to macros or special forms.)
+</li></ul>
+
+
+
+
+</body>
+</html>

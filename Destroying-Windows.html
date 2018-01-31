@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Destroying Windows</title>
+
+<meta name="description" content="Common LISP X Interface: Destroying Windows">
+<meta name="keywords" content="Common LISP X Interface: Destroying Windows">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Windows-and-Pixmaps.html#Windows-and-Pixmaps" rel="up" title="Windows and Pixmaps">
+<link href="Pixmaps.html#Pixmaps" rel="next" title="Pixmaps">
+<link href="Mapping-Windows.html#Mapping-Windows" rel="prev" title="Mapping Windows">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Destroying-Windows"></a>
+<div class="header">
+<p>
+Next: <a href="Pixmaps.html#Pixmaps" accesskey="n" rel="next">Pixmaps</a>, Previous: <a href="Mapping-Windows.html#Mapping-Windows" accesskey="p" rel="prev">Mapping Windows</a>, Up: <a href="Windows-and-Pixmaps.html#Windows-and-Pixmaps" accesskey="u" rel="up">Windows and Pixmaps</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Destroying-Windows-1"></a>
+<h3 class="section">5.7 Destroying Windows</h3>
+
+
+<p>CLX provides functions to destroy a window or destroy all children of
+a window. Note that by default, windows are destroyed when a
+connection is closed. For further information,
+See <a href="Closing-the-Display.html#Closing-the-Display">Closing the Display</a>, and See <a href="Client-Termination.html#Client-Termination">Client Termination</a>.
+</p>
+<dl>
+<dt><a name="index-destroy_002dwindow"></a>Function: <strong>destroy-window</strong> <em>window</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+</dl>
+
+<p>Destroys the specified <em>window</em> as well as all of its
+inferiors. The windows should never again be referenced. If the
+specified <em>window</em> is mapped, it is automatically unmapped.  The
+window and all of its inferiors are then destroyed, and a
+<var>:destroy-notify</var> event is generated for each window. The ordering
+of the <var>:destroy-notify</var> events is such that for any given window
+being destroyed, <var>:destroy-notify</var> is generated on the window&rsquo;s
+inferiors before being generated on the window. The ordering among
+siblings and across sub-hierarchies is not otherwise constrained. If
+the <em>window</em> is a root window, no windows are
+destroyed. Destroying a mapped window generates <var>:exposure</var> events
+on other windows that the mapped window obscured.
+</p>
+
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-destroy_002dsubwindows"></a>Function: <strong>destroy-subwindows</strong> <em>window</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+</dl>
+
+<p>Destroys all inferiors of the specified <em>window</em>, in bottom to
+top stacking order. The X server generates a <var>:destroy-notify</var>
+event for each window. This is much more efficient than deleting many
+windows individually. The inferiors should never be referenced again.
+</p>
+
+</dd></dl>
+
+
+
+
+
+</body>
+</html>

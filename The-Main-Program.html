@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: The Main Program</title>
+
+<meta name="description" content="Common LISP X Interface: The Main Program">
+<meta name="keywords" content="Common LISP X Interface: The Main Program">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="A-Quick-Tour-of-CLX.html#A-Quick-Tour-of-CLX" rel="up" title="A Quick Tour of CLX">
+<link href="Debugging-With-CLX.html#Debugging-With-CLX" rel="next" title="Debugging With CLX">
+<link href="Menu-Input.html#Menu-Input" rel="prev" title="Menu Input">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="The-Main-Program"></a>
+<div class="header">
+<p>
+Next: <a href="Debugging-With-CLX.html#Debugging-With-CLX" accesskey="n" rel="next">Debugging With CLX</a>, Previous: <a href="Menu-Input.html#Menu-Input" accesskey="p" rel="prev">Menu Input</a>, Up: <a href="A-Quick-Tour-of-CLX.html#A-Quick-Tour-of-CLX" accesskey="u" rel="up">A Quick Tour of CLX</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="The-Main-Program-1"></a>
+<h4 class="subsection">2.2.4 The Main Program</h4>
+
+<p>After all the preceding build-up and the other functions referenced
+(but not shown here) have been implemented, the code for the main
+client program is very small.
+</p>
+<div class="lisp">
+<pre class="lisp">(defun just-say-lisp (host &amp;optional (font-name &quot;fg-16&quot;))
+  (let* ((display   (OPEN-DISPLAY host))
+	 (screen    (first (DISPLAY-ROOTS display)))
+	 (fg-color  (SCREEN-BLACK-PIXEL screen))
+	 (bg-color  (SCREEN-WHITE-PIXEL screen))
+	 (nice-font (OPEN-FONT display font-name))
+
+	 ;; Create a menu as a child of the root window.
+	 (a-menu       (create-menu (SCREEN-ROOT screen)
+				    fg-color bg-color nice-font)))
+
+    (setf (menu-title a-menu) &quot;Please pick your favorite language:&quot;)
+    (menu-set-item-list a-menu &quot;Fortran&quot; &quot;APL&quot; &quot;Forth&quot; &quot;Lisp&quot;)
+
+    ;; Bedevil the user until he picks a nice programming language
+    (unwind-protect
+	(loop
+	 ;; Determine the current root window position of the pointer
+	 (multiple-value-bind (x y) (QUERY-POINTER (SCREEN-ROOT screen))
+
+	   (let ((choice (menu-choose a-menu x y)))
+	     (when (string-equal &quot;Lisp&quot; choice)
+	       (return)))))
+
+      (CLOSE-DISPLAY display))))
+</pre></div>
+
+<p>Note that the main program event loop lies in the body of an
+<var>unwind-protect</var> form. This is a good programming technique
+because, without this protection, an unexpected error could cause the
+program to terminate without freeing the <em>server resources</em> it has
+created. Server resources are CLX objects which refer to objects
+actually stored on the X server. Examples of these are
+<var>window</var> (see <a href="Data-Types.html#window">window</a>),
+<var>font</var> (see <a href="Data-Types.html#font">font</a>),
+<var>pixmap</var> (see <a href="Data-Types.html#pixmap">pixmap</a>),
+<var>cursor</var> (see <a href="Data-Types.html#cursor">cursor</a>),
+<var>colormap</var> (see <a href="Data-Types.html#colormap">colormap</a>),
+and
+<var>gcontext</var> (see <a href="Data-Types.html#gcontext">gcontext</a>)
+objects. These server resources are created and destroyed by user
+requests. Server resources created by a client are also destroyed when
+its display connection is closed. If client resources are repeatedly
+created without being destroyed, then the server will eventually run out
+of memory and fail.
+</p>
+<p>Most server resources are potentially sharable between applications. In
+fact, windows are manipulated explicitly by window manager programs.
+Fonts and cursors are typically shared automatically since the X server
+loads and unloads font storage as needed.
+<var>gcontext</var> (see <a href="Data-Types.html#gcontext">gcontext</a>)
+objects are not ordinarily shared between client applications.
+</p>
+<hr>
+<div class="header">
+<p>
+Next: <a href="Debugging-With-CLX.html#Debugging-With-CLX" accesskey="n" rel="next">Debugging With CLX</a>, Previous: <a href="Menu-Input.html#Menu-Input" accesskey="p" rel="prev">Menu Input</a>, Up: <a href="A-Quick-Tour-of-CLX.html#A-Quick-Tour-of-CLX" accesskey="u" rel="up">A Quick Tour of CLX</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

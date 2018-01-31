@@ -1,0 +1,541 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Window State Events</title>
+
+<meta name="description" content="Common LISP X Interface: Window State Events">
+<meta name="keywords" content="Common LISP X Interface: Window State Events">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Event-Types.html#Event-Types" rel="up" title="Event Types">
+<link href="Structure-Control-Events.html#Structure-Control-Events" rel="next" title="Structure Control Events">
+<link href="Exposure-Events.html#Exposure-Events" rel="prev" title="Exposure Events">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Window-State-Events"></a>
+<div class="header">
+<p>
+Next: <a href="Structure-Control-Events.html#Structure-Control-Events" accesskey="n" rel="next">Structure Control Events</a>, Previous: <a href="Exposure-Events.html#Exposure-Events" accesskey="p" rel="prev">Exposure Events</a>, Up: <a href="Event-Types.html#Event-Types" accesskey="u" rel="up">Event Types</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Window-State-Events-1"></a>
+<h4 class="subsection">13.11.5 Window State Events</h4>
+
+
+<p>The following paragraphs describe the events that can be received when a
+window becomes:
+</p><ul>
+<li> Created
+
+</li><li> Destroyed
+
+</li><li> Invisible
+
+</li><li> Mapped
+
+</li><li> Moved
+
+</li><li> Reparented
+
+</li><li> Resized
+
+</li><li> Restacked
+
+</li><li> Unmapped
+
+</li><li> Visible
+</li></ul>
+
+<dl>
+<dt><a name="index-_003acirculate_002dnotify"></a>Event Type: <strong>:circulate-notify</strong></dt>
+<dd>
+<p>Selected by: <var>:structure-notify</var> on a window or <var>:substructure-notify</var> on its parent.
+</p>
+<p>A <var>:circulate-notify</var> event is generated whenever a window is
+actually restacked as a result of a client application calling
+<var>circulate-window-up</var> or <var>circulate-window-down</var>.
+</p>
+<dl compact="compact">
+<dt><var>event-window</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The window receiving the event.
+</p>
+</dd>
+<dt><var>window</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The window that was restacked.
+</p>
+</dd>
+<dt><var>place</var></dt>
+<dd><p>Type (<var>member :top :bottom</var>).
+</p>
+<p>If place is <var>:top</var>, the <em>window</em> is now on top of all siblings. Otherwise, it is below
+all siblings.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-_003aconfigure_002dnotify"></a>Event Type: <strong>:configure-notify</strong></dt>
+<dd>
+<p>Selected by: <var>:structure-notify</var> on a window or
+<var>:substructure-notify</var> on its parent.
+</p>
+
+<p>The <var>:configure-notify</var> event is generated when the position or
+size of a window actually changes as a result of a client
+application setting its <em>x</em>, <em>y</em>, <em>width</em>,
+<em>height</em>, or <em>border-width</em> attributes.
+</p>
+<dl compact="compact">
+<dt><var>event-window</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The window receiving the event.
+</p>
+</dd>
+<dt><var>window</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The window that was moved or resized.
+</p>
+</dd>
+<dt><var>x</var></dt>
+<dd><p>Type <var>int16</var>.
+</p>
+<p><em>x</em> and <em>y</em> specify the new upper-left corner position of the <em>window</em> relative to its
+parent.
+</p>
+</dd>
+<dt><var>y</var></dt>
+<dd><p>Type <var>int16</var>.
+</p>
+<p><em>x</em> and <em>y</em> specify the new upper-left corner position of the <em>window</em> relative to its
+parent.
+</p>
+</dd>
+<dt><var>width</var></dt>
+<dd><p>Type <var>card16</var>.
+</p>
+<p><em>width</em> and <em>height</em> specify the new size of the <em>window</em> interior.
+</p>
+</dd>
+<dt><var>height</var></dt>
+<dd><p>Type <var>card16</var>.
+</p>
+<p><em>width</em> and <em>height</em> specify the new size of the <em>window</em> interior.
+</p>
+</dd>
+<dt><var>border-width</var></dt>
+<dd><p>Type <var>card16</var>.
+</p>
+<p>The new <em>window</em> border width.
+</p>
+</dd>
+<dt><var>above-sibling</var></dt>
+<dd><p>Type (<var>or null window</var>).
+</p>
+<p>The sibling immediately below the <em>window</em>. If above-sibling is <var>nil</var>, then the
+<em>window</em> is below all of its siblings.
+</p>
+</dd>
+<dt><var>override-redirect-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p>
+<p><em>override-redirect-p</em> is true if the override-redirect attribute of the <em>window</em> is
+<var>:on</var>; otherwise, it is <var>nil</var>. See <var>window-override-redirect</var> in <a href="Window-Attributes.html#Window-Attributes">Window Attributes</a>.
+</p></dd>
+</dl>
+
+
+<p>The X server can report <var>:create-notify</var> events to clients
+wanting information about creation of windows. The X server
+generates this event whenever a client application creates a window
+by calling <var>create-window</var>.
+</p>
+<p>To receive this event type in a client application, you <code>setf</code>
+the <var>:substructure-notify</var> as the event-mask in the parent
+window&rsquo;s event-mask slot.
+</p>
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-_003acreate_002dnotify"></a>Event Type: <strong>:create-notify</strong></dt>
+<dd>
+<p>Selected by: <var>:substructure-notify</var>.
+</p>
+
+<p>The <var>:create-notify</var> event is generated when a <em>window</em> is
+created and is sent to the <em>parent</em> window.
+</p>
+<dl compact="compact">
+<dt><var>parent</var></dt>
+<dt><var>event-window</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The parent window receiving the event.
+</p>
+</dd>
+<dt><var>window</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The new window created.
+</p>
+</dd>
+<dt><var>x</var></dt>
+<dd><p>Type <var>int16</var>.
+</p>
+<p><em>x</em> and <em>y</em> specify the initial upper-left corner position of the <em>window</em> relative to
+the parent.
+</p>
+</dd>
+<dt><var>y</var></dt>
+<dd><p>Type <var>int16</var>.
+</p>
+<p><em>x</em> and <em>y</em> specify the initial upper-left corner position of the <em>window</em> relative to
+the parent.
+</p>
+</dd>
+<dt><var>width</var></dt>
+<dd><p>Type <var>card16</var>.
+</p>
+<p><em>width</em> and <em>height</em> specify the initial size of the <em>window</em> interior.
+</p>
+</dd>
+<dt><var>height</var></dt>
+<dd><p>Type <var>card16</var>.
+</p>
+<p><em>width</em> and <em>height</em> specify the initial size of the <em>window</em> interior.
+</p>
+</dd>
+<dt><var>border-width</var></dt>
+<dd><p>Type <var>card16</var>.
+</p>
+<p>The initial <em>window</em> border width.
+</p>
+</dd>
+<dt><var>override-redirect-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p>
+<p><em>override-redirect-p</em> is true if the override-redirect attribute of the <em>window</em> is
+<var>:on</var>; otherwise, it is <var>nil</var>. See <var>window-override-redirect</var> in <a href="Window-Attributes.html#Window-Attributes">Window Attributes</a>.
+</p>
+</dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-_003adestroy_002dnotify"></a>Event Type: <strong>:destroy-notify</strong></dt>
+<dd>
+<p>Selected by: <var>:structure-notify</var> on a window or <var>:substructure-notify</var> on its parent.
+</p>
+<p>The <var>:destroy-notify</var> event is generated when a <em>window</em>
+is destroyed. The ordering of the <var>:destroy-notify</var> events is
+such that for any given window, <var>:destroy-notify</var> is generated
+on all inferiors of a window before <var>:destroy-notify</var> is
+generated on the <em>window</em>. The ordering among siblings and
+across subhierarchies is not otherwise constrained.
+</p>
+<dl compact="compact">
+<dt><var>event-window</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The window receiving the event.
+</p>
+</dd>
+<dt><var>window</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The window that was destroyed.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-_003agravity_002dnotify"></a>Event Type: <strong>:gravity-notify</strong></dt>
+<dd>
+<p>Selected by: <var>:structure-notify</var> on a window or <var>:substructure-notify</var> on its parent.
+</p>
+<p>The X server can report <var>:gravity-notify</var> events to clients
+wanting information about when a <em>window</em> is moved because of a
+change in the size of its parent. The X server generates this event
+whenever a client application actually moves a child window as a
+result of resizing its parent by calling <var>with-state</var> with the
+appropriate arguments set.
+</p>
+<dl compact="compact">
+<dt><var>event-window</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The window receiving the event.
+</p>
+</dd>
+<dt><var>window</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The window that was moved.
+</p>
+</dd>
+<dt><var>x</var></dt>
+<dd><p>Type <var>int16</var>.
+</p>
+<p>x and y specify the new upper-left corner position of the <em>window</em> relative to its
+parent.
+</p>
+</dd>
+<dt><var>y</var></dt>
+<dd><p>Type <var>int16</var>.
+</p>
+<p>x and y specify the new upper-left corner position of the <em>window</em> relative to its
+parent.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-_003amap_002dnotify"></a>Event Type: <strong>:map-notify</strong></dt>
+<dd>
+<p>Selected by: <var>:structure-notify</var> on a window or <var>:substructure-notify</var> on its parent.
+</p>
+<p>The X server can report <var>:map-notify</var> events to clients wanting
+information about which windows are mapped. The X server generates
+this event type whenever a client application changes the
+<em>window</em>&rsquo;s state from unmapped to mapped by calling
+<var>map-window</var> or <var>map-subwindow</var>.
+</p>
+<p>To receive this event type, you <var>setf :structure-notify</var> as the
+event-mask on the <em>window</em>&rsquo;s <var>event-mask</var> slot. You can
+also receive this event type by <code>setf</code>ing the
+<var>:substructure-notify</var> event-mask on the parent window.
+</p>
+<dl compact="compact">
+<dt><var>event-window</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The window receiving the event.
+</p>
+</dd>
+<dt><var>window</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The window that was mapped.
+</p>
+</dd>
+<dt><var>override-redirect-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p>
+<p><em>override-redirect-p</em> is true if the override-redirect attribute of the <em>window</em> is
+<var>:on</var>; otherwise, it is <var>nil</var>. See <var>window-override-redirect</var> in <a href="Window-Attributes.html#Window-Attributes">Window Attributes</a>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-_003areparent_002dnotify"></a>Event Type: <strong>:reparent-notify</strong></dt>
+<dd><p>Selected by: <var>:structure-notify</var> on a window or <var>:substructure-notify</var> on its old or new parent.
+</p>
+<p>The <var>:reparent-notify</var> event is generated when a <em>window</em>
+is reparented.
+</p>
+<dl compact="compact">
+<dt><var>event-window</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The window receiving the event.
+</p>
+</dd>
+<dt><var>window</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The window that was reparented.
+</p>
+</dd>
+<dt><var>parent</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The new parent of the <em>window</em>.
+</p>
+</dd>
+<dt><var>x</var></dt>
+<dd><p>Type <var>int16</var>.
+</p>
+<p>x and y specify the upper-left corner position of the <em>window</em> relative to its new
+<em>parent</em>.
+</p>
+</dd>
+<dt><var>y</var></dt>
+<dd><p>Type <var>int16</var>.
+</p>
+<p>x and y specify the upper-left corner position of the <em>window</em> relative to its new
+<em>parent</em>.
+</p>
+</dd>
+<dt><var>override-redirect-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p>
+<p><em>override-redirect-p</em> is true if the override-redirect attribute
+of the <em>window</em> is <var>:on</var>; otherwise, it is <var>nil</var>. See
+<var>window-override-redirect</var> in <a href="Window-Attributes.html#Window-Attributes">Window Attributes</a>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-_003aunmap_002dnotify"></a>Event Type: <strong>:unmap-notify</strong></dt>
+<dd>
+<p>Selected by: <var>:structure-notify</var> on a window or <var>:substructure-notify</var> on its parent.
+</p>
+<p>The <var>:unmap-notify</var> event is generated when a mapped
+<em>window</em> is unmapped.
+</p>
+<dl compact="compact">
+<dt><var>event-window</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The window receiving the event.
+</p>
+</dd>
+<dt><var>window</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The window that was unmapped.
+</p>
+</dd>
+<dt><var>configure-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p>
+<p><em>configure-p</em> is true if the <em>window</em> has a win-gravity
+attribute of <var>:unmap</var>, and the event was generated because
+<em>window</em>&rsquo;s parent was resized.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-_003avisibility_002dnotify"></a>Event Type: <strong>:visibility-notify</strong></dt>
+<dd>
+<p>Selected by: <var>:visibility-change</var>.
+</p>
+<p>The <var>:visibility-notify</var> event is sent when the visibility of a
+<em>window</em> changes.  <var>:visibility-notify</var> events are never
+generated on <var>:input-only</var> windows. For the purposes of this
+event, the visibility of the <em>window</em> is not affected by its
+subwindows.
+</p>
+<p>All <var>:visibility-notify</var> events caused by a hierarchy change
+are generated after any hierarchy event caused by that change (for
+example, <var>:unmap-notify</var>, <var>:map-notify</var>,
+<var>:configure-notify</var>, <var>:gravity-notify</var>, or
+<var>:circulate-notify</var>). Any <var>:visibility-notify</var> event on a
+given window is generated before any <var>:exposure</var> events on that
+window, but it is not required that all <var>:visibility-notify</var>
+events on all windows be generated before all <var>:exposure</var>
+events on all windows. The ordering of <var>:visibility-notify</var>
+events with respect to <var>:focus-out</var>, <var>:enter-notify</var>, and
+<var>:leave-notify</var> events is not constrained.
+</p>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dt><var>event-window</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The window that changed in visibility.
+</p>
+</dd>
+<dt><var>state</var></dt>
+<dd><p>Type (<var>member :unobscured :partially-obscured</var> <var>:fully-obscured</var>).
+</p>
+<p>When the <em>window</em> was either unviewable or it was viewable and at least
+partially obscured, and the <em>window</em> changed to viewable and completely
+unobscured, then <em>state</em> is <var>:unobscured</var>.
+</p>
+<p>When the <em>window</em> was either unviewable or it was viewable and completely
+obscured, and the <em>window</em> changed to viewable and partially obscured, then
+<em>state</em> is <var>:partially-obscured</var>.
+</p>
+<p>When the <em>window</em> was either unviewable or it was at least partially visible, and
+the <em>window</em> changed to viewable and completely obscured, then <em>state</em> is
+<var>:fully-obscured</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Structure-Control-Events.html#Structure-Control-Events" accesskey="n" rel="next">Structure Control Events</a>, Previous: <a href="Exposure-Events.html#Exposure-Events" accesskey="p" rel="prev">Exposure Events</a>, Up: <a href="Event-Types.html#Event-Types" accesskey="u" rel="up">Event Types</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

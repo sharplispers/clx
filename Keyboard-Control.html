@@ -1,0 +1,349 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Keyboard Control</title>
+
+<meta name="description" content="Common LISP X Interface: Keyboard Control">
+<meta name="keywords" content="Common LISP X Interface: Keyboard Control">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Control-Functions.html#Control-Functions" rel="up" title="Control Functions">
+<link href="Keyboard-Encodings.html#Keyboard-Encodings" rel="next" title="Keyboard Encodings">
+<link href="Pointer-Control.html#Pointer-Control" rel="prev" title="Pointer Control">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Keyboard-Control"></a>
+<div class="header">
+<p>
+Next: <a href="Keyboard-Encodings.html#Keyboard-Encodings" accesskey="n" rel="next">Keyboard Encodings</a>, Previous: <a href="Pointer-Control.html#Pointer-Control" accesskey="p" rel="prev">Pointer Control</a>, Up: <a href="Control-Functions.html#Control-Functions" accesskey="u" rel="up">Control Functions</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Keyboard-Control-1"></a>
+<h3 class="section">15.3 Keyboard Control</h3>
+
+
+<p>The following paragraphs describe the CLX functions used to:
+</p><ul>
+<li> Return or change keyboard controls
+
+</li><li> Ring the keyboard bell
+
+</li><li> Return or change the mapping of modifiers
+
+</li><li> Return the current up/down state of all keys
+</li></ul>
+
+<dl>
+<dt><a name="index-bell"></a>Function: <strong>bell</strong> <em>display &amp;optional (percent-from-normal 0)</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+<dt><var>percent-from-normal</var></dt>
+<dd><p>An integer (-100 through 100).
+</p></dd>
+</dl>
+
+<p>Rings the bell on the keyboard at a volume relative to the base volume for the keyboard,
+if possible. Percent can range from -100 to 100 inclusive, or else a Value error occurs.
+The following is the bell volume when percent is non-negative:
+</p>
+<div class="lisp">
+<pre class="lisp">(- (+ <em>base percent</em>) (<var>quotient</var> (* <em>base percent</em>) 100))
+</pre></div>
+
+<p>and when percent is negative:
+</p>
+<div class="lisp">
+<pre class="lisp">(+ <em>base</em> (<var>quotient</var> (* <em>base percent</em>) 100))
+</pre></div>
+
+
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-change_002dkeyboard_002dcontrol"></a>Function: <strong>change-keyboard-control</strong> <em>display &amp;key :key-click-percent :bell-percent :bell-pitch :bell-duration :led :led-mode :key :auto-repeat-mode</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+<dt><var>:key-click-percent</var></dt>
+<dd><p>An integer (0 100).
+</p></dd>
+<dt><var>:bell-percent</var></dt>
+<dd><p>An integer (0 100).
+</p></dd>
+<dt><var>:bell-pitch</var></dt>
+<dd><p>A <var>card16</var>.
+</p></dd>
+<dt><var>:bell-duration</var></dt>
+<dd><p>A <var>card16</var>.
+</p></dd>
+<dt><var>:led</var></dt>
+<dd><p>A <var>card8</var>.
+</p></dd>
+<dt><var>:led-mode</var></dt>
+<dd><p>Either <var>:on</var> or <var>:off</var>.
+</p></dd>
+<dt><var>:key</var></dt>
+<dd><p>A <var>card8</var> keycode.
+</p></dd>
+<dt><var>:auto-repeat-mode</var></dt>
+<dd><p>Either <var>:on</var>, <var>:off</var>, or <var>:default</var>.
+</p></dd>
+</dl>
+
+<p>Changes the various aspects of the keyboard. The keyword arguments
+specify which controls to change.
+</p>
+<p>The <var>:key-click-percent</var> keyword sets the volume for key
+clicks, if possible. A value of 0 implies off, while a value of 100
+implies loud. Setting <var>:key-click-percent</var> to <var>:default</var>
+restores the default value.
+</p>
+<p>The <var>:bell-percent</var> sets the base volume for the bell between 0
+(off) and 100 (loud) if possible. Setting <var>:bell-percent</var> to
+<var>:default</var> restores the default value.
+</p>
+<p>The <var>:bell-pitch</var> sets the pitch (specified in Hz) of the bell,
+if possible. Setting the <var>:bell-pitch</var> to <var>:default</var>
+restores the default value. The <var>:bell-duration</var> sets the
+duration ( specified in milliseconds) of the bell, if
+possible. Setting <var>:bell-pitch</var> to <var>:default</var> restores the
+default. Note that a bell generator connected with the console but
+not directly on the keyboard is treated as if it were part of the
+keyboard.
+</p>
+<p>If both <var>:led-mode</var> and <var>:led</var> are specified, then the
+state of that LED is changed, if possible. If only <var>:led-mode</var>
+is specified, the state of all LEDs are changed, if possible. At
+most 32 LEDs are supported, numbered from one. No standard
+interpretation of the LEDs are defined.
+</p>
+<p>If both <var>:auto-repeat-mode</var> and <var>:key</var> are specified, the
+auto-repeat mode of that key is changed, if possible. If only
+<var>:auto-repeat-mode</var> is specified, the global auto-repeat mode
+for the entire keyboard is changed, if possible, without affecting
+the per-key settings. An error occurs if <var>:key</var> is specified
+without <var>:auto-repeat-mode</var>.
+</p>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-keyboard_002dcontrol"></a>Function: <strong>keyboard-control</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+</dl>
+
+
+<p>Returns the current control values for the keyboard. For the LEDs,
+the least significant bit of <em>led-mask</em> corresponds to LED one,
+and each one bit in <em>led-mask</em> indicates an LED that is
+lit. <em>auto-repeats</em> is a bit vector; each one bit indicates
+that auto-repeat is enabled for the corresponding key. The vector is
+represented as 32 bytes. Byte <em>n</em> (from 0) contains the bits
+for keys 8<em>n</em> to 8<em>n</em>+7, with the least significant bit in
+the byte representing key 8<em>n</em>.
+</p><dl compact="compact">
+<dt><var>key-click-percent</var></dt>
+<dt><var>bell-percent</var></dt>
+<dd><p>Type <var>card8</var>.
+</p></dd>
+<dt><var>bell-pitch</var></dt>
+<dt><var>bell-duration</var></dt>
+<dd><p>Type <var>card16</var>.
+</p></dd>
+<dt><var>led-mask</var></dt>
+<dd><p>Type <var>card32</var>.
+</p></dd>
+<dt><var>global-auto-repeat</var></dt>
+<dd><p>Either <var>:on</var> or <var>:off</var>.
+</p></dd>
+<dt><var>auto-repeats</var></dt>
+<dd><p>Type <var>bit-vector</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-modifier_002dmapping"></a>Function: <strong>modifier-mapping</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+</dl>
+
+
+<p>Returns the set of keycodes used for each modifier on the
+<em>display</em> keyboard. Each return value is a list of the
+<var>card8</var> keycodes used for each modifier key. The order of
+keycodes within each list is server-dependent.
+</p><dl compact="compact">
+<dt><var>shift-keycodes</var></dt>
+<dt><var>lock-keycodes</var></dt>
+<dt><var>control-keycodes</var></dt>
+<dt><var>mod1-keycodes</var></dt>
+<dt><var>mod2-keycodes</var></dt>
+<dt><var>mod3-keycodes</var></dt>
+<dt><var>mod4-keycodes</var></dt>
+<dt><var>mod5-keycodes</var></dt>
+<dd><p>Type <var>list</var> of <var>card8</var>.
+</p></dd>
+</dl>
+
+<p>Some servers may include the same keycode in more than one list.  For
+example, if the CAPS LOCK key has been turned into an additional
+CONTROL key, some servers include it in the third return value, but
+also in the second return value.  Client code can therefore not rely
+on the returned lists to have pairwise empty intersections.
+</p>
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-query_002dkeymap"></a>Function: <strong>query-keymap</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+</dl>
+
+<p>Returns a bit vector that describes the state of the keyboard. Each
+one bit indicates that the corresponding key is currently
+pressed. The vector is represented as 32 bytes. Byte <em>n</em> (from
+0) contains the bits for keys 8<em>n</em> to 8<em>n</em>+7, with the
+least significant bit in the byte representing key 8<em>n</em>.
+</p><dl compact="compact">
+<dt><var>keymap</var></dt>
+<dd><p>Type <var>bit-vector</var> 256.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-set_002dmodifier_002dmapping"></a>Function: <strong>set-modifier-mapping</strong> <em>display &amp;key :shift :lock :control :mod1 :mod2 :mod3 :mod4 :mod5</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+<dt><var>:shift</var></dt>
+<dt><var>:lock</var></dt>
+<dt><var>:control</var></dt>
+<dt><var>:mod1</var></dt>
+<dt><var>:mod2</var></dt>
+<dt><var>:mod3</var></dt>
+<dt><var>:mod4</var></dt>
+<dt><var>:mod5</var></dt>
+<dd><p>A sequence of <var>card8</var> keycodes for the given modifier.
+</p></dd>
+</dl>
+
+
+<p>Changes the set of keycodes mapped to the specified modifier keys on
+the <em>display</em> keyboard. Each keyword argument contains a
+sequence of new <var>card8</var> keycodes for a specific modifier. The
+return value indicates whether the change was completed
+successfully.
+</p>
+<p>A status of <var>:failed</var> is returned if hardware limitations
+prevent the requested change. For example, multiple keycodes per
+modifier may not be supported, up transitions on a given keycode may
+not be supported, or autorepeat may be mandatory for a given
+keycode. If <var>:failed</var> is returned, the mappings for all
+modifiers remain unchanged.
+</p>
+<p>A status of <var>:device-busy</var> is returned if a new keycode given
+for a modifier was not previously mapped to that modifier and is
+currently in the down state. In this case, the mappings for all
+modifiers remain unchanged.
+</p><dl compact="compact">
+<dt><var>status</var></dt>
+<dd><p>One of <var>:success</var>, <var>:failed</var>, or <var>:device-busy</var>.
+</p></dd>
+</dl>
+
+<p>Notice that the default value for each of the key arguments is the
+empty list.  Failing to include a key argument in a call to this
+function will therefore remove all the keycodes as modifiers that were
+previously considered modifiers in the category corresponding to the
+keyword argument.
+</p>
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Keyboard-Encodings.html#Keyboard-Encodings" accesskey="n" rel="next">Keyboard Encodings</a>, Previous: <a href="Pointer-Control.html#Pointer-Control" accesskey="p" rel="prev">Pointer Control</a>, Up: <a href="Control-Functions.html#Control-Functions" accesskey="u" rel="up">Control Functions</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

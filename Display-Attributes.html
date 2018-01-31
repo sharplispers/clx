@@ -1,0 +1,743 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Display Attributes</title>
+
+<meta name="description" content="Common LISP X Interface: Display Attributes">
+<meta name="keywords" content="Common LISP X Interface: Display Attributes">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Displays.html#Displays" rel="up" title="Displays">
+<link href="Managing-the-Output-Buffer.html#Managing-the-Output-Buffer" rel="next" title="Managing the Output Buffer">
+<link href="Opening-the-Display.html#Opening-the-Display" rel="prev" title="Opening the Display">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Display-Attributes"></a>
+<div class="header">
+<p>
+Next: <a href="Managing-the-Output-Buffer.html#Managing-the-Output-Buffer" accesskey="n" rel="next">Managing the Output Buffer</a>, Previous: <a href="Opening-the-Display.html#Opening-the-Display" accesskey="p" rel="prev">Opening the Display</a>, Up: <a href="Displays.html#Displays" accesskey="u" rel="up">Displays</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Display-Attributes-1"></a>
+<h3 class="section">3.2 Display Attributes</h3>
+
+<p>The complete set of display attributes is discussed in the following
+paragraphs.
+</p>
+<dl>
+<dt><a name="index-display_002dauthorization_002ddata"></a>Function: <strong>display-authorization-data</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var> object.
+</p></dd>
+</dl>
+
+<p>Returns the authorization data vector for <var>display</var> that was
+transmitted to the server by <var>open-display</var> during connection
+setup. The data is specific to the particular authorization protocol
+that was used. The <var>display-authorization-name</var> function returns
+the protocol used.
+</p>
+<dl compact="compact">
+<dt><var>authorization-data</var></dt>
+<dd><p>Type <var>vector</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-display_002dauthorization_002dname"></a>Function: <strong>display-authorization-name</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var> object.
+</p></dd>
+</dl>
+
+<p>Returns the authorization protocol namestring for <var>display</var> that
+was transmitted by <var>open-display</var> to the server during connection
+setup. The <var>authorization-name</var> indicates what authorization
+protocol the client expects the server to use. Specification of valid
+authorization mechanisms is not part of the X protocol. A server that
+implements a different protocol than the client expects, or a server
+that only implements the host-based mechanism, can simply ignore this
+information. If both name and data strings are empty, this is to be
+interpreted as &quot;no explicit authorization.&quot;
+</p>
+<dl compact="compact">
+<dt><var>authorization-name</var></dt>
+<dd><p>Type <var>string</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-display_002dbitmap_002dformat"></a>Function: <strong>display-bitmap-format</strong> <em>display</em></dt>
+<dd><a name="display_002dbitmap_002dformat"></a>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var> object.
+</p></dd>
+</dl>
+
+<p>Returns the <em>bitmap-format</em> information for the specified <em>display</em>.
+</p>
+<dl compact="compact">
+<dt><var>bitmap-format</var></dt>
+<dd><p>Type <var>bitmap-format</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-display_002dbyte_002dorder"></a>Function: <strong>display-byte-order</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var> object.
+</p></dd>
+</dl>
+
+<p>Returns the <var>byte-order</var> to be employed in communication with the
+server for the given <var>display</var>. The possible values are as
+follows:
+</p>
+<dl compact="compact">
+<dt><var>:lsbfirst</var></dt>
+<dd><p>Values are transmitted least significant byte first.
+</p></dd>
+<dt><var>:msbfirst</var></dt>
+<dd><p>Values are transmitted most significant byte first.
+</p></dd>
+</dl>
+
+<p>Except where explicitly noted in the protocol, all 16-bit and 32-bit
+quantities sent by the client must be transmitted with this
+<var>byte-order</var>, and all 16-bit and 32-bit quantities returned by the
+server are transmitted with this <var>byte-order</var>.
+</p>
+<dl compact="compact">
+<dt><var>byte-order</var></dt>
+<dd><p>Either <var>:lsbfirst</var> or <var>:msbfirst</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-display_002ddisplay"></a>Function: <strong>display-display</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var> object.
+</p></dd>
+</dl>
+
+<p>Returns the <var>display-number</var> for the host associated with
+<var>display</var>.
+</p>
+<dl compact="compact">
+<dt><var>display-number</var></dt>
+<dd><p>Type <var>integer</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-display_002derror_002dhandler"></a>Function: <strong>display-error-handler</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var> object.
+</p></dd>
+</dl>
+
+<p>Returns and (with <code>setf</code>) sets the <var>error-handler</var> function
+for the given <var>display</var>. CLX calls (one of) the display error
+handler functions to handle server errors returned to the
+connection. The default error handler, <var>default-error-handler</var>,
+signals conditions as they occur. See <a href="Errors.html#Errors">Errors</a>, for a list of
+the conditions that CLX can signal. For more information about errors
+and error handling, refer to the section entitled Common Lisp
+Condition System in the <em>Lisp Reference</em> manual.
+</p>
+<p>If the value of <var>error-handler</var> is a sequence, it is expected to
+contain a handler function designator for each specific error. The
+error code is used as an index into the sequence to fetch the
+appropriate handler function. If this element is a function
+designator, it is called for all errors. Any results returned by the
+handler are ignored since it is assumed the handler either takes care
+of the error completely or else signals. The arguments passed to the
+handler function are the <var>display</var> object, a symbol naming the
+type of error, and a set of keyword-value argument pairs that vary
+depending on the type of error. For all core errors, the keyword-value
+argument pairs are:
+</p>
+<table>
+<tr><td width="50%"><var>:current-sequence</var></td><td width="50%"><var>card16</var></td></tr>
+<tr><td width="50%"><var>:major</var></td><td width="50%"><var>card8</var></td></tr>
+<tr><td width="50%"><var>:minor</var></td><td width="50%"><var>card16</var></td></tr>
+<tr><td width="50%"><var>:sequence</var></td><td width="50%"><var>card16</var></td></tr>
+</table>
+
+<p>For <var>colormap</var>, <var>cursor</var>, <var>drawable</var>, <var>font</var>,
+<var>gcontext</var>, <var>id-choice</var>, <var>pixmap</var>, and <var>window</var>
+errors, the keyword-value pairs are the core error pairs plus:
+</p>
+<table>
+<tr><td width="50%"><var>:resource-id</var></td><td width="50%"><var>card32</var></td></tr>
+</table>
+
+<p>For <var>:atom</var> errors, the keyword-value pairs are the core error
+pairs plus:
+</p>
+<table>
+<tr><td width="50%"><var>:atom-id</var></td><td width="50%"><var>card32</var></td></tr>
+</table>
+
+<p>For <var>:value</var> errors, the keyword-value pairs are the core error
+pairs plus:
+</p>
+<table>
+<tr><td width="50%"><var>:value</var></td><td width="50%"><var>card32</var></td></tr>
+</table>
+
+<dl compact="compact">
+<dt><var>error-handler</var></dt>
+<dd><p>Type <var>function</var> or <var>symbol</var> or <var>sequence</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-display_002dimage_002dlsb_002dfirst_002dp"></a>Function: <strong>display-image-lsb-first-p</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var> object.
+</p></dd>
+</dl>
+
+<p>Although the server is generally responsible for byte swapping
+communication data to match the client, images (pixmaps/bitmaps) are
+always transmitted and received in formats (including byte order)
+specified by the server. Within images for each scan-line unit in
+bitmaps or for each pixel value in pixmaps, the leftmost bit in the
+image as displayed on the screen is either the least or most
+significant bit in the unit. For the given <var>display</var>,
+<var>display-image-lsb-first-p</var> returns non-<var>nil</var> if the leftmost
+bit is the least significant bit; otherwise, it returns <var>nil</var>.
+</p>
+<dl compact="compact">
+<dt><var>image-lsb-first-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-display_002dkeycode_002drange"></a>Function: <strong>display-keycode-range</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var> object.
+</p></dd>
+</dl>
+
+<p>Returns <var>min-keycode</var> and <var>max-keycode</var> as multiple
+values. See the <var>display-max-keycode</var> and
+<var>display-min-keycode</var> functions for additional information.
+</p>
+<dl compact="compact">
+<dt><var>min-keycode</var></dt>
+<dt><var>max-keycode</var></dt>
+<dd><p>Type <var>card8</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-display_002dmax_002dkeycode"></a>Function: <strong>display-max-keycode</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var> object.
+</p></dd>
+</dl>
+
+<p>Returns the maximum keycode value for the specified
+<em>display</em>. This value is never greater than 255. Not all keycodes
+in the allowed range are required to have corresponding keys.
+</p>
+<dl compact="compact">
+<dt><var>max-keycode</var></dt>
+<dd><p>Type <var>card8</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-display_002dmax_002drequest_002dlength"></a>Function: <strong>display-max-request-length</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var> object.
+</p></dd>
+</dl>
+
+<p>Returns the maximum length of a request, in four-byte units, that is
+accepted by the specified <em>display</em>. Requests larger than this
+generate a length error, and the server will read and simply discard
+the entire request. This length is always at least 4096 (that is,
+requests of length up to and including 16384 bytes are accepted by all
+servers).
+</p>
+<dl compact="compact">
+<dt><var>max-request-length</var></dt>
+<dd><p>Type <var>card16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-display_002dmin_002dkeycode"></a>Function: <strong>display-min-keycode</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var> object.
+</p></dd>
+</dl>
+
+<p>Returns the minimum keycode value for the specified
+<var>display</var>. This value is never less than eight. Not all keycodes
+in the allowed range are required to have corresponding keys.
+</p>
+<dl compact="compact">
+<dt><var>min-keycode</var></dt>
+<dd><p>Type <var>card8</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-display_002dmotion_002dbuffer_002dsize"></a>Function: <strong>display-motion-buffer-size</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var> object.
+</p></dd>
+</dl>
+
+<p>Returns the approximate size of the motion buffer for the specified
+<var>display</var>. The server can retain the recent history of pointer
+motion at a finer granularity than is reported by <var>:motion-notify</var>
+events. Such history is available through the <var>motion-events</var>
+function.
+</p>
+<dl compact="compact">
+<dt><var>motion-buffer-size</var></dt>
+<dd><p>Type <var>card32</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-display_002dnscreens"></a>Function: <strong>display-nscreens</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var> object.
+</p></dd>
+</dl>
+
+<p>Returns the number of screens available on <var>display</var>.
+</p>
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-display_002dp"></a>Function: <strong>display-p</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p></dd>
+</dl>
+
+<p>Returns non-<var>nil</var> if <em>display</em> is a <var>display</var> object;
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-display_002dpixmap_002dformats"></a>Function: <strong>display-pixmap-formats</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var> object.
+</p></dd>
+</dl>
+
+<p>Returns the list of <var>pixmap-format</var> values for the given
+<em>display</em>. This list contains one entry for each depth value. The
+entry describes the format used to represent images of that depth. An
+entry for a depth is included if any screen supports that depth, and
+all screens supporting that depth must support (only) the format for
+that depth.
+</p>
+<dl compact="compact">
+<dt><var>pixmap-formats</var></dt>
+<dd><p>Type <var>list</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-display_002dplist"></a>Function: <strong>display-plist</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var> object.
+</p></dd>
+</dl>
+
+<p>Returns and (with <code>setf</code>) sets the property list for the specified
+<em>display</em>. This function provides a hook where extensions can add
+data.
+</p><dl compact="compact">
+<dt><var>plist</var></dt>
+<dd><p>Type <var>list</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-display_002dprotocol_002dmajor_002dversion"></a>Function: <strong>display-protocol-major-version</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var> object.
+</p></dd>
+</dl>
+
+<p>Returns the major version number of the X protocol associated with the
+specified <em>display</em>. In general, the major version would
+increment for incompatible changes. The returned protocol version
+number indicates the protocol the server actually supports. This might
+not equal the version supported by the client. The server can (but
+need not) refuse connections from clients that offer a different
+version than the server supports. A server can (but need not) support
+more than one version simultaneously.
+</p><dl compact="compact">
+<dt><var>protocol-major-version</var></dt>
+<dd><p>Type <var>card16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-display_002dprotocol_002dminor_002dversion"></a>Function: <strong>display-protocol-minor-version</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var> object.
+</p></dd>
+</dl>
+
+<p>Returns the minor protocol revision number associated with the
+specified <em>display</em>. In general, the minor version would
+increment for small upward compatible changes in the X protocol.
+</p><dl compact="compact">
+<dt><var>protocol-minor-version</var></dt>
+<dd><p>Type <var>card16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-display_002dprotocol_002dversion"></a>Function: <strong>display-protocol-version</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var> object.
+</p></dd>
+</dl>
+
+<p>Returns <em>protocol-major-version</em> and
+<em>protocol-minor-version</em> as multiple values. See the
+<var>display-protocol-major-version</var> and
+<var>display-protocol-minor-version</var> functions for additional
+information.
+</p>
+<dl compact="compact">
+<dt><var>protocol-major-version</var></dt>
+<dt><var>protocol-minor-version</var></dt>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-display_002dresource_002did_002dbase"></a>Function: <strong>display-resource-id-base</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var> object.
+</p></dd>
+</dl>
+
+<p>Returns the <em>resource-id-base</em> value that was returned from the
+server during connection setup for the specified <em>display</em>. This
+is used in combination with the <em>resource-id-mask</em> to construct
+valid IDs for this connection.
+</p><dl compact="compact">
+<dt><var>resource-id-base</var></dt>
+<dd><p>Type <var>resource-id</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-display_002dresource_002did_002dmask"></a>Function: <strong>display-resource-id-mask</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var> object.
+</p></dd>
+</dl>
+
+<p>Returns the <em>resource-id-mask</em> that was returned from the server
+during connection setup for the specified <em>display</em>. The
+<em>resource-id-mask</em> contains a single contiguous set of bits (at
+least 18) which the client uses to allocate resource IDs for types
+<var>window</var>, <var>pixmap</var>, <var>cursor</var>, <var>font</var>, <var>gcontext</var>,
+and <var>colormap</var> by choosing a value with (only) some subset of
+these bits set, and <var>or</var>ing it with the
+<em>resource-id-base</em>. Only values constructed in this way can be
+used to name newly created server resources over this
+connection. Server resource IDs never have the top three bits set. The
+client is not restricted to linear or contiguous allocation of server
+resource IDs. Once an ID has been freed, it can be reused, but this
+should not be necessary.
+</p>
+
+<p>An ID must be unique with respect to the IDs of all other server
+resources, not just other server resources of the same type. However,
+note that the value spaces of server resource identifiers, atoms,
+visualids, and keysyms are distinguished by context, and as such are
+not required to be disjoint (for example, a given numeric value might
+be both a valid window ID, a valid atom, and a valid keysym.)
+</p><dl compact="compact">
+<dt><var>resource-id-mask</var></dt>
+<dd><p>Type <var>resource-id</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-display_002droots"></a>Function: <strong>display-roots</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var> object.
+</p></dd>
+</dl>
+
+<p>Returns a list of all the <var>screen</var> structures available for the
+given <em>display</em>.
+</p><dl compact="compact">
+<dt><var>roots</var></dt>
+<dd><p>A list of screens.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-display_002dvendor"></a>Function: <strong>display-vendor</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var> object.
+</p></dd>
+</dl>
+<p>Returns <em>vendor-name</em> and <em>release-number</em> as
+multiple values. See the <var>display-vendor-name</var> and
+<var>display-release-number</var> functions for additional information.
+</p><dl compact="compact">
+<dt><var>vendor-name</var></dt>
+<dt><var>release-number</var></dt>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-display_002dvendor_002dname"></a>Function: <strong>display-vendor-name</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var> object.
+</p></dd>
+</dl>
+
+<p>Returns a string that provides some vendor identification of the X
+server implementation associated with the specified <em>display</em>.
+</p><dl compact="compact">
+<dt><var>vendor-name</var></dt>
+<dd><p>Type <var>string</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-display_002drelease_002dnumber"></a>Function: <strong>display-release-number</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var> object.
+</p></dd>
+</dl>
+
+<p>Returns the X protocol version number for this implementation of CLX.
+</p><dl compact="compact">
+<dt><var>version-number</var></dt>
+<dd><p>Type <var>card32</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-display_002dxid"></a>Function: <strong>display-xid</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var> object.
+</p></dd>
+</dl>
+
+<p>Returns the function designator that is used to allocate server
+resource IDs for this <em>display</em>.
+</p><dl compact="compact">
+<dt><var>resource-allocator</var></dt>
+<dd><p>Type <var>function</var> or <var>symbol</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-with_002ddisplay"></a>Macro: <strong>with-display</strong> <em>display &amp;body body</em></dt>
+<dd>
+<p>This macro is for use in a multi-process
+environment. <var>with-display</var> provides exclusive access to the local
+<var>display</var> object for multiple request generation. It need not
+provide immediate exclusive access for replies. That is, if another
+process is waiting for a reply (while not in a <var>with-display</var>),
+then synchronization need not (but can) occur immediately. Except
+where noted, all routines effectively contain an implicit
+<var>with-display</var> where needed, so that correct synchronization is
+always provided at the interface level on a per-call basis. Nested
+uses of this macro work correctly. This macro does not prevent
+concurrent event processing (see <a href="Managing-the-Event-Queue.html#with_002devent_002dqueue">with-event-queue</a>).
+</p>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Managing-the-Output-Buffer.html#Managing-the-Output-Buffer" accesskey="n" rel="next">Managing the Output Buffer</a>, Previous: <a href="Opening-the-Display.html#Opening-the-Display" accesskey="p" rel="prev">Opening the Display</a>, Up: <a href="Displays.html#Displays" accesskey="u" rel="up">Displays</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

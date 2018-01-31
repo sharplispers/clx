@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Naming and Argument Conventions</title>
+
+<meta name="description" content="Common LISP X Interface: Naming and Argument Conventions">
+<meta name="keywords" content="Common LISP X Interface: Naming and Argument Conventions">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Introduction-to-CLX.html#Introduction-to-CLX" rel="up" title="Introduction to CLX">
+<link href="Programming-Considerations.html#Programming-Considerations" rel="next" title="Programming Considerations">
+<link href="Debugging-With-CLX.html#Debugging-With-CLX" rel="prev" title="Debugging With CLX">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Naming-and-Argument-Conventions"></a>
+<div class="header">
+<p>
+Next: <a href="Programming-Considerations.html#Programming-Considerations" accesskey="n" rel="next">Programming Considerations</a>, Previous: <a href="A-Quick-Tour-of-CLX.html#A-Quick-Tour-of-CLX" accesskey="p" rel="prev">A Quick Tour of CLX</a>, Up: <a href="Introduction-to-CLX.html#Introduction-to-CLX" accesskey="u" rel="up">Introduction to CLX</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Naming-and-Argument-Conventions-1"></a>
+<h3 class="section">2.3 Naming and Argument Conventions</h3>
+
+<p>Throughout CLX, a number of conventions for naming and syntax of the CLX
+functions have been followed. These conventions are intended to make the
+syntax of the functions more predictable.
+</p>
+<p>The major naming conventions are as follows:
+</p>
+<ul>
+<li> To better differentiate the CLX symbols from other symbols, they have
+all been placed in the package XLIB. External symbols have been
+explicitly exported.
+
+</li><li> The <em>display</em> argument, where used, is always first in the
+argument list.
+
+</li><li> All server resource objects, where used, occur at the beginning of the
+argument list, immediately after the display variable.
+
+</li><li> When a graphics context (<em>gcontext</em>) is present together with
+another type of server resource (most commonly, a <em>drawable</em>),
+the graphics context occurs in the argument list after the other
+server resource. Drawables out rank all other server resources.
+
+</li><li> Source arguments always precede the destination arguments in the
+argument list.
+
+</li><li> The <em>x</em> argument always precedes the <em>y</em> argument in the
+argument list.
+
+</li><li> The <em>width</em> argument always precedes the <em>height</em> argument
+in the argument list.
+
+</li><li> Where the <em>x</em>, <em>y</em>, <em>width</em> and <em>height</em> arguments
+are used together, the <em>x</em> and <em>y</em> arguments always precede
+the <em>width</em> and <em>height</em> arguments.
+
+</li><li> Where a <em>mask</em> is accompanied with a <em>structure</em>, the mask
+always precedes the structure in the argument list.
+</li></ul>
+
+
+
+
+</body>
+</html>

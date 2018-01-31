@@ -1,0 +1,209 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Drawing Arcs</title>
+
+<meta name="description" content="Common LISP X Interface: Drawing Arcs">
+<meta name="keywords" content="Common LISP X Interface: Drawing Arcs">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Graphic-Operations.html#Graphic-Operations" rel="up" title="Graphic Operations">
+<link href="Drawing-Text.html#Drawing-Text" rel="next" title="Drawing Text">
+<link href="Drawing-Rectangles.html#Drawing-Rectangles" rel="prev" title="Drawing Rectangles">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Drawing-Arcs"></a>
+<div class="header">
+<p>
+Next: <a href="Drawing-Text.html#Drawing-Text" accesskey="n" rel="next">Drawing Text</a>, Previous: <a href="Drawing-Rectangles.html#Drawing-Rectangles" accesskey="p" rel="prev">Drawing Rectangles</a>, Up: <a href="Graphic-Operations.html#Graphic-Operations" accesskey="u" rel="up">Graphic Operations</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Drawing-Arcs-1"></a>
+<h3 class="section">7.5 Drawing Arcs</h3>
+
+<p><var>draw-arc</var> draws a single circular or an elliptical arc, while
+<var>draw-arcs</var> draws multiple circular or elliptical
+arcs. <var>draw-arc</var> and <var>draw-arcs</var> use the following graphics
+context components: arc-mode, background, cap-style, clip-x, clip-y,
+clip-mask, dash-list, dash-offset, fill-style, foreground, join-style,
+function, plane-mask, line-width, line-style, stipple, subwindow-mode,
+tile, ts-x-origin, and ts-y-origin.
+</p>
+<dl>
+<dt><a name="index-draw_002darc"></a>Function: <strong>draw-arc</strong> <em>drawable gcontext x y width height angle1 angle2 &amp;optional fill-p</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>drawable</var></dt>
+<dd><p>The destination <var>drawable</var>.
+</p>
+</dd>
+<dt><var>gcontext</var></dt>
+<dd><p>The graphics context for drawing the arc.
+</p>
+</dd>
+<dt><var>x</var></dt>
+<dt><var>y</var></dt>
+<dd><p>The x and y coordinates of the arc rectangle relative to the origin of the <em>drawable</em>.
+Type is <var>int16</var>.
+</p>
+</dd>
+<dt><var>width</var></dt>
+<dt><var>height</var></dt>
+<dd><p>Specifies the width and height of the rectangle. These are the major and
+minor axes of the arc. Type is <var>card16</var>.
+</p>
+</dd>
+<dt><var>angle1</var></dt>
+<dd><p>Specifies the start of the arc in radians. Type is <var>angle</var>.
+</p>
+</dd>
+<dt><var>angle2</var></dt>
+<dd><p>Specifies the direction and end point of the arc. Type is <var>angle</var>.
+</p>
+</dd>
+<dt><var>fill-p</var></dt>
+<dd><p>Specifies whether the arc is filled or not. Type <var>boolean</var>.
+</p></dd>
+</dl>
+
+<p>Draws either a circular or an elliptical arc. Also, outlined or filled
+arcs can be drawn.  Each arc is specified by a rectangle (<em>x</em>,
+<em>y</em>, <em>width</em>, and <em>height</em>) and two angles
+(<em>angle1</em> and <em>angle2</em>). The angles are signed integers in
+radians, with positive indicating counterclockwise motion and negative
+indicating clockwise motion. The start of the arc is specified by
+<em>angle1</em>, and the path and extent of the arc is specified by
+<em>angle2</em> relative to the start of the arc. If the magnitude of
+<em>angle2</em> is greater than 360 degrees, it is truncated to 360
+degrees. The <em>x</em> and <em>y</em> coordinates of the rectangle are
+relative to the <em>drawable</em>&rsquo;s origin.
+</p>
+<p>For example, an arc specified as
+[<em>x</em>,<em>y</em>,<em>width</em>,<em>height</em>,<em>angle1</em>,<em>angle2</em>]
+has the origin of the major and minor axes at:
+</p>
+<div class="display">
+<pre class="display">[<em>x</em>+(<em>width</em>/2),<em>y</em>+(<em>height</em>/2)]
+</pre></div>
+
+<p>The infinitely thin path describing the entire circle/ellipse
+intersects the horizontal axis at:
+</p>
+<div class="display">
+<pre class="display">[<em>x</em>,<em>y</em>+(<em>height</em>/2)] and [<em>x</em>+<em>width</em>,<em>y</em>+(<em>height</em>/2)]
+</pre></div>
+
+<p>The intersection of the vertical axis is at:
+</p>
+<div class="display">
+<pre class="display">[<em>x</em>+(<em>width</em>/2),<em>y</em>] and [<em>x</em>+(<em>width</em>/2),<em>y</em>+<em>height</em>]
+</pre></div>
+
+<p>These coordinates can be fractional; that is, they are not truncated
+to discrete coordinates. Note that the angle values are slightly
+different in CLX than in the X protocol specification.
+</p>
+<p>If <em>fill-p</em> is <var>nil</var>, then only the outline of the arc is
+drawn. Otherwise, if <em>fill-p</em> is true, <var>draw-arc</var> fills the
+area bounded by the arc outline and one or two line segments,
+depending on the arc-mode. If the arc-mode is <var>:chord</var>, the
+filled area is bounded by the arc outline and the line segment joining
+the arc end points. If the arc-mode is <var>:pie-slice</var>, the filled
+area is bounded by the arc outline and the two line segments joining
+each arc end point with the center point.
+</p>
+
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-draw_002darcs"></a>Function: <strong>draw-arcs</strong> <em>drawable gcontext arcs &amp;optional fill-p</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>drawable</var></dt>
+<dd><p>Specifies the <var>drawable</var> where you want the arcs drawn.
+</p></dd>
+<dt><var>gcontext</var></dt>
+<dd><p>Specifies the graphics context for drawing the arc.
+</p></dd>
+<dt><var>arcs</var></dt>
+<dd><p>A sequence containing the width, height, angle1, and angle2 arguments defining
+the arcs. See <var>draw-arc</var> for more detail. Type is <var>arc-seq</var>.
+</p></dd>
+<dt><var>fill-p</var></dt>
+<dd><p>Specifies whether the arcs are filled or not. Type is <var>boolean</var>.
+</p></dd>
+</dl>
+
+<p>Draws circular or elliptical, outlined or filled arcs. Each arc is
+specified by a rectangle and two angles. For a more detailed
+description, see <var>draw-arc</var>.
+</p>
+<p>The arcs are filled in the order listed. For any given arc, no pixel is drawn more than
+once. If regions intersect, the intersecting pixels are drawn multiple times.
+</p>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Drawing-Text.html#Drawing-Text" accesskey="n" rel="next">Drawing Text</a>, Previous: <a href="Drawing-Rectangles.html#Drawing-Rectangles" accesskey="p" rel="prev">Drawing Rectangles</a>, Up: <a href="Graphic-Operations.html#Graphic-Operations" accesskey="u" rel="up">Graphic Operations</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

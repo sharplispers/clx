@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Using glyphs</title>
+
+<meta name="description" content="Common LISP X Interface: Using glyphs">
+<meta name="keywords" content="Common LISP X Interface: Using glyphs">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="RENDER-_002d-A-new-rendering-system-for-X11.html#RENDER-_002d-A-new-rendering-system-for-X11" rel="up" title="RENDER - A new rendering system for X11">
+<link href="Using-cursors.html#Using-cursors" rel="next" title="Using cursors">
+<link href="Glyphs-and-Glyphsets.html#Glyphs-and-Glyphsets" rel="prev" title="Glyphs and Glyphsets">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Using-glyphs"></a>
+<div class="header">
+<p>
+Next: <a href="Using-cursors.html#Using-cursors" accesskey="n" rel="next">Using cursors</a>, Previous: <a href="Glyphs-and-Glyphsets.html#Glyphs-and-Glyphsets" accesskey="p" rel="prev">Glyphs and Glyphsets</a>, Up: <a href="RENDER-_002d-A-new-rendering-system-for-X11.html#RENDER-_002d-A-new-rendering-system-for-X11" accesskey="u" rel="up">RENDER - A new rendering system for X11</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Using-glyphs-1"></a>
+<h4 class="subsection">16.3.4 Using glyphs</h4>
+
+<dl>
+<dt><a name="index-render_002dcomposite_002dglyph"></a>Function: <strong>render-composite-glyph</strong> <em>dest glyph-set source dest-x dest-y sequence &amp;key op src-x src-y mask-format start end</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>dest</var></dt>
+<dd><p>picture
+</p></dd>
+<dt><var>glyph-set</var></dt>
+<dd><p>glyph-set
+</p></dd>
+<dt><var>source</var></dt>
+<dd><p>picture
+</p></dd>
+<dt><var>dest-x</var></dt>
+<dd><p>int16
+</p></dd>
+<dt><var>dest-y</var></dt>
+<dd><p>int16
+</p></dd>
+<dt><var>sequence</var></dt>
+<dt><var>op</var></dt>
+<dd><p>(member clear :src :dst :over :over-reverse :in :in-reverse :out :out-reverse :atop :atop-reverse :xor :add :saturate :maximum)
+</p></dd>
+<dt><var>src-x</var></dt>
+<dd><p>int16
+</p></dd>
+<dt><var>src-y</var></dt>
+<dd><p>iny16
+</p></dd>
+<dt><var>mask-format</var></dt>
+<dd><p>picture-format
+</p></dd>
+<dt><var>start</var></dt>
+<dd><p>blah
+</p></dd>
+<dt><var>end</var></dt>
+<dd><p>blah
+</p></dd>
+</dl>
+
+
+
+
+<p>Requests the sequence of glyphs to be drawn with the glyph-set.
+</p></dd></dl>
+
+
+
+
+</body>
+</html>

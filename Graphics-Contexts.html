@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Graphics Contexts</title>
+
+<meta name="description" content="Common LISP X Interface: Graphics Contexts">
+<meta name="keywords" content="Common LISP X Interface: Graphics Contexts">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="index.html#Top" rel="up" title="Top">
+<link href="Creating-Graphics-Contexts.html#Creating-Graphics-Contexts" rel="next" title="Creating Graphics Contexts">
+<link href="Pixmaps.html#Pixmaps" rel="prev" title="Pixmaps">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Graphics-Contexts"></a>
+<div class="header">
+<p>
+Next: <a href="Graphic-Operations.html#Graphic-Operations" accesskey="n" rel="next">Graphic Operations</a>, Previous: <a href="Windows-and-Pixmaps.html#Windows-and-Pixmaps" accesskey="p" rel="prev">Windows and Pixmaps</a>, Up: <a href="index.html#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Graphics-Contexts-1"></a>
+<h2 class="chapter">6 Graphics Contexts</h2>
+
+<p>Clients of the X Window System specify the visual attributes of
+graphical output primitives by using <em>graphics contexts</em>. A
+graphics context is a set of graphical attribute values such as
+foreground color, font, line style, and so forth. Like a window, a
+graphics context is another kind of X server resource which is created
+and maintained at the request of a client program. The client program,
+which may use several different graphics contexts at different times,
+is responsible for specifying a graphics context to use with each
+graphical output function.
+</p>
+<p>CLX represents a graphics context by an object of type <var>gcontext</var>
+and defines functions to create, modify, and manipulate <var>gcontext</var>
+objects. By default, CLX also records the contents of graphics
+contexts in a cache associated with each display. This local caching
+of graphics contexts has two important advantages:
+</p>
+<ol>
+<li> Communication efficiency &ndash; Changes to attribute values in a
+<var>gcontext</var> are first made only in the local cache. Just before a
+<var>gcontext</var> is actually used, CLX automatically sends any changes
+to the X server, batching all changes into a single request.
+
+</li><li> Inquiring <var>gcontext</var> contents &ndash; Accessor functions can be used
+to return the value of any individual <var>gcontext</var> component by
+reading the copy of the <var>gcontext</var> from the cache. This kind of
+inquiry is not supported by the basic X protocol. There is no way for
+a client program to request an X server to return the contents of a
+<var>gcontext</var>.
+</li></ol>
+
+
+<p>Caching graphics contexts can result in a synchronization problem if
+more than one client program modifies a graphics context. However,
+this problem is unusual. Sharing a graphics context among several
+clients, while possible, is not expected to be useful and is not very
+easy to do. At any rate, a client program can choose to not cache a
+<var>gcontext</var> when it is created.
+</p>
+<p>Each client program must determine its own policy for creating and
+using graphics contexts. Depending on the display hardware and the
+server implementation, creating a new graphics context can be more or
+less expensive than modifying an existing one. In general, some amount
+of graphics context information can be cached in the display hardware,
+in which case modifying the hardware cache is faster than replacing
+it. Typical display hardware can cache only a small number of graphics
+contexts. Graphics output is fastest when only a few graphics contexts
+are used without heavy modifications.
+</p>
+<p>This section explains the CLX functions used to:
+</p>
+<ul>
+<li> Create a graphics context
+
+</li><li> Return the contents of a graphics context
+
+</li><li> Change the contents of a graphics context
+
+</li><li> Copy a graphics context
+
+</li><li> Free a graphics context
+</li></ul>
+
+
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top">&bull; <a href="Creating-Graphics-Contexts.html#Creating-Graphics-Contexts" accesskey="1">Creating Graphics Contexts</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Graphics-Context-Attributes.html#Graphics-Context-Attributes" accesskey="2">Graphics Context Attributes</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Copying-Graphics-Contexts.html#Copying-Graphics-Contexts" accesskey="3">Copying Graphics Contexts</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Destroying-Graphics-Contexts.html#Destroying-Graphics-Contexts" accesskey="4">Destroying Graphics Contexts</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Graphics-Context-Cache.html#Graphics-Context-Cache" accesskey="5">Graphics Context Cache</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+</table>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Graphic-Operations.html#Graphic-Operations" accesskey="n" rel="next">Graphic Operations</a>, Previous: <a href="Windows-and-Pixmaps.html#Windows-and-Pixmaps" accesskey="p" rel="prev">Windows and Pixmaps</a>, Up: <a href="index.html#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

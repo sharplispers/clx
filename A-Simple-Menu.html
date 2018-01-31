@@ -1,0 +1,226 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: A Simple Menu</title>
+
+<meta name="description" content="Common LISP X Interface: A Simple Menu">
+<meta name="keywords" content="Common LISP X Interface: A Simple Menu">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="A-Quick-Tour-of-CLX.html#A-Quick-Tour-of-CLX" rel="up" title="A Quick Tour of CLX">
+<link href="Displaying-the-Menu.html#Displaying-the-Menu" rel="next" title="Displaying the Menu">
+<link href="A-Quick-Tour-of-CLX.html#A-Quick-Tour-of-CLX" rel="prev" title="A Quick Tour of CLX">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="A-Simple-Menu"></a>
+<div class="header">
+<p>
+Next: <a href="Displaying-the-Menu.html#Displaying-the-Menu" accesskey="n" rel="next">Displaying the Menu</a>, Previous: <a href="A-Quick-Tour-of-CLX.html#A-Quick-Tour-of-CLX" accesskey="p" rel="prev">A Quick Tour of CLX</a>, Up: <a href="A-Quick-Tour-of-CLX.html#A-Quick-Tour-of-CLX" accesskey="u" rel="up">A Quick Tour of CLX</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="A-Simple-Menu-1"></a>
+<h4 class="subsection">2.2.1 A Simple Menu</h4>
+
+<p>The example client program creates and displays a simple pop-up menu
+consisting of a column of strings&ndash;a title string followed by selectable
+menu item strings. The implementation uses one window to represent the
+entire menu, plus a set of subwindows, one for each menu item. Here is
+the definition of a structure which represents such a menu.
+</p>
+<div class="lisp">
+<pre class="lisp">(defstruct (menu)
+  &quot;A simple menu of text strings.&quot;
+  (title &quot;Choose an item:&quot;)
+  item-alist				;((item-window item-string))
+  window
+  gcontext
+  width
+  title-width
+  item-width
+  item-height
+  (geometry-changed-p t))	     ;nil if unchanged since displayed
+</pre></div>
+
+
+<p>The <code>window</code> slot will contain the
+<var>window</var> (see <a href="Data-Types.html#window">window</a>)
+object that represents the menu. The <code>item-</code>
+<code>alist</code> represents the relationship between the menu items
+and their associated subwindows. Each entry in <code>item-alist</code>
+is a list whose first element is a (sub)window object and whose second
+element is the corresponding item string. A
+<var>window</var> (see <a href="Data-Types.html#window">window</a>)
+object is an instance of a CLX-defined data type which represents X
+windows. A
+<var>window</var> (see <a href="Data-Types.html#window">window</a>)
+object actually carries two pieces of information: an X window ID
+integer and a
+<var>display</var> (see <a href="Data-Types.html#display">display</a>)
+object. A
+<var>display</var> (see <a href="Data-Types.html#display">display</a>)
+is another CLX-defined data type that represents a connection to a
+specific X display server. The <code>gcontext</code> slot contains an
+instance of a CLX data type known as a <em>graphics context</em>. A
+graphics context is a set of display attribute values, such as
+foreground color, fill style, line style, text font, and so forth. Each
+X graphics request (and hence each CLX graphics function call) must
+supply a graphics context to use in displaying the request. The menu&rsquo;s
+<code>gcontext</code> will thus hold all of the attribute values used
+during menu display.
+</p>
+<p>The first thing to do is make an instance of a <code>menu</code> object:
+</p>
+<div class="lisp">
+<pre class="lisp">(defun create-menu (parent-window text-color background-color text-font)
+  (make-menu
+   ;; Create menu graphics context
+   :gcontext (CREATE-GCONTEXT :drawable   parent-window
+			      :foreground text-color
+			      :background background-color
+			      :font       text-font)
+
+   ;; Create menu window
+   :window    (CREATE-WINDOW
+	       :parent            parent-window
+	       :class             :input-output
+	       :x                 0	;temporary value
+	       :y                 0	;temporary value
+	       :width             16	;temporary value
+	       :height            16	;temporary value
+	       :border-width 2
+	       :border            text-color
+	       :background        background-color
+	       :save-under        :on
+	       :override-redirect :on ;override window mgr when positioning
+	       :event-mask        (MAKE-EVENT-MASK :leave-window :exposure))))
+</pre></div>
+
+<p><var>create-window</var> (see <a href="Creating-Windows.html#create_002dwindow">create-window</a>)
+is one of the most important CLX functions, since it creates and returns
+a <var>window</var> (see <a href="Data-Types.html#window">window</a>)
+object. Several of its options are shown here. The default window class
+is <var>:input-output</var>, but X provides for <var>:input-only</var> windows,
+too. Every window must have a parent window, except for a system-defined
+<em>root window</em>, which represents an entire display screen. The
+<var>:event-mask</var> keyword value, a CLX
+<var>event-mask</var> (see <a href="Data-Types.html#event_002dmask">event-mask</a>)
+data type, says that an input event will be received for the menu window
+when the window is exposed and also when the pointer cursor leaves the
+window. The window border is a pattern-filled or (as in this case) a
+solid-colored boundary which is maintained automatically by the X
+server; a client cannot draw in a window&rsquo;s border, since all graphics
+requests are relative to the origin (upper-left corner) of the window&rsquo;s
+interior and are clipped by the server to this inside region. Turning on
+the <var>:save-under</var> option is a hint to the X server that, when this
+window is made visible, it may be more efficient to save the pixels it
+obscures, rather than require several client programs to refresh their
+windows when the pop-up menu disappears. This is a way to work around
+X&rsquo;s client-managed refresh policy when only a small amount of screen
+space is needed temporarily.
+</p>
+<p>Why is <var>:override-redirect</var> turned on for the menu window? This is
+actually a little unusual, because it prevents any window manager client
+from <em>redirecting</em> the position of the menu when it is popped up.
+Remember that the window manager represents the user&rsquo;s policy for
+controlling the positions of his windows, so this kind of redirection is
+ordinarily correct. However, in this case, as a favor to the user, the
+menu avoids redirection in order to pop up the menu at a very specific
+location; that is, under the pointer cursor.
+</p>
+<p>What about the item subwindows? The <code>menu-set-item-list</code>
+function in the following example creates them whenever the menu&rsquo;s item
+list is changed. The upper-left x and y coordinates and the width and
+height are not important yet, because they are computed just before the
+menu is displayed. This function also calls
+<var>create-window</var> (see <a href="Creating-Windows.html#create_002dwindow">create-window</a>),
+demonstrating the equal treatment of parent and children windows in the
+X window hierarchy.
+</p>
+<div class="lisp">
+<pre class="lisp">(defun menu-set-item-list (menu &amp;rest item-strings)
+  ;; Assume the new items will change the menu's width and height
+  (setf (menu-geometry-changed-p menu) t)
+
+  ;; Destroy any existing item windows
+  (dolist (item (menu-item-alist menu))
+    (DESTROY-WINDOW (first item)))
+
+  ;; Add (item-window item-string) elements to item-alist
+  (setf (menu-item-alist menu)
+	(let (alist)
+	  (dolist (item item-strings (nreverse alist))
+	    (push (list (CREATE-WINDOW
+			 :parent       (menu-window menu)
+			 :x            0 ;temporary value
+			 :y            0 ;temporary value
+			 :width        16 ;temporary value
+			 :height       16 ;temporary value
+			 :background   (GCONTEXT-BACKGROUND (menu-gcontext menu))
+			 :event-mask   (MAKE-EVENT-MASK :enter-window
+							:leave-window
+							:button-press
+							:button-release))
+			item)
+		  alist)))))
+</pre></div>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Displaying-the-Menu.html#Displaying-the-Menu" accesskey="n" rel="next">Displaying the Menu</a>, Previous: <a href="A-Quick-Tour-of-CLX.html#A-Quick-Tour-of-CLX" accesskey="p" rel="prev">A Quick Tour of CLX</a>, Up: <a href="A-Quick-Tour-of-CLX.html#A-Quick-Tour-of-CLX" accesskey="u" rel="up">A Quick Tour of CLX</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

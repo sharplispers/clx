@@ -1,0 +1,1265 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Data Types</title>
+
+<meta name="description" content="Common LISP X Interface: Data Types">
+<meta name="keywords" content="Common LISP X Interface: Data Types">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Introduction-to-CLX.html#Introduction-to-CLX" rel="up" title="Introduction to CLX">
+<link href="Displays.html#Displays" rel="next" title="Displays">
+<link href="Programming-Considerations.html#Programming-Considerations" rel="prev" title="Programming Considerations">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Data-Types"></a>
+<div class="header">
+<p>
+Previous: <a href="Programming-Considerations.html#Programming-Considerations" accesskey="p" rel="prev">Programming Considerations</a>, Up: <a href="Introduction-to-CLX.html#Introduction-to-CLX" accesskey="u" rel="up">Introduction to CLX</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Data-Types-1"></a>
+<h3 class="section">2.5 Data Types</h3>
+
+
+<p>The following are some data type definitions that are commonly used in
+CLX function definitions.
+</p>
+<dl>
+<dt><a name="index-alist"></a>Type: <strong>alist</strong> <em>(key-type-and-name datum-type-and-name) 'list</em></dt>
+<dd><p><var>alist</var> defines an association list. An association list is a
+sequence, containing zero or more repetitions of the given elements
+with each of the elements expressed as (<em>type</em> <em>name</em>).
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-angle"></a>Type: <strong>angle</strong> <em>`(number ,(* -2pi) ,(* 2pi))</em></dt>
+<dd><p><var>angle</var> defines an angle in units of radians and is bounded by
+(-2%pi;) and (2%pi;). Note that we are explicitly using a
+different angle representation than what is actually transmitted in
+the protocol.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-arc_002dseq"></a>Type: <strong>arc-seq</strong> <em>'(repeat-seq (int16 x) (int16 y) (card16 width) (card16 height) (angle angle1) (angle angle2))</em></dt>
+<dd><p><var>arc-seq</var> defines a six-tuple sequence of the form
+(<em>x</em>, <em>y</em>, <em>width</em>, <em>height</em>, <em>angle1</em>, <em>angle2</em>).
+The points <em>x</em> and <em>y</em> are signed, 16-bit quantities with a
+range from -32,768 to 32,767. The <em>width</em> and <em>height</em>
+values are unsigned, 16-bit quantities and range from 0 to 65,535.
+<em>angle1</em> and <em>angle2</em> are in units of radians, and bounded
+by (-2%pi;) and (2%pi;).
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-array_002dindex"></a>Type: <strong>array-index</strong> <em>`(integer 0 ,array-dimension-limit)</em></dt>
+<dd><p><var>array-index</var> defines a type which is a subtype of the integers
+and can be used to describe all variables that can be array
+indices. The range is inclusive because start and end array index
+specifiers can be one (1) past the end.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-bit_002dgravity"></a>Type: <strong>bit-gravity</strong> <em>'(member gravity*)</em></dt>
+<dd><p>A keyword that specifies which region of a window should be retained
+when the window is resized.
+</p>
+<p><em>gravity</em> &ndash; One of the following:
+</p><ul>
+<li> <var>:center</var>
+</li><li> <var>:north</var>
+</li><li> <var>:south</var>
+</li><li> <var>:static</var>
+
+</li><li> <var>:east</var>
+</li><li> <var>:north-east</var>
+</li><li> <var>:south-east :west</var>
+
+</li><li> <var>:forget</var>
+</li><li> <var>:north-west</var>
+</li><li> <var>:south-west</var>
+</li></ul>
+
+<p>If a window is reconfigured without changing its inside width or
+height, then the contents of the window moves with the window and are
+not lost. Otherwise, the contents of a resized window are either moved
+or lost, depending on its bit-gravity attribute. See
+<var>window-bit-gravity</var>, in <a href="Window-Attributes.html#Window-Attributes">Window Attributes</a>, for additional
+information.
+</p>
+</dd></dl>
+
+
+
+<dl>
+<dt><a name="index-bitmap"></a>Type: <strong>bitmap</strong> <em>'(array bit (* *))</em></dt>
+<dd><p>Specifies a two-dimensional array of bits.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-bitmap_002dformat"></a>Structure: <strong>bitmap-format</strong></dt>
+<dd>
+<p>A structure that describes the storage format of a bitmap.
+</p>
+<p>The <var>bitmap-format</var> structure contains slots for <var>unit</var>,
+<var>pad</var>, and <var>lsb-first-p</var>. The <var>unit</var> member indicates
+the unit of increments used to maintain the bitmap data. The units
+available for use are 8, 16, or 32 bits. The <var>pad</var> member
+indicates how many bits are needed to pad the left edge of the
+scan-line. The <var>lsb-first-p</var> member is a predicate which
+indicates the ordering of bits with the bitmap unit.
+</p>
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-unit"></a>Slot of bitmap-format: <strong>unit</strong></dt>
+<dd>
+<p>Type: (<var>member</var> 8 16 32).
+</p>
+<p>The size of a contiguous grouping of bits, which can be 8, 16, or
+32. The default is 8.
+</p>
+</dd></dl>
+
+
+
+<dl>
+<dt><a name="index-pad"></a>Slot of bitmap-format: <strong>pad</strong></dt>
+<dd>
+<p>Type: (<var>member</var> 8 16 32).
+</p>
+<p>The number of bits to left-pad the scan-line, which can be 8, 16, or
+32. The default is 8.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-lsb_002dfirst_002dp"></a>Slot of bitmap-format: <strong>lsb-first-p</strong></dt>
+<dd>
+<p>Type: <var>boolean</var>.
+</p>
+<p>A predicate indicating whether the least significant bit comes first
+(<var>true</var>) or not (<var>nil</var>).
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-boolean"></a>Type: <strong>boolean</strong> <em>'(or nil (not nil))</em></dt>
+<dd><p><var>boolean</var> defines a type which is all inclusive. It is used for
+variables that can take on a true (non-<var>nil</var>) or false
+(<var>nil</var>) value.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-boole_002dconstant"></a>Type: <strong>boole-constant</strong> <em>`(member value*)</em></dt>
+<dd>
+<p><var>boole-constant</var> defines a type that is a set of the values
+associated with the 16 boolean operation-code constants for the Common
+Lisp language. It is used for the set of allowed source and
+destination combination functions in a graphics context.
+</p>
+<p><em>value</em> &ndash; One of the following:
+</p><ul>
+<li> <var>boole-1</var>
+</li><li> <var>boole-c1</var>
+</li><li> <var>boole-nand</var>
+</li><li> <var>boole-xor</var>
+
+</li><li> <var>boole-2</var>
+</li><li> <var>boole-c2</var>
+</li><li> <var>boole-nor</var>
+
+</li><li> <var>boole-and</var>
+</li><li> <var>boole-clr</var>
+</li><li> <var>boole-orc1</var>
+
+</li><li> <var>boole-andc1</var>
+</li><li> <var>boole-eqv</var>
+</li><li> <var>boole-orc2</var>
+
+</li><li> <var>boole-andc2</var>
+</li><li> <var>boole-ior</var>
+</li><li> <var>boole-set</var>
+</li></ul>
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-card8"></a>Type: <strong>card8</strong> <em>'(unsigned-byte 8)</em></dt>
+<dd><p>An unsigned integer value that is a maximum of eight bits long. This
+gives a number of this type a range from 0 to 255.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-card16"></a>Type: <strong>card16</strong> <em>'(unsigned-byte 16)</em></dt>
+<dd><p>An unsigned integer value that is a maximum of 16 bits long. This
+gives a number of this type a range from 0 to 65,535.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-card29"></a>Type: <strong>card29</strong> <em>'(unsigned-byte 29)</em></dt>
+<dd><p>An unsigned integer value that is a maximum of 29 bits long. This
+gives a number of this type a range from 0 to 536,870,911.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-card32"></a>Type: <strong>card32</strong> <em>'(unsigned-byte 32)</em></dt>
+<dd><p>An unsigned integer value that is a maximum of 32 bits long. This
+gives a number of this type a range from 0 to 4,294,967,295.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-color"></a>Type: <strong>color</strong> <em>'(satisfies color-p)</em></dt>
+<dd><a name="color"></a><p>A <var>color</var>. See <a href="Color-Functions.html#Color-Functions">Color Functions</a>, for additional
+information.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-colormap"></a>Type: <strong>colormap</strong> <em>'(satisfies colormap-p)</em></dt>
+<dd><a name="colormap"></a><p>A <var>colormap</var>. See <a href="Colormap-Functions.html#Colormap-Functions">Colormap Functions</a>, for
+additional information.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-cursor"></a>Type: <strong>cursor</strong> <em>'(satisfies cursor-p)</em></dt>
+<dd><a name="cursor"></a><p>A <var>cursor</var>. See <a href="Cursors.html#Cursors">Cursors</a>, for additional information.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-device_002devent_002dmask"></a>Type: <strong>device-event-mask</strong> <em>'(or mask32 (list device-event-mask-class))</em></dt>
+<dd><a name="event_002dmask"></a>
+<p>Provides a way to specify a set of bits for an event bitmask. Two ways
+of specifying the bits are allowed: by setting the event bits in a 32
+bit mask, or by listing the keyword names of the device related event
+bits in a list.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-device_002devent_002dmask_002dclass"></a>Type: <strong>device-event-mask-class</strong> <em>'(member event*)</em></dt>
+<dd><p>A keyword name, for a device related event, that corresponds to a
+particular bit in an event bitmask. The set of names is a subset of
+the names in the type <var>event-mask-class</var>.
+</p>
+<p><em>event</em> &ndash; One of the following:
+</p><ul>
+<li> <var>:button-1-motion</var>
+</li><li> <var>:button-motion</var>
+
+</li><li> <var>:button-2-motion</var>
+</li><li> <var>:button-press</var>
+
+</li><li> <var>:button-3-motion</var>
+</li><li> <var>:key-press</var>
+
+</li><li> <var>:button-4-motion</var>
+</li><li> <var>:key-release</var>
+
+</li><li> <var>:button-5-motion</var>
+</li><li> <var>:pointer-motion</var>
+</li></ul>
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-display"></a>Type: <strong>display</strong> <em>'(satisfies display-p)</em></dt>
+<dd><a name="display"></a><p>A connection to an X server. See <a href="Displays.html#Displays">Displays</a>, for additional
+information.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-drawable"></a>Type: <strong>drawable</strong> <em>'(or window pixmap)</em></dt>
+<dd><p>Both <var>windows</var> and <var>pixmaps</var> can be used as sources and
+destinations in graphics operations. <var>windows</var> and <var>pixmaps</var>
+together are known as <em>drawables</em>. However, an <var>:input-only</var>
+window cannot be used as a source or destination in a graphics
+operation.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-draw_002ddirection"></a>Type: <strong>draw-direction</strong> <em>'(member :left-to-right :right-to-left)</em></dt>
+<dd><p>Defines a list of rotation directions for drawing arcs and
+fonts. <var>draw-direction</var> can have the values of
+<var>:left-to-right</var> or <var>:right-to-left</var>.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-error_002dkey"></a>Type: <strong>error-key</strong> <em>'(member error*)</em></dt>
+<dd><p>Defines a list of all predefined errors. All errors (synchronous and
+asynchronous) are processed by calling an error handler in the
+display. The handler is called with the display as the first argument
+and the error-key as its second argument.
+</p>
+<p><em>error</em> &ndash; One of the following:
+</p><ul>
+<li> <var>:access</var>
+</li><li> <var>:drawable</var>
+</li><li> <var>:implementation</var>
+</li><li> <var>:value</var>
+
+</li><li> <var>:alloc</var>
+</li><li> <var>:font</var>
+</li><li> <var>:length</var>
+</li><li> <var>:window</var>
+
+</li><li> <var>:atom</var>
+</li><li> <var>:gcontext</var>
+</li><li> <var>:match</var>
+
+</li><li> <var>:colormap</var>
+</li><li> <var>:id-choice</var>
+</li><li> <var>:name</var>
+
+</li><li> <var>:cursor</var>
+</li><li> <var>:illegal-request</var>
+</li><li> <var>:pixmap</var>
+</li></ul>
+</dd></dl>
+
+<dl>
+<dt><a name="index-event_002dkey"></a>Type: <strong>event-key</strong> <em>'(member event-type*)</em></dt>
+<dd><p>Defines a list that specifies all predefined event-types. Clients are
+informed of information asynchronously by means of events. These
+events can be either asynchronously generated from devices or
+generated as side effects of client requests.
+</p>
+<p><em>event-type</em> &ndash; One of the following:
+</p><ul>
+<li> <var>:button-press</var>
+</li><li> <var>:exposure</var>
+</li><li> <var>:motion-notify</var>
+
+</li><li> <var>:button-release</var>
+</li><li> <var>:focus-in</var>
+</li><li> <var>:no-exposure</var>
+
+</li><li> <var>:circulate-notify</var>
+</li><li> <var>:focus-out</var>
+</li><li> <var>:property-notify</var>
+
+</li><li> <var>:circulate-request</var>
+</li><li> <var>:graphics-exposure</var>
+</li><li> <var>:reparent-notify</var>
+
+</li><li> <var>:client-message</var>
+</li><li> <var>:gravity-notify</var>
+</li><li> <var>:resize-request</var>
+
+</li><li> <var>:colormap-notify</var>
+</li><li> <var>:keymap-notify</var>
+</li><li> <var>:selection-clear</var>
+
+</li><li> <var>:configure-notify</var>
+</li><li> <var>:key-press</var>
+</li><li> <var>:selection-notify</var>
+
+</li><li> <var>:configure-request</var>
+</li><li> <var>:key-release</var>
+</li><li> <var>:selection-request</var>
+
+</li><li> <var>:create-notify</var>
+</li><li> <var>:leave-notify</var>
+</li><li> <var>:unmap-notify</var>
+
+</li><li> <var>:destroy-notify</var>
+</li><li> <var>:map-notify</var>
+</li><li> <var>:visibility-notify</var>
+
+</li><li> <var>:enter-notify</var>
+</li><li> <var>:map-request</var>
+</li></ul>
+</dd></dl>
+
+<dl>
+<dt><a name="index-event_002dmask"></a>Type: <strong>event-mask</strong> <em>'(or mask32 (list event-mask-class))</em></dt>
+<dd><p>Provides a way to specify a set of bits for an event bitmask. Two ways
+of specifying the bits are allowed: by setting the event bits in a 32
+bit mask, or by listing the keyword names of the event bits in a list.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-event_002dmask_002dclass"></a>Type: <strong>event-mask-class</strong> <em>'(member event*)</em></dt>
+<dd><p>The elements of the type <var>event-mask-class</var> are keyword names
+that correspond to a particular bit in an event bitmask.
+</p>
+<p><em>event</em> &ndash; One of the following:
+</p><ul>
+<li> <var>:button-1-motion</var>
+</li><li> <var>:enter-window</var>
+</li><li> <var>:pointer-motion-hint</var>
+
+</li><li> <var>:button-2-motion</var>
+</li><li> <var>:exposure</var>
+</li><li> <var>:property-change</var>
+
+</li><li> <var>:button-3-motion</var>
+</li><li> <var>:focus-change</var>
+</li><li> <var>:resize-redirect</var>
+
+</li><li> <var>:button-4-motion</var>
+</li><li> <var>:key-press</var>
+</li><li> <var>:structure-notify</var>
+
+</li><li> <var>:button-5-motion</var>
+</li><li> <var>:key-release</var>
+</li><li> <var>:substructure-notify</var>
+
+</li><li> <var>:button-motion</var>
+</li><li> <var>:keymap-state</var>
+</li><li> <var>:substructure-redirect</var>
+
+</li><li> <var>:button-press</var>
+</li><li> <var>:leave-window</var>
+</li><li> <var>:visibility-change</var>
+
+</li><li> <var>:button-release</var>
+</li><li> <var>:owner-grab-button</var>
+
+</li><li> <var>:colormap-change</var>
+</li><li> <var>:pointer-motion</var>
+</li></ul>
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-make_002devent_002dkeys"></a>Function: <strong>make-event-keys</strong> <em>event-mask</em></dt>
+<dd><p>Returns a list of <var>event-mask-class</var> keyword names for the event
+bits that are set in the specified event mask.
+</p>
+<dl compact="compact">
+<dt><var>event-mask</var></dt>
+<dd><p>An event mask (type <var>mask32</var>).
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-make_002devent_002dmask"></a>Function: <strong>make-event-mask</strong> <em>&amp;rest keys</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>keys</var></dt>
+<dd><p><var>event-mask-class</var> keywords.
+</p></dd>
+</dl>
+
+<p>Constructs an event mask from a set of <var>event-mask-class</var> keyword
+names.
+</p>
+<dl compact="compact">
+<dt><var>event-mask</var></dt>
+<dd><p>Type <var>mask32</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-font"></a>Type: <strong>font</strong> <em>'(satisfies font-p)</em></dt>
+<dd><a name="font"></a>
+<p>A text font. See <a href="Font-and-Characters.html#Font-and-Characters">Font and Characters</a>, for additional
+information.
+</p>
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-fontable"></a>Type: <strong>fontable</strong> <em>'(or stringable font)</em></dt>
+<dd>
+<p>A <var>fontable</var> is either a <var>font</var> object or the name of one of
+the fonts in the font database.
+</p>
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-font_002dprops"></a>Type: <strong>font-props</strong> <em>'list</em></dt>
+<dd>
+<p>A <var>list</var> that contains alternating keywords and integers.
+</p>
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-gcontext"></a>Type: <strong>gcontext</strong> <em>'(satisfies gcontext-p)</em></dt>
+<dd><a name="gcontext"></a>
+<p>A graphics context. See <a href="Graphics-Contexts.html#Graphics-Contexts">Graphics Contexts</a>, for additional
+information.
+</p>
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-gcontext_002dkey"></a>Type: <strong>gcontext-key</strong> <em>'(member type*)</em></dt>
+<dd>
+<p>A list of predefined types for use in <var>gcontext</var>
+processing. Various information for graphics output is stored in a
+graphics context (GC or GContext), such as foreground pixel,
+background pixel, line width, clipping region, and so forth.
+</p>
+<p><var>type</var> &ndash; One of the following:
+</p><ul>
+<li> <var>:arc-mode</var>
+</li><li> <var>:exposures</var>
+</li><li> <var>:line-width</var>
+
+</li><li> <var>:background</var>
+</li><li> <var>:fill-rule</var>
+</li><li> <var>:plane-mask</var>
+
+</li><li> <var>:cap-style :fill-style</var>
+</li><li> <var>:stipple</var>
+
+</li><li> <var>:clip-mask</var>
+</li><li> <var>:font</var>
+</li><li> <var>:subwindow-mode</var>
+
+</li><li> <var>:clip-x</var>
+</li><li> <var>:foreground</var>
+</li><li> <var>:tile</var>
+
+</li><li> <var>:clip-y</var>
+</li><li> <var>:function</var>
+</li><li> <var>:ts-x</var>
+
+</li><li> <var>:dash-offset</var>
+</li><li> <var>:join-style</var>
+</li><li> <var>:ts-y</var>
+
+</li><li> <var>:dashes</var>
+</li><li> <var>:line-style</var>
+</li></ul>
+</dd></dl>
+
+<dl>
+<dt><a name="index-grab_002dstatus"></a>Type: <strong>grab-status</strong> <em>'(member grab-type*)</em></dt>
+<dd>
+<p>There are two kinds of grabs: active and passive. An <em>active
+grab</em> occurs when a single client grabs the keyboard and/or pointer
+explicitly. Clients can also grab a particular keyboard key or pointer
+button in a window. The grab activates when the key or button is
+actually pressed, and is called a <em>passive grab</em>. Passive grabs
+can be very convenient for implementing reliable pop-up menus.
+</p>
+<p><var>grab-type</var> &ndash; One of the following:
+</p>
+<ul>
+<li> <var>:already-grabbed</var>
+
+</li><li> <var>:frozen</var>
+
+</li><li> <var>:invalid-time</var>
+
+</li><li> <var>:not-viewable</var>
+
+</li><li> <var>:success</var>
+</li></ul>
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-image_002ddepth-1"></a>Type: <strong>image-depth</strong> <em>'(integer 0 32)</em></dt>
+<dd><p>Used in determining the depth of a pixmap, window, or image. The value
+specifies the number of bits deep that a given pixel has within a
+given pixmap, window, or image.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-index_002dsize"></a>Type: <strong>index-size</strong> <em>'(member :default 8 16)</em></dt>
+<dd><p>Used to control the element size of the destination buffer given to
+the translate function when drawing glyphs. If <var>:default</var> is
+specified, the size is based on the current font, if known; otherwise,
+16 is used.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-int8"></a>Type: <strong>int8</strong> <em>'(signed-byte 8)</em></dt>
+<dd><p>A signed integer value that is a maximum of eight bits long. A number
+of this type can have a range from -128 to 127.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-int16"></a>Type: <strong>int16</strong> <em>'(signed-byte 16)</em></dt>
+<dd><a name="int16"></a><p>A signed integer value that is a maximum of 16 bits long. A number of
+this type can have a range from -32,768 to 32,767.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-int32"></a>Type: <strong>int32</strong> <em>'(signed-byte 32)</em></dt>
+<dd><p>A signed integer value that is a maximum of 32 bits long. A number of
+this type can have a range from -2,147,483,648 to 2,147,483,647.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-keysym"></a>Type: <strong>keysym</strong> <em>'card32</em></dt>
+<dd><p>Used as an encoding of a symbol on a keycap on a keyboard. It is an
+unsigned integer value represented in a maximum of 32 bits long. A
+<var>keysym</var> type can have a range from 0 to 4,294,967,295.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-mask16"></a>Type: <strong>mask16</strong> <em>' card16</em></dt>
+<dd><p>A positional bitmask that contains 16 boolean flags.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-mask32"></a>Type: <strong>mask32</strong> <em>' card32</em></dt>
+<dd><p>A positional bitmask that contains 32 boolean flags.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-modifier_002dkey"></a>Type: <strong>modifier-key</strong> <em>'(member modifier*)</em></dt>
+<dd><p>A keyword identifying one of the modifier keys on the keyboard device.
+</p>
+<p><var>modifier</var> &ndash; One of the following:
+</p><ul>
+<li> <var>:shift</var>
+</li><li> <var>:mod-2</var>
+
+</li><li> <var>:lock</var>
+</li><li> <var>:mod-3</var>
+
+</li><li> <var>:control</var>
+</li><li> <var>:mod-4</var>
+
+</li><li> <var>:mod-1</var>
+</li><li> <var>:mod-5</var>
+</li></ul>
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-modifier_002dmask"></a>Type: <strong>modifier-mask</strong> <em>'(or (member :any) mask16 (list modifier-key))</em></dt>
+<dd><p>A bitmask or list of keywords that specifies a set of modifier
+keys. The keyword <var>:any</var> is equivalent to any subset of modifier
+key.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-pixarray"></a>Type: <strong>pixarray</strong> <em>'(or (array pixel (* *)) (array card16 (* *)) (array card8 (* *)) (array (unsigned-byte 4) (* *)) (array bit (* *)))</em></dt>
+<dd>
+<p>Specifies a two-dimensional array of pixels.
+</p>
+</dd></dl>
+
+
+
+<dl>
+<dt><a name="index-pixel"></a>Type: <strong>pixel</strong> <em>'(unsigned-byte 32)</em></dt>
+<dd>
+<p>An unsigned integer value that is a maximum of 32 bits long. This
+gives a pixel type a value range from 0 to 4,294,967,295. Useful
+values are dependent on the class of colormap being used.
+</p>
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-pixmap"></a>Type: <strong>pixmap</strong> <em>'(satisfies pixmap-p)</em></dt>
+<dd><a name="pixmap"></a>
+<p>A <var>pixmap</var>, see <a href="Pixmaps.html#Pixmaps">Pixmaps</a>), for additional information.
+</p>
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-pixmap_002dformat"></a>Structure: <strong>pixmap-format</strong></dt>
+<dd>
+<p>A structure that describes the storage format of a pixmap.
+</p>
+<p>The <var>pixmap-format</var> structure contains slots for <var>depth</var>,
+<var>bits-per-pixel</var>, and <var>scanline-pad</var>. The <var>depth</var> member
+indicates the number of bit planes in the pixmap. The
+<var>bits-per-pixel</var> member indicates the number of bits used to
+represent a single pixel. For X, a pixel can be 1, 4, 8, 16, 24, or 32
+bits wide. As for <var>bitmap-format</var>, the <var>scanline-pad</var> member
+indicates how many pixels are needed to pad the left edge of the
+scan-line.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-depth"></a>Slot of pixmap-format: <strong>depth</strong></dt>
+<dd>
+<p>Type: <var>image-depth</var>.
+</p>
+<p>The number of bit planes in the pixmap.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-bits_002dper_002dpixel"></a>Slot of pixmap-format: <strong>bits-per-pixel</strong></dt>
+<dd>
+
+<p>Type: (<var>member</var> 1 4 8 16 24 32).
+</p>
+<p>The number of consecutive bits used to encode a single pixel. The
+default is 8.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-scanline_002dpad"></a>Slot of pixmap-format: <strong>scanline-pad</strong></dt>
+<dd>
+<p>Type: (<var>member</var> 8 16 32).
+</p>
+<p>The number of bits to left-pad the scan-line, which can be 8, 16, or
+32. The default is 8.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-point_002dseq"></a>Type: <strong>point-seq</strong> <em>'(repeat-seq (int16 x) (int16 y))</em></dt>
+<dd>
+<p>The <var>point-seq</var> type is used to define sequences of
+(<var>x</var>,<var>y</var>) pairs of points. The paired values are 16-bit,
+signed integer quantities. This gives the points in this type a range
+from -32,768 to 32,767.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-pointer_002devent_002dmask"></a>Type: <strong>pointer-event-mask</strong> <em>'(or mask32 (list pointer-event-mask-class))</em></dt>
+<dd>
+<p>Provides a way to specify a set of bits for an event bitmask. Two ways
+of specifying the bits are allowed: by setting the event bits in a 32
+bit mask, or by listing the keyword names of the pointer related event
+bits in a list.
+</p>
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-pointer_002devent_002dmask_002dclass"></a>Type: <strong>pointer-event-mask-class</strong> <em>'(member event*)</em></dt>
+<dd>
+<p>A keyword name, for a pointer related event, that corresponds to a
+particular bit in an event bitmask. The set of names is a subset of
+the names in the type <var>event-mask-class</var>.
+</p>
+<p><var>event</var> &ndash; One of the following:
+</p>
+<ul>
+<li> <var>:button-1-motion</var>
+</li><li> <var>:button-motion</var>
+</li><li> <var>:leave-window</var>
+
+</li><li> <var>:button-2-motion</var>
+</li><li> <var>:button-press</var>
+</li><li> <var>:pointer-motion</var>
+
+</li><li> <var>:button-3-motion</var>
+</li><li> <var>:button-release</var>
+</li><li> <var>:pointer-motion-hint</var>
+
+</li><li> <var>:button-4-motion</var>
+</li><li> <var>:enter-window</var>
+
+</li><li> <var>:button-5-motion</var>
+</li><li> <var>:keymap-state</var>
+</li></ul>
+</dd></dl>
+
+<dl>
+<dt><a name="index-rect_002dseq"></a>Type: <strong>rect-seq</strong> <em>'(repeat-seq (int16 x) (int16 y) (card16 width) (card16 height))</em></dt>
+<dd>
+<p><var>rect-seq</var> defines a four-tuple sequence of the form (<var>x</var>,
+<var>y</var>, <var>width</var>, <var>height</var>). The points <var>x</var> and
+<var>y</var> are signed, 16-bit quantities with a range from -32,768 to
+32,767. The <var>width</var> and <var>height</var> values are unsigned, 16-bit
+quantities and range from 0 to 65,535.
+</p>
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-repeat_002dseq"></a>Type: <strong>repeat-seq</strong> <em>(&amp;rest elts) 'sequence</em></dt>
+<dd>
+<p>A subtype used to define repeating sequences.
+</p>
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-resource_002did"></a>Type: <strong>resource-id</strong> <em>'card29</em></dt>
+<dd>
+<p>A numeric identifier that is assigned by the server to a server
+resource object.
+</p>
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-rgb_002dval"></a>Type: <strong>rgb-val</strong> <em>'(float 0.0 1.0)</em></dt>
+<dd>
+<p>An <var>rgb-val</var> is a floating-point value between 0 and 1 that
+specifies a saturation for a red, green, or blue additive primary. The
+0 value indicates no saturation and 1 indicates full saturation.
+</p>
+</dd></dl>
+
+<dl>
+<dt><a name="index-screen"></a>Type: <strong>screen</strong> <em>'(satisfies screen-p)</em></dt>
+<dd><a name="screen"></a>
+<p>A display screen. See <a href="Screens.html#Screens">Screens</a>, for further information.
+</p>
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-seg_002dseq"></a>Type: <strong>seg-seq</strong> <em>'(repeat-seq (int16 x1) (int16 y1) (int16 x2) (int16 y2))</em></dt>
+<dd>
+<p>Defines sequences of (<var>x1</var>, <var>y1</var>, <var>x2</var>, <var>y2</var>) sets
+of points. The point values are 16-bit, signed integer
+quantities. This gives the points in this type a range from -32,768 to
+32,767.
+</p>
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-state_002dmask_002dkey"></a>Type: <strong>state-mask-key</strong> <em>'(or modifier-key (member button*))</em></dt>
+<dd>
+<p>A keyword identifying one of the display modifier keys or pointer
+buttons whose state is reported in device events.
+</p>
+<p><var>button</var> &ndash; One of the following:
+</p>
+<ul>
+<li> <var>:button-1</var>
+</li><li> <var>:button-4</var>
+</li><li> <var>:button-2</var>
+</li><li> <var>:button-5</var>
+</li><li> <var>:button-3</var>
+</li></ul>
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-make_002dstate_002dkeys"></a>Function: <strong>make-state-keys</strong> <em>state-mask</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>state-mask</var></dt>
+<dd><p>A 16-bit mask of type <var>mask16</var>.
+</p>
+</dd>
+</dl>
+
+<p>Returns a list of <var>state-mask-key</var> symbols corresponding to the
+<var>state-mask</var>. A symbol belongs to the returned list if, and only
+if, the corresponding <var>state-mask</var> bit is 1.
+</p>
+<dl compact="compact">
+<dt><var>state-keywords</var></dt>
+<dd><p>Type <var>list</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-make_002dstate_002dmask"></a>Function: <strong>make-state-mask</strong> <em>&amp;rest keys</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>keys</var></dt>
+<dd><p>A list of <var>state-mask-key</var> symbols.
+</p></dd>
+</dl>
+
+<p>Returns a 16-bit <var>mask</var> representing the given
+<var>state-mask-key</var> symbols. The returned <var>mask</var> contains a 1
+bit for each keyword.
+</p>
+<dl compact="compact">
+<dt><var>mask</var></dt>
+<dd><p>Type <var>mask16</var>.
+</p></dd>
+</dl>
+</dd></dl>
+
+<dl>
+<dt><a name="index-stringable"></a>Type: <strong>stringable</strong> <em>'(or string symbol)</em></dt>
+<dd>
+<p>Used for naming something. This type can be either a string or a
+<var>symbol</var> whose <var>symbol-name</var> is used as the string containing
+the name. The case of the characters in the string is ignored when
+comparing stringables.
+</p>
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-timestamp"></a>Type: <strong>timestamp</strong> <em>'(or null card32)</em></dt>
+<dd>
+<p>An encoding of a time. <var>nil</var> stands for the current time.
+</p>
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-visual_002dinfo"></a>Structure: <strong>visual-info</strong></dt>
+<dd>
+<p>A structure that represents a visual type. The elements of this
+structure are <var>id</var>, <var>class</var>, <var>red-mask</var>, <var>green-mask</var>,
+<var>blue-mask</var>, <var>bits-per-rgb</var>, and <var>colormap-entries</var>.
+</p>
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-id"></a>Slot of visual-info: <strong>id</strong></dt>
+<dd>
+<p>Type: <var>card29</var>.
+</p>
+<p>A unique identification number.
+</p>
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-class"></a>Slot of visual-info: <strong>class</strong></dt>
+<dd>
+<p>Type: (member :direct-color :gray-scale :pseudo-color :static-color :static-gray :true-color).
+</p>
+<p>The class of the visual type.
+</p>
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-red_002dmask"></a>Slots of visual-info: <strong>red-mask</strong></dt>
+<dt><a name="index-green_002dmask"></a>Slots of visual-info: <strong>green-mask</strong></dt>
+<dt><a name="index-blue_002dmask"></a>Slots of visual-info: <strong>blue-mask</strong></dt>
+<dd>
+<p>Type: <var>pixel</var>.
+</p>
+<p>The <var>red-mask</var>, <var>green-mask</var>, and <var>blue-mask</var> elements are
+only meaningful for the <var>:direct-color</var> and <var>:true-color</var>
+classes. Each mask has one contiguous set of bits with no
+intersections.
+</p>
+</dd></dl>
+
+<dl>
+<dt><a name="index-bits_002dper_002drgb"></a>Slot of visual-info: <strong>bits-per-rgb</strong></dt>
+<dd>
+<p>Type: <var>card8</var>.
+</p>
+<p>Specifies the log base 2 of the approximate number of distinct color
+values ( individually) of red, green, and blue. Actual RGB values are
+unsigned 16-bit numbers.
+</p>
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-colormap_002dentries"></a>Slot of visual-info: <strong>colormap-entries</strong></dt>
+<dd>
+<p>Type: <var>card16</var>.
+</p>
+<p>Defines the number of available colormap entries in a newly created
+colormap. For <var>:direct-color</var> and <var>:true-color</var>, this is the
+size of an individual pixel subfield.
+</p>
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-win_002dgravity"></a>Type: <strong>win-gravity</strong> <em>'(member gravity*)</em></dt>
+<dd>
+<p>A keyword that specifies how to reposition a window when its parent is
+resized.
+</p>
+<p><var>gravity</var> &ndash; One of the following:
+</p><ul>
+<li> <var>:center</var>
+</li><li> <var>:north-west</var>
+</li><li> <var>:static</var>
+
+</li><li> <var>:east</var>
+</li><li> <var>:south</var>
+</li><li> <var>:unmap</var>
+
+</li><li> <var>:north</var>
+</li><li> <var>:south-east</var>
+</li><li> <var>:west</var>
+
+</li><li> <var>:north-east</var>
+</li><li> <var>:south-west</var>
+</li></ul>
+
+<p>If a parent window is reconfigured without changing its inside width
+or height, then all child windows move with the parent and are not
+changed. Otherwise, each child of the resized parent is moved,
+depending on the child&rsquo;s gravity attribute. See <var>window-gravity</var>
+(see <a href="Window-Attributes.html#Window-Attributes">Window Attributes</a>)), for additional information.
+</p>
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-window"></a>Type: <strong>window</strong> <em>'(satisfies window-p)</em></dt>
+<dd><a name="window"></a>
+<p>A window. See <a href="Windows-and-Pixmaps.html#Windows-and-Pixmaps">Windows and Pixmaps</a>, for additional
+information.
+</p>
+</dd></dl>
+
+<dl>
+<dt><a name="index-wm_002dsize_002dhints"></a>Structure: <strong>wm-size-hints</strong></dt>
+<dd>
+<p>A structure that contains size hints for the window manager.
+</p>
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-x"></a>Slot of wm-size-hints: <strong>x</strong></dt>
+<dd>
+<p>Type: (<var>or</var> <var>null</var> <var>int32</var>).
+</p>
+<p>This slot is obsolete.  New window managers do not use it.
+</p>
+</dd></dl>
+
+<dl>
+<dt><a name="index-y"></a>Slot of wm-size-hints: <strong>y</strong></dt>
+<dd>
+<p>Type: (<var>or</var> <var>null</var> <var>int32</var>).
+</p>
+<p>This slot is obsolete.  New window managers do not use it.
+</p>
+</dd></dl>
+
+<dl>
+<dt><a name="index-width"></a>Slot of wm-size-hints: <strong>width</strong></dt>
+<dd>
+<p>Type: (<var>or</var> <var>null</var> <var>card32</var>).
+</p>
+<p>This slot is obsolete.  New window managers do not use it.  They will
+use the <var>min-width</var> and <var>max-width</var> slots instead.
+</p>
+</dd></dl>
+
+<dl>
+<dt><a name="index-height"></a>Slot of wm-size-hints: <strong>height</strong></dt>
+<dd>
+<p>Type: (<var>or</var> <var>null</var> <var>card32</var>).
+</p>
+<p>This slot is obsolete.  New window managers do not use it.  They will
+use the <var>min-height</var> and <var>max-height</var> slots instead.
+</p>
+</dd></dl>
+
+<dl>
+<dt><a name="index-min_002dwidth"></a>Slot of wm-size-hints: <strong>min-width</strong></dt>
+<dd>
+<p>Type: (<var>or</var> <var>null</var> <var>card32</var>).
+</p>
+<p>This slot indicates the smallest width for which the application still
+works properly.
+</p>
+</dd></dl>
+
+<dl>
+<dt><a name="index-min_002dheight"></a>Slot of wm-size-hints: <strong>min-height</strong></dt>
+<dd>
+<p>Type: (<var>or</var> <var>null</var> <var>card32</var>).
+</p>
+<p>This slot indicates the smallest height for which the application still
+works properly.
+</p>
+</dd></dl>
+
+<dl>
+<dt><a name="index-max_002dwidth"></a>Slot of wm-size-hints: <strong>max-width</strong></dt>
+<dd>
+<p>Type: (<var>or</var> <var>null</var> <var>card32</var>).
+</p>
+<p>This slot indicates the largest width for which the application still
+works properly.
+</p>
+</dd></dl>
+
+<dl>
+<dt><a name="index-max_002dheight"></a>Slot of wm-size-hints: <strong>max-height</strong></dt>
+<dd>
+<p>Type: (<var>or</var> <var>null</var> <var>card32</var>).
+</p>
+<p>This slot indicates the largest height for which the application still
+works properly.
+</p>
+</dd></dl>
+
+<dl>
+<dt><a name="index-width_002dinc"></a>Slot of wm-size-hints: <strong>width-inc</strong></dt>
+<dd>
+<p>Type: (<var>or</var> <var>null</var> <var>card32</var>).
+</p>
+<p>This slot defines an arithmetic progression of widths (minimum to
+maximum) into which the window prefers to be resized.
+</p>
+</dd></dl>
+
+<dl>
+<dt><a name="index-height_002dinc"></a>Slot of wm-size-hints: <strong>height-inc</strong></dt>
+<dd>
+<p>Type: (<var>or</var> <var>null</var> <var>card32</var>).
+</p>
+<p>This slot defines an arithmetic progression of heights (minimum to
+maximum) into which the window prefers to be resized.
+</p>
+</dd></dl>
+
+<dl>
+<dt><a name="index-min_002daspect"></a>Slot of wm-size-hints: <strong>min-aspect</strong></dt>
+<dd>
+<p>Type: (<var>or</var> <var>null</var> <var>number</var>).
+</p>
+<p>This slot specifies the minimum aspect ratio (the fraction <var>x</var>
+size divided by <var>y</var> size) preferred by the application.
+</p>
+</dd></dl>
+
+<dl>
+<dt><a name="index-max_002daspect"></a>Slot of wm-size-hints: <strong>max-aspect</strong></dt>
+<dd>
+<p>Type: (<var>or</var> <var>null</var> <var>number</var>).
+</p>
+<p>This slot specifies the maximum aspect ratio (the fraction <var>x</var>
+size divided by <var>y</var> size) preferred by the application.
+</p>
+</dd></dl>
+
+<dl>
+<dt><a name="index-base_002dwidth"></a>Slot of wm-size-hints: <strong>base-width</strong></dt>
+<dd>
+<p>Type: (<var>or</var> <var>null</var> <var>card32</var>).
+</p>
+<p>This slot specifies the desired width of the window.
+</p>
+</dd></dl>
+
+<dl>
+<dt><a name="index-base_002dheight"></a>Slot of wm-size-hints: <strong>base-height</strong></dt>
+<dd>
+<p>Type: (<var>or</var> <var>null</var> <var>card32</var>).
+</p>
+<p>This slot specifies the desired height of the window.
+</p>
+</dd></dl>
+
+<dl>
+<dt><a name="index-win_002dgravity-1"></a>Slot of wm-size-hints: <strong>win-gravity</strong></dt>
+<dd>
+<p>Type: (<var>or</var> <var>null</var> <var>win-gravity</var>).
+</p>
+<p>The window manager will interpret the position of the window and its
+border width to position the point of the outer rectangle of the
+overall window specified by the value of this slot. The outer
+rectangle of the window includes any borders or decorations supplied
+by the window manager. In other words, if the window manager decides
+to place the window where the client asked, the position on the parent
+window&rsquo;s border named by the value of this slot will be placed where
+the client window would have been placed in the absence of a window
+manager.
+</p>
+</dd></dl>
+
+<dl>
+<dt><a name="index-xatom"></a>Type: <strong>xatom</strong> <em>'(or string symbol)</em></dt>
+<dd>
+<p>A name that has been assigned a corresponding unique ID by the
+server. <var>xatoms</var> are used to identify properties, selections, and
+types defined in the X server. An <var>xatom</var> can be either a
+<var>string</var> or <var>symbol</var> whose <var>symbol-name</var> is used as the
+<var>xatom</var> name. The case of the characters in the string are
+significant when comparing <var>xatoms</var>.
+</p>
+</dd></dl>
+
+<hr>
+<div class="header">
+<p>
+Previous: <a href="Programming-Considerations.html#Programming-Considerations" accesskey="p" rel="prev">Programming Considerations</a>, Up: <a href="Introduction-to-CLX.html#Introduction-to-CLX" accesskey="u" rel="up">Introduction to CLX</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

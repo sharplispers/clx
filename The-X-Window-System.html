@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: The X Window System</title>
+
+<meta name="description" content="Common LISP X Interface: The X Window System">
+<meta name="keywords" content="Common LISP X Interface: The X Window System">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Introduction-to-CLX.html#Introduction-to-CLX" rel="up" title="Introduction to CLX">
+<link href="Windows.html#Windows" rel="next" title="Windows">
+<link href="Introduction-to-CLX.html#Introduction-to-CLX" rel="prev" title="Introduction to CLX">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="The-X-Window-System"></a>
+<div class="header">
+<p>
+Next: <a href="A-Quick-Tour-of-CLX.html#A-Quick-Tour-of-CLX" accesskey="n" rel="next">A Quick Tour of CLX</a>, Previous: <a href="Introduction-to-CLX.html#Introduction-to-CLX" accesskey="p" rel="prev">Introduction to CLX</a>, Up: <a href="Introduction-to-CLX.html#Introduction-to-CLX" accesskey="u" rel="up">Introduction to CLX</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="The-X-Window-System-1"></a>
+<h3 class="section">2.1 The X Window System</h3>
+
+<p>The X Window System was developed at the Massachusetts Institute of
+Technology (MIT) and first released in 1985. Since then, the X Window
+System has become an industry-standard product available on virtually
+every type of bit-mapped workstation. The current version of X,
+Version 11, has been implemented for several different computer
+architectures, for a wide variety of display hardware, and also for
+many different operating systems. X Version 11 represents the
+fulfillment of the original design goals proposed by MIT, as follows:
+</p>
+<dl compact="compact">
+<dt>Portable</dt>
+<dd><p>Support virtually any bitmap display and any interactive input device
+(including keyboards, mice, tablets, joysticks, and touch screens).
+Make it easy to implement the window system on different operating
+systems.
+</p>
+</dd>
+<dt>Device-Independent Applications</dt>
+<dd><p>Avoid rewriting, recompiling, or even relinking in order to use
+different display/input hardware. Make it easy for an application to
+work on both monochrome and color hardware.
+</p>
+</dd>
+<dt>Network Transparent</dt>
+<dd><p>Let an application run on one computer while using another computer&rsquo;s
+display, even if the other computer has a different operating system
+or hardware architecture.
+</p>
+</dd>
+<dt>Multitasking</dt>
+<dd><p>Support multiple applications being displayed simultaneously.
+</p>
+</dd>
+<dt>No User Interface Policy</dt>
+<dd>
+<p>Since no one agrees on what constitutes the best user interface, make
+it possible for a broad range of user interface styles (or policies)
+to be implemented, external to the window system and to the
+application programs.
+</p>
+</dd>
+<dt>Cheap Windows</dt>
+<dd><p>Windows should be abundant, and ubiquitous. Provide overlapping
+windows and a simple mechanism for window hierarchy.
+</p>
+</dd>
+<dt>High-Performance Graphics</dt>
+<dd><p>Provide powerful interfaces for synthesizing 2-D images (geometric
+primitives, high-quality text with multiple typefaces, and scanned
+images).
+</p>
+</dd>
+<dt>Extensible</dt>
+<dd><p>Include a mechanism for adding new capabilities. Allow separate sites
+to develop independent extensions without becoming incompatible with
+remote applications.
+</p></dd>
+</dl>
+
+<p>Some of these goals lead directly to the basic X architecture &ndash; the
+client-server model. The basic window system is implemented by the X
+<em>server</em> program. An application program (the <em>client</em>)
+sends window system <em>requests</em> to the X server through a reliable
+two-way byte-stream.
+</p>
+<p>In general, the server and the client can be executing on separate
+host computers, in which case the byte-stream is implemented via some
+network protocol (TCP, DECnet(tm), Chaosnet, and so
+forth). The X server, which is connected to several client programs
+running concurrently, executes client requests in round-robin
+fashion. The server is responsible for drawing client graphics on the
+display screen and for making sure that graphics output to a window
+stays inside its boundary.
+</p>
+<p>The other primary job of the X server is to channel input from the
+keyboard, pointer, and other input devices back to the appropriate
+client programs. Input arrives at the client asynchronously in the
+form of input <em>events</em> representing up/down transitions of keys
+or pointer buttons, changes in the pointer position, and so on. In
+some cases, a request generates a return value (or <em>reply</em>) from
+the server, which is another kind of client input. Replies and input
+events are received via the same byte-stream connecting the client
+with the server.
+</p>
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top">&bull; <a href="Windows.html#Windows" accesskey="1">Windows</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Input-Events.html#Input-Events" accesskey="2">Input Events</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+</table>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="A-Quick-Tour-of-CLX.html#A-Quick-Tour-of-CLX" accesskey="n" rel="next">A Quick Tour of CLX</a>, Previous: <a href="Introduction-to-CLX.html#Introduction-to-CLX" accesskey="p" rel="prev">Introduction to CLX</a>, Up: <a href="Introduction-to-CLX.html#Introduction-to-CLX" accesskey="u" rel="up">Introduction to CLX</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

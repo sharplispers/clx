@@ -1,0 +1,970 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Glossary</title>
+
+<meta name="description" content="Common LISP X Interface: Glossary">
+<meta name="keywords" content="Common LISP X Interface: Glossary">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="index.html#Top" rel="up" title="Top">
+<link href="Function-Index.html#Function-Index" rel="next" title="Function Index">
+<link href="Undocumented.html#Undocumented" rel="prev" title="Undocumented">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Glossary"></a>
+<div class="header">
+<p>
+Next: <a href="Function-Index.html#Function-Index" accesskey="n" rel="next">Function Index</a>, Previous: <a href="Undocumented.html#Undocumented" accesskey="p" rel="prev">Undocumented</a>, Up: <a href="index.html#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Glossary-1"></a>
+<h2 class="appendix">Appendix A Glossary</h2>
+
+<dl compact="compact">
+<dt>access control list</dt>
+<dd><p>X maintains a list of hosts from which client programs can be run. By
+default, only programs on the local host can use the display, plus any
+hosts specified in an initial list read by the server. This <em>access
+control list</em> can be changed by clients on the local host. Some
+server implementations can also implement other authorization
+mechanisms in addition to or in place of this mechanism. The action of
+this mechanism can be conditional based on the authorization protocol
+name and data received by the server at connection setup.
+</p>
+</dd>
+<dt>action</dt>
+<dd><p>A function that is designed to handle an input event. CLUE input
+processing consists of matching an event with an event specification
+found in a contact&rsquo;s <var>event-translations</var> slot and then calling
+actions associated with the matching event specification.
+</p>
+</dd>
+<dt>active grab</dt>
+<dd><p>A grab is <em>active</em> when the pointer or keyboard is actually owned
+by the single grabbing client.
+</p>
+</dd>
+<dt>ancestors</dt>
+<dd><p>If W is an inferior of A, then A is an <em>ancestor</em> of W.
+</p>
+</dd>
+<dt>atom</dt>
+<dd><p>A unique ID corresponding to a string name. Atoms are used to identify
+properties, types, and selections.
+</p>
+</dd>
+<dt>backing store</dt>
+<dd><p>When a server maintains the contents of a window, the off-screen saved
+pixels are known as a <em>backing store</em>.
+</p>
+</dd>
+<dt>before action</dt>
+<dd><p>An action of a <var>contact-display</var> that is called when an event is
+dispatched to a contact, but before any other contact input processing
+is performed.
+</p>
+</dd>
+<dt>bit gravity</dt>
+<dd><p>When a window is resized, the contents of the window are not
+necessarily discarded. It is possible to request the server to
+relocate the previous contents to some region of the window. This
+attraction of window contents for some location of a window is known
+as <em>bit</em> <em>gravity</em>.
+</p>
+</dd>
+<dt>bitmap</dt>
+<dd><p>A pixmap of depth one.
+</p>
+</dd>
+<dt>button grabbing</dt>
+<dd><p>Buttons on the pointer can be passively <em>grabbed</em> by a
+client. When the button is pressed, the pointer is then actively
+grabbed by the client.
+</p>
+</dd>
+<dt>byte order</dt>
+<dd><p>For image (pixmap/bitmap) data, byte order is defined by the server,
+and clients with different native byte ordering must swap bytes as
+necessary. For all other parts of the protocol, the byte order is
+defined by the client, and the server swaps bytes as necessary.
+</p>
+</dd>
+<dt>callback</dt>
+<dd><p>A function that represents a connection between a contact and the rest
+of an application program. A contact calls a callback function in
+order to report the results of the user interface component that it
+represents.
+</p>
+</dd>
+<dt>children</dt>
+<dd><p>First-level subwindows of a window.
+</p>
+</dd>
+<dt>class event</dt>
+<dd><p>Event translations that belong to all instances of a contact class. A
+class event <var>translations</var> translation is created by the
+<var>defevent</var> macro.
+</p>
+</dd>
+<dt>class resources</dt>
+<dd><p>Resources defined for each instance of a contact class. Also see
+constraint resources.
+</p>
+</dd>
+<dt>click</dt>
+<dd><p>A <var>:button-press</var> event followed immediately by a
+<var>:button-release</var> event for the same button, with no intervening
+change in pointer position or modifier key state.
+</p>
+</dd>
+<dt>client</dt>
+<dd><p>An application program connects to the window system server by some
+interprocess communication (IPC) path, such as a TCP connection or a
+shared memory buffer. This program is referred to as a <em>client</em>
+of the window system server. More precisely, the client is the IPC
+path itself. A program with multiple paths open to the server is
+viewed as multiple clients by the protocol. Resource lifetimes are
+controlled by connection lifetimes, not by program lifetimes.
+</p>
+</dd>
+<dt>clipping regions</dt>
+<dd><p>In a graphics context, a bitmap or list of rectangles can be specified
+to restrict output to a particular region of the window. The image
+defined by the bitmap or rectangles is called a <em>clipping
+region</em>.
+</p>
+</dd>
+<dt>colormap</dt>
+<dd><p>A set of entries defining color values. The colormap associated with a
+window is used to display the contents of the window. Each pixel value
+indexes the colormap to produce RGB values that drive the guns of a
+monitor. Depending on hardware limitations, one or more colormaps can
+be installed at one time, such that windows associated with those maps
+display with correct colors.
+</p>
+</dd>
+<dt>composite</dt>
+<dd><p>A subclass of <var>contact</var> representing contacts that are the
+parents of other contacts. A composite provides geometry management
+and input focus management services for the contacts that are its
+children.
+</p>
+</dd>
+<dt>complete resource class</dt>
+<dd><p>A list of symbols containing the class of the contact, the class of
+the contact&rsquo;s <var>parent</var> (and so on), and the class of the
+<var>contact-display</var> to which the contact belongs.  The complete
+resource class is one of the two items used as a key by a CLUE
+application in order to access a contact resource value in a resource
+database.
+</p>
+</dd>
+<dt>complete resource name</dt>
+<dd><p>A list of symbols containing the <var>name</var> of the contact, the
+<var>name</var> of the contact&rsquo;s <var>parent</var> (and so on), and the name
+of the <var>contact-display</var> to which the contact belongs. The
+complete resource name is one of the two items used as a key by a CLUE
+application in order to access a contact resource value in a resource
+database.
+</p>
+</dd>
+<dt>connection</dt>
+<dd><p>The IPC path between the server and client program. A client program
+typically has one connection to the server over which requests and
+events are sent.
+</p>
+</dd>
+<dt>constraint resources</dt>
+<dd><p>Resources defined for each child belonging to a member of a composite
+class.  Constraint resources are typically used to control the
+parent&rsquo;s geometry management policy.  Also see class resources.
+</p>
+</dd>
+<dt>contact</dt>
+<dd><p>The basic CLUE object for programming a user interface.
+</p>
+</dd>
+<dt>contact-display</dt>
+<dd><p>The CLUE object type that represents a connection to an X server and
+that supports an event loop for application input.
+</p>
+</dd>
+<dt>contact initialization</dt>
+<dd><p>The process of collecting initial values for all contact
+attributes. No server resources (windows and so on) are actually
+allocated until contact realization.
+</p>
+</dd>
+<dt>contact realization</dt>
+<dd><p>The process of allocating contact resources. This process completes
+contact creation.
+</p>
+</dd>
+<dt>containment</dt>
+<dd><p>A window contains the pointer if the window is viewable and the hot
+spot of the cursor is within a visible region of the window or a
+visible region of one of its inferiors. The border of the window is
+included as part of the window for containment. The pointer is in a
+window if the window contains the pointer but no inferior contains the
+pointer.
+</p>
+</dd>
+<dt>content</dt>
+<dd><p>The single child of a shell. The basic geometry management policy
+implemented by the <var>shell</var> class constrains a shell and its
+content to have the same width and height; size changes to one are
+automatically applied to the other.
+</p>
+</dd>
+<dt>coordinate system</dt>
+<dd><p>The coordinate system has x horizontal and y vertical, with the origin
+[0, 0] at the upper left. Coordinates are discrete and are in terms of
+pixels. Each window and pixmap has its own coordinate system. For a
+window, the origin is at the inside upper left, inside the border.
+</p>
+</dd>
+<dt>cursor</dt>
+<dd><p>The visible shape of the pointer on a screen. It consists of a
+hot-spot, a source bitmap, a shape bitmap, and a pair of colors. The
+cursor defined for a window controls the visible appearance when the
+pointer is in that window.
+</p>
+</dd>
+<dt>depth</dt>
+<dd><p>The depth of a window or pixmap is number of bits per pixel it
+has. The depth of a graphics context is the depth of the drawables it
+can be used in conjunction with for graphics output.
+</p>
+</dd>
+<dt>descendant</dt>
+<dd><p>If W is an inferior of A, then W is a <em>descendant</em> of A.
+</p>
+</dd>
+<dt>device</dt>
+<dd><p>Keyboards, mice, tablets, track-balls, button boxes, and so forth, are
+all collectively known as input <em>devices</em>. The core protocol only
+deals with two devices: the keyboard and the pointer.
+</p>
+</dd>
+<dt>direct color</dt>
+<dd><p>A class of colormap in which a pixel value is decomposed into three
+separate subfields for indexing. One subfield indexes an array to
+produce red intensity values, the second subfield indexes a second
+array to produce blue intensity values, and the third subfield indexes
+a third array to produce green intensity values. The RGB values can be
+changed dynamically.
+</p>
+</dd>
+<dt>dispatching an event</dt>
+<dd><p>The process of finding the appropriate contact and its actions.
+</p>
+</dd>
+<dt>double-click</dt>
+<dd><p>A sequence of two clicks of the same button in rapid succession.
+</p>
+</dd>
+<dt>drawable</dt>
+<dd><p>Both windows and pixmaps can be used as sources and destinations in
+graphics operations. These are collectively known as
+<em>drawables</em>. However, an <var>:input-only</var> window cannot be used
+as a source or destination in a graphics operation.
+</p>
+</dd>
+<dt>event</dt>
+<dd><p>Clients receive information asynchronously via <em>events</em>. These
+events can be either asynchronously generated from devices, or
+generated as side effects of client requests.  Events are grouped into
+types; events are never sent to a client by the server unless the
+client has specifically asked to be informed of that type of event,
+but clients can force events to be sent to other clients. Events are
+typically reported relative to a window.
+</p>
+</dd>
+<dt>event compression</dt>
+<dd><p>Ignoring (or compressing) certain redundant input events. Compression
+of redundant events is controlled by the class slots
+<var>compress-exposures</var> and <var>compress-motion</var>, which are shared
+by all instances of a contact class.
+</p>
+</dd>
+<dt>event loop</dt>
+<dd><p>The fundamental application control structure: wait for an event,
+figure out how to handle it, process the event, then go back and wait
+for the next one. In CLUE, the event loop is implemented using the
+<var>process-next-event</var> function.
+</p>
+</dd>
+<dt>event mask</dt>
+<dd><p>Events are requested relative to a window. The set of event types a
+client requests relative to a window are described using an <em>event
+mask</em>.
+</p>
+</dd>
+<dt>event propagation</dt>
+<dd><p>Device-related events <em>propagate</em> from the source window to
+ancestor windows until some client has expressed interest in handling
+that type of event, or until the event is discarded explicitly.
+</p>
+</dd>
+<dt>event specification</dt>
+<dd><p>A notation for describing a certain sort of event. CLUE input
+processing consists of matching an event with an event specification
+found in a contact&rsquo;s <var>event-translations</var> slot and then calling
+actions associated with the matching event specification.
+</p>
+</dd>
+<dt>event synchronization</dt>
+<dd><p>Certain race conditions are possible when demultiplexing device events
+to clients (in particular deciding where pointer and keyboard events
+should be sent when in the middle of window management
+operations). The event synchronization mechanism allows synchronous
+processing of device events.
+</p>
+</dd>
+<dt>event source</dt>
+<dd><p>The smallest window containing the pointer is the <em>source</em> of a
+device related event.
+</p>
+</dd>
+<dt>event translation</dt>
+<dd><p>The process of determining which contact action functions will be
+executed. An event translation is a list found in a contact&rsquo;s
+<var>event-translations</var> slot associating an event specification with
+one or more action names. Also see class event translations.
+</p>
+</dd>
+<dt>exposure event</dt>
+<dd><p>Servers do not guarantee to preserve the contents of windows when
+windows are obscured or reconfigured. <em>Exposure</em> events are sent
+to clients to inform them when contents of regions of windows have
+been lost.
+</p>
+</dd>
+<dt>extension</dt>
+<dd><p>Named <em>extensions</em> to the core protocol can be defined to extend
+the system. Extension to output requests, resources, and event types
+are all possible, and expected.
+</p>
+</dd>
+<dt>focus window</dt>
+<dd><p>Another term for the input focus.
+</p>
+</dd>
+<dt>font</dt>
+<dd><p>A matrix of glyphs (typically characters). The protocol does no
+translation or interpretation of character sets. The client simply
+indicates values used to index the glyph array. A font contains
+additional metric information to determine inter-glyph and inter-line
+spacing.
+</p>
+</dd>
+<dt>geometry management</dt>
+<dd><p>The process whereby a composite controls the geometrical properties of
+its child contacts; the composite is referred to as the geometry
+manager.
+</p>
+</dd>
+<dt>glyph</dt>
+<dd><p>An image, typically of a character, in a font.
+</p>
+</dd>
+<dt>grab</dt>
+<dd><p>Keyboard keys, the keyboard, pointer buttons, the pointer, and the
+server can be <em>grabbed</em> for exclusive use by a client. In
+general, these facilities are not intended to be used by normal
+applications but are intended for various input and window managers to
+implement various styles of user interfaces.
+</p>
+</dd>
+<dt>gcontext</dt>
+<dd><p>Shorthand for graphics context.
+</p>
+</dd>
+<dt>graphics context</dt>
+<dd><p>Various information for graphics output is stored in a <em>graphics
+context</em> (or gcontext), such as foreground pixel, background pixel,
+line width, clipping region, and so forth. A graphics context can only
+be used with drawables that have the same root and the same depth as
+the graphics context.
+</p>
+</dd>
+<dt>gray scale</dt>
+<dd><p>A degenerate case of pseudo color, in which the red, green, and blue
+values in any given colormap entry are equal, thus producing shades of
+gray. The gray values can be changed dynamically.
+</p>
+</dd>
+<dt>hot spot</dt>
+<dd><p>A cursor has an associated <em>hot spot</em> that defines a point in the
+cursor that corresponds to the coordinates reported for the pointer.
+</p>
+</dd>
+<dt>identifier</dt>
+<dd><p>Each resource has an <em>identifier</em>, a unique value associated with
+it that clients use to name the resource. An identifier can be used
+over any connection to name the resource.
+</p>
+</dd>
+<dt>inferiors</dt>
+<dd><p>All of the subwindows nested below a window: the children, the
+children&rsquo;s children, and so on.
+</p>
+</dd>
+<dt>initialization</dt>
+<dd><p>See contact initialization.
+</p>
+</dd>
+<dt>input event</dt>
+<dd><p>See event.
+</p>
+</dd>
+<dt>input focus</dt>
+<dd><p>Normally a window defining the scope for processing of keyboard
+input. If a generated keyboard event would normally be reported to
+this window or one of its inferiors, the event is reported normally;
+otherwise, the event is reported with respect to the focus window. The
+input focus also can be set such that all keyboard events are
+discarded and that the focus window is dynamically taken to be the
+root window of whatever screen the pointer is on at each keyboard
+event.
+</p>
+</dd>
+<dt>input-only window</dt>
+<dd><p>A window that cannot be used for graphics requests. <em>input-only</em>
+windows are invisible, and can be used to control such things as
+cursors, input event generation, and grabbing.  <em>input-only</em>
+windows cannot have <em>input/output</em> windows as inferiors.
+</p>
+</dd>
+<dt>input/output window</dt>
+<dd><p>The normal kind of opaque window, used for both input and
+output. Input/output windows can have both <em>input/output</em> and
+input-only windows as inferiors.
+</p>
+</dd>
+<dt>insensitivity</dt>
+<dd><p>See sensitivity.
+</p>
+</dd>
+<dt>interactive-stream</dt>
+<dd><p>A contact subclass designed to integrate CLUE with the conventional
+stream-based I/O of Common Lisp.
+</p>
+</dd>
+<dt>key grabbing</dt>
+<dd><p>Keys on the keyboard can be passively <em>grabbed</em> by a client. When
+the key is pressed, the keyboard is then actively grabbed by the
+client.
+</p>
+</dd>
+<dt>keyboard grabbing</dt>
+<dd><p>A client can actively <em>grab</em> control of the keyboard, and key
+events will be sent to that client rather than the client to which the
+events would normally have been sent.
+</p>
+</dd>
+<dt>keysym</dt>
+<dd><p>An encoding of a symbol on a keycap on a keyboard.
+</p>
+</dd>
+<dt>managed</dt>
+<dd><p>A contact under geometry management control.
+</p>
+</dd>
+<dt>mapped</dt>
+<dd><p>A window is said to be <em>mapped</em> if a map call has been performed
+on it. Unmapped windows and their inferiors are never viewable or
+visible.
+</p>
+</dd>
+<dt>modifier keys</dt>
+<dd><p>SHIFT, CONTROL, META, SUPER, HYPER, ALT, Compose, Apple, CAPS LOCK,
+Shift Lock, and similar keys are called <em>modifier keys</em>.
+</p>
+</dd>
+<dt>monochrome</dt>
+<dd><p>A special case of static gray, in which there are only two colormap
+entries.
+</p>
+</dd>
+<dt>obscure</dt>
+<dd><p>A window is <em>obscured</em> if some other window obscures it. For
+example, window A obscures window B if:
+</p><ul>
+<li> Both windows are viewable <var>:input-output</var> windows
+
+</li><li> Window A is higher in the global stacking order than window B
+
+</li><li> The rectangle defined by the outside edges of window A intersects the rectangle
+defined by the outside edges of window B
+</li></ul>
+
+<p>Notice that window borders are included in the calculation, and that a window can be
+obscured and yet still have visible regions. See occlude (there is a fine distinction
+between obscure and occlude).
+</p>
+</dd>
+<dt>occlude</dt>
+<dd><p>A window is <em>occluded</em> if some other window occludes it. For
+example, window A occludes window B if:
+</p><ul>
+<li> Both windows are mapped
+
+</li><li> Window A is higher in the global stacking order than window B
+
+</li><li> The rectangle defined by the outside edges of window A intersects the rectangle
+defined by the outside edges of window B
+</li></ul>
+
+<p>Notice that window borders are included in the calculation. See
+obscure (there is a fine distinction between occlude and obscure).
+</p>
+</dd>
+<dt>override-shell</dt>
+<dd><p>A subclass of <var>shell</var> used to override the window manager. This
+subclass contains pop-up menus and other temporary objects that the
+user can never resize and so on.
+</p>
+</dd>
+<dt>padding</dt>
+<dd><p>Some padding bytes are inserted in the data stream to maintain
+alignment of the protocol requests on natural boundaries. This
+increases ease of portability to some machine architectures.
+</p>
+</dd>
+<dt>parent window</dt>
+<dd><p>If C is a child of P, then P is the <em>parent</em> of C.
+</p>
+</dd>
+<dt>passive grab</dt>
+<dd><p>Grabbing a key or button is a <em>passive grab</em>. The grab activates
+when the key or button is actually pressed.
+</p>
+</dd>
+<dt>pixel value</dt>
+<dd><p>An <em>n</em>-bit value, where <em>n</em> is the number of bit planes used
+in (that is, the depth of) a particular window or pixmap. For a
+window, a pixel value indexes a colormap to derive an actual color to
+be displayed.
+</p>
+</dd>
+<dt>pixmap</dt>
+<dd><p>A three dimensional array of bits. A pixmap is normally thought of as
+a two dimensional array of pixels, where each pixel can be a value
+from 0 to (2<em>n</em>)-1, where <em>n</em> is the depth (z axis) of
+the pixmap. A pixmap can also be thought of as a stack of <em>n</em>
+bitmaps.
+</p>
+</dd>
+<dt>plane</dt>
+<dd><p>When a pixmap or window is thought of as a stack of bitmaps, each
+bitmap is called a <em>plane</em> or <em>bit plane</em>.
+</p>
+</dd>
+<dt>plane mask</dt>
+<dd><p>Graphics operations can be restricted to only affect a subset of bit
+planes of a destination.  A <em>plane mask</em> is a bit mask describing
+which planes are to be modified, and it is stored in a graphics
+context.
+</p>
+</dd>
+<dt>pointer</dt>
+<dd><p>The pointing device attached to the cursor and tracked on the screens.
+</p>
+</dd>
+<dt>pointer grabbing</dt>
+<dd><p>A client can actively <em>grab</em> control of the pointer, and button
+and motion events will be sent to that client rather than the client
+to which the events would normally have been sent.
+</p>
+</dd>
+<dt>pointing device</dt>
+<dd><p>Typically a mouse or tablet, or some other device with effective
+dimensional motion.  There is only one visible cursor defined by the
+core protocol, and it tracks whatever pointing device is attached as
+the pointer.
+</p>
+</dd>
+<dt>pop-up</dt>
+<dd><p>One of the uses of a top-level shell (for example, a menu that pops up
+when a command button contact is activated). Setting the <var>state</var>
+of a shell to <var>:mapped</var> is sometimes referred to as
+<em>mapping</em> or <em>popping up</em> the shell. Setting the
+<var>state</var> of a shell to <var>:withdrawn</var> or <var>:iconic</var> is
+sometimes referred to as <em>unmapping</em> or <em>popping down</em> the
+shell.
+</p>
+</dd>
+<dt>property</dt>
+<dd><p>Windows can have associated <em>properties</em>, consisting of a name, a
+type, a data format, and some data. The protocol places no
+interpretation on properties; they are intended as a general-purpose
+naming mechanism for clients. For example, clients might share
+information such as resize hints, program names, and icon formats with
+a window manager via properties.
+</p>
+</dd>
+<dt>property list</dt>
+<dd><p>The list of properties that have been defined for a window.
+</p>
+</dd>
+<dt>pseudo color</dt>
+<dd><p>A class of colormap in which a pixel value indexes the colormap to
+produce independent red, green, and blue values. That is, the colormap
+is viewed as an array of triples (RGB values). The RGB values can be
+changed dynamically.
+</p>
+</dd>
+<dt>realization</dt>
+<dd><p>See contact realization.
+</p>
+</dd>
+<dt>redirecting control</dt>
+<dd><p>Window managers (or client programs) may choose to enforce window
+layout policy in various ways. When a client attempts to change the
+size or position of a window, the operation can be <em>redirected</em>
+to a specified client, rather than the operation actually being
+performed.
+</p>
+</dd>
+<dt>reply</dt>
+<dd><p>Information requested by a client program is sent back to the client
+with a <em>reply</em>. Both events and replies are multiplexed on the
+same connection. Most requests do not generate replies. However, some
+requests generate multiple replies.
+</p>
+</dd>
+<dt>representation type</dt>
+<dd><p>The type of representation of a resource value. For example, a color
+value might be represented either as a namestring (&quot;red&quot;), a pixel
+value, an RGB triplet, an HSV triplet, and so on.
+</p>
+</dd>
+<dt>request</dt>
+<dd><p>A command to the server is called a <em>request</em>. It is a single
+block of data sent over a connection.
+</p>
+</dd>
+<dt>resource</dt>
+<dd><p>A value of the user interface that can be changed by the user in a
+resource database via CLX functions <var>add-resource</var>,
+<var>get-resource</var>, and so forth. See server resource.
+</p>
+</dd>
+<dt>resource class, complete</dt>
+<dd><p>See complete resource class.
+</p>
+</dd>
+<dt>resource database</dt>
+<dd><p>Conceptually, a set of resource name/value pairs (or resource
+bindings). CLX defines functions for storing and retrieving interface
+resources from a resource database.
+</p>
+</dd>
+<dt>resource name, complete</dt>
+<dd><p>See complete resource name.
+</p>
+</dd>
+<dt>RGB values</dt>
+<dd><p><em>Red</em>, <em>green</em>, and <em>blue</em> intensity values used to
+define color. These values are always represented as 16-bit unsigned
+numbers, with zero being the minimum intensity and 65535 being the
+maximum intensity. The values are scaled by the server to match the
+display hardware.
+</p>
+</dd>
+<dt>root</dt>
+<dd><p>A special composite contact used to represent an entire display
+screen.
+</p>
+</dd>
+<dt>root window</dt>
+<dd><p>Each screen has a <em>root window</em> covering it. It cannot be
+reconfigured or unmapped, but otherwise acts as a full-fledged
+window. A root window has no parent.
+</p>
+</dd>
+<dt>save set</dt>
+<dd><p>The <em>save set</em> of a client is a list of other client&rsquo;s windows
+that, if they are inferiors of one of the client&rsquo;s windows at
+connection close, should not be destroyed and that should be remapped
+if it is unmapped. Save sets are typically used by window managers to
+avoid lost windows if the manager should terminate abnormally.
+</p>
+</dd>
+<dt>scanline</dt>
+<dd><p>A list of pixel or bit values viewed as a horizontal row (all values
+having the same y coordinate) of an image, with the values ordered by
+increasing x coordinate.
+</p>
+</dd>
+<dt>scanline order</dt>
+<dd><p>An image represented in <em>scanline order</em> contains scanlines
+ordered by increasing y coordinate.
+</p>
+</dd>
+<dt>screen</dt>
+<dd><p>A server can provide several independent <em>screens</em>, which
+typically have physically independent monitors. This would be the
+expected configuration when there is only a single keyboard and
+pointer shared among the screens.
+</p>
+</dd>
+<dt>selection</dt>
+<dd>
+<p>A <em>selection</em> can be thought of as an indirect property with
+dynamic type. That is, rather than having the property stored in the
+server, it is maintained by some client (the <em>owner</em>).  A
+selection is global in nature, being thought of as belonging to the
+user (but maintained by clients), rather than being private to a
+particular window subhierarchy or a particular set of clients. When
+a client asks for the contents of a selection, it specifies a
+selection <em>target type</em>. This target type can be used to
+control the transmitted representation of the contents.
+</p>
+<p>For example, if the selection is &quot;the last thing the user clicked
+on&quot; and that is currently an image, then the target type might
+specify whether the contents of the image should be sent in XY
+Format or Z Format. The target type can also be used to control the
+class of contents transmitted; that is, asking for the looks (fonts,
+line spacing, indentation, and so forth) of a paragraph selection,
+rather than the text of the paragraph. The target type can also be
+used for other purposes; the semantics is not constrained by the
+protocol.
+</p>
+</dd>
+<dt>sensitivity</dt>
+<dd><p>A condition in which a user interface component of an application will
+accept input.  Conversely, when a contact is insensitive, events of
+particular types are not dispatched to the contact and are ignored.
+</p>
+</dd>
+<dt>server</dt>
+<dd><p>The <em>server</em> provides the basic windowing mechanism. It handles
+IPC connections from clients, demultiplexes graphics requests onto the
+screens, and multiplexes input back to the appropriate clients.
+</p>
+</dd>
+<dt>server grabbing</dt>
+<dd><p>The server can be <em>grabbed</em> by a single client for exclusive
+use. This prevents processing of any requests from other client
+connections until the grab is complete. This is typically only a
+transient state for such things as rubber-banding and pop-up menus, or
+to execute requests indivisibly.
+</p>
+</dd>
+<dt>server resource</dt>
+<dd><p>Windows, pixmaps, cursors, fonts, gcontexts, and colormaps are known
+as resources.  They all have unique identifiers associated with them
+for naming purposes. The lifetime of a resource is bounded by the
+lifetime of the connection over which the resource was created. See
+resource.
+</p>
+</dd>
+<dt>shell</dt>
+<dd><p>A composite that handles the duties required by standard conventions
+for top-level X windows.
+</p>
+</dd>
+<dt>sibling</dt>
+<dd><p>Children of the same parent window are known as <em>sibling</em>
+windows.
+</p>
+</dd>
+<dt>static color</dt>
+<dd><p>A degenerate case of pseudo color in which the RGB values are
+predefined and read-only.
+</p>
+</dd>
+<dt>static gray</dt>
+<dd><p>A degenerate case of gray scale in which the gray values are
+predefined and read-only.  The values are typically (near-)linear
+increasing ramps.
+</p>
+</dd>
+<dt>stacking order</dt>
+<dd><p>Sibling windows can <em>stack</em> on top of each other. Windows above
+both obscure and occlude lower windows. This is similar to paper on a
+desk. The relationship between sibling windows is known as the
+<em>stacking order</em>.
+</p>
+</dd>
+<dt>state</dt>
+<dd><p>A slot of <var>contact</var> that controls the visual effect of the
+contact.
+</p>
+</dd>
+<dt>stipple</dt>
+<dd><p>A bitmap that is used to tile a region to serve as an additional clip
+mask for a fill operation with the foreground color.
+</p>
+</dd>
+<dt>tile</dt>
+<dd><p>A pixmap can be replicated in two dimensions to <em>tile</em> a
+region. The pixmap itself is also known as a tile.
+</p>
+</dd>
+<dt>timer</dt>
+<dd><p>A CLUE object that provides support for animation and other types of
+time-sensitive user interfaces. A timer causes <var>:timer</var> events to
+be dispatched to a specific contact for processing.
+</p>
+</dd>
+<dt>timestamp</dt>
+<dd><p>A time value, expressed in milliseconds, typically since the last
+server reset. Timestamp values wrap around (after about 49.7
+days). The server, given its current time is represented by timestamp
+T, always interprets timestamps from clients by treating half of the
+timestamp space as being earlier in time than T and half of the
+timestamp space as being later in time than T. One timestamp value
+(named CurrentTime) is never generated by the server; this value is
+reserved for use in requests to represent the current server time.
+</p>
+</dd>
+<dt>top-level contact</dt>
+<dd><p>A contact whose parent is a root. A top-level contact is usually a
+composite at the top of a hierarchy of other contacts created by an
+application program.
+</p>
+</dd>
+<dt>top-level-session</dt>
+<dd><p>A subclass of <var>shell</var> that is used to communicate with a session
+manager.
+</p>
+</dd>
+<dt>top-level-shell</dt>
+<dd><p>A subclass of <var>shell</var> that provides full window manager
+interaction.
+</p>
+</dd>
+<dt>transient-shell</dt>
+<dd><p>A subclass of <var>shell</var> that a window manager typically will unmap
+when its owner becomes unmapped or iconified and will not allow to be
+individually iconified.
+</p>
+</dd>
+<dt>true color</dt>
+<dd><p>A degenerate case of direct color in which the subfields in the pixel
+value directly encode the corresponding RGB values. That is, the
+colormap has predefined read-only RGB values. The values are typically
+(near-)linear increasing ramps.
+</p>
+</dd>
+<dt>type</dt>
+<dd><p>An arbitrary atom used to identify the interpretation of property
+data. Types are completely uninterpreted by the server; they are
+solely for the benefit of clients.
+</p>
+</dd>
+<dt>unmanaged</dt>
+<dd><p>A contact that is not under geometry management control.
+</p>
+</dd>
+<dt>user interface</dt>
+<dd><p>A set of abstract interface objects used to control the dialog between
+an application and its human user.
+</p>
+</dd>
+<dt>viewable</dt>
+<dd><p>A window is <em>viewable</em> if it and all of its ancestors are
+mapped. This does not imply that any portion of the window is actually
+visible. Graphics requests can be performed on a window when it is not
+viewable, but output will not be retained unless the server is
+maintaining backing store.
+</p>
+</dd>
+<dt>visible</dt>
+<dd><p>A region of a window is <em>visible</em> if someone looking at the screen
+can actually see it; that is, the window is viewable and the region is
+not occluded by any other window.
+</p>
+</dd>
+<dt>window gravity</dt>
+<dd><p>When windows are resized, subwindows can be repositioned automatically
+relative to some position in the window. This attraction of a subwindow
+to some part of its parent is known as <em>window gravity</em>.
+</p>
+</dd>
+<dt>window manager</dt>
+<dd><p>Manipulation of windows on the screen, and much of the user interface
+(policy) is typically provided by a <em>window manager</em> client.
+</p>
+</dd>
+<dt>window manager shell</dt>
+<dd><p>A subclass of <var>shell</var> called <var>wm-shell</var> that interacts with
+the window manager.
+</p>
+</dd>
+<dt>XY Format</dt>
+<dd><p>The data for a pixmap is said to be in <em>XY Format</em> if it is
+organized as a set of bitmaps representing individual bit planes, with
+the planes appearing from most to least significant in bit order.
+</p>
+</dd>
+<dt>Z Format</dt>
+<dd><p>The data for a pixmap is said to be in <em>Z Format</em> if it is
+organized as a set of pixel values in scanline order.
+</p></dd>
+</dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Function-Index.html#Function-Index" accesskey="n" rel="next">Function Index</a>, Previous: <a href="Undocumented.html#Undocumented" accesskey="p" rel="prev">Undocumented</a>, Up: <a href="index.html#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

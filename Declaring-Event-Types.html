@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Declaring Event Types</title>
+
+<meta name="description" content="Common LISP X Interface: Declaring Event Types">
+<meta name="keywords" content="Common LISP X Interface: Declaring Event Types">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Event-Types.html#Event-Types" rel="up" title="Event Types">
+<link href="Releasing-Queued-Events.html#Releasing-Queued-Events" rel="next" title="Releasing Queued Events">
+<link href="Client-Communications-Events.html#Client-Communications-Events" rel="prev" title="Client Communications Events">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Declaring-Event-Types"></a>
+<div class="header">
+<p>
+Previous: <a href="Client-Communications-Events.html#Client-Communications-Events" accesskey="p" rel="prev">Client Communications Events</a>, Up: <a href="Event-Types.html#Event-Types" accesskey="u" rel="up">Event Types</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Declaring-Event-Types-1"></a>
+<h4 class="subsection">13.11.8 Declaring Event Types</h4>
+
+
+<p>CLX uses the <var>declare-event</var> macro to define the event slot symbols
+that access the contents of X events. Most client applications do not
+need to use <var>declare-event</var> because the declarations for all core X
+events are already defined by CLX.  Programmers using extensions to the
+X protocol can use <var>declare-event</var> to allow CLX to handle new event
+types returned by an extended X server.
+</p>
+<dl>
+<dt><a name="index-declare_002devent"></a>Macro: <strong>declare-event</strong> <em>event-codes &amp;rest slot-declarations</em></dt>
+<dd>
+<p>Defines a mapping between event slot symbols and the data items in
+event messages received from an X server.
+</p>
+<p>The <em>event-codes</em> argument gives the event type keyword for the
+event described. If several event types share the same slots, then
+<em>event-codes</em> can be a list of event type
+keywords. <em>slot-declarations</em> is a list containing an element
+for each event data item. The order of <em>slot-declarations</em>
+corresponds to the order of event data items defined by the X
+protocol.
+</p>
+<p>Each element of <em>slot-declarations</em> is a list of the form
+(<em>type slot-name</em>*), where <em>type</em> is a Common Lisp type
+specifier and <em>slot-name</em> is a slot name symbol. The effect of
+such a list is to declare that the next data items in the event have
+the given data <em>type</em> and are associated with the given
+<em>slot-name</em> symbols. <em>slot-name</em> can also be a list of
+slot name symbols; in this case, each symbol in the list is an alias
+that refers to the same event data item.
+</p>
+<dl compact="compact">
+<dt><var>event-codes</var></dt>
+<dd><p>An event type keyword or a list of event type keywords.
+</p></dd>
+<dt><var>slot-declarations</var></dt>
+<dd><p>A list of clauses defining event slot symbols.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Previous: <a href="Client-Communications-Events.html#Client-Communications-Events" accesskey="p" rel="prev">Client Communications Events</a>, Up: <a href="Event-Types.html#Event-Types" accesskey="u" rel="up">Event Types</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

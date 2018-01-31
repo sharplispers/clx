@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Keyboard Encodings</title>
+
+<meta name="description" content="Common LISP X Interface: Keyboard Encodings">
+<meta name="keywords" content="Common LISP X Interface: Keyboard Encodings">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Control-Functions.html#Control-Functions" rel="up" title="Control Functions">
+<link href="Keycodes-and-Keysyms.html#Keycodes-and-Keysyms" rel="next" title="Keycodes and Keysyms">
+<link href="Keyboard-Control.html#Keyboard-Control" rel="prev" title="Keyboard Control">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Keyboard-Encodings"></a>
+<div class="header">
+<p>
+Next: <a href="Client-Termination.html#Client-Termination" accesskey="n" rel="next">Client Termination</a>, Previous: <a href="Keyboard-Control.html#Keyboard-Control" accesskey="p" rel="prev">Keyboard Control</a>, Up: <a href="Control-Functions.html#Control-Functions" accesskey="u" rel="up">Control Functions</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Keyboard-Encodings-1"></a>
+<h3 class="section">15.4 Keyboard Encodings</h3>
+
+
+<p>Handling the great diversity of keyboard devices and international
+language character encodings is a difficult problem for interactive
+programs that need to receive text input but must also be portable. The
+X Window System solves this problem by using different sets of encodings
+for device keys (<em>keycodes</em>) and for character symbols
+(<em>keysyms</em>). Each X server maintains a <em>keyboard mapping</em> that
+associates keycodes and keysyms, and which can be returned or changed by
+client programs.
+</p>
+<p>To handle text input, a CLX client program must follow these steps:
+</p><ol>
+<li> Receive a <var>:key-press</var> (or <var>:key-release</var>) event containing
+a keycode.
+
+</li><li> Convert the keycode into its corresponding keysym, based on the
+current keyboard mapping. See <var>keycode-&amp;gt;keysym</var>.
+
+</li><li> Convert the keysym into the corresponding Common Lisp character. See
+<var>keysym-&amp;gt;character</var>.
+</li></ol>
+
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top">&bull; <a href="Keycodes-and-Keysyms.html#Keycodes-and-Keysyms" accesskey="1">Keycodes and Keysyms</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Keyboard-Mapping.html#Keyboard-Mapping" accesskey="2">Keyboard Mapping</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Using-Keycodes-and-Keysyms.html#Using-Keycodes-and-Keysyms" accesskey="3">Using Keycodes and Keysyms</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+</table>
+
+
+
+
+</body>
+</html>

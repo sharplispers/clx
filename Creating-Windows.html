@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Creating Windows</title>
+
+<meta name="description" content="Common LISP X Interface: Creating Windows">
+<meta name="keywords" content="Common LISP X Interface: Creating Windows">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Windows-and-Pixmaps.html#Windows-and-Pixmaps" rel="up" title="Windows and Pixmaps">
+<link href="Window-Attributes.html#Window-Attributes" rel="next" title="Window Attributes">
+<link href="Drawables.html#Drawables" rel="prev" title="Drawables">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Creating-Windows"></a>
+<div class="header">
+<p>
+Next: <a href="Window-Attributes.html#Window-Attributes" accesskey="n" rel="next">Window Attributes</a>, Previous: <a href="Drawables.html#Drawables" accesskey="p" rel="prev">Drawables</a>, Up: <a href="Windows-and-Pixmaps.html#Windows-and-Pixmaps" accesskey="u" rel="up">Windows and Pixmaps</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Creating-Windows-1"></a>
+<h3 class="section">5.2 Creating Windows</h3>
+
+
+<p>A window is a <var>drawable</var> that can also receive input events. CLX
+represents a window with a <var>window</var> object. The
+<var>create-window</var> function creates a new <var>window</var> object.
+</p>
+<dl>
+<dt><a name="index-create_002dwindow"></a>Function: <strong>create-window</strong> <em>&amp;key :parent :x :y :width :height (:depth 0) (:border-width 0) (:class :copy) (:visual :copy) :background :border :gravity :bit-gravity :backing-store :backing-planes :backing-pixel :save-under :event-mask :do-not-propagate-mask :override-redirect :colormap :cursor</em></dt>
+<dd><a name="create_002dwindow"></a>
+<dl compact="compact">
+<dt><var>:parent</var></dt>
+<dd><p>The parent window. This argument is required.
+</p>
+</dd>
+<dt><var>:x</var></dt>
+<dt><var>:y</var></dt>
+<dd><p><var>int16</var> coordinates for the outside upper-left corner of the new
+window with respect to the origin (inside upper-left corner) of the
+<var>:parent</var>. These arguments are required.
+</p>
+</dd>
+<dt><var>:width</var></dt>
+<dt><var>:height</var></dt>
+<dd>
+<p><var>card16</var> values for the size of the new window. These arguments
+are required.
+</p>
+</dd>
+<dt><var>:depth</var></dt>
+<dd>
+<p>A <var>card16</var> specifying the depth of the new window.
+</p>
+</dd>
+<dt><var>:class</var></dt>
+<dd>
+<p>One of <var>:input-outpu</var>t, <var>:input-only</var>, or <var>:copy</var>.
+</p>
+</dd>
+<dt><var>:visual</var></dt>
+<dd>
+<p>A <var>card29</var> ID specifying the visual type of the new window.
+</p>
+</dd>
+<dt><var>:background</var></dt>
+<dt><var>:backing-pixel</var></dt>
+<dt><var>:backing-planes</var></dt>
+<dt><var>:backing-store</var></dt>
+<dt><var>:bit-gravity</var></dt>
+<dt><var>:border</var></dt>
+<dt><var>:border-width</var></dt>
+<dt><var>:colormap</var></dt>
+<dt><var>:cursor</var></dt>
+<dt><var>:do-not-propagate-mask</var></dt>
+<dt><var>:event</var></dt>
+<dt><var>:gravity</var></dt>
+<dt><var>:override-redirect</var></dt>
+<dt><var>:save-under</var></dt>
+<dd>
+<p>Initial attribute values for the new window. If <var>nil</var>, the default
+value is defined by the X protocol.See paragraph
+</p></dd>
+</dl>
+
+<p>Creates and returns a window. A <var>:parent</var> window must be
+specified; the first window created by a client will have a root
+window as its <var>:parent</var>. The new window is initially unmapped and
+is placed on top of its siblings in the stacking order. A
+<var>:create-notify</var> event is generated by the server.
+</p>
+<p>The <var>:class</var> of a window can be <var>:input-output</var> or
+<var>:input-only</var>. Windows of class <var>:input-only</var> cannot be used
+as the destination drawable for graphics output and can never receive
+<var>:exposure</var> events, but otherwise operate the same as
+<var>:input-output</var> windows. The <var>:class</var> can also be <var>:copy</var>,
+in which case the new window has the same class as its <var>:parent</var>.
+</p>
+<p>For an <var>:input-output</var> window, the <var>:visual</var> and <var>:depth</var>
+must be a combination supported by the <var>:parent</var>&rsquo;s screen, but the
+<var>:depth</var> need not be the same as the <var>:parent</var>&rsquo;s. The
+<var>:parent</var> of an <var>:input-output</var> window must also be
+<var>:input-output</var>. A <var>:depth</var> of 0 means that the depth of the
+<var>:parent</var> is used.
+</p>
+<p>For an <var>:input-only</var> window, the <var>:depth</var> must be zero, and
+the <var>:visual</var> must be supported by the <var>:parent</var>&rsquo;s screen. The
+<var>:parent</var> of an <var>:input-only</var> window can be of any class. The
+only attributes that can be given for an <var>:input-only</var> window are
+<var>:cursor</var>, <var>:do-not-propagate-mask</var>, <var>:event-mask</var>,
+<var>:gravity</var>, and <var>:override-redirect</var>.
+</p>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>Type <var>window</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Window-Attributes.html#Window-Attributes" accesskey="n" rel="next">Window Attributes</a>, Previous: <a href="Drawables.html#Drawables" accesskey="p" rel="prev">Drawables</a>, Up: <a href="Windows-and-Pixmaps.html#Windows-and-Pixmaps" accesskey="u" rel="up">Windows and Pixmaps</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

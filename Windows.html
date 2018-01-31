@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Windows</title>
+
+<meta name="description" content="Common LISP X Interface: Windows">
+<meta name="keywords" content="Common LISP X Interface: Windows">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="The-X-Window-System.html#The-X-Window-System" rel="up" title="The X Window System">
+<link href="Input-Events.html#Input-Events" rel="next" title="Input Events">
+<link href="The-X-Window-System.html#The-X-Window-System" rel="prev" title="The X Window System">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Windows"></a>
+<div class="header">
+<p>
+Next: <a href="Input-Events.html#Input-Events" accesskey="n" rel="next">Input Events</a>, Previous: <a href="The-X-Window-System.html#The-X-Window-System" accesskey="p" rel="prev">The X Window System</a>, Up: <a href="The-X-Window-System.html#The-X-Window-System" accesskey="u" rel="up">The X Window System</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Windows-1"></a>
+<h4 class="subsection">2.1.1 Windows</h4>
+
+<p>The X Window System supports one or more screens containing
+overlapping windows and subwindows. A <em>screen</em> is a physical
+monitor and hardware, which can be either color or black and
+white. There can be multiple screens per display workstation. A single
+server can provide display services for any number of screens. A set
+of screens for a single user with one keyboard and one mouse is called
+a <em>display</em>.
+</p>
+<p>All windows in an X server are arranged in a strict hierarchy. At the
+top of the hierarchy are the <em>root windows</em>, which cover each of
+the display screens. Each root window is either partially or
+completely covered by child windows. All windows, except for root
+windows, have parents. Any window can in turn have its own
+children. In this way, an application program can create a window tree
+of arbitrary depth on each screen.
+</p>
+<p>A child window can be larger than its parent. That is, part or all of
+the child window can extend beyond the boundaries of the parent.
+However, all output to a window is clipped by the boundaries of its
+parent window. If several children of a window have overlapping
+locations, one of the children is considered to be on top of/or raised
+over the others, <em>obscuring</em> them. Window output to areas that
+are covered by other windows is suppressed.
+</p>
+<p>A window has a border that is zero or more pixels in width and can be
+any pattern (pixmap) or solid color. A window usually has a background
+pattern that is drawn by the X server. Each window has its own
+coordinate system. Child windows obscure their parents unless the
+child windows have no background. Graphics operations in the parent
+window are usually clipped by the children.
+</p>
+<p>X also provides objects called <em>pixmaps</em> for off-screen storage
+of graphics. Single-plane pixmaps (that is, of depth 1) are sometimes
+referred to as <em>bitmaps</em>. Both pixmaps and windows can be used
+interchangeably in most graphics functions. Pixmaps are also used in
+various graphics operations to define patterns, or
+<em>tiles</em>. Windows and pixmaps together are referred to as
+<em>drawables</em>.
+</p>
+<hr>
+<div class="header">
+<p>
+Next: <a href="Input-Events.html#Input-Events" accesskey="n" rel="next">Input Events</a>, Previous: <a href="The-X-Window-System.html#The-X-Window-System" accesskey="p" rel="prev">The X Window System</a>, Up: <a href="The-X-Window-System.html#The-X-Window-System" accesskey="u" rel="up">The X Window System</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

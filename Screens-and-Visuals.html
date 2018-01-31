@@ -1,0 +1,143 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Screens and Visuals</title>
+
+<meta name="description" content="Common LISP X Interface: Screens and Visuals">
+<meta name="keywords" content="Common LISP X Interface: Screens and Visuals">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Screens.html#Screens" rel="up" title="Screens">
+<link href="Screen-Attributes.html#Screen-Attributes" rel="next" title="Screen Attributes">
+<link href="Screens.html#Screens" rel="prev" title="Screens">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Screens-and-Visuals"></a>
+<div class="header">
+<p>
+Next: <a href="Screen-Attributes.html#Screen-Attributes" accesskey="n" rel="next">Screen Attributes</a>, Previous: <a href="Screens.html#Screens" accesskey="p" rel="prev">Screens</a>, Up: <a href="Screens.html#Screens" accesskey="u" rel="up">Screens</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Screens-and-Visuals-1"></a>
+<h3 class="section">4.1 Screens and Visuals</h3>
+
+
+<p>An X display supports graphical output to one or more
+<em>screens</em>. Each screen has its own root window and window
+hierarchy. Each window belongs to exactly one screen and cannot
+simultaneously appear on another screen.
+</p>
+
+<p>The kinds of graphics hardware used by X screens can vary greatly in
+their support for color and in their methods for accessing raster
+memory. X uses the concept of a <em>visual type</em> (usually
+referred to simply as a <em>visual</em>) which uniquely identifies the
+hardware capabilities of a display screen. Fundamentally, a visual is
+represented by a <var>card29</var> integer ID, which uniquely identifies
+the visual type relative to a single display. CLX also represents a
+visual with a <var>visual-info</var> structure that contains other
+attributes associated with a visual (see <a href="Data-Types.html#Data-Types">Data Types</a>). A
+screen can support more than one depth (that is, pixel size), and for
+each supported depth, a screen may support more than one visual.
+However, it is more typical for a screen to have only a single depth
+and a single visual type.
+</p>
+
+<p>A visual represents various aspects of the screen hardware, as
+follows:
+</p>
+<ul>
+<li> A screen can be color or gray-scale.
+
+</li><li> A screen can have a colormap that is either writable or read-only.
+
+</li><li> A screen can have a single colormap or separate colormaps for each of
+the red, green, and blue components. With separate colormaps, a pixel
+value is decomposed into three parts to determine indexes into each of
+the red, green, and blue colormaps.
+
+</li></ul>
+
+<p>CLX supports the following classes of visual types:
+<var>:direct-color</var>, <var>:gray-scale</var>, <var>:pseudo-color</var>,
+<var>:static-color</var>, <var>:static-gray</var>, and <var>:true-color</var>. The
+following tables show how the characteristics of a screen determine
+the class of its visual type.
+</p>
+<p>For screens with a single colormap:
+</p>
+<table>
+<tr><td>Read-only</td><td><var>:static-color</var></td><td><var>:static-gray</var></td></tr>
+<tr><td>Writable</td><td><var>:pseudo-color</var></td><td><var>:gray-scale</var></td></tr>
+</table>
+
+<p>For screens with red, green, and blue colormaps:
+</p>
+<table>
+<tr><td width="30%">Read-only</td><td width="30%"><var>:true-color</var></td><td width="30%"></td></tr>
+<tr><td width="30%">Writable</td><td width="30%"><var>:direct-color</var></td><td width="30%"><var>:gray-scale</var></td></tr>
+</table>
+
+<p>The visual class also indicates how screen colormaps are
+handled. see <a href="Colormaps-and-Colors.html#Colormaps-and-Colors">Colormaps and Colors</a>).
+</p>
+<hr>
+<div class="header">
+<p>
+Next: <a href="Screen-Attributes.html#Screen-Attributes" accesskey="n" rel="next">Screen Attributes</a>, Previous: <a href="Screens.html#Screens" accesskey="p" rel="prev">Screens</a>, Up: <a href="Screens.html#Screens" accesskey="u" rel="up">Screens</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

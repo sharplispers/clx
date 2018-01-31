@@ -1,0 +1,327 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Properties</title>
+
+<meta name="description" content="Common LISP X Interface: Properties">
+<meta name="keywords" content="Common LISP X Interface: Properties">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Atoms.html#Atoms" rel="up" title="Atoms">
+<link href="Selections.html#Selections" rel="next" title="Selections">
+<link href="Atoms-_0028Atoms_0029.html#Atoms-_0028Atoms_0029" rel="prev" title="Atoms (Atoms)">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Properties"></a>
+<div class="header">
+<p>
+Next: <a href="Selections.html#Selections" accesskey="n" rel="next">Selections</a>, Previous: <a href="Atoms-_0028Atoms_0029.html#Atoms-_0028Atoms_0029" accesskey="p" rel="prev">Atoms (Atoms)</a>, Up: <a href="Atoms.html#Atoms" accesskey="u" rel="up">Atoms</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Properties-1"></a>
+<h3 class="section">12.2 Properties</h3>
+
+
+<p>For each window, an X server can record a set of
+<em>properties</em>. Properties are a general mechanism for clients to
+associate arbitrary data with a window, and for clients to communicate
+window data to each other via the server. No interpretation is placed on
+property data by the server itself.
+</p>
+<p>A property consists of a name, a type, a data format, and data. The name
+of a property is given by an atom. The property type is another atom
+used to denote the intended interpretation of the property data. The
+property formats specifies whether the property data should be treated
+as a set of 8-, 16-, or 32-bit elements. The property format must be
+specified so that the X server can communicate property data with the
+correct byte order.
+</p>
+<p>CLX provides functions to:
+</p>
+<ul>
+<li> Create or change a property
+
+</li><li> Return property data
+
+</li><li> List window properties
+
+</li><li> Delete a property
+</li></ul>
+
+
+<dl>
+<dt><a name="index-change_002dproperty"></a>Function: <strong>change-property</strong> <em>window property data type format &amp;key (:mode :replace) (:start 0) :end :transform</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+<dt><var>property</var></dt>
+<dd><p>A property name <var>xatom</var>.
+</p></dd>
+<dt><var>data</var></dt>
+<dd><p>A sequence of property data elements.
+</p></dd>
+<dt><var>type</var></dt>
+<dd><p>The property type <var>xatom</var>.
+</p></dd>
+<dt><var>format</var></dt>
+<dd><p>One of 8, 16, or 32.
+</p></dd>
+<dt><var>:mode</var></dt>
+<dd><p>One of <var>:replace</var>, <var>:append</var>, or <var>:prepend</var>.
+</p></dd>
+<dt><var>:start</var></dt>
+<dt><var>:end</var></dt>
+<dd><p>Specify the subsequence of previous data replaced when <var>:mode</var> is <var>:replace</var>.
+</p></dd>
+<dt><var>:transform</var></dt>
+<dd><p>A function that transforms each data element into a data value to store.
+</p></dd>
+</dl>
+
+<p>Creates a new window property or changes an existing property. A
+<var>:property-notify</var> event is generated for the <em>window</em>.
+</p>
+<p>If the <var>:mode</var> is <var>:replace</var>, the new <em>data</em>,
+<em>type</em>, and <em>format</em> replace any previous values.  The
+subsequence of previous data elements that are replaced is defined
+by the <var>:start</var> and <var>:end</var> indexes.
+</p>
+<p>If the <var>:mode</var> is <var>:prepend</var> or <var>:append</var>, no
+previous data is changed, but the new <em>data</em> is added at the
+beginning or the end, respectively. For these modes, if the
+<em>property</em> already exists, the new <em>type</em> and
+<em>format</em> must match the previous values.
+</p>
+<p>The <var>:transform</var>, if given, is a function used to compute the
+actual property data stored.  The <var>:transform</var>, which must
+accept a single data element and return a single transformed data
+element, is called for each data element. If the <em>data</em> is a
+string, the default <var>:transform</var> function transforms each
+character into its ASCII code; otherwise, the default is to store
+the <em>data</em> unchanged.
+</p>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-delete_002dproperty"></a>Function: <strong>delete-property</strong> <em>window property</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+<dt><var>property</var></dt>
+<dd><p>A property name <var>xatom</var>.
+</p></dd>
+</dl>
+
+<p>Deletes the <em>window property</em>. If the <em>property</em> already
+exists, a <var>:property-notify</var> event is generated for the
+<em>window</em>.
+</p>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-get_002dproperty"></a>Function: <strong>get-property</strong> <em>window property &amp;key :type (:start 0) :end :delete-p (:result-type 'list) :transform</em></dt>
+<dd><a name="get_002dproperty"></a>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+<dt><var>property</var></dt>
+<dd><p>A property name <var>xatom</var>.
+</p></dd>
+<dt><var>:type</var></dt>
+<dd><p>The requested type <var>xatom</var> or <var>nil</var>.
+</p></dd>
+<dt><var>:start</var></dt>
+<dt><var>:end</var></dt>
+<dd><p>Specify the subsequence of property <em>data</em> returned.
+</p></dd>
+<dt><var>:transform</var></dt>
+<dd><p>A function that transforms each data element into a data value to return.
+</p></dd>
+<dt><var>:delete-p</var></dt>
+<dd><p>If true, the existing <em>property</em> can be deleted.
+</p></dd>
+<dt><var>:result-type</var></dt>
+<dd><p>The t<em>ype</em> of data sequence to return. Default is <var>&rsquo;list</var>.
+</p></dd>
+</dl>
+
+<p>Returns a subsequence of the data for the window property. The
+<var>:start</var> and <var>:end</var> indexes specify the property
+<em>data</em> elements returned. The <var>:transform</var> function is
+called for elements of the specified subsequence to compute the
+<em>data</em> sequence returned. The property <em>type</em> and
+<em>format</em> are also returned. The final return value gives the
+actual number of data bytes (not elements) following the last data
+element returned.
+</p>
+<p>If the <em>property</em> does not exist, the returned <em>data</em> and
+<em>type</em> are <var>nil</var> and the returned <em>format</em> and
+<em>bytes-after</em> are zero.
+</p>
+<p>If the given <var>:type</var> is non-<var>nil</var> but does not match the
+actual property type, then the <em>data</em> returned is <var>nil</var>,
+the <em>type</em> and <em>format</em> returned give the actual property
+values, and the <em>bytes-after</em> returned gives the total number
+of bytes (not elements) in the property data.
+</p>
+<p>If the given <var>:type</var> is <var>nil</var> or if it matches the actual
+property type, then:
+</p>
+<ul>
+<li> The <em>data</em> returned is the transformed subsequence of the
+property data.
+
+</li><li> The <em>type</em> and <em>format</em> returned give the actual
+property values.
+
+</li><li> The <em>bytes-after</em> returned gives the actual number of data
+bytes (not elements) following the last data element returned.
+</li></ul>
+
+
+<p>In this case, the <var>:delete-p</var> argument is also examined. If
+<var>:delete-p</var> is true and <em>bytes-after</em> is zero, the
+property is deleted and a <var>:property-notify</var> event is generated
+for the <em>window</em>.
+</p>
+<dl compact="compact">
+<dt><var>data</var></dt>
+<dd><p>Type <var>sequence</var>.
+</p></dd>
+<dt><var>type</var></dt>
+<dd><p>Type <var>xatom</var>.
+</p></dd>
+<dt><var>format</var></dt>
+<dd><p>Type (<var>member 8 16 32</var>).
+</p></dd>
+<dt><var>bytes-after</var></dt>
+<dd><p>Type <var>card32</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-list_002dproperties"></a>Function: <strong>list-properties</strong> <em>window &amp;key (:result-type 'list)</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+<dt><var>:result-type</var></dt>
+<dd><p>The type of sequence to return. Default is <var>&rsquo;list</var>.
+</p></dd>
+</dl>
+
+
+<p>Returns a sequence containing the names of all <em>window
+properties</em>.
+</p><dl compact="compact">
+<dt><var>properties</var></dt>
+<dd><p>Type <var>sequence</var> of <var>keyword</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-rotate_002dproperties"></a>Function: <strong>rotate-properties</strong> <em>window properties &amp;optional (delta 1)</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+<dt><var>properties</var></dt>
+<dd><p>A sequence of <var>xatom</var> values.
+</p></dd>
+<dt><var>delta</var></dt>
+<dd><p>The index interval between source and destination elements of <em>properties</em>.
+</p></dd>
+</dl>
+
+<p>Rotates the values of the given <em>window properties</em>. The value
+of property <em>i</em> in the given sequence is changed to the value
+of the property at index (<var>mod</var> (+ <em>i delta</em>)
+(<var>length</var> <em>properties</em>)). This function operates much like
+the <var>rotatef</var> macro in Common Lisp.
+</p>
+<p>If (<var>mod</var> <em>delta</em> (<var>length</var> <em>properties</em>)) is
+non-zero, a <var>:property-notify</var> event is generated on the window
+for each property, in the same order as they appear in the
+<em>properties</em> sequence.
+</p>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Selections.html#Selections" accesskey="n" rel="next">Selections</a>, Previous: <a href="Atoms-_0028Atoms_0029.html#Atoms-_0028Atoms_0029" accesskey="p" rel="prev">Atoms (Atoms)</a>, Up: <a href="Atoms.html#Atoms" accesskey="u" rel="up">Atoms</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

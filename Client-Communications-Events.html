@@ -1,0 +1,359 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Client Communications Events</title>
+
+<meta name="description" content="Common LISP X Interface: Client Communications Events">
+<meta name="keywords" content="Common LISP X Interface: Client Communications Events">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Event-Types.html#Event-Types" rel="up" title="Event Types">
+<link href="Declaring-Event-Types.html#Declaring-Event-Types" rel="next" title="Declaring Event Types">
+<link href="Structure-Control-Events.html#Structure-Control-Events" rel="prev" title="Structure Control Events">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Client-Communications-Events"></a>
+<div class="header">
+<p>
+Next: <a href="Declaring-Event-Types.html#Declaring-Event-Types" accesskey="n" rel="next">Declaring Event Types</a>, Previous: <a href="Structure-Control-Events.html#Structure-Control-Events" accesskey="p" rel="prev">Structure Control Events</a>, Up: <a href="Event-Types.html#Event-Types" accesskey="u" rel="up">Event Types</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Client-Communications-Events-1"></a>
+<h4 class="subsection">13.11.7 Client Communications Events</h4>
+
+
+<p>The client communications events discussed in the following paragraphs
+are: <var>:client-message</var>, <var>:property-notify</var>,
+<var>:selection-clear</var>, <var>:selection-request</var>, and
+<var>:selection-notify</var>.
+</p>
+<dl>
+<dt><a name="index-_003aclient_002dmessage"></a>Event Type: <strong>:client-message</strong></dt>
+<dd>
+<p>The <var>:client-message</var> event is generated exclusively by client
+calls to <var>send-event</var>. The X server places no interpretation on
+the <em>type</em> or content of <em>data</em> sent in a
+<var>:client-message</var>. A client can neither select
+<var>:client-message</var> events nor avoid receiving them.
+</p>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dt><var>event-window</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The window receiving the event.
+</p>
+</dd>
+<dt><var>type</var></dt>
+<dd><p>Type <var>keyword</var>.
+</p>
+<p>An xatom keyword that specifies the type of client message. Interpretation of
+the type is determined solely by agreement between the sending and receiving
+clients.
+</p>
+</dd>
+<dt><var>format</var></dt>
+<dd><p>Type (<var>member 8 16 32</var>).
+</p>
+<p>An integer that specifies whether <em>data</em> should be viewed as a sequence of 8-bit,
+16-bit, or 32-bit quantities.
+</p>
+</dd>
+<dt><var>data</var></dt>
+<dd><p>Type <code>(sequence integer)</code>.
+</p>
+<p>The data content of the client message. <em>data</em> always consists of 160 bytes &ndash;
+depending on format, either 20 8-bit values, 10 16-bit values or 5 32-bit values.
+The amount of this data actually used by a particular client message depends on
+the type.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-_003aproperty_002dnotify"></a>Event Type: <strong>:property-notify</strong></dt>
+<dd><p>Selected by: <var>:property-change</var>.
+</p>
+<p>The <var>:property-notify</var> event is generated when a window
+property is changed or deleted.
+</p>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dt><var>event-window</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The window receiving the event.
+</p>
+</dd>
+<dt><var>atom</var></dt>
+<dd><p>Type <var>keyword</var>.
+</p>
+<p>The property that was changed or deleted.
+</p>
+</dd>
+<dt><var>state</var></dt>
+<dd><p>Type <code>(member :new-value :deleted)</code>.
+</p>
+<p><em>state</em> is <var>:new-value</var> if the property was changed using <var>change-property</var> or
+<var>rotate-properties</var>, even if zero-length data was added or if all or part of the
+property was replaced with identical data. <em>state</em> is <var>:deleted</var> if the property was
+deleted using <var>delete-property</var> or <var>get-property</var>.
+</p>
+</dd>
+<dt><var>time</var></dt>
+<dd><p>Type <var>timestamp</var>.
+</p>
+<p>The server time when the property was changed or deleted.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-_003aselection_002dclear"></a>Event Type: <strong>:selection-clear</strong></dt>
+<dd>
+<p>The <var>:selection-clear</var> event is reported to the previous owner
+of a <em>selection</em> when the owner of the <em>selection</em> is
+changed. The selection owner is changed by a client using
+<code>setf</code>.  A client can neither select <var>:selection-clear</var>
+events nor avoid receiving them.
+</p><dl compact="compact">
+<dt><var>window</var></dt>
+<dt><var>event-window</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The window losing ownership of the <em>selection</em>.
+</p>
+</dd>
+<dt><var>selection</var></dt>
+<dd><p>Type <var>keyword</var>.
+</p>
+<p>The name of the selection.
+</p>
+</dd>
+<dt><var>time</var></dt>
+<dd><p>Type <var>timestamp</var>.
+</p>
+<p>The last-change time recorded for the <em>selection</em>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-_003aselection_002dnotify"></a>Event Type: <strong>:selection-notify</strong></dt>
+<dd>
+<p>The <var>:selection-notify</var> event is sent to a client calling
+<var>convert-selection</var>.  <var>:selection-notify</var> reports the
+result of the client request to return the current value of a
+<em>selection</em> into a particular form. <var>:selection-notify</var> is
+sent using <var>send-event</var> by the owner of the selection or (if no
+owner exists) by the X server. A client can neither select
+<var>:selection-notify</var> events nor avoid receiving them.
+</p>
+<p><var>NOTE:</var> Standard conventions for inter-client communication require the following
+additional steps in processing a <var>:selection-notify</var> event:
+</p>
+<ol>
+<li> The client receiving this event should call <var>get-property</var> to
+return the converted selection value.
+
+</li><li> After receiving the selection value, the property should then be
+deleted (either by using the <var>:delete-p</var> argument to
+<var>get-property</var> or by calling <var>delete-property</var>).
+</li></ol>
+
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dt><var>event-window</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The requestor window given in the call to <var>convert-selection</var>.
+</p>
+</dd>
+<dt><var>selection</var></dt>
+<dd><p>Type <var>keyword</var>.
+</p>
+<p>The selection to be converted.
+</p>
+</dd>
+<dt><var>target</var></dt>
+<dd><p>Type <var>keyword</var>.
+</p>
+<p>An <var>xatom</var> specifying the type of the converted selection value. This is the same
+target type given in the call to <var>convert-selection</var>.
+</p>
+</dd>
+<dt><var>property</var></dt>
+<dd><p>Type <code>(or null keyword)</code>.
+</p>
+<p>The window property containing the converted selection. If the property is <var>nil</var>,
+then either the <em>selection</em> has no owner or the owner could not perform the
+conversion to the <em>target</em> type.
+</p>
+</dd>
+<dt><var>time</var></dt>
+<dd><p>Type <var>timestamp</var>.
+</p>
+<p>The timestamp from the client call to <var>convert-selection</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-_003aselection_002drequest"></a>Event Type: <strong>:selection-request</strong></dt>
+<dd>
+<p>The <var>:selection-request</var> event is reported to the owner of a
+selection when a client calls <var>convert-selection</var>. This event
+requests the selection owner to convert the current value of a
+<em>selection</em> into a specified form and to return it to the
+requestor. A client can neither select <var>:selection-request</var>
+events nor avoid receiving them.
+</p>
+<p>The selection owner should respond to a <var>:selection-request</var> event by performing the
+following steps:
+</p>
+<ol>
+<li> Convert the current <em>selection</em> value to the <em>target</em>
+type.
+
+</li><li> Store the converted selection value in the <em>property</em>. If
+<em>property</em> is <var>nil</var>, then the owner should choose the
+<em>property</em>.
+
+</li><li> Call <var>send-event</var> to send a <var>:selection-notify</var> event to
+the <em>requestor</em> containing the <em>property</em> with the
+converted value. If the <em>selection</em> could not be converted to
+the <em>target</em> type, then a <var>nil</var> <em>property</em> should
+be sent. The <var>:selection</var>, <var>:target</var>, and <var>:time</var>
+arguments to <var>send-event</var> should be the same as those
+received in the <var>:selection-request</var> event. The event-mask
+argument to <var>send-event</var> should be <var>nil</var>; that is, the
+<var>:selection-notify</var> event should be sent to client that
+created the <em>requestor</em>.
+</li></ol>
+
+
+<p><var>NOTE:</var> Standard conventions for inter-client communication
+require the following additional steps in processing a
+<var>:selection-request</var> event:
+</p>
+<ol>
+<li> The property used to store the selection value must belong to the
+requestor.
+
+</li><li> If the property is <var>nil</var>, the target type <var>atom</var> should
+be used as the property name.
+
+</li><li> If the window did not actually own the selection at the given
+time, the request should be refused, just as if it could not be
+converted to the target type.
+</li></ol>
+
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dt><var>event-window</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The selection owner receiving the event.
+</p>
+</dd>
+<dt><var>requestor</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The window requesting the converted <em>selection</em>.
+</p>
+</dd>
+<dt><var>selection</var></dt>
+<dd><p>Type <var>keyword</var>.
+</p>
+<p>The selection to be converted.
+</p>
+</dd>
+<dt><var>target</var></dt>
+<dd><p>Type <var>keyword</var>.
+</p>
+<p>An <var>xatom</var> specifying the type of the converted <em>selection</em> value.
+</p>
+</dd>
+<dt><var>property</var></dt>
+<dd><p>Type <code>(or null keyword)</code>.
+</p>
+<p>A requestor window property.
+</p>
+</dd>
+<dt><var>time</var></dt>
+<dd><p>Type <var>timestamp</var>.
+</p>
+<p>The timestamp sent in the client <var>convert-selection</var> request.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Declaring-Event-Types.html#Declaring-Event-Types" accesskey="n" rel="next">Declaring Event Types</a>, Previous: <a href="Structure-Control-Events.html#Structure-Control-Events" accesskey="p" rel="prev">Structure Control Events</a>, Up: <a href="Event-Types.html#Event-Types" accesskey="u" rel="up">Event Types</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

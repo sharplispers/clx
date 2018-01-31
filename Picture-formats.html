@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Picture formats</title>
+
+<meta name="description" content="Common LISP X Interface: Picture formats">
+<meta name="keywords" content="Common LISP X Interface: Picture formats">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="RENDER-_002d-A-new-rendering-system-for-X11.html#RENDER-_002d-A-new-rendering-system-for-X11" rel="up" title="RENDER - A new rendering system for X11">
+<link href="The-picture-object.html#The-picture-object" rel="next" title="The picture object">
+<link href="RENDER-_002d-A-new-rendering-system-for-X11.html#RENDER-_002d-A-new-rendering-system-for-X11" rel="prev" title="RENDER - A new rendering system for X11">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Picture-formats"></a>
+<div class="header">
+<p>
+Next: <a href="The-picture-object.html#The-picture-object" accesskey="n" rel="next">The picture object</a>, Previous: <a href="RENDER-_002d-A-new-rendering-system-for-X11.html#RENDER-_002d-A-new-rendering-system-for-X11" accesskey="p" rel="prev">RENDER - A new rendering system for X11</a>, Up: <a href="RENDER-_002d-A-new-rendering-system-for-X11.html#RENDER-_002d-A-new-rendering-system-for-X11" accesskey="u" rel="up">RENDER - A new rendering system for X11</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Picture-formats-1"></a>
+<h4 class="subsection">16.3.1 Picture formats</h4>
+
+<p>The following is what the X protocol rendering spec has to say about picture formats.
+<a href="http://www.xfree86.org/~keithp/render/protocol.html">http://www.xfree86.org/~keithp/render/protocol.html</a>
+</p>
+
+<p>The <var>picture-format</var> object holds information needed to translate pixel values
+into red, green, blue and alpha channels.  The server has a list of picture
+formats corresponding to the various visuals on the screen.  There are two
+classes of formats, Indexed and Direct.  Indexed picture-formats hold a list of
+pixel values and RGBA values while Direct picture-formats hold bit masks for each
+of R, G, B and A.
+</p>
+
+<p>The server must support a direct <var>picture-format</var> with 8 bits each of red, green,
+blue and alpha as well as a direct <var>picture-format</var> with 8 bits of red, green and
+blue and 0 bits of alpha.  The server must also support direct <var>picture-format</var>s
+with 1, 4 and 8 bits of alpha and 0 bits of r, g and b.
+</p>
+
+<p>Pixel component values lie in the closed range [0,1].  These values are
+encoded in a varying number of bits.  Values are encoded in a straight
+forward manner.  For a component encoded in m bits, a binary encoding b
+is equal to a component value of b/(2^m-1).
+</p>
+
+<p>A direct <var>picture-format</var> with zero bits of alpha component is declared to have
+alpha == 1 everywhere.  A direct <var>picture-format</var> with zero bits of red, green and
+blue is declared to have red, green, blue == 0 everywhere.  If any of red,
+green or blue components are of zero size, all are of zero size.  Direct
+<var>picture-format</var>s never have colormaps and are therefore screen independent.
+</p>
+
+<p>Indexed <var>picture-format</var>s never have alpha channels and the direct component is all
+zeros.  Indexed <var>picture-format</var>s always have a colormap in which the specified
+colors are allocated read- only and are therefore screen dependent.
+</p>
+<p>These are valid accessors for picture-format objects.
+</p>
+<dl compact="compact">
+<dt><var>picture-format-display</var></dt>
+<dd><p>A display
+</p></dd>
+<dt><var>picture-format-id</var></dt>
+<dd><p>The X protocol <var>resource-id</var>
+</p></dd>
+<dt><var>picture-format-type</var></dt>
+<dd><p><code>(member :indexed :direct)</code>
+</p></dd>
+<dt><var>picture-format-depth</var></dt>
+<dd><p>Bitdepth as <var>card8</var>
+</p></dd>
+<dt><var>picture-format-red-byte</var></dt>
+<dd><p>A bitmask
+</p></dd>
+<dt><var>picture-format-green-byte</var></dt>
+<dt><var>picture-format-blue-byte</var></dt>
+<dt><var>picture-format-alpha-byte</var></dt>
+<dt><var>picture-format-colormap</var></dt>
+<dd><p>A <var>colormap</var> or nil
+</p></dd>
+</dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="The-picture-object.html#The-picture-object" accesskey="n" rel="next">The picture object</a>, Previous: <a href="RENDER-_002d-A-new-rendering-system-for-X11.html#RENDER-_002d-A-new-rendering-system-for-X11" accesskey="p" rel="prev">RENDER - A new rendering system for X11</a>, Up: <a href="RENDER-_002d-A-new-rendering-system-for-X11.html#RENDER-_002d-A-new-rendering-system-for-X11" accesskey="u" rel="up">RENDER - A new rendering system for X11</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

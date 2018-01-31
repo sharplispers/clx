@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: The picture object</title>
+
+<meta name="description" content="Common LISP X Interface: The picture object">
+<meta name="keywords" content="Common LISP X Interface: The picture object">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="RENDER-_002d-A-new-rendering-system-for-X11.html#RENDER-_002d-A-new-rendering-system-for-X11" rel="up" title="RENDER - A new rendering system for X11">
+<link href="Glyphs-and-Glyphsets.html#Glyphs-and-Glyphsets" rel="next" title="Glyphs and Glyphsets">
+<link href="Picture-formats.html#Picture-formats" rel="prev" title="Picture formats">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="The-picture-object"></a>
+<div class="header">
+<p>
+Next: <a href="Glyphs-and-Glyphsets.html#Glyphs-and-Glyphsets" accesskey="n" rel="next">Glyphs and Glyphsets</a>, Previous: <a href="Picture-formats.html#Picture-formats" accesskey="p" rel="prev">Picture formats</a>, Up: <a href="RENDER-_002d-A-new-rendering-system-for-X11.html#RENDER-_002d-A-new-rendering-system-for-X11" accesskey="u" rel="up">RENDER - A new rendering system for X11</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="The-picture-object-1"></a>
+<h4 class="subsection">16.3.2 The picture object</h4>
+
+
+<p>The <var>picture</var> object contains a <var>drawable</var>, a <var>picture-format</var> and some
+rendering state.  More than one <var>picture</var> can refer to the same <var>drawable</var>.
+</p>
+
+<p>A <var>picture</var> is almost like a <var>gcontext</var>, except that it is tied in use to
+a single <var>drawable</var>. Another similarity it has with <var>gcontext</var> is that it is
+a cached object. Updates are not processed until the <var>picture</var> is used. This also
+makes it possible to query state, as there is no such request in XRENDER to do so.
+</p>
+
+<p>The <var>picture</var> object is also a lot like a <var>drawable</var>, in that it is used as a
+target for graphics operations. Or at least that it occurs where you would expect a
+drawable in XRENDER requests.
+</p>
+<dl>
+<dt><a name="index-render_002dcreate_002dpicture"></a>Function: <strong>render-create-picture</strong> <em>drawable &amp;key format picture ...</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>drawable</var></dt>
+<dd><p>A <var>Drawable</var>
+</p></dd>
+<dt><var>format</var></dt>
+<dd><p>A <var>picture-format</var>
+</p></dd>
+<dt><var>picture</var></dt>
+<dd><p>An existing <var>picture</var> object to use,
+one is created if not specified.
+</p></dd>
+<dt><var>repeat</var></dt>
+<dd><p><code>(member :off :on)</code>
+</p></dd>
+<dt><var>alpha-map</var></dt>
+<dd><p>A <var>picture</var> or <var>:none</var>
+</p></dd>
+<dt><var>alpha-x-origin</var></dt>
+<dd><p><var>int16</var>
+</p></dd>
+<dt><var>alpha-y-origin</var></dt>
+<dd><p><var>int16</var>
+</p></dd>
+<dt><var>clip-x-origin</var></dt>
+<dd><p><var>int16</var>
+</p></dd>
+<dt><var>clip-y-origin</var></dt>
+<dd><p><var>int16</var>
+</p></dd>
+<dt><var>clip-mask</var></dt>
+<dd><p>A <var>Pixmap</var> or <var>:none</var>
+</p></dd>
+<dt><var>graphics-exposures</var></dt>
+<dd><p><code>(member :off :on)</code>
+</p></dd>
+<dt><var>subwindow-mode</var></dt>
+<dd><p><code>(member :clip-by-children :include-inferiors)</code>
+</p></dd>
+<dt><var>poly-edge</var></dt>
+<dd><p><code>(member :sharp :smooth)</code>
+</p></dd>
+<dt><var>poly-mode</var></dt>
+<dd><p><code>(member :precise :imprecise)</code>
+</p></dd>
+<dt><var>dither</var></dt>
+<dd><p><var>xatom</var> or <var>:none</var>
+</p></dd>
+<dt><var>component-alpha</var></dt>
+<dd><p><code>(member :off :on)</code>
+</p></dd>
+</dl>
+<p>This request creates a Picture object.  If the <em>drawable</em> is a Window
+then the Red, Green and Blue masks must match those in the visual for the
+window else a Match error is generated.
+</p>
+<dl compact="compact">
+<dt><var>picture</var></dt>
+<dd><p>A <var>picture</var>
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+
+<dl>
+<dt><a name="index-render_002dfree_002dpicture"></a>Function: <strong>render-free-picture</strong> <em>picture This request deletes all server resources associated with the picture object.</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>picture</var></dt>
+<dd><p>The <var>picture</var> object to free
+</p></dd>
+</dl>
+
+
+
+</dd></dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Glyphs-and-Glyphsets.html#Glyphs-and-Glyphsets" accesskey="n" rel="next">Glyphs and Glyphsets</a>, Previous: <a href="Picture-formats.html#Picture-formats" accesskey="p" rel="prev">Picture formats</a>, Up: <a href="RENDER-_002d-A-new-rendering-system-for-X11.html#RENDER-_002d-A-new-rendering-system-for-X11" accesskey="u" rel="up">RENDER - A new rendering system for X11</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

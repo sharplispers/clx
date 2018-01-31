@@ -1,0 +1,639 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Top</title>
+
+<meta name="description" content="Common LISP X Interface: Top">
+<meta name="keywords" content="Common LISP X Interface: Top">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="../dir/index.html" rel="up" title="(dir)">
+<link href="Acknowledgments.html#Acknowledgments" rel="next" title="Acknowledgments">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<h1 class="settitle" align="center">Common LISP X Interface</h1>
+
+
+
+
+<a name="SEC_Contents"></a>
+<h2 class="contents-heading">Table of Contents</h2>
+
+<div class="contents">
+
+<ul class="no-bullet">
+  <li><a name="toc-Acknowledgments-1" href="Acknowledgments.html#Acknowledgments">1 Acknowledgments</a></li>
+  <li><a name="toc-Introduction-to-CLX-1" href="Introduction-to-CLX.html#Introduction-to-CLX">2 Introduction to CLX</a>
+  <ul class="no-bullet">
+    <li><a name="toc-The-X-Window-System-1" href="The-X-Window-System.html#The-X-Window-System">2.1 The X Window System</a>
+    <ul class="no-bullet">
+      <li><a name="toc-Windows-1" href="Windows.html#Windows">2.1.1 Windows</a></li>
+      <li><a name="toc-Input-Events-1" href="Input-Events.html#Input-Events">2.1.2 Input Events</a></li>
+    </ul></li>
+    <li><a name="toc-A-Quick-Tour-of-CLX-1" href="A-Quick-Tour-of-CLX.html#A-Quick-Tour-of-CLX">2.2 A Quick Tour of CLX</a>
+    <ul class="no-bullet">
+      <li><a name="toc-A-Simple-Menu-1" href="A-Simple-Menu.html#A-Simple-Menu">2.2.1 A Simple Menu</a></li>
+      <li><a name="toc-Displaying-the-Menu-1" href="Displaying-the-Menu.html#Displaying-the-Menu">2.2.2 Displaying the Menu</a></li>
+      <li><a name="toc-Menu-Input-1" href="Menu-Input.html#Menu-Input">2.2.3 Menu Input</a></li>
+      <li><a name="toc-The-Main-Program-1" href="The-Main-Program.html#The-Main-Program">2.2.4 The Main Program</a></li>
+      <li><a name="toc-Debugging-With-CLX-1" href="Debugging-With-CLX.html#Debugging-With-CLX">2.2.5 Debugging With CLX</a></li>
+    </ul></li>
+    <li><a name="toc-Naming-and-Argument-Conventions-1" href="Naming-and-Argument-Conventions.html#Naming-and-Argument-Conventions">2.3 Naming and Argument Conventions</a></li>
+    <li><a name="toc-Programming-Considerations-1" href="Programming-Considerations.html#Programming-Considerations">2.4 Programming Considerations</a></li>
+    <li><a name="toc-Data-Types-1" href="Data-Types.html#Data-Types">2.5 Data Types</a></li>
+  </ul></li>
+  <li><a name="toc-Displays-1" href="Displays.html#Displays">3 Displays</a>
+  <ul class="no-bullet">
+    <li><a name="toc-Opening-the-Display-1" href="Opening-the-Display.html#Opening-the-Display">3.1 Opening the Display</a></li>
+    <li><a name="toc-Display-Attributes-1" href="Display-Attributes.html#Display-Attributes">3.2 Display Attributes</a></li>
+    <li><a name="toc-Managing-the-Output-Buffer-1" href="Managing-the-Output-Buffer.html#Managing-the-Output-Buffer">3.3 Managing the Output Buffer</a></li>
+    <li><a name="toc-Closing-the-Display-1" href="Closing-the-Display.html#Closing-the-Display">3.4 Closing the Display</a></li>
+  </ul></li>
+  <li><a name="toc-Screens-1" href="Screens.html#Screens">4 Screens</a>
+  <ul class="no-bullet">
+    <li><a name="toc-Screens-and-Visuals-1" href="Screens-and-Visuals.html#Screens-and-Visuals">4.1 Screens and Visuals</a></li>
+    <li><a name="toc-Screen-Attributes-1" href="Screen-Attributes.html#Screen-Attributes">4.2 Screen Attributes</a></li>
+  </ul></li>
+  <li><a name="toc-Windows-and-Pixmaps-1" href="Windows-and-Pixmaps.html#Windows-and-Pixmaps">5 Windows and Pixmaps</a>
+  <ul class="no-bullet">
+    <li><a name="toc-Drawables-1" href="Drawables.html#Drawables">5.1 Drawables</a></li>
+    <li><a name="toc-Creating-Windows-1" href="Creating-Windows.html#Creating-Windows">5.2 Creating Windows</a></li>
+    <li><a name="toc-Window-Attributes-1" href="Window-Attributes.html#Window-Attributes">5.3 Window Attributes</a></li>
+    <li><a name="toc-Stacking-Order-1" href="Stacking-Order.html#Stacking-Order">5.4 Stacking Order</a></li>
+    <li><a name="toc-Window-Hierarchy-1" href="Window-Hierarchy.html#Window-Hierarchy">5.5 Window Hierarchy</a></li>
+    <li><a name="toc-Mapping-Windows-1" href="Mapping-Windows.html#Mapping-Windows">5.6 Mapping Windows</a></li>
+    <li><a name="toc-Destroying-Windows-1" href="Destroying-Windows.html#Destroying-Windows">5.7 Destroying Windows</a></li>
+    <li><a name="toc-Pixmaps-1" href="Pixmaps.html#Pixmaps">5.8 Pixmaps</a></li>
+  </ul></li>
+  <li><a name="toc-Graphics-Contexts-1" href="Graphics-Contexts.html#Graphics-Contexts">6 Graphics Contexts</a>
+  <ul class="no-bullet">
+    <li><a name="toc-Creating-Graphics-Contexts-1" href="Creating-Graphics-Contexts.html#Creating-Graphics-Contexts">6.1 Creating Graphics Contexts</a></li>
+    <li><a name="toc-Graphics-Context-Attributes-1" href="Graphics-Context-Attributes.html#Graphics-Context-Attributes">6.2 Graphics Context Attributes</a></li>
+    <li><a name="toc-Copying-Graphics-Contexts-1" href="Copying-Graphics-Contexts.html#Copying-Graphics-Contexts">6.3 Copying Graphics Contexts</a></li>
+    <li><a name="toc-Destroying-Graphics-Contexts-1" href="Destroying-Graphics-Contexts.html#Destroying-Graphics-Contexts">6.4 Destroying Graphics Contexts</a></li>
+    <li><a name="toc-Graphics-Context-Cache-1" href="Graphics-Context-Cache.html#Graphics-Context-Cache">6.5 Graphics Context Cache</a></li>
+  </ul></li>
+  <li><a name="toc-Graphic-Operations-1" href="Graphic-Operations.html#Graphic-Operations">7 Graphic Operations</a>
+  <ul class="no-bullet">
+    <li><a name="toc-Area-and-Plane-Operations-1" href="Area-and-Plane-Operations.html#Area-and-Plane-Operations">7.1 Area and Plane Operations</a></li>
+    <li><a name="toc-Drawing-Points-1" href="Drawing-Points.html#Drawing-Points">7.2 Drawing Points</a></li>
+    <li><a name="toc-Drawing-Lines-1" href="Drawing-Lines.html#Drawing-Lines">7.3 Drawing Lines</a></li>
+    <li><a name="toc-Drawing-Rectangles-1" href="Drawing-Rectangles.html#Drawing-Rectangles">7.4 Drawing Rectangles</a></li>
+    <li><a name="toc-Drawing-Arcs-1" href="Drawing-Arcs.html#Drawing-Arcs">7.5 Drawing Arcs</a></li>
+    <li><a name="toc-Drawing-Text-1" href="Drawing-Text.html#Drawing-Text">7.6 Drawing Text</a></li>
+  </ul></li>
+  <li><a name="toc-Images-1" href="Images.html#Images">8 Images</a>
+  <ul class="no-bullet">
+    <li><a name="toc-Image-Types-1" href="Image-Types.html#Image-Types">8.1 Image Types</a>
+    <ul class="no-bullet">
+      <li><a name="toc-Basic-Images-1" href="Basic-Images.html#Basic-Images">8.1.1 Basic Images</a></li>
+      <li><a name="toc-XY_002dFormat-Images-1" href="XY_002dFormat-Images.html#XY_002dFormat-Images">8.1.2 XY-Format Images</a></li>
+      <li><a name="toc-Z_002dFormat-Images-1" href="Z_002dFormat-Images.html#Z_002dFormat-Images">8.1.3 Z-Format Images</a></li>
+    </ul></li>
+    <li><a name="toc-Image-Functions-1" href="Image-Functions.html#Image-Functions">8.2 Image Functions</a></li>
+    <li><a name="toc-Image-Files-1" href="Image-Files.html#Image-Files">8.3 Image Files</a></li>
+    <li><a name="toc-Direct-Image-Transfer-1" href="Direct-Image-Transfer.html#Direct-Image-Transfer">8.4 Direct Image Transfer</a></li>
+  </ul></li>
+  <li><a name="toc-Font-and-Characters-1" href="Font-and-Characters.html#Font-and-Characters">9 Font and Characters</a>
+  <ul class="no-bullet">
+    <li><a name="toc-Opening-Fonts-1" href="Opening-Fonts.html#Opening-Fonts">9.1 Opening Fonts</a></li>
+    <li><a name="toc-Listing-Fonts-1" href="Listing-Fonts.html#Listing-Fonts">9.2 Listing Fonts</a></li>
+    <li><a name="toc-Font-Attributes-1" href="Font-Attributes.html#Font-Attributes">9.3 Font Attributes</a></li>
+    <li><a name="toc-Chracter-Attributes-1" href="Chracter-Attributes.html#Chracter-Attributes">9.4 Chracter Attributes</a></li>
+    <li><a name="toc-Querying-Text-Size-1" href="Querying-Text-Size.html#Querying-Text-Size">9.5 Querying Text Size</a></li>
+  </ul></li>
+  <li><a name="toc-Colors-1" href="Colors.html#Colors">10 Colors</a>
+  <ul class="no-bullet">
+    <li><a name="toc-Colormaps-and-Colors-1" href="Colormaps-and-Colors.html#Colormaps-and-Colors">10.1 Colormaps and Colors</a></li>
+    <li><a name="toc-Color-Functions-1" href="Color-Functions.html#Color-Functions">10.2 Color Functions</a></li>
+    <li><a name="toc-Colormap-Functions-1" href="Colormap-Functions.html#Colormap-Functions">10.3 Colormap Functions</a>
+    <ul class="no-bullet">
+      <li><a name="toc-Creating-Colormaps-1" href="Creating-Colormaps.html#Creating-Colormaps">10.3.1 Creating Colormaps</a></li>
+      <li><a name="toc-Installing-Colormaps-1" href="Installing-Colormaps.html#Installing-Colormaps">10.3.2 Installing Colormaps</a></li>
+      <li><a name="toc-Allocating-Colors-1" href="Allocating-Colors.html#Allocating-Colors">10.3.3 Allocating Colors</a></li>
+      <li><a name="toc-Finding-Colors-1" href="Finding-Colors.html#Finding-Colors">10.3.4 Finding Colors</a></li>
+      <li><a name="toc-Changing-Colors-1" href="Changing-Colors.html#Changing-Colors">10.3.5 Changing Colors</a></li>
+      <li><a name="toc-Colormap-Attributes-1" href="Colormap-Attributes.html#Colormap-Attributes">10.3.6 Colormap Attributes</a></li>
+    </ul></li>
+  </ul></li>
+  <li><a name="toc-Cursors-1" href="Cursors.html#Cursors">11 Cursors</a>
+  <ul class="no-bullet">
+    <li><a name="toc-Creating-Cursors-1" href="Creating-Cursors.html#Creating-Cursors">11.1 Creating Cursors</a></li>
+    <li><a name="toc-Cursor-Functions-1" href="Cursor-Functions.html#Cursor-Functions">11.2 Cursor Functions</a></li>
+    <li><a name="toc-Cursor-Attributes-1" href="Cursor-Attributes.html#Cursor-Attributes">11.3 Cursor Attributes</a></li>
+  </ul></li>
+  <li><a name="toc-Atoms_002c-Properties-and-Selections" href="Atoms.html#Atoms">12 Atoms, Properties and Selections</a>
+  <ul class="no-bullet">
+    <li><a name="toc-Atoms-1" href="Atoms-_0028Atoms_0029.html#Atoms-_0028Atoms_0029">12.1 Atoms</a></li>
+    <li><a name="toc-Properties-1" href="Properties.html#Properties">12.2 Properties</a></li>
+    <li><a name="toc-Selections-1" href="Selections.html#Selections">12.3 Selections</a></li>
+  </ul></li>
+  <li><a name="toc-Events-and-Input-1" href="Events-and-Input.html#Events-and-Input">13 Events and Input</a>
+  <ul class="no-bullet">
+    <li><a name="toc-Selecting-Events-1" href="Selecting-Events.html#Selecting-Events">13.1 Selecting Events</a></li>
+    <li><a name="toc-Processing-Events-1" href="Processing-Events.html#Processing-Events">13.2 Processing Events</a></li>
+    <li><a name="toc-Managing-the-Event-Queue-1" href="Managing-the-Event-Queue.html#Managing-the-Event-Queue">13.3 Managing the Event Queue</a></li>
+    <li><a name="toc-Sending-Events-1" href="Sending-Events.html#Sending-Events">13.4 Sending Events</a></li>
+    <li><a name="toc-Pointer-Position-1" href="Pointer-Position.html#Pointer-Position">13.5 Pointer Position</a></li>
+    <li><a name="toc-Managing-Input-Focus-1" href="Managing-Input-Focus.html#Managing-Input-Focus">13.6 Managing Input Focus</a></li>
+    <li><a name="toc-Grabbing-the-Pointer-1" href="Grabbing-the-Pointer.html#Grabbing-the-Pointer">13.7 Grabbing the Pointer</a></li>
+    <li><a name="toc-Grabbing-a-Button-1" href="Grabbing-a-Button.html#Grabbing-a-Button">13.8 Grabbing a Button</a></li>
+    <li><a name="toc-Grabbing-the-Keyboard-1" href="Grabbing-the-Keyboard.html#Grabbing-the-Keyboard">13.9 Grabbing the Keyboard</a></li>
+    <li><a name="toc-Grabbing-a-Key-1" href="Grabbing-a-Key.html#Grabbing-a-Key">13.10 Grabbing a Key</a></li>
+    <li><a name="toc-Event-Types-1" href="Event-Types.html#Event-Types">13.11 Event Types</a>
+    <ul class="no-bullet">
+      <li><a name="toc-Keyboard-and-Pointer-Events-1" href="Keyboard-and-Pointer-Events.html#Keyboard-and-Pointer-Events">13.11.1 Keyboard and Pointer Events</a></li>
+      <li><a name="toc-Input-Focus-Events-1" href="Input-Focus-Events.html#Input-Focus-Events">13.11.2 Input Focus Events</a></li>
+      <li><a name="toc-Keyboard-and-Pointer-State-Events-1" href="Keyboard-and-Pointer-State-Events.html#Keyboard-and-Pointer-State-Events">13.11.3 Keyboard and Pointer State Events</a></li>
+      <li><a name="toc-Exposure-Events-1" href="Exposure-Events.html#Exposure-Events">13.11.4 Exposure Events</a></li>
+      <li><a name="toc-Window-State-Events-1" href="Window-State-Events.html#Window-State-Events">13.11.5 Window State Events</a></li>
+      <li><a name="toc-Structure-Control-Events-1" href="Structure-Control-Events.html#Structure-Control-Events">13.11.6 Structure Control Events</a></li>
+      <li><a name="toc-Client-Communications-Events-1" href="Client-Communications-Events.html#Client-Communications-Events">13.11.7 Client Communications Events</a></li>
+      <li><a name="toc-Declaring-Event-Types-1" href="Declaring-Event-Types.html#Declaring-Event-Types">13.11.8 Declaring Event Types</a></li>
+    </ul></li>
+    <li><a name="toc-Releasing-Queued-Events-1" href="Releasing-Queued-Events.html#Releasing-Queued-Events">13.12 Releasing Queued Events</a></li>
+  </ul></li>
+  <li><a name="toc-Resources-1" href="Resources.html#Resources">14 Resources</a>
+  <ul class="no-bullet">
+    <li><a name="toc-Resource-Binings-1" href="Resource-Binings.html#Resource-Binings">14.1 Resource Binings</a></li>
+    <li><a name="toc-Basic-Resource-Database-Functions-1" href="Basic-Resource-Database-Functions.html#Basic-Resource-Database-Functions">14.2 Basic Resource Database Functions</a></li>
+    <li><a name="toc-Accessing-Resource-Values-1" href="Accessing-Resource-Values.html#Accessing-Resource-Values">14.3 Accessing Resource Values</a>
+    <ul class="no-bullet">
+      <li><a name="toc-Complete-Names-and-Classes-1" href="Complete-Names-and-Classes.html#Complete-Names-and-Classes">14.3.1 Complete Names and Classes</a></li>
+      <li><a name="toc-Matching-Resource-Names-1" href="Matching-Resource-Names.html#Matching-Resource-Names">14.3.2 Matching Resource Names</a></li>
+      <li><a name="toc-Resource-Access-Functions-1" href="Resource-Access-Functions.html#Resource-Access-Functions">14.3.3 Resource Access Functions</a></li>
+    </ul></li>
+    <li><a name="toc-Resource-Database-Files-1" href="Resource-Database-Files.html#Resource-Database-Files">14.4 Resource Database Files</a></li>
+  </ul></li>
+  <li><a name="toc-Control-Functions-1" href="Control-Functions.html#Control-Functions">15 Control Functions</a>
+  <ul class="no-bullet">
+    <li><a name="toc-Grabbing-the-Server-1" href="Grabbing-the-Server.html#Grabbing-the-Server">15.1 Grabbing the Server</a></li>
+    <li><a name="toc-Pointer-Control-1" href="Pointer-Control.html#Pointer-Control">15.2 Pointer Control</a></li>
+    <li><a name="toc-Keyboard-Control-1" href="Keyboard-Control.html#Keyboard-Control">15.3 Keyboard Control</a></li>
+    <li><a name="toc-Keyboard-Encodings-1" href="Keyboard-Encodings.html#Keyboard-Encodings">15.4 Keyboard Encodings</a>
+    <ul class="no-bullet">
+      <li><a name="toc-Keycodes-and-Keysyms-1" href="Keycodes-and-Keysyms.html#Keycodes-and-Keysyms">15.4.1 Keycodes and Keysyms</a></li>
+      <li><a name="toc-Keyboard-Mapping-1" href="Keyboard-Mapping.html#Keyboard-Mapping">15.4.2 Keyboard Mapping</a></li>
+      <li><a name="toc-Using-Keycodes-and-Keysyms-1" href="Using-Keycodes-and-Keysyms.html#Using-Keycodes-and-Keysyms">15.4.3 Using Keycodes and Keysyms</a></li>
+    </ul></li>
+    <li><a name="toc-Client-Termination-1" href="Client-Termination.html#Client-Termination">15.5 Client Termination</a></li>
+    <li><a name="toc-Managing-Host-Access-1" href="Managing-Host-Access.html#Managing-Host-Access">15.6 Managing Host Access</a></li>
+    <li><a name="toc-Screen-Saver-1" href="Screen-Saver.html#Screen-Saver">15.7 Screen Saver</a></li>
+  </ul></li>
+  <li><a name="toc-Extensions-1" href="Extensions.html#Extensions">16 Extensions</a>
+  <ul class="no-bullet">
+    <li><a name="toc-Extensions-2" href="Extensions-_0028Extensions_0029.html#Extensions-_0028Extensions_0029">16.1 Extensions</a></li>
+    <li><a name="toc-SHAPE-_002d-The-X11-Nonrectangular-Window-Shape-Extension-1" href="SHAPE-_002d-The-X11-Nonrectangular-Window-Shape-Extension.html#SHAPE-_002d-The-X11-Nonrectangular-Window-Shape-Extension">16.2 SHAPE - The X11 Nonrectangular Window Shape Extension</a></li>
+    <li><a name="toc-RENDER-_002d-A-new-rendering-system-for-X11-1" href="RENDER-_002d-A-new-rendering-system-for-X11.html#RENDER-_002d-A-new-rendering-system-for-X11">16.3 RENDER - A new rendering system for X11</a>
+    <ul class="no-bullet">
+      <li><a name="toc-Picture-formats-1" href="Picture-formats.html#Picture-formats">16.3.1 Picture formats</a></li>
+      <li><a name="toc-The-picture-object-1" href="The-picture-object.html#The-picture-object">16.3.2 The picture object</a></li>
+      <li><a name="toc-Glyphs-and-Glyphsets-1" href="Glyphs-and-Glyphsets.html#Glyphs-and-Glyphsets">16.3.3 Glyphs and Glyphsets</a></li>
+      <li><a name="toc-Using-glyphs-1" href="Using-glyphs.html#Using-glyphs">16.3.4 Using glyphs</a></li>
+      <li><a name="toc-Using-cursors-1" href="Using-cursors.html#Using-cursors">16.3.5 Using cursors</a></li>
+      <li><a name="toc-Errors-1" href="Errors-_0028Extensions_0029.html#Errors-_0028Extensions_0029">16.3.6 Errors</a></li>
+    </ul></li>
+    <li><a name="toc-DPMS-_002d-The-X11-Display-Power-Management-Signaling-Extension-1" href="DPMS-_002d-The-X11-Display-Power-Management-Signaling-Extension.html#DPMS-_002d-The-X11-Display-Power-Management-Signaling-Extension">16.4 DPMS - The X11 Display Power Management Signaling Extension</a></li>
+    <li><a name="toc-BIG_002dREQUESTS-_002d-Big-Requests-Extension-1" href="BIG_002dREQUESTS-_002d-Big-Requests-Extension.html#BIG_002dREQUESTS-_002d-Big-Requests-Extension">16.5 BIG-REQUESTS - Big Requests Extension</a></li>
+  </ul></li>
+  <li><a name="toc-Errors-2" href="BIG_002dREQUESTS-_002d-Big-Requests-Extension.html#Errors-2">17 Errors</a>
+  <ul class="no-bullet">
+    <li><a name="toc-Introduction" href="Introduction-_0028Errors_0029.html#Introduction-_0028Errors_0029">17.1 Introduction</a></li>
+  </ul></li>
+  <li><a name="toc-Undocumented-1" href="Undocumented.html#Undocumented">18 Undocumented</a></li>
+  <li><a name="toc-Glossary-1" href="Glossary.html#Glossary">Appendix A Glossary</a></li>
+  <li><a name="toc-Function-Index-1" href="Function-Index.html#Function-Index">Appendix B Function Index</a></li>
+  <li><a name="toc-Type-Index-1" href="Type-Index.html#Type-Index">Appendix C Type Index</a></li>
+</ul>
+</div>
+
+
+<a name="Top"></a>
+<div class="header">
+<p>
+Next: <a href="Acknowledgments.html#Acknowledgments" accesskey="n" rel="next">Acknowledgments</a>, Previous: <a href="../dir/index.html" accesskey="p" rel="prev">(dir)</a>, Up: <a href="../dir/index.html" accesskey="u" rel="up">(dir)</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="The-Common-LISP-X-Interface-_0028CLX_0029"></a>
+<h1 class="top">The Common LISP X Interface (CLX)</h1>
+
+<p>The Common LISP X Interface (CLX)
+</p>
+<p>Copyright &copy; 1988, 1989 Texas Instruments Incorporated
+</p>
+<blockquote>
+<p>Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided &quot;as is&quot; without
+express or implied warranty.
+</p></blockquote>
+
+
+
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top">&bull; <a href="Acknowledgments.html#Acknowledgments" accesskey="1">Acknowledgments</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Introduction-to-CLX.html#Introduction-to-CLX" accesskey="2">Introduction to CLX</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Displays.html#Displays" accesskey="3">Displays</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Screens.html#Screens" accesskey="4">Screens</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Windows-and-Pixmaps.html#Windows-and-Pixmaps" accesskey="5">Windows and Pixmaps</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Graphics-Contexts.html#Graphics-Contexts" accesskey="6">Graphics Contexts</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Graphic-Operations.html#Graphic-Operations" accesskey="7">Graphic Operations</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Images.html#Images" accesskey="8">Images</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Font-and-Characters.html#Font-and-Characters" accesskey="9">Font and Characters</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Colors.html#Colors">Colors</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Cursors.html#Cursors">Cursors</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Atoms.html#Atoms">Atoms</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Events-and-Input.html#Events-and-Input">Events and Input</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Resources.html#Resources">Resources</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Control-Functions.html#Control-Functions">Control Functions</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Extensions.html#Extensions">Extensions</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Errors.html#Errors">Errors</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Undocumented.html#Undocumented">Undocumented</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Glossary.html#Glossary">Glossary</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Function-Index.html#Function-Index">Function Index</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Type-Index.html#Type-Index">Type Index</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
+</pre></th></tr><tr><th colspan="3" align="left" valign="top"><pre class="menu-comment"> &mdash; The Detailed Node Listing &mdash;
+
+Introduction to CLX
+
+</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="The-X-Window-System.html#The-X-Window-System">The X Window System</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="A-Quick-Tour-of-CLX.html#A-Quick-Tour-of-CLX">A Quick Tour of CLX</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Naming-and-Argument-Conventions.html#Naming-and-Argument-Conventions">Naming and Argument Conventions</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Programming-Considerations.html#Programming-Considerations">Programming Considerations</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Data-Types.html#Data-Types">Data Types</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
+The X Window System
+
+</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="Windows.html#Windows">Windows</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Input-Events.html#Input-Events">Input Events</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
+A Quick Tour of CLX
+
+</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="A-Simple-Menu.html#A-Simple-Menu">A Simple Menu</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Displaying-the-Menu.html#Displaying-the-Menu">Displaying the Menu</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Menu-Input.html#Menu-Input">Menu Input</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="The-Main-Program.html#The-Main-Program">The Main Program</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Debugging-With-CLX.html#Debugging-With-CLX">Debugging With CLX</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
+Displays
+
+</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="Opening-the-Display.html#Opening-the-Display">Opening the Display</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Display-Attributes.html#Display-Attributes">Display Attributes</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Managing-the-Output-Buffer.html#Managing-the-Output-Buffer">Managing the Output Buffer</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Closing-the-Display.html#Closing-the-Display">Closing the Display</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
+Screens
+
+</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="Screens-and-Visuals.html#Screens-and-Visuals">Screens and Visuals</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Screen-Attributes.html#Screen-Attributes">Screen Attributes</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
+Windows and Pixmaps
+
+</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="Drawables.html#Drawables">Drawables</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Creating-Windows.html#Creating-Windows">Creating Windows</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Window-Attributes.html#Window-Attributes">Window Attributes</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Stacking-Order.html#Stacking-Order">Stacking Order</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Window-Hierarchy.html#Window-Hierarchy">Window Hierarchy</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Mapping-Windows.html#Mapping-Windows">Mapping Windows</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Destroying-Windows.html#Destroying-Windows">Destroying Windows</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Pixmaps.html#Pixmaps">Pixmaps</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
+Graphics Contexts
+
+</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="Creating-Graphics-Contexts.html#Creating-Graphics-Contexts">Creating Graphics Contexts</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Graphics-Context-Attributes.html#Graphics-Context-Attributes">Graphics Context Attributes</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Copying-Graphics-Contexts.html#Copying-Graphics-Contexts">Copying Graphics Contexts</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Destroying-Graphics-Contexts.html#Destroying-Graphics-Contexts">Destroying Graphics Contexts</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Graphics-Context-Cache.html#Graphics-Context-Cache">Graphics Context Cache</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
+Graphic Operations
+
+</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="Area-and-Plane-Operations.html#Area-and-Plane-Operations">Area and Plane Operations</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Drawing-Points.html#Drawing-Points">Drawing Points</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Drawing-Lines.html#Drawing-Lines">Drawing Lines</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Drawing-Rectangles.html#Drawing-Rectangles">Drawing Rectangles</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Drawing-Arcs.html#Drawing-Arcs">Drawing Arcs</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Drawing-Text.html#Drawing-Text">Drawing Text</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
+Images
+
+</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="Image-Types.html#Image-Types">Image Types</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Image-Functions.html#Image-Functions">Image Functions</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Image-Files.html#Image-Files">Image Files</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Direct-Image-Transfer.html#Direct-Image-Transfer">Direct Image Transfer</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
+Image Types
+
+</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="Basic-Images.html#Basic-Images">Basic Images</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="XY_002dFormat-Images.html#XY_002dFormat-Images">XY-Format Images</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Z_002dFormat-Images.html#Z_002dFormat-Images">Z-Format Images</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
+Font and Characters
+
+</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="Opening-Fonts.html#Opening-Fonts">Opening Fonts</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Listing-Fonts.html#Listing-Fonts">Listing Fonts</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Font-Attributes.html#Font-Attributes">Font Attributes</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Chracter-Attributes.html#Chracter-Attributes">Chracter Attributes</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Querying-Text-Size.html#Querying-Text-Size">Querying Text Size</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
+Colors
+
+</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="Colormaps-and-Colors.html#Colormaps-and-Colors">Colormaps and Colors</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Color-Functions.html#Color-Functions">Color Functions</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Colormap-Functions.html#Colormap-Functions">Colormap Functions</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
+Colormap Functions
+
+</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="Creating-Colormaps.html#Creating-Colormaps">Creating Colormaps</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Installing-Colormaps.html#Installing-Colormaps">Installing Colormaps</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Allocating-Colors.html#Allocating-Colors">Allocating Colors</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Finding-Colors.html#Finding-Colors">Finding Colors</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Changing-Colors.html#Changing-Colors">Changing Colors</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Colormap-Attributes.html#Colormap-Attributes">Colormap Attributes</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
+Cursors
+
+</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="Creating-Cursors.html#Creating-Cursors">Creating Cursors</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Cursor-Functions.html#Cursor-Functions">Cursor Functions</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Cursor-Attributes.html#Cursor-Attributes">Cursor Attributes</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
+Atoms, Properties and Selections
+
+</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="Atoms-_0028Atoms_0029.html#Atoms-_0028Atoms_0029">Atoms (Atoms)</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Properties.html#Properties">Properties</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Selections.html#Selections">Selections</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
+Events and Input
+
+</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="Selecting-Events.html#Selecting-Events">Selecting Events</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Processing-Events.html#Processing-Events">Processing Events</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Managing-the-Event-Queue.html#Managing-the-Event-Queue">Managing the Event Queue</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Sending-Events.html#Sending-Events">Sending Events</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Pointer-Position.html#Pointer-Position">Pointer Position</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Managing-Input-Focus.html#Managing-Input-Focus">Managing Input Focus</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Grabbing-the-Pointer.html#Grabbing-the-Pointer">Grabbing the Pointer</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Grabbing-a-Button.html#Grabbing-a-Button">Grabbing a Button</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Grabbing-the-Keyboard.html#Grabbing-the-Keyboard">Grabbing the Keyboard</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Grabbing-a-Key.html#Grabbing-a-Key">Grabbing a Key</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Event-Types.html#Event-Types">Event Types</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Releasing-Queued-Events.html#Releasing-Queued-Events">Releasing Queued Events</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
+Event Types
+
+</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="Keyboard-and-Pointer-Events.html#Keyboard-and-Pointer-Events">Keyboard and Pointer Events</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Input-Focus-Events.html#Input-Focus-Events">Input Focus Events</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Keyboard-and-Pointer-State-Events.html#Keyboard-and-Pointer-State-Events">Keyboard and Pointer State Events</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Exposure-Events.html#Exposure-Events">Exposure Events</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Window-State-Events.html#Window-State-Events">Window State Events</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Structure-Control-Events.html#Structure-Control-Events">Structure Control Events</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Client-Communications-Events.html#Client-Communications-Events">Client Communications Events</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Declaring-Event-Types.html#Declaring-Event-Types">Declaring Event Types</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
+Resources
+
+</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="Resource-Binings.html#Resource-Binings">Resource Binings</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Basic-Resource-Database-Functions.html#Basic-Resource-Database-Functions">Basic Resource Database Functions</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Accessing-Resource-Values.html#Accessing-Resource-Values">Accessing Resource Values</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Resource-Database-Files.html#Resource-Database-Files">Resource Database Files</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
+Accessing Resource Values
+
+</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="Complete-Names-and-Classes.html#Complete-Names-and-Classes">Complete Names and Classes</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Matching-Resource-Names.html#Matching-Resource-Names">Matching Resource Names</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Resource-Access-Functions.html#Resource-Access-Functions">Resource Access Functions</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
+Control Functions
+
+</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="Grabbing-the-Server.html#Grabbing-the-Server">Grabbing the Server</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Pointer-Control.html#Pointer-Control">Pointer Control</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Keyboard-Control.html#Keyboard-Control">Keyboard Control</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Keyboard-Encodings.html#Keyboard-Encodings">Keyboard Encodings</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Client-Termination.html#Client-Termination">Client Termination</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Managing-Host-Access.html#Managing-Host-Access">Managing Host Access</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Screen-Saver.html#Screen-Saver">Screen Saver</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
+Keyboard Encodings
+
+</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="Keycodes-and-Keysyms.html#Keycodes-and-Keysyms">Keycodes and Keysyms</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Keyboard-Mapping.html#Keyboard-Mapping">Keyboard Mapping</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Using-Keycodes-and-Keysyms.html#Using-Keycodes-and-Keysyms">Using Keycodes and Keysyms</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
+Extensions
+
+</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="Extensions-_0028Extensions_0029.html#Extensions-_0028Extensions_0029">Extensions (Extensions)</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="SHAPE-_002d-The-X11-Nonrectangular-Window-Shape-Extension.html#SHAPE-_002d-The-X11-Nonrectangular-Window-Shape-Extension">SHAPE - The X11 Nonrectangular Window Shape Extension</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="RENDER-_002d-A-new-rendering-system-for-X11.html#RENDER-_002d-A-new-rendering-system-for-X11">RENDER - A new rendering system for X11</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="DPMS-_002d-The-X11-Display-Power-Management-Signaling-Extension.html#DPMS-_002d-The-X11-Display-Power-Management-Signaling-Extension">DPMS - The X11 Display Power Management Signaling Extension</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="BIG_002dREQUESTS-_002d-Big-Requests-Extension.html#BIG_002dREQUESTS-_002d-Big-Requests-Extension">BIG-REQUESTS - Big Requests Extension</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
+RENDER - A new rendering system for X11
+
+</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="Picture-formats.html#Picture-formats">Picture formats</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="The-picture-object.html#The-picture-object">The picture object</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Glyphs-and-Glyphsets.html#Glyphs-and-Glyphsets">Glyphs and Glyphsets</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Using-glyphs.html#Using-glyphs">Using glyphs</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Errors-_0028Extensions_0029.html#Errors-_0028Extensions_0029">Errors (Extensions)</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
+Errors
+
+</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="Introduction-_0028Errors_0029.html#Introduction-_0028Errors_0029">Introduction (Errors)</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
+</pre></th></tr></table>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Acknowledgments.html#Acknowledgments" accesskey="n" rel="next">Acknowledgments</a>, Previous: <a href="../dir/index.html" accesskey="p" rel="prev">(dir)</a>, Up: <a href="../dir/index.html" accesskey="u" rel="up">(dir)</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

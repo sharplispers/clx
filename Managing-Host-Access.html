@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Managing Host Access</title>
+
+<meta name="description" content="Common LISP X Interface: Managing Host Access">
+<meta name="keywords" content="Common LISP X Interface: Managing Host Access">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Control-Functions.html#Control-Functions" rel="up" title="Control Functions">
+<link href="Screen-Saver.html#Screen-Saver" rel="next" title="Screen Saver">
+<link href="Client-Termination.html#Client-Termination" rel="prev" title="Client Termination">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Managing-Host-Access"></a>
+<div class="header">
+<p>
+Next: <a href="Screen-Saver.html#Screen-Saver" accesskey="n" rel="next">Screen Saver</a>, Previous: <a href="Client-Termination.html#Client-Termination" accesskey="p" rel="prev">Client Termination</a>, Up: <a href="Control-Functions.html#Control-Functions" accesskey="u" rel="up">Control Functions</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Managing-Host-Access-1"></a>
+<h3 class="section">15.6 Managing Host Access</h3>
+
+
+<p>An X server maintains a list of hosts from which client programs can be
+run. Only clients executing on hosts that belong to this <em>access
+control list</em> are allowed to open a connection to the
+server. Typically, the access control list can be changed by clients
+running on the same host as the server. Some server implementations can
+also implement other authorization mechanisms in addition to, or in
+place of, this mechanism.  The action of this mechanism can be
+conditional based on the authorization protocol name and data received
+by the server at connection setup.
+</p>
+<p>The following paragraphs describe the CLX functions used to:
+</p><ul>
+<li> Add or remove hosts on the access control list.
+
+</li><li> Return the hosts on the access control list.
+
+</li><li> Return or change the state of the access control list mechanism
+</li></ul>
+
+<dl>
+<dt><a name="index-access_002dcontrol"></a>Function: <strong>access-control</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+</dl>
+<p>Returns and (with <code>setf</code>) changes the state of the access
+control list mechanism for the <em>display</em> server. Returns true
+if access control is enabled; otherwise, <var>nil</var> is returned. If
+enabled, the access control list is used to validate each client
+during connection setup.
+</p>
+<p>Only a client running on the same host as the server is allowed to
+enable or disable the access control list mechanism.
+</p><dl compact="compact">
+<dt><var>enabled-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-access_002dhosts"></a>Function: <strong>access-hosts</strong> <em>display &amp;key (:result-type 'list)</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+<dt><var>:result-type</var></dt>
+<dd><p>The type of hosts sequence to return.
+</p></dd>
+</dl>
+<p>Returns a sequence containing the <em>hosts</em> that belong to the
+access control list of the <em>display</em> server. Elements of the
+returned <em>hosts</em> sequence are either strings or some other type
+of object recognized as a host name by <var>add-access-host</var> and
+<var>remove-access-host</var>.  The second returned value specifies
+whether the access control list mechanism is currently enabled or
+disabled (see <var>access-control</var>).
+</p><dl compact="compact">
+<dt><var>hosts</var></dt>
+<dd><p><var>sequence</var> of <var>string</var>.
+</p></dd>
+<dt><var>enabled-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-add_002daccess_002dhost"></a>Function: <strong>add-access-host</strong> <em>display host</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+<dt><var>host</var></dt>
+<dd><p>A host name. Either a string or some other implementation-dependent type.
+</p></dd>
+</dl>
+
+<p>Adds the specified <em>host</em> to the access control list. Only a
+client running on the same host as the server can change the access
+control list.
+</p>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-remove_002daccess_002dhost"></a>Function: <strong>remove-access-host</strong> <em>display host</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+<dt><var>host</var></dt>
+<dd><p>A host name. Either a string or some other implementation-dependent type.
+</p></dd>
+</dl>
+
+<p>Removes the specified <em>host</em> from the access control list. Only
+a client running on the same host as the server can change the
+access control list.
+</p>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Screen-Saver.html#Screen-Saver" accesskey="n" rel="next">Screen Saver</a>, Previous: <a href="Client-Termination.html#Client-Termination" accesskey="p" rel="prev">Client Termination</a>, Up: <a href="Control-Functions.html#Control-Functions" accesskey="u" rel="up">Control Functions</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

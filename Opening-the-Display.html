@@ -1,0 +1,178 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Opening the Display</title>
+
+<meta name="description" content="Common LISP X Interface: Opening the Display">
+<meta name="keywords" content="Common LISP X Interface: Opening the Display">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Displays.html#Displays" rel="up" title="Displays">
+<link href="Display-Attributes.html#Display-Attributes" rel="next" title="Display Attributes">
+<link href="Displays.html#Displays" rel="prev" title="Displays">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Opening-the-Display"></a>
+<div class="header">
+<p>
+Next: <a href="Display-Attributes.html#Display-Attributes" accesskey="n" rel="next">Display Attributes</a>, Previous: <a href="Displays.html#Displays" accesskey="p" rel="prev">Displays</a>, Up: <a href="Displays.html#Displays" accesskey="u" rel="up">Displays</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Opening-the-Display-1"></a>
+<h3 class="section">3.1 Opening the Display</h3>
+
+
+<p>The <var>open-display</var> and <var>open-default-display</var> functions are
+used to open a connection to an X server.  <var>open-default-display</var>
+is an extension that is not present in the MIT CLX tree, but is
+preferred where available as it uses the same rules for display
+defaulting as the C Xlib bindings, and tends to get authorization
+right more often than <var>open-display</var> (particularly on
+ssh-forwarded connections)
+</p>
+<dl>
+<dt><a name="index-open_002ddisplay"></a>Function: <strong>open-display</strong> <em>host &amp;key :display :protocol</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>host</var></dt>
+<dd><p>Specifies the name of the <em>host</em> machine on which the server
+executes. A string must be acceptable as a <em>host</em>, but otherwise
+the possible types are not constrained and will likely be very system
+dependent.
+</p>
+</dd>
+<dt><var>:display</var></dt>
+<dd><p>An integer that specifies which display device on the <em>host</em>
+should be used for this connection. This is needed since multiple
+displays can be controlled by a single X server. The default is
+display 0 (zero).
+</p>
+</dd>
+<dt><var>:protocol</var></dt>
+<dd><p>A keyword argument that specifies which network protocol should be
+used for connecting to the server (for example, <var>:tcp</var>,
+<var>:dna</var>, or <var>:chaos</var>). The set of possible values and the
+default value are implementation specific.
+</p>
+</dd>
+</dl>
+
+<p>Returns a <var>display</var> that serves as the connection to the X
+server and contains all the information about that X server.
+</p>
+<p>Authorization, if any, is assumed to come from the
+environment. After a successful call to <var>open-display</var>, all
+screens on the display can be used by the client application.
+</p>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>Type <var>display</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-open_002ddefault_002ddisplay"></a>Function: <strong>open-default-display</strong> <em>&amp;optional display-name</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display-name</var></dt>
+<dd><p>The display to connect to.  Display names have the format
+</p>
+<pre class="verbatim">  [protocol/] [hostname] : [:] displaynumber [.screennumber]
+</pre>
+<p>There are two special cases in parsing, to match that done in the Xlib
+C language bindings
+</p>
+<ul>
+<li> If the hostname is <code>unix</code> or the empty string, any supplied
+protocol is ignored and a connection is made using the <code>local</code> transport.
+</li><li> If a double colon separates <var>hostname</var> from <var>displaynumber</var>, the
+protocol is assumed to be <code>decnet</code>.
+</li></ul>
+
+<p>If <var>display-name</var> is not supplied, a default will be provided
+appropriate for the local environment: on a POSIX system - the only
+kind this CLX port runs on - the default display is taken from the
+environment variable <code>DISPLAY</code>.  See also the section &ldquo;DISPLAY
+NAMES&rdquo; in X(7)
+</p>
+</dd>
+</dl>
+
+<p>Open a connection to <var>display-name</var> or to the appropriate
+default display.
+</p>
+<p><code>open-display-name</code> always attempts to do display authorization,
+following complicated rules that closely match the ones that the C
+Xlib bindings use.  Briefly: the hostname is resolved to an address,
+then authorization data for the (protocol, host-address,
+displaynumber) triple is looked up in the file given by the
+environment variable <code>AUTHORITY_PATHNAME</code> (typically
+<samp>$HOME/.Xauthority</samp>).  If the protocol is <code>:local</code>, or if
+the hostname resolves to the local host, authority data for the local
+machine&rsquo;s actual hostname - as returned by gethostname(3) - is used
+instead.
+</p>
+</dd></dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Display-Attributes.html#Display-Attributes" accesskey="n" rel="next">Display Attributes</a>, Previous: <a href="Displays.html#Displays" accesskey="p" rel="prev">Displays</a>, Up: <a href="Displays.html#Displays" accesskey="u" rel="up">Displays</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

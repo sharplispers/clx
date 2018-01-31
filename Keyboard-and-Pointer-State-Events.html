@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Keyboard and Pointer State Events</title>
+
+<meta name="description" content="Common LISP X Interface: Keyboard and Pointer State Events">
+<meta name="keywords" content="Common LISP X Interface: Keyboard and Pointer State Events">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Event-Types.html#Event-Types" rel="up" title="Event Types">
+<link href="Exposure-Events.html#Exposure-Events" rel="next" title="Exposure Events">
+<link href="Input-Focus-Events.html#Input-Focus-Events" rel="prev" title="Input Focus Events">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Keyboard-and-Pointer-State-Events"></a>
+<div class="header">
+<p>
+Next: <a href="Exposure-Events.html#Exposure-Events" accesskey="n" rel="next">Exposure Events</a>, Previous: <a href="Input-Focus-Events.html#Input-Focus-Events" accesskey="p" rel="prev">Input Focus Events</a>, Up: <a href="Event-Types.html#Event-Types" accesskey="u" rel="up">Event Types</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Keyboard-and-Pointer-State-Events-1"></a>
+<h4 class="subsection">13.11.3 Keyboard and Pointer State Events</h4>
+
+
+<p>The keyboard and pointer state events are <var>:keymap-notify</var> and <var>:mapping-notify</var>.
+</p>
+<dl>
+<dt><a name="index-_003akeymap_002dnotify"></a>Event Type: <strong>:keymap-notify</strong></dt>
+<dd>
+
+<p>Selected by: <var>:keymap-state</var>.
+</p>
+<p>The <var>:keymap-notify</var> event returns the current state of the
+keyboard. <var>:keymap-notify</var> is generated immediately after every
+<var>:enter-notify</var> and <var>:focus-in</var>.
+</p>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dt><var>event-window</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The window receiving an <var>:enter-notify</var> or <var>:focus-in</var> event.
+</p>
+</dd>
+<dt><var>keymap</var></dt>
+<dd><p>Type (<var>bit-vector 256</var>).
+</p>
+<p>A bit-vector containing the logical state of the keyboard. Each bit set to 1
+indicates that the corresponding key is currently pressed. The vector is represented
+as 32 bytes. For <em>n</em> from 0 to 7, byte <em>n</em> (from 0) contains the bits for keys 8<em>n</em> to
+8<em>n</em>+7, with the least significant bit in the byte representing key 8<em>n</em>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-_003amapping_002dnotify"></a>Event Type: <strong>:mapping-notify</strong></dt>
+<dd>
+<p>The X server reports <var>:mapping-notify</var> events to all
+clients. There is no mechanism to express disinterest in this
+event. The X server generates this event type whenever a client
+application calls one of the following:
+</p><ul>
+<li> <var>set-modifier-mapping</var> to indicate which keycodes to use as
+modifiers (the status reply must be <var>:mapping-success</var>)
+
+</li><li> <var>change-keyboard-mapping</var> to change the keyboard mapping
+
+</li><li> <var>set-pointer-mapping</var> to set the pointer mapping (the status
+reply must be <var>:mapping-success</var>)
+</li></ul>
+
+<dl compact="compact">
+<dt><var>request</var></dt>
+<dd><p>Type (<code>member :modifier :keyboard :pointer</code>).
+</p>
+<p>Indicates the kind of change that occurred&ndash;<var>:modifier</var> for a successful
+<var>set-modifier-mapping</var>, <var>:keyboard</var> for a successful <var>change-keyboard-mapping</var>,
+and <var>:pointer</var> for a successful <var>set-pointer-mapping</var>.
+</p>
+</dd>
+<dt><var>start</var></dt>
+<dd><p>Type <var>card8</var>.
+</p>
+<p>If request is <var>:keyboard</var>, then <em>start</em> and <em>count</em> indicate the range of altered
+keycodes.
+</p>
+</dd>
+<dt><var>count</var></dt>
+<dd><p>Type <var>card8</var>.
+</p>
+<p>If request is <var>:keyboard</var>, then <em>start</em> and <em>count</em> indicate the range of altered
+keycodes.
+</p></dd>
+</dl>
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Exposure-Events.html#Exposure-Events" accesskey="n" rel="next">Exposure Events</a>, Previous: <a href="Input-Focus-Events.html#Input-Focus-Events" accesskey="p" rel="prev">Input Focus Events</a>, Up: <a href="Event-Types.html#Event-Types" accesskey="u" rel="up">Event Types</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

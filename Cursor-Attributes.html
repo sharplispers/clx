@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Cursor Attributes</title>
+
+<meta name="description" content="Common LISP X Interface: Cursor Attributes">
+<meta name="keywords" content="Common LISP X Interface: Cursor Attributes">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Cursors.html#Cursors" rel="up" title="Cursors">
+<link href="Atoms.html#Atoms" rel="next" title="Atoms">
+<link href="Cursor-Functions.html#Cursor-Functions" rel="prev" title="Cursor Functions">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Cursor-Attributes"></a>
+<div class="header">
+<p>
+Previous: <a href="Cursor-Functions.html#Cursor-Functions" accesskey="p" rel="prev">Cursor Functions</a>, Up: <a href="Cursors.html#Cursors" accesskey="u" rel="up">Cursors</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Cursor-Attributes-1"></a>
+<h3 class="section">11.3 Cursor Attributes</h3>
+
+
+<p>The complete set of cursor attributes is discussed in the following
+paragraphs.
+</p>
+<dl>
+<dt><a name="index-cursor_002ddisplay"></a>Function: <strong>cursor-display</strong> <em>cursor</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>cursor</var></dt>
+<dd><p>A <var>cursor</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns the <var>display</var> object associated with the specified
+<em>cursor</em>.
+</p>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>Type <var>display</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-cursor_002dequal"></a>Function: <strong>cursor-equal</strong> <em>cursor-1 cursor-2</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>cursor-1</var></dt>
+<dt><var>cursor-2</var></dt>
+<dd><p><var>cursor</var> objects.
+</p></dd>
+</dl>
+
+<p>Returns true if the two arguments refer to the same server resource
+and <var>nil</var> if they do not.
+</p>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-cursor_002did"></a>Function: <strong>cursor-id</strong> <em>cursor</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>cursor</var></dt>
+<dd><p>A <var>cursor</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns the unique resource ID that has been assigned to the
+specified <em>cursor</em>.
+</p>
+<dl compact="compact">
+<dt><var>id</var></dt>
+<dd><p>Type <var>resource-id.</var>
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-cursor_002dp"></a>Function: <strong>cursor-p</strong> <em>cursor</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>cursor-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p></dd>
+</dl>
+
+<p>Returns true if the argument is a <var>cursor</var> object and
+<var>nil</var> otherwise.
+</p>
+</dd></dl>
+
+<dl>
+<dt><a name="index-cursor_002dplist"></a>Function: <strong>cursor-plist</strong> <em>cursor</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>cursor</var></dt>
+<dd><p>A <var>cursor</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns and (with <code>setf</code>) sets the property list for the
+specified <em>cursor</em>. This function provides a hook where
+extensions can add data.
+</p>
+<dl compact="compact">
+<dt><var>plist</var></dt>
+<dd><p>A property list.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+
+
+
+</body>
+</html>

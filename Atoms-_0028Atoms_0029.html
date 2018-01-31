@@ -1,0 +1,227 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Atoms (Atoms)</title>
+
+<meta name="description" content="Common LISP X Interface: Atoms (Atoms)">
+<meta name="keywords" content="Common LISP X Interface: Atoms (Atoms)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Atoms.html#Atoms" rel="up" title="Atoms">
+<link href="Properties.html#Properties" rel="next" title="Properties">
+<link href="Atoms.html#Atoms" rel="prev" title="Atoms">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Atoms-_0028Atoms_0029"></a>
+<div class="header">
+<p>
+Next: <a href="Properties.html#Properties" accesskey="n" rel="next">Properties</a>, Previous: <a href="Atoms.html#Atoms" accesskey="p" rel="prev">Atoms</a>, Up: <a href="Atoms.html#Atoms" accesskey="u" rel="up">Atoms</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Atoms-1"></a>
+<h3 class="section">12.1 Atoms</h3>
+
+
+<p>In X, an <em>atom</em> is a unique ID used as the name for certain server
+resources &ndash; properties and selections.
+</p>
+<p>In CLX, an atom is represented by a keyword symbol. For convenience, CLX
+functions also allow atoms to be specified by strings and non-keyword
+symbols. <var>xatom</var> is a CLX data type that permits either string or
+symbol values. A string is equivalent to the <var>xatom</var> given by
+(<var>intern</var> <em>string</em> <var>&rsquo;keyword</var>). A symbol is equivalent to
+the <var>xatom</var> given by ( <var>intern</var> (<var>symbol-name</var>
+<em>symbol</em>) <var>&rsquo;keyword</var>). The symbol name string of an
+<var>xatom</var> must consist only of ISO Latin characters. Note that the
+case of <var>xatom</var> strings is important; the <var>xatom</var> &quot;Atom&quot; is
+not the same as the <var>xatom</var> &quot;ATOM&quot;.
+</p>
+<p>Certain atoms are already predefined by every X server. Predefined atoms
+are designed to represent common names that are likely to be useful for
+many client applications.  Note that these atoms are predefined only in
+the sense of having <var>xatom</var> and <var>card29</var> values, not in the
+sense of having required semantics. No interpretation is placed on the
+meaning or use of an atom by the server. The <var>xatom</var> objects
+predefined by CLX are listed below.
+</p>
+<table>
+<tr><td width="30%"><var>:arc</var></td><td width="30%"><var>:italic_angle</var></td><td width="30%"><var>:string</var></td></tr>
+<tr><td width="30%"><var>:atom</var></td><td width="30%"><var>:max_space</var></td><td width="30%"><var>:subscript_x</var></td></tr>
+<tr><td width="30%"><var>:bitmap</var></td><td width="30%"><var>:min_space</var></td><td width="30%"><var>:subscript_y</var></td></tr>
+<tr><td width="30%"><var>:cap_height</var></td><td width="30%"><var>:norm_space</var></td><td width="30%"><var>:superscript_x</var></td></tr>
+<tr><td width="30%"><var>:cardinal</var></td><td width="30%"><var>:notice</var></td><td width="30%"><var>:superscript_y</var></td></tr>
+<tr><td width="30%"><var>:colormap</var></td><td width="30%"><var>:pixmap</var></td><td width="30%"><var>:underline_position</var></td></tr>
+<tr><td width="30%"><var>:copyright</var></td><td width="30%"><var>:point</var></td><td width="30%"><var>:underline_thickness</var></td></tr>
+<tr><td width="30%"><var>:cursor</var></td><td width="30%"><var>:point_size</var></td><td width="30%"><var>:visualid</var></td></tr>
+<tr><td width="30%"><var>:cut_buffer0</var></td><td width="30%"><var>:primary</var></td><td width="30%"><var>:weight</var></td></tr>
+<tr><td width="30%"><var>:cut_buffer1</var></td><td width="30%"><var>:quad_width</var></td><td width="30%"><var>:window</var></td></tr>
+<tr><td width="30%"><var>:cut_buffer2</var></td><td width="30%"><var>:rectangle</var></td><td width="30%"><var>:wm_class</var></td></tr>
+<tr><td width="30%"><var>:cut_buffer3</var></td><td width="30%"><var>:resolution</var></td><td width="30%"><var>:wm_client_machine</var></td></tr>
+<tr><td width="30%"><var>:cut_buffer4</var></td><td width="30%"><var>:resource_manager</var></td><td width="30%"><var>:wm_command</var></td></tr>
+<tr><td width="30%"><var>:cut_buffer5</var></td><td width="30%"><var>:rgb_best_map</var></td><td width="30%"><var>:wm_hints</var></td></tr>
+<tr><td width="30%"><var>:cut_buffer6</var></td><td width="30%"><var>:rgb_blue_map</var></td><td width="30%"><var>:wm_icon_name</var></td></tr>
+<tr><td width="30%"><var>:cut_buffer7</var></td><td width="30%"><var>:rgb_color_map</var></td><td width="30%"><var>:wm_icon_size</var></td></tr>
+<tr><td width="30%"><var>:drawable</var></td><td width="30%"><var>:rgb_default_map</var></td><td width="30%"><var>:wm_name</var></td></tr>
+<tr><td width="30%"><var>:end_space</var></td><td width="30%"><var>:rgb_gray_map</var></td><td width="30%"><var>:wm_normal_hints</var></td></tr>
+<tr><td width="30%"><var>:family_name</var></td><td width="30%"><var>:rgb_green_map</var></td><td width="30%"><var>:wm_size_hints</var></td></tr>
+<tr><td width="30%"><var>:font</var></td><td width="30%"><var>:rgb_red_map</var></td><td width="30%"><var>:wm_transient_for</var></td></tr>
+<tr><td width="30%"><var>:font_name</var></td><td width="30%"><var>:secondary</var></td><td width="30%"><var>:wm_zoom_hints</var></td></tr>
+<tr><td width="30%"><var>:full_name</var></td><td width="30%"><var>:strikeout_ascent</var></td><td width="30%"><var>:x_height</var></td></tr>
+<tr><td width="30%"><var>:integer</var></td><td width="30%"><var>:strikeout_descent</var></td><td width="30%"></td></tr>
+</table>
+
+
+<p>When creating a new atom, the following conventions should be obeyed in
+order to minimize the conflict between atom names:
+</p>
+<ul>
+<li> Symbol names beginning with an underscore should be used for atoms
+that are private to a particular vendor or organization. An additional
+prefix should identify the organization.
+
+</li><li> Symbol names beginning with two underscores should be used for atoms
+that are private to a single application or end user.
+</li></ul>
+
+
+<p>CLX provides functions to convert between an <var>xatom</var> and its
+corresponding ID integer.  The data type of an atom ID is
+<var>card29</var>. The <var>xatom</var> representation is usually sufficient for
+most CLX programs. However, it is occasionally useful to be able to
+convert an atom ID returned in events or properties into its
+corresponding <var>xatom</var>.
+</p>
+<dl>
+<dt><a name="index-atom_002dname"></a>Function: <strong>atom-name</strong> <em>display atom-id</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var> object.
+</p></dd>
+<dt><var>atom-id</var></dt>
+<dd><p>A <var>card29</var>.
+</p></dd>
+</dl>
+
+<p>Returns the atom keyword for the <em>atom-id</em> on the given
+<em>display</em> server.
+</p>
+<dl compact="compact">
+<dt><var>atom-name</var></dt>
+<dd><p>Type <var>keyword</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-find_002datom"></a>Function: <strong>find-atom</strong> <em>display atom-name</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var> object.
+</p></dd>
+<dt><var>atom-name</var></dt>
+<dd><p>An <var>xatom</var>.
+</p></dd>
+</dl>
+
+<p>Returns the atom ID for the given <em>atom-name</em>, if it exists. If
+no atom of that name exists for the display server, <var>nil</var> is
+returned.
+</p>
+<dl compact="compact">
+<dt><var>atom-id</var></dt>
+<dd><p>Type <var>card29</var> or <var>null</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-intern_002datom"></a>Function: <strong>intern-atom</strong> <em>display atom-name</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var> object.
+</p></dd>
+<dt><var>atom-name</var></dt>
+<dd><p>An <var>xatom</var>.
+</p></dd>
+</dl>
+
+<p>Creates an atom with the given name and returns its atom ID. The
+atom can survive the interning client; it exists until the last
+server connection has been closed and the server resets itself.
+</p>
+<dl compact="compact">
+<dt><var>atom-id</var></dt>
+<dd><p>Type <var>card29</var> or <var>null</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Properties.html#Properties" accesskey="n" rel="next">Properties</a>, Previous: <a href="Atoms.html#Atoms" accesskey="p" rel="prev">Atoms</a>, Up: <a href="Atoms.html#Atoms" accesskey="u" rel="up">Atoms</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,288 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Exposure Events</title>
+
+<meta name="description" content="Common LISP X Interface: Exposure Events">
+<meta name="keywords" content="Common LISP X Interface: Exposure Events">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Event-Types.html#Event-Types" rel="up" title="Event Types">
+<link href="Window-State-Events.html#Window-State-Events" rel="next" title="Window State Events">
+<link href="Keyboard-and-Pointer-State-Events.html#Keyboard-and-Pointer-State-Events" rel="prev" title="Keyboard and Pointer State Events">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Exposure-Events"></a>
+<div class="header">
+<p>
+Next: <a href="Window-State-Events.html#Window-State-Events" accesskey="n" rel="next">Window State Events</a>, Previous: <a href="Keyboard-and-Pointer-State-Events.html#Keyboard-and-Pointer-State-Events" accesskey="p" rel="prev">Keyboard and Pointer State Events</a>, Up: <a href="Event-Types.html#Event-Types" accesskey="u" rel="up">Event Types</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Exposure-Events-1"></a>
+<h4 class="subsection">13.11.4 Exposure Events</h4>
+
+
+<p>The X server cannot guarantee that a window&rsquo;s content is preserved when
+the window is obscured or reconfigured. X requires client applications
+to be capable of restoring the contents of a previously-invisible window
+region whenever it is exposed.  Therefore, the X server sends events
+describing the exposed window and its exposed region. For a simple
+window, a client can choose to redraw the entire content whenever any
+region is exposed. For a complex window, a client can redraw only the
+exposed region.
+</p>
+<dl>
+<dt><a name="index-_003aexposure"></a>Event Type: <strong>:exposure</strong></dt>
+<dd><a name="exposure"></a>
+<p>Selected by: <var>:exposure</var>.
+</p>
+<p>An <var>:exposure</var> event is sent when redisplay is needed for a
+window region whose content has been lost. Redisplay is needed
+when one of the following occurs:
+</p><ul>
+<li> A region is exposed for a window and the X server has no backing
+store for the region
+
+</li><li> A region of a viewable window is obscured and the X server
+begins to honor the window&rsquo;s backing-store attribute of
+<var>:always</var> or <var>:when-mapped</var>
+
+</li><li> The X server begins to honor an unviewable window&rsquo;s
+backing-store attribute of <var>:always</var> or
+<var>:when-mapped</var>.
+</li></ul>
+
+<p>The regions needing redisplay are decomposed into an arbitrary set
+of rectangles, and an <var>:exposure</var> event is generated for each
+rectangle. For a given action causing <var>:exposure</var> events, the
+set of events for a given window are guaranteed to be reported
+contiguously.
+</p>
+<p><var>:exposure</var> events are never generated for <var>:input-only</var>
+windows.
+</p>
+<p>All <var>:exposure</var> events caused by a hierarchy change are
+generated after any hierarchy event (<var>:unmap-notify</var>,
+<var>:map-notify</var>,
+<var>:configure-notify</var>,<var>:gravity-notify</var>, or
+<var>:circulate-notify</var>) caused by that change. All
+<var>:exposure</var> events on a given window are generated after any
+<var>:visibility-notify</var> event on that window, but it is not
+required that all <var>:exposure</var> events on all windows be
+generated after all visibility events on all windows. The ordering
+of <var>:exposure</var> events with respect to <var>:focus-out</var>,
+<var>:enter-notify</var>, and <var>:leave-notify</var> events is not
+constrained.
+</p>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dt><var>event-window</var></dt>
+<dd><p>Type <var>window</var>.
+</p>
+<p>The window needing redisplay.
+</p>
+</dd>
+<dt><var>x</var></dt>
+<dd><p>Type <var>card16</var>.
+</p>
+<p>The position of the left edge of the region to redisplay, relative to the
+<em>event-window</em>.
+</p>
+</dd>
+<dt><var>y</var></dt>
+<dd><p>Type <var>card16</var>.
+</p>
+<p>The position of the top edge of the region to redisplay, relative to the
+<em>event-window</em>.
+</p>
+</dd>
+<dt><var>width</var></dt>
+<dd><p>Type <var>card16</var>.
+</p>
+<p>The width of the region to redisplay.
+</p>
+</dd>
+<dt><var>height</var></dt>
+<dd><p>Type <var>card16</var>.
+</p>
+<p>The height of the region to redisplay.
+</p>
+</dd>
+<dt><var>count</var></dt>
+<dd><p>Type <var>card16</var>.
+</p>
+<p>If count is zero, then no more <var>:exposure</var> events for this window follow. If
+count is nonzero, then at least that many more <var>:exposure</var> events for this
+window follow (and possibly more).
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-_003agraphics_002dexposure"></a>Event Type: <strong>:graphics-exposure</strong></dt>
+<dd>
+<p>A <var>:graphics-exposure</var> event is generated by a call to
+<var>copy-area</var> or <var>copy-plane</var> when the exposures attribute
+of the graphics context is <var>:on</var>. A <var>:graphics-exposure</var>
+event reports a destination region whose content cannot be computed
+because the content of the corresponding source region has been
+lost. For example, the missing source region may be obscured or may
+lie outside the current source drawable size. For a given action
+causing <var>:graphics-exposure</var> events, the set of events for a
+given destination are guaranteed to be reported contiguously.
+</p>
+<dl compact="compact">
+<dt><var>drawable</var></dt>
+<dt><var>event-window</var></dt>
+<dd><p>Type <var>drawable</var>.
+</p>
+<p>The destination drawable for the <var>copy-area</var> or <var>copy-plane</var> function.
+</p>
+</dd>
+<dt><var>x</var></dt>
+<dd><p>Type <var>card16</var>.
+</p>
+<p>The position of the left edge of the destination region, relative to the <em>drawable</em>.
+</p>
+</dd>
+<dt><var>y</var></dt>
+<dd><p>Type <var>card16</var>.
+</p>
+<p>The position of the top edge of the destination region, relative to the <em>drawable</em>.
+</p>
+</dd>
+<dt><var>width</var></dt>
+<dd><p>Type <var>card16</var>.
+</p>
+<p>The width of the destination region.
+</p>
+</dd>
+<dt><var>height</var></dt>
+<dd><p>Type <var>card16</var>.
+</p>
+<p>The height of the destination region.
+</p>
+</dd>
+<dt><var>count</var></dt>
+<dd><p>Type <var>card16</var>.
+</p>
+<p>If count is zero then no more <var>:graphics-exposure</var> events for the <em>drawable</em>
+follow. If count is nonzero then at least that many more <var>:graphics-exposure</var>
+events for the <em>drawable</em> follow (and possibly more).
+</p>
+</dd>
+<dt><var>major</var></dt>
+<dd><p>Type <var>card8</var>.
+</p>
+<p>The major opcode for the graphics request generating the event
+(62 for <var>copy-area</var>, 63 for <var>copy-plane</var>).
+</p>
+</dd>
+<dt><var>minor</var></dt>
+<dd><p>Type <var>card16</var>.
+</p>
+<p>The minor opcode for the graphics request generating the event
+(0 for both <var>copy-area</var> and <var>copy-plane</var>).
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-_003ano_002dexposure"></a>Event Type: <strong>:no-exposure</strong></dt>
+<dd>
+<p>A <var>:no-exposure</var> event is generated by a call to
+<var>copy-area</var> or <var>copy-plane</var> when the exposures attribute
+of the graphics context is <var>:on</var>. If no
+<var>:graphics-exposure</var> events are generated, then a single
+<var>:no-exposure</var> event is sent.
+</p>
+<dl compact="compact">
+<dt><var>drawable</var></dt>
+<dt><var>event-window</var></dt>
+<dd><p>Type <var>drawable</var>.
+</p>
+<p>The destination drawable for the <var>copy-area</var> or <var>copy-plane</var> function.
+</p>
+</dd>
+<dt><var>major</var></dt>
+<dd><p>Type <var>card8</var>.
+</p>
+<p>The major opcode for the graphics request generating the event
+(62 for <var>copy-area</var>, 63 for <var>copy-plane</var>).
+</p>
+</dd>
+<dt><var>minor</var></dt>
+<dd><p>Type <var>card16</var>.
+</p>
+<p>The minor opcode for the graphics request generating the event
+(0 for both <var>copy-area</var> and <var>copy-plane</var>).
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Window-State-Events.html#Window-State-Events" accesskey="n" rel="next">Window State Events</a>, Previous: <a href="Keyboard-and-Pointer-State-Events.html#Keyboard-and-Pointer-State-Events" accesskey="p" rel="prev">Keyboard and Pointer State Events</a>, Up: <a href="Event-Types.html#Event-Types" accesskey="u" rel="up">Event Types</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

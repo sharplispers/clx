@@ -1,0 +1,215 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Creating Cursors</title>
+
+<meta name="description" content="Common LISP X Interface: Creating Cursors">
+<meta name="keywords" content="Common LISP X Interface: Creating Cursors">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Cursors.html#Cursors" rel="up" title="Cursors">
+<link href="Cursor-Functions.html#Cursor-Functions" rel="next" title="Cursor Functions">
+<link href="Cursors.html#Cursors" rel="prev" title="Cursors">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Creating-Cursors"></a>
+<div class="header">
+<p>
+Next: <a href="Cursor-Functions.html#Cursor-Functions" accesskey="n" rel="next">Cursor Functions</a>, Previous: <a href="Cursors.html#Cursors" accesskey="p" rel="prev">Cursors</a>, Up: <a href="Cursors.html#Cursors" accesskey="u" rel="up">Cursors</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Creating-Cursors-1"></a>
+<h3 class="section">11.1 Creating Cursors</h3>
+
+
+<p>The following paragraphs describe the CLX functions used to create and
+free <var>cursor</var> objects.
+</p>
+<dl>
+<dt><a name="index-create_002dcursor"></a>Function: <strong>create-cursor</strong> <em>&amp;key :source :mask :x :y :foreground :background</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>:source</var></dt>
+<dd><p>The source pixmap. This argument is required.
+</p></dd>
+<dt><var>:mask</var></dt>
+<dd><p>The mask pixmap.
+</p></dd>
+<dt><var>:x</var></dt>
+<dt><var>:y</var></dt>
+<dd><p>The hot spot position in the <var>:source</var>. This argument is required.
+</p></dd>
+<dt><var>:foreground</var></dt>
+<dd><p>A <var>color</var> object specifying the foreground color. This argument is required.
+</p></dd>
+<dt><var>:background</var></dt>
+<dd><p>A <var>color</var> object specifying the background color. This argument is required.
+</p></dd>
+</dl>
+
+
+<p>Creates and returns a cursor. <var>:x</var> and <var>:y</var> define the
+position of the hot spot relative to the origin of the
+<var>:source. :foreground</var> and <var>:background</var> colors must be
+specified, even if the server only has a <var>:static-gray</var> or
+<var>:gray-scale</var> screen. The <var>:source</var>, <var>:x</var>, and
+<var>:y</var> arguments must also be specified.
+</p>
+<p>The cursor image is drawn by drawing a pixel from the <var>:source</var>
+bitmap at every position where the corresponding bit in the
+<var>:mask</var> bitmap is 1. If the corresponding <var>:source</var> bit is
+1, a pixel is drawn in the <var>:foreground</var> color; otherwise, a
+pixel is drawn in the <var>:back-ground</var> color. If the <var>:mask</var>
+is omitted, all <var>:source</var> pixels are drawn. If given, the
+<var>:mask</var> must be the same size as the <var>:source</var>.
+</p>
+<p>An X server may not be able to support every cursor size. A server
+is free to modify any component of the cursor to satisfy hardware or
+software limitations.
+</p>
+<p>The <var>:source</var> and <var>:mask</var> can be freed immediately after
+the cursor is created. Subsequent drawing in the <var>:source</var> or
+<var>:mask</var> pixmap has an undefined effect on the cursor.
+</p>
+<dl compact="compact">
+<dt><var>cursor</var></dt>
+<dd><p>Type <var>cursor</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-create_002dglyph_002dcursor"></a>Function: <strong>create-glyph-cursor</strong> <em>&amp;key :source-font :source-char :mask-font (:mask-char 0) :foreground :background</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>:source-font</var></dt>
+<dd><p>The source font. This is a required argument.
+</p></dd>
+<dt><var>:source-char</var></dt>
+<dd><p>An index specifying a glyph in the source font. This is a required argument.
+</p></dd>
+<dt><var>:mask-font</var></dt>
+<dd><p>The mask font.
+</p></dd>
+<dt><var>:mask-char</var></dt>
+<dd><p>An index specifying a glyph in the mask font.
+</p></dd>
+<dt><var>:foreground</var></dt>
+<dd><p>A <var>color</var> object specifying the foreground color. This is a required argument.
+</p></dd>
+<dt><var>:background</var></dt>
+<dd><p>A <var>color</var> object specifying the background color. This is a required argument.
+</p></dd>
+</dl>
+
+
+<p>Creates and returns a cursor defined by font glyphs. The source
+bitmap is defined by the <var>:source-font</var> and
+<var>:source-char</var>. The mask bitmap is defined by the
+<var>:mask-font</var> and <var>:mask-char</var>. It is an error if the
+<var>:source-char</var> and <var>:mask-char</var> are not valid indexes for
+the <var>:source-font</var> and <var>:mask-font</var>, respectively. The hot
+spot position is defined by the &quot;character origin&quot; of the source
+glyph, that is, the position [- <em>char-left-bearing</em>,
+<em>char-ascent</em>] relative to the upper left corner of the source
+glyph bitmap.
+</p>
+<p>Source and mask bits are compared after aligning the character
+origins of the source and mask glyphs. The source and mask glyphs
+need not have the same size or character origin position. If the
+<var>:mask-font</var> is omitted, all source pixels are drawn.
+</p>
+<p>An X server may not be able to support every cursor size. A server
+is free to modify any component of the cursor to satisfy hardware or
+software limitations.
+</p>
+<p>Either of the <var>:source-font</var> or <var>:mask-font</var> can be closed
+after the cursor is created.
+</p>
+<dl compact="compact">
+<dt><var>cursor</var></dt>
+<dd><p>Type <var>cursor</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-free_002dcursor"></a>Function: <strong>free-cursor</strong> <em>cursor</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>cursor</var></dt>
+<dd><p>A <var>cursor</var> object.
+</p></dd>
+</dl>
+
+<p>Destroys the <var>cursor</var> object. Cursor server resources are freed
+when no other references remain.
+</p>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Cursor-Functions.html#Cursor-Functions" accesskey="n" rel="next">Cursor Functions</a>, Previous: <a href="Cursors.html#Cursors" accesskey="p" rel="prev">Cursors</a>, Up: <a href="Cursors.html#Cursors" accesskey="u" rel="up">Cursors</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

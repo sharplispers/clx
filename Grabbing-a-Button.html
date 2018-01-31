@@ -1,0 +1,186 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Grabbing a Button</title>
+
+<meta name="description" content="Common LISP X Interface: Grabbing a Button">
+<meta name="keywords" content="Common LISP X Interface: Grabbing a Button">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Events-and-Input.html#Events-and-Input" rel="up" title="Events and Input">
+<link href="Grabbing-the-Keyboard.html#Grabbing-the-Keyboard" rel="next" title="Grabbing the Keyboard">
+<link href="Grabbing-the-Pointer.html#Grabbing-the-Pointer" rel="prev" title="Grabbing the Pointer">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Grabbing-a-Button"></a>
+<div class="header">
+<p>
+Next: <a href="Grabbing-the-Keyboard.html#Grabbing-the-Keyboard" accesskey="n" rel="next">Grabbing the Keyboard</a>, Previous: <a href="Grabbing-the-Pointer.html#Grabbing-the-Pointer" accesskey="p" rel="prev">Grabbing the Pointer</a>, Up: <a href="Events-and-Input.html#Events-and-Input" accesskey="u" rel="up">Events and Input</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Grabbing-a-Button-1"></a>
+<h3 class="section">13.8 Grabbing a Button</h3>
+
+
+<p>CLX provides the <var>grab-button</var> and <var>ungrab-button</var> functions
+for passively grabbing and releasing pointer control.
+</p>
+<dl>
+<dt><a name="index-grab_002dbutton"></a>Function: <strong>grab-button</strong> <em>window button event-mask &amp;key (:modifiers 0) :owner-p :sync-pointer-p :sync-keyboard-p :confine-to :cursor</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+<dt><var>button</var></dt>
+<dd><p>The button (type <var>card8</var>) pressed or <var>:any</var>.
+</p></dd>
+<dt><var>event-mask</var></dt>
+<dd><p>A <var>pointer-event-mask</var>.
+</p></dd>
+<dt><var>:modifiers</var></dt>
+<dd><p>A <var>modifier-mask</var>.
+</p></dd>
+<dt><var>:owner-p</var></dt>
+<dd><p>If true, all client windows receive pointer events normally.
+</p></dd>
+<dt><var>:sync-pointer-p</var></dt>
+<dd><p>Indicates whether the pointer is handled in a synchronous or asynchronous fashion.
+</p></dd>
+<dt><var>:sync-keyboard-p</var></dt>
+<dd><p>Indicates whether the keyboard is in synchronous or asynchronous mode.
+</p></dd>
+<dt><var>:confine-to</var></dt>
+<dd><p>A <var>window</var> to which the pointer is confined.
+</p></dd>
+<dt><var>:cursor</var></dt>
+<dd><p>A <var>cursor</var>.
+</p></dd>
+</dl>
+
+<p>This request establishes a passive grab. If the specified
+<em>button</em> is pressed when the specified modifier keys are down
+(and no other buttons or modifier keys are down), and:
+</p><ul>
+<li> <em>window</em> contains the pointer
+
+</li><li> The <var>:confine-to</var> window (if any) is viewable
+
+</li><li> These constraints are not satisfied for any ancestor of <em>window</em>
+</li></ul>
+
+<p>then:
+</p><ul>
+<li> The pointer is actively grabbed as described with
+<var>grab-pointer</var>
+
+</li><li> The last-pointer-grab time is set to the time that the button was
+pressed (as transmitted in the <var>:button-press</var> event)
+
+</li><li> The <var>:button-press</var> event is reported
+</li></ul>
+
+<p>The interpretation of the remaining arguments is the same as with
+<var>grab-pointer</var>. The active grab is terminated automatically
+when all buttons are released (independent of the state of modifier
+keys).
+</p>
+<p>A zero <em>modifier</em> mask is equivalent to issuing the request for
+all possible modifier-key combinations (including the combination of
+no modifiers). It is not required that all specified modifiers have
+currently assigned keycodes. A <em>button</em> of <var>:any</var> is
+equivalent to issuing the request for all possible
+buttons. Otherwise, it is not required that the specified
+<em>button</em> currently be assigned to a physical button.
+</p>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-ungrab_002dbutton"></a>Function: <strong>ungrab-button</strong> <em>window button &amp;key (:modifiers 0)</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+<dt><var>button</var></dt>
+<dd><p>The button (type <var>card8</var>) that is released or <var>:any</var>.
+</p></dd>
+<dt><var>:modifiers</var></dt>
+<dd><p>A <var>modifier-mask</var>.
+</p></dd>
+</dl>
+
+<p>Releases the passive button/key combination on the specified
+<em>window</em> if it was grabbed by this client. A zero
+<em>modifier</em> mask is equivalent to issuing the request for all
+possible modifier combinations including the combination of no
+modifiers. A <em>button</em> of <var>:any</var> is equivalent to issuing
+the request for all possible buttons. This has no effect on an
+active grab.
+</p>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Grabbing-the-Keyboard.html#Grabbing-the-Keyboard" accesskey="n" rel="next">Grabbing the Keyboard</a>, Previous: <a href="Grabbing-the-Pointer.html#Grabbing-the-Pointer" accesskey="p" rel="prev">Grabbing the Pointer</a>, Up: <a href="Events-and-Input.html#Events-and-Input" accesskey="u" rel="up">Events and Input</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

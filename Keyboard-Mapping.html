@@ -1,0 +1,205 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Keyboard Mapping</title>
+
+<meta name="description" content="Common LISP X Interface: Keyboard Mapping">
+<meta name="keywords" content="Common LISP X Interface: Keyboard Mapping">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Keyboard-Encodings.html#Keyboard-Encodings" rel="up" title="Keyboard Encodings">
+<link href="Using-Keycodes-and-Keysyms.html#Using-Keycodes-and-Keysyms" rel="next" title="Using Keycodes and Keysyms">
+<link href="Keycodes-and-Keysyms.html#Keycodes-and-Keysyms" rel="prev" title="Keycodes and Keysyms">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Keyboard-Mapping"></a>
+<div class="header">
+<p>
+Next: <a href="Using-Keycodes-and-Keysyms.html#Using-Keycodes-and-Keysyms" accesskey="n" rel="next">Using Keycodes and Keysyms</a>, Previous: <a href="Keycodes-and-Keysyms.html#Keycodes-and-Keysyms" accesskey="p" rel="prev">Keycodes and Keysyms</a>, Up: <a href="Keyboard-Encodings.html#Keyboard-Encodings" accesskey="u" rel="up">Keyboard Encodings</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Keyboard-Mapping-1"></a>
+<h4 class="subsection">15.4.2 Keyboard Mapping</h4>
+
+<p>The X server maintains a keyboard mapping that associates each keycode
+with one or more keysyms. The following paragraphs describe the CLX
+functions used to return or change the mapping of keycodes.
+</p>
+<dl>
+<dt><a name="index-change_002dkeyboard_002dmapping"></a>Function: <strong>change-keyboard-mapping</strong> <em>display keysyms &amp;key (:start 0) :end</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+<dt><var>keysyms</var></dt>
+<dd><p>A two-dimensional array of keysym (<var>card32</var>) values.
+</p></dd>
+<dt><var>:start</var></dt>
+<dt><var>:end</var></dt>
+<dd><p>Indexes for the subsequence of <em>keysyms</em> used.
+</p></dd>
+<dt><var>:first-keycode</var></dt>
+<dd><p>A <var>card8</var> defining the first keycode mapping changed.
+</p></dd>
+</dl>
+
+<p>(<var>:first-keycode :start</var>)
+</p>
+<p>Changes the mapping of keycodes to <em>keysyms</em>. A
+<var>:mapping-notify</var> event is generated for all clients.
+</p>
+<p>The new <em>keysyms</em> are specified as a two-dimensional array in
+which:
+</p>
+<p>(<var>aref</var> <em>keysyms</em> (+ <var>:start</var> <em>i</em>) <em>j</em>)
+</p>
+<p>is <em>keysym j</em> associated with keycode (+ <var>:first-keycode</var>
+<em>i</em>). The maximum number of <em>keysyms</em> associated with any
+one keycode is given by:
+</p>
+<p>(<var>array-dimension</var> <em>keysyms</em> 1)
+</p>
+<p><em>keysyms</em> should contain <var>nil</var> elements to represent those
+keysyms that are undefined for a given keycode. <var>:start</var> and
+<var>:end</var> define the subsequence of the <em>keysyms</em> array that
+defines the new mapping, and the number of keycode mappings
+changed. By default, <var>:end</var> is given by:
+</p>
+<p>(<var>array-dimension</var> <em>keysyms</em> 0)
+</p>
+<p>The keycodes whose mappings are changed are given by
+<var>:first-keycode</var> through the following:
+</p>
+<p>(+ <var>:first-keycode</var> (- <var>:end :start</var>) -1)
+</p>
+<p>keycodes outside this range of are not
+affected. <var>:first-keycode</var> must not be less than
+(<var>display-min-keycode</var> <em>display</em>), and the last keycode
+modified must not be greater than (<var>display-max-keycode</var>
+<em>display</em>).
+</p>
+
+</dd></dl>
+
+
+
+<dl>
+<dt><a name="index-keyboard_002dmapping"></a>Function: <strong>keyboard-mapping</strong> <em>display &amp;key :first-keycode :start :end :data</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+<dt><var>:first-keycode</var></dt>
+<dd><p>A <var>card8</var> defining the first keycode mapping returned.
+</p></dd>
+<dt><var>:start</var></dt>
+<dt><var>:end</var></dt>
+<dd><p>Indexes for the subsequence of the returned array which is modified.
+</p></dd>
+<dt><var>:data</var></dt>
+<dd><p>If given, a two-dimensional array to receive the returned keysyms.
+</p></dd>
+</dl>
+<p>Returns the keysyms mapped to the given range of keycodes for the
+<em>display</em> keyboard.  The mappings are returned in the form of a
+two-dimensional array of <var>card32</var> keysym values. The
+<var>:data</var> argument, if given, must be a two-dimensional array in
+which the returned mappings will be stored. In this case:
+</p>
+<p>(<var>array-dimension :data</var> 1)
+</p>
+<p>defines the maximum number of keysyms returned for any
+keycode. Otherwise, a new array is created and returned.
+</p>
+<p>Upon return:
+</p>
+<p>(<var>aref</var> <em>mappings</em> (+ <em>:start i</em>) <em>j</em>)
+</p>
+<p>will contain keysym <em>j</em> associated with keycode (+
+<var>:first-keycode i</var>) (or <var>nil</var>, if keysym <em>j</em> is
+undefined for that keycode).
+</p>
+<p><var>:first-keycode</var> specifies the first keycode whose mapping is
+returned; by default, <var>:first-keycode</var> is
+(<var>display-min-keycode</var> <em>display</em>). <var>:start</var> and
+<var>:end</var> define the subsequence of the returned array in which
+the returned mappings are stored. By default, <var>:start</var> is given
+by <var>:first-keycode</var> and <var>:end</var> is given by:
+</p>
+<p>(1+ (<var>display-max-keycode</var> <em>display</em>))
+</p>
+<p><var>:first-keycode</var> must not be less than
+(<var>display-min-keycode</var> <em>display</em>), and the last keycode
+returned must not be greater than (<var>display-max-keycode</var>
+<em>display</em>).
+</p><dl compact="compact">
+<dt><var>mappings</var></dt>
+<dd><p>Type (<var>array card32</var> (* *)).
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Using-Keycodes-and-Keysyms.html#Using-Keycodes-and-Keysyms" accesskey="n" rel="next">Using Keycodes and Keysyms</a>, Previous: <a href="Keycodes-and-Keysyms.html#Keycodes-and-Keysyms" accesskey="p" rel="prev">Keycodes and Keysyms</a>, Up: <a href="Keyboard-Encodings.html#Keyboard-Encodings" accesskey="u" rel="up">Keyboard Encodings</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

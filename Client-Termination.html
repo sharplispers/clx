@@ -1,0 +1,292 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Client Termination</title>
+
+<meta name="description" content="Common LISP X Interface: Client Termination">
+<meta name="keywords" content="Common LISP X Interface: Client Termination">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Control-Functions.html#Control-Functions" rel="up" title="Control Functions">
+<link href="Managing-Host-Access.html#Managing-Host-Access" rel="next" title="Managing Host Access">
+<link href="Using-Keycodes-and-Keysyms.html#Using-Keycodes-and-Keysyms" rel="prev" title="Using Keycodes and Keysyms">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Client-Termination"></a>
+<div class="header">
+<p>
+Next: <a href="Managing-Host-Access.html#Managing-Host-Access" accesskey="n" rel="next">Managing Host Access</a>, Previous: <a href="Keyboard-Encodings.html#Keyboard-Encodings" accesskey="p" rel="prev">Keyboard Encodings</a>, Up: <a href="Control-Functions.html#Control-Functions" accesskey="u" rel="up">Control Functions</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Client-Termination-1"></a>
+<h3 class="section">15.5 Client Termination</h3>
+
+
+<p>The CLX functions affecting client termination are discussed in the
+following paragraphs.
+</p>
+<p>When a display connection to an X server is closed, whether by an
+explicit call to <var>close-display</var> or by some external condition, the
+server automatically performs a sequence of operations to clean up
+server state information associated with the closed connection.  The
+effect of these operations depends the <em>close-down mode</em> and the
+<em>save-set</em> that the client has specified for the closed display
+connection. The close-down mode of a display determines whether server
+resources allocated by the connection are freed or not. The save-set
+identifies windows that will remain after the connection is closed.
+</p>
+<p>The display save-set is used primarily by window managers that reparent
+the top-level windows of other clients. For example, such a window
+manager can automatically create a frame window that encloses a
+top-level client window, along with a set of controls used for window
+management. Ordinarily, termination of the window manager client would
+then destroy all client windows! However, the window manager can prevent
+this by adding to its save-set those windows created by other clients
+that should be preserved.
+</p>
+<p>When a display connection closes, an X server performs the following
+operations:
+</p><ol>
+<li> For each selection owned by a window created on the connection, the
+selection owner is set to <var>nil</var>.
+
+</li><li> An active or passive grab established for a window created on the
+connection is released.
+
+</li><li> If the connection has grabbed the server, the server is ungrabbed.
+
+</li><li> Server resources and colormap cells allocated by the connection are
+freed and destroyed, depending on the close-down mode, as follows:
+<ul>
+<li> <var>:retain-permanent</var> &ndash; All resources are marked
+<em>permanent</em>, and no resources are destroyed. These resources
+can later be destroyed by a call to <var>kill-client</var>.
+
+</li><li> <var>:retain-temporary</var> &ndash; All resources are marked
+<em>temporary</em>, and no resources are destroyed. These resources
+can later be destroyed by a call to <var>kill-client</var> or
+<var>kill-temporary-clients</var>.
+
+</li><li> <var>:destroy</var> &ndash; All resources are destroyed.
+</li></ul>
+</li></ol>
+
+<p>When server resources allocated by a display connection are destroyed &ndash;
+whether by closing the connection with close-down mode <var>:destroy</var>
+or by later calling <var>kill-client</var> or <var>kill-temporary-clients</var>
+&ndash; then an X server performs the following operations on each member of
+the save-set before actually destroying resources.
+</p><ol>
+<li> If the save-set window is a descendant of a window created on the
+connection, the save-set window is reparented. The new parent is the
+closest ancestor such that the save-set window is no longer a
+descendant of any window created on the connection. The position of
+the reparented window with respect to its parent remains unchanged.
+
+</li><li> If the save-set window is unmapped, then it is mapped.
+</li></ol>
+
+<p>If the last connection open to an X server is closed with close-down
+mode <var>:destroy</var>, the server resets its state to restore all initial
+defaults. The server state after reset is the same as its initial state
+when first started. When an X server resets, it performs the following
+operations:
+</p><ul>
+<li> All permanent and temporary server resources from previously-closed
+connections are destroyed.
+
+</li><li> All but the predefined atoms are deleted.
+
+</li><li> All root window properties are deleted.
+
+</li><li> All device control attributes and mappings are restored to their
+original default values.
+
+</li><li> The default background and cursor for all root windows are restored.
+
+</li><li> The default font path is restored.
+
+</li><li> The input focus is set to <var>:pointer-root</var>.
+
+</li><li> The access control list is reset.
+</li></ul>
+
+<p>The following paragraphs describe the CLX functions used to:
+</p><ul>
+<li> Add or remove a window from a display save-set.
+
+</li><li> Return or change the display close-down mode.
+
+</li><li> Force a connection to be closed or all its server resources to be
+destroyed.
+
+</li><li> Force a connection to be closed and all temporary resources to be
+destroyed.
+</li></ul>
+
+<dl>
+<dt><a name="index-add_002dto_002dsave_002dset"></a>Function: <strong>add-to-save-set</strong> <em>window</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+</dl>
+
+<p>Adds the specified <em>window</em> to the save-set of the
+<em>window</em> display. The <em>window</em> must have been created by
+some other display. Windows are removed automatically from the
+save-set when they are destroyed.
+</p>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-close_002ddown_002dmode"></a>Function: <strong>close-down-mode</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+</dl>
+<p>Returns and (with <code>setf</code>) sets the close-down mode of the
+client&rsquo;s resources at connection close.
+</p><dl compact="compact">
+<dt><var>mode</var></dt>
+<dd><p>One of <var>:destroy</var>, <var>:retain-permanent</var>, or <var>:retain-temporary</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-kill_002dclient"></a>Function: <strong>kill-client</strong> <em>display resource-id</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+<dt><var>resource-id</var></dt>
+<dd><p>A valid <var>card29</var> resource ID.
+</p></dd>
+</dl>
+
+<p>Closes the display connection which created the given
+<em>resource-id</em>. The <em>resource-id</em> must be valid, but need
+not belong to the given <em>display</em>.
+</p>
+<p>If the closed connection was previously open, the connection is
+closed according to its close-down mode. Otherwise, if the
+connection had been previously terminated with close-down mode
+<var>:retain-permanent</var> or <var>:retain-temporary</var>, then all its
+retained server resources &ndash; both permanent and temporary &ndash; are
+destroyed.
+</p>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-kill_002dtemporary_002dclients"></a>Function: <strong>kill-temporary-clients</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+</dl>
+
+<p>Closes the <em>display</em> connection and destroys all retained
+temporary server resources for this and all previously-terminated
+connections.
+</p>
+<p>If the <em>display</em> connection was previously open, the connection
+is closed according to its close-down mode. Otherwise, if the
+<em>display</em> connection had been previously terminated with
+close-down mode <var>:retain-permanent</var> or
+<var>:retain-temporary</var>, then all its retained server resources &ndash;
+both permanent and temporary &ndash; are destroyed.
+</p>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-remove_002dfrom_002dsave_002dset"></a>Function: <strong>remove-from-save-set</strong> <em>window</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+</dl>
+
+<p>Removes the specified <em>window</em> from the save-set of the
+<em>window</em> display. The <em>window</em> must have been created by
+some other display. Windows are removed automatically from the
+save-set when they are destroyed.
+</p>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Managing-Host-Access.html#Managing-Host-Access" accesskey="n" rel="next">Managing Host Access</a>, Previous: <a href="Keyboard-Encodings.html#Keyboard-Encodings" accesskey="p" rel="prev">Keyboard Encodings</a>, Up: <a href="Control-Functions.html#Control-Functions" accesskey="u" rel="up">Control Functions</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,545 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Introduction (Errors)</title>
+
+<meta name="description" content="Common LISP X Interface: Introduction (Errors)">
+<meta name="keywords" content="Common LISP X Interface: Introduction (Errors)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Errors.html#Errors" rel="up" title="Errors">
+<link href="Undocumented.html#Undocumented" rel="next" title="Undocumented">
+<link href="Errors.html#Errors" rel="prev" title="Errors">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Introduction-_0028Errors_0029"></a>
+<div class="header">
+<p>
+Previous: <a href="Errors.html#Errors" accesskey="p" rel="prev">Errors</a>, Up: <a href="Errors.html#Errors" accesskey="u" rel="up">Errors</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Introduction"></a>
+<h3 class="section">17.1 Introduction</h3>
+
+<p>CLX error conditions are hierarchial. The base error condition is
+<var>x-error</var>, and all other conditions are built on top of
+<var>x-error</var>. <var>x-error</var> can be built on a lower-level condition
+that is implementation dependent (this is probably the <var>error</var>
+condition).
+</p>
+<dl>
+<dt><a name="index-define_002dcondition"></a>Macro: <strong>define-condition</strong> <em>name (parent-types*) [(slot-specifier*) option*]</em></dt>
+<dd>
+<p>Any new condition type must be defined with the
+<var>define-condition</var> macro. A condition type has a name, parent
+types, report message, and any number of slot items. See the
+<em>Lisp</em> <em>Reference</em> manual for further information
+regarding <var>define-condition</var>.
+</p>
+<p>The following are the predefined error conditions that can occur in CLX.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-access_002derror"></a>Condition: <strong>access-error</strong></dt>
+<dd>
+<p>An <var>access-error</var> can occur for several reasons:
+</p><ul>
+<li> A client attempted to grab a key/button combination already
+grabbed by another client
+
+</li><li> A client attempted to free a colormap entry that it did not already allocate
+
+</li><li> A client attempted to store into a read-only colormap entry
+
+</li><li> A client attempted to modify the access control list from other
+than the local (or otherwise authorized) host
+
+</li><li> A client attempted to select an event type that another client
+has already selected, and, that at most, one client can select
+at a time
+</li></ul>
+
+<p>An <var>access-error</var> is a special case of the more general
+<var>request-error</var> (see <a href="#request_002derror">request-error</a>).
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-alloc_002derror"></a>Condition: <strong>alloc-error</strong></dt>
+<dd>
+<p>The server failed to allocate the requested resource or server memory.
+</p>
+<p>An <var>alloc-error</var> is a special case of the more general
+<var>request-error</var> (see <a href="#request_002derror">request-error</a>).
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-atom_002derror"></a>Condition: <strong>atom-error</strong></dt>
+<dd>
+<p>A value for an <em>atom</em> argument does not name a defined atom.
+</p>
+<p>An <var>atom-error</var> is a special case of the more general
+<var>request-error</var> (see <a href="#request_002derror">request-error</a>).
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-closed_002ddisplay"></a>Condition: <strong>closed-display</strong></dt>
+<dd>
+<p>The <var>closed-display</var> condition is signaled when trying to read
+or write a closed display (that is, <var>close-display</var> has been
+called on the <var>display</var> object, or a server-disconnect
+occurred). The <var>closed-display</var> object is reported with the
+error.
+</p>
+<p>A <var>closed-display</var> condition is a special case of the more
+general <var>x-error</var> (see <a href="#x_002derror">x-error</a>).
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-colormap_002derror"></a>Condition: <strong>colormap-error</strong></dt>
+<dd>
+<p>A value for a <em>colormap</em> argument does not name a defined
+colormap.
+</p>
+<p>A <var>colormap-error</var> is a special case of the more general
+<var>resource-error</var> (see <a href="#resource_002derror">resource-error</a>).
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-connection_002dfailure"></a>Condition: <strong>connection-failure</strong></dt>
+<dd>
+<p>Signaled when an X11 server refuses a connection. The following
+items are reported along with the error:
+</p><ul>
+<li> <em>major-version</em> &ndash; The major version of the X server code.
+
+</li><li> <em>minor-version</em> &ndash; The minor version of the X server code.
+
+</li><li> <em>host</em> &ndash; The host name for the X server.
+
+</li><li> <em>display</em> &ndash; The display on which the error occurred.
+
+</li><li> <em>reason</em> &ndash; A string indicating why the connection failed.
+</li></ul>
+
+<p>A <var>connection-failure</var> is a special case of the more general
+<var>x-error</var> (see <a href="#x_002derror">x-error</a>).
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-cursor_002derror"></a>Condition: <strong>cursor-error</strong></dt>
+<dd>
+<p>A value for a <em>cursor</em> argument does not name a defined cursor.
+</p>
+<p>A <var>cursor-error</var> is a special case of the more general
+<var>resource-error</var> (see <a href="#resource_002derror">resource-error</a>).
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-device_002dbusy"></a>Condition: <strong>device-busy</strong></dt>
+<dd>
+<p>Signaled by (<code>setf</code> (<var>pointer-mapping</var> <em>display</em>)
+<var>mapping</var>) when the <var>set-pointer-mapping</var> request returns
+a busy status. A similar condition occurs in
+<var>set-modifier-mapping</var>, but in this case, it returns a boolean
+indicating success, rather than signaling an error.  The
+<var>device-busy</var> condition returns the display object as part of
+the error.
+</p>
+<p>A <var>device-busy</var> condition is a special case of the more general
+<var>x-error</var> (see <a href="#x_002derror">x-error</a>).
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-drawable_002derror"></a>Condition: <strong>drawable-error</strong></dt>
+<dd>
+<p>A value for a <em>drawable</em> argument does not name a defined window or pixmap.
+</p>
+<p>A <var>drawable-error</var> is a special case of the more general <var>resource-error</var> (see <a href="#resource_002derror">resource-error</a>).
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-font_002derror"></a>Condition: <strong>font-error</strong></dt>
+<dd>
+<p>A value for a <em>font</em> or <em>gcontext</em> argument does not name a defined font.
+</p>
+<p>A <var>font-error</var> is a special case of the more general
+<var>resource-error</var> (see <a href="#resource_002derror">resource-error</a>).
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-gcontext_002derror"></a>Condition: <strong>gcontext-error</strong></dt>
+<dd>
+<p>A value for a <em>gcontext</em> argument does not name a defined GContext.
+</p>
+<p>A <var>gcontext-error</var> is a special case of the more general
+<var>resource-error</var> (see <a href="#resource_002derror">resource-error</a>).
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-id_002dchoice_002derror"></a>Condition: <strong>id-choice-error</strong></dt>
+<dd>
+<p>The value chosen for a resource identifier is either not included in
+the range assigned to the client or is already in use. Under normal
+circumstances, this cannot occur and should be considered a server
+or CLX library error.
+</p>
+<p>An <var>id-choice-error</var> is a special case of the more general
+<var>resource-error</var> (see <a href="#resource_002derror">resource-error</a>).
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-implementation_002derror"></a>Condition: <strong>implementation-error</strong></dt>
+<dd>
+<p>The server does not implement some aspect of the request. A server
+that generates this error for a core request is deficient. As such,
+this error is not listed for any of the requests.  However, clients
+should be prepared to receive such errors and either handle or
+discard them.
+</p>
+<p>An <var>implementation-error</var> is a special case of the more general
+<var>resource-error</var> (see <a href="#resource_002derror">resource-error</a>).
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-length_002derror"></a>Condition: <strong>length-error</strong></dt>
+<dd>
+<p>The length of a request is shorter or longer than that minimally
+required to contain the arguments. This usually means an internal
+CLX error.
+</p>
+<p>A <var>length-error</var> is a special case of the more general
+<var>resource-error</var> (see <a href="#resource_002derror">resource-error</a>).
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-lookup_002derror"></a>Condition: <strong>lookup-error</strong></dt>
+<dd>
+<p>CLX has the option of caching different resource types (see
+<var>*clx-cached-types*</var>) in a hash table by resource ID. When
+looking up an object in the hash table, if the type of the object is
+wrong, a <var>lookup-error</var> is signaled.
+</p>
+<p>For example: The cursor with ID 123 is interned in the hash
+table. An event is received with a field for window 123. When 123 is
+looked up in the hash table, a cursor is found.  Since a window was
+expected, a <var>lookup-error</var> is signaled. This error indicates a
+problem with the extension code being used. The following items are
+reported along with the error:
+</p><ul>
+<li> <em>id</em> &ndash; The resource ID.
+
+</li><li> <em>display</em> &ndash; The display being used.
+
+</li><li> <em>type</em> &ndash; The resource type.
+
+</li><li> <em>object</em> &ndash; The <var>resource</var> object.
+</li></ul>
+
+<p>A <var>lookup-error</var> is a special case of the more general
+<var>x-error</var> (see <a href="#x_002derror">x-error</a>).
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-match_002derror"></a>Condition: <strong>match-error</strong></dt>
+<dd>
+<p>In a graphics request, the root and depth of the GContext does not
+match that of the drawable. An <var>:input-only</var> window is used as
+a drawable. Some argument or pair of arguments has the correct type
+and range but fails to match in some other way required by the
+request. An <var>:input-only</var> window locks this attribute. The
+values do not exist for an <var>:input-only</var> window.
+</p>
+<p>A <var>match-error</var> is a special case of the more general
+<var>request-error</var> (see <a href="#request_002derror">request-error</a>).
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-missing_002dparameter"></a>Condition: <strong>missing-parameter</strong></dt>
+<dd>
+<p>One or more of the required keyword parameters is missing or
+<var>nil</var>. The missing parameters are reported along with the
+error.
+</p>
+<p>A <var>missing-parameter</var> condition is a special case of the more
+general <var>x-error</var> (see <a href="#x_002derror">x-error</a>).
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-name_002derror"></a>Condition: <strong>name-error</strong></dt>
+<dd>
+<p>A font or color of the specified name does not exist.
+</p>
+<p>A <var>name-error</var> is a special case of the more general
+<var>request-error</var> (see <a href="#request_002derror">request-error</a>).
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-pixmap_002derror"></a>Condition: <strong>pixmap-error</strong></dt>
+<dd>
+<p>A value for a <em>pixmap</em> argument does not name a defined pixmap.
+</p>
+<p>A <var>pixmap-error</var> is a special case of the more general
+<var>resource-error</var>. (see <a href="#resource_002derror">resource-error</a>.)
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-reply_002dlength_002derror"></a>Condition: <strong>reply-length-error</strong> <em>(x-error) (slots*)</em></dt>
+<dd>
+<p>The reply to a request has an unexpected length. The following items
+are reported along with the error:
+</p><ul>
+<li> <em>reply-length</em> &ndash; The actual reply length.
+
+</li><li> <em>expected-length</em> &ndash; The expected reply length.
+
+</li><li> <em>display</em> &ndash; The display on which the error occurred.
+</li></ul>
+
+<p>A <var>reply-length-error</var> is a special case of the more general
+<var>x-error</var> (see <a href="#x_002derror">x-error</a>).
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-reply_002dtimeout"></a>Condition: <strong>reply-timeout</strong></dt>
+<dd>
+<p>The <var>*reply-timeout*</var> parameter specifies the maximum number of
+seconds to wait for a request reply, or <var>nil</var> to wait forever
+(the default). When a reply has not been received after
+*<var>reply-timeout</var>* seconds, the <var>reply-timeout</var> condition
+is signaled. The <em>timeout</em> <em>period</em> and <em>display</em> are
+reported along with the error.
+</p>
+<p>A <var>reply-timeout</var> condition is a special case of the more
+general <var>x-error</var> (see <a href="#x_002derror">x-error</a>).
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-request_002derror"></a>Condition: <strong>request-error</strong></dt>
+<dd><a name="request_002derror"></a>
+<p>The following items are reported along with the error:
+</p>
+<p>The major or minor opcode does not specify a valid request.
+</p><ul>
+<li> <em>display</em> &ndash; The display on which the error occurred.
+
+</li><li> <em>error-key</em> &ndash; The error (sub)type.
+
+</li><li> <em>major</em> &ndash; The major opcode.
+
+</li><li> <em>minor</em> &ndash; The minor opcode.
+
+</li><li> <em>sequence</em> &ndash; The actual sequence number.
+
+</li><li> <em>current-sequence</em> &ndash; The current sequence number.
+</li></ul>
+
+<p>A <var>request-error</var> condition is a special case of the more
+general <var>x-error</var> (see <a href="#x_002derror">x-error</a>).
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-resource_002derror"></a>Condition: <strong>resource-error</strong></dt>
+<dd><a name="resource_002derror"></a>
+<p>All X11 errors for incorrect resource IDs are built on top of
+<var>resource-error</var>. These are <var>colormap-error</var>,
+<var>cursor-error</var>, <var>drawable-error</var>, <var>font-error</var>,
+<var>gcontext-error</var>, <var>id-choice-error</var>, <var>pixmap-error</var>
+and <var>window-error</var>. <var>resource-error</var> is never signaled
+directly.
+</p>
+<p>A <var>resource-error</var> is a special case of the more general
+<var>request-error</var> (see <a href="#request_002derror">request-error</a>).
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-sequence_002derror"></a>Condition: <strong>sequence-error</strong></dt>
+<dd>
+<p>All X11 request replies contain the sequence number of their
+request. If a reply&rsquo;s sequence does not match the request count, a
+<var>sequence-error</var> is signaled. A <var>sequence-error</var> usually
+indicates a locking problem with a multi-processing Lisp. The
+following items are reported along with the error:
+</p><ul>
+<li> <em>display</em> &ndash; The display on which the error occurred.
+
+</li><li> <em>req-sequence</em> &ndash; The sequence number in the reply.
+
+</li><li> <em>msg-sequence</em> &ndash; The current sequence number.
+</li></ul>
+
+<p>A <var>sequence-error</var> condition is a special case of the more
+general <var>x-error</var>. (see <a href="#x_002derror">x-error</a>)
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-server_002ddisconnect"></a>Condition: <strong>server-disconnect</strong></dt>
+<dd>
+<p>The connection to the server was lost. The display on which the
+error occurred is reported along with the error.
+</p>
+<p>A <var>server-disconnect</var> condition is a special case of the more
+general <var>x-error</var>. (see <a href="#x_002derror">x-error</a>)
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-unexpected_002dreply"></a>Condition: <strong>unexpected-reply</strong></dt>
+<dd>
+<p>A reply was found when none was expected. This indicates a problem
+with the extension code. The following items are reported along with
+the error:
+</p>
+<dl compact="compact">
+<dt><code>display</code></dt>
+<dd><p>The display on which the error occurred.
+</p>
+</dd>
+<dt><code>req-sequence</code></dt>
+<dd><p>The sequence number in the reply.
+</p>
+</dd>
+<dt><code>msg-sequence</code></dt>
+<dd><p>The current sequence number.
+</p>
+</dd>
+<dt><code>length</code></dt>
+<dd><p>The message length of the reply.
+</p></dd>
+</dl>
+
+
+<p>An <var>unexpected-reply</var> condition is a special case of the more general
+<var>x-error</var>. (see <a href="#x_002derror">x-error</a>.)
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-unknown_002derror"></a>Condition: <strong>unknown-error</strong> <em>(request-error) (error-code)</em></dt>
+<dd>
+<p>An error was received from the server with an unknown error
+code. This indicates a problem with the extension code. The
+undefined error code is reported.
+</p>
+<p>An <var>unknown-error</var> is a special case of the more general
+<var>request-error</var>. (see <a href="#request_002derror">request-error</a>)
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-value_002derror"></a>Condition: <strong>value-error</strong> <em>(request-error) (value)</em></dt>
+<dd>
+<p>Some numeric value falls outside the range of values accepted by the
+request. Unless a specific range is specified for an argument, the
+full range defined by the argument&rsquo;s type is accepted. Any argument
+defined as a set of alternatives can generate this error. The
+erroneous value is reported.
+</p>
+<p>A <var>value-error</var> is a special case of the more general
+<var>request-error</var>. (see <a href="#request_002derror">request-error</a>)
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-window_002derror"></a>Condition: <strong>window-error</strong> <em>(resource-error)</em></dt>
+<dd>
+
+<p>A value for a <em>window</em> argument does not name a defined window.
+</p>
+<p>A <var>window-error</var> is a special case of the more general
+<var>resource-error</var>. (see <a href="#resource_002derror">resource-error</a>.)
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-x_002derror"></a>Condition: <strong>x-error</strong></dt>
+<dd><a name="x_002derror"></a>
+<p>This is the most general error condition upon which all other conditions are defined.
+</p></dd></dl>
+
+
+
+
+<hr>
+<div class="header">
+<p>
+Previous: <a href="Errors.html#Errors" accesskey="p" rel="prev">Errors</a>, Up: <a href="Errors.html#Errors" accesskey="u" rel="up">Errors</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

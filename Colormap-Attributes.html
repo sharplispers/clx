@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Colormap Attributes</title>
+
+<meta name="description" content="Common LISP X Interface: Colormap Attributes">
+<meta name="keywords" content="Common LISP X Interface: Colormap Attributes">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Colormap-Functions.html#Colormap-Functions" rel="up" title="Colormap Functions">
+<link href="Cursors.html#Cursors" rel="next" title="Cursors">
+<link href="Changing-Colors.html#Changing-Colors" rel="prev" title="Changing Colors">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Colormap-Attributes"></a>
+<div class="header">
+<p>
+Previous: <a href="Changing-Colors.html#Changing-Colors" accesskey="p" rel="prev">Changing Colors</a>, Up: <a href="Colormap-Functions.html#Colormap-Functions" accesskey="u" rel="up">Colormap Functions</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Colormap-Attributes-1"></a>
+<h4 class="subsection">10.3.6 Colormap Attributes</h4>
+
+
+<p>The complete set of colormap attributes is discussed in the following
+paragraphs.
+</p>
+<dl>
+<dt><a name="index-colormap_002ddisplay"></a>Function: <strong>colormap-display</strong> <em>colormap</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>colormap</var></dt>
+<dd><p>A <var>colormap</var>.
+</p></dd>
+</dl>
+
+
+<p>Returns the <var>display</var> object associated with the specified
+<em>colormap</em>.
+</p><dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>Type <var>display</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-colormap_002dequal"></a>Function: <strong>colormap-equal</strong> <em>colormap-1 colormap-2</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>colormap-1</var></dt>
+<dt><var>colormap-2</var></dt>
+<dd><p>A <var>colormap</var>.
+</p></dd>
+</dl>
+
+<p>Returns true if the two arguments refer to the same server resource
+and <var>nil</var> if they do not.
+</p>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-colormap_002did"></a>Function: <strong>colormap-id</strong> <em>colormap</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>colormap</var></dt>
+<dd><p>A <var>colormap</var>.
+</p></dd>
+</dl>
+
+<p>Returns the unique ID assigned to the specified <em>colormap</em>.
+</p>
+<dl compact="compact">
+<dt><var>id</var></dt>
+<dd><p>Type <var>resource-id</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-colormap_002dp"></a>Function: <strong>colormap-p</strong> <em>colormap</em></dt>
+<dd>
+<p>Returns non-<var>nil</var> if the argument is a <var>colormap</var> and
+<var>nil</var> otherwise.
+</p>
+<dl compact="compact">
+<dt><var>map-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-colormap_002dplist"></a>Function: <strong>colormap-plist</strong> <em>colormap</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>colormap</var></dt>
+<dd><p>A <var>colormap</var>.
+</p></dd>
+</dl>
+
+
+
+
+<p>Returns and (with <code>setf</code>) sets the property list for the
+specified <em>colormap</em>. This function provides a hook where
+extensions can add data.
+</p>
+<dl compact="compact">
+<dt><var>colormap-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+
+
+
+</body>
+</html>

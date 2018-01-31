@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Input Events</title>
+
+<meta name="description" content="Common LISP X Interface: Input Events">
+<meta name="keywords" content="Common LISP X Interface: Input Events">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="The-X-Window-System.html#The-X-Window-System" rel="up" title="The X Window System">
+<link href="A-Quick-Tour-of-CLX.html#A-Quick-Tour-of-CLX" rel="next" title="A Quick Tour of CLX">
+<link href="Windows.html#Windows" rel="prev" title="Windows">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Input-Events"></a>
+<div class="header">
+<p>
+Previous: <a href="Windows.html#Windows" accesskey="p" rel="prev">Windows</a>, Up: <a href="The-X-Window-System.html#The-X-Window-System" accesskey="u" rel="up">The X Window System</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Input-Events-1"></a>
+<h4 class="subsection">2.1.2 Input Events</h4>
+
+<p>The X input mechanism is conceptually simple yet quite powerful. Most
+events are attached to a particular window (that is, contain an
+identifier for the window receiving the event). A client program can
+receive multiple window input streams, all multiplexed over the single
+byte-stream connection to the server.
+</p>
+<p>Clients can tailor their input by expressing interest in only certain
+event types. The server uses special event types to send important
+messages to the client. For example, the client can elect to receive
+an <var>:enter-notify</var>
+(see <a href="Keyboard-and-Pointer-Events.html#enter_002dnotify">enter-notify</a>) event
+when the pointer cursor moves into a certain window. Another vital
+message from the server is an <var>:exposure</var>
+(see <a href="Exposure-Events.html#exposure">exposure</a>) event. This is a
+signal to the client indicating that at least some portion of the
+window has suddenly become visible (perhaps the user moved another
+window which had been overlapping it). The client is then responsible
+for doing what is necessary to redisplay the window&rsquo;s image.  Client
+programs must be prepared to regenerate the contents of windows in
+this way on demand.
+</p>
+<p>Input is also subject to policy decisions about which client window
+receives keyboard and pointer events. Since the pointer is free to roam
+between windows, just clicking on a window is often enough to send a
+pointer event to that window. Keyboard events, however, must go to a
+keyboard focus window which has to be designated in some other way.
+Usually, the arbiter of such input management policy is a program called
+the <em>window manager</em>. The window manager gives the human
+user a way to make a window the keyboard focus, to manage the layout of
+windows on the screen, to represent windows with icons, and so forth. In
+fact, the window manager client determines most of the so-called look
+and feel of the X Window System.
+</p>
+<hr>
+<div class="header">
+<p>
+Previous: <a href="Windows.html#Windows" accesskey="p" rel="prev">Windows</a>, Up: <a href="The-X-Window-System.html#The-X-Window-System" accesskey="u" rel="up">The X Window System</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

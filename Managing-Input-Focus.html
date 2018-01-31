@@ -1,0 +1,170 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Managing Input Focus</title>
+
+<meta name="description" content="Common LISP X Interface: Managing Input Focus">
+<meta name="keywords" content="Common LISP X Interface: Managing Input Focus">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Events-and-Input.html#Events-and-Input" rel="up" title="Events and Input">
+<link href="Grabbing-the-Pointer.html#Grabbing-the-Pointer" rel="next" title="Grabbing the Pointer">
+<link href="Pointer-Position.html#Pointer-Position" rel="prev" title="Pointer Position">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Managing-Input-Focus"></a>
+<div class="header">
+<p>
+Next: <a href="Grabbing-the-Pointer.html#Grabbing-the-Pointer" accesskey="n" rel="next">Grabbing the Pointer</a>, Previous: <a href="Pointer-Position.html#Pointer-Position" accesskey="p" rel="prev">Pointer Position</a>, Up: <a href="Events-and-Input.html#Events-and-Input" accesskey="u" rel="up">Events and Input</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Managing-Input-Focus-1"></a>
+<h3 class="section">13.6 Managing Input Focus</h3>
+
+
+<p>CLX provides the <var>set-focus-input</var> and <var>focus-input</var> functions
+to set and get the keyboard input focus window.
+</p>
+<dl>
+<dt><a name="index-set_002dinput_002dfocus"></a>Function: <strong>set-input-focus</strong> <em>display focus revert-to &amp;optional time</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+<dt><var>focus</var></dt>
+<dd><p>The new input focus <var>window</var>.
+</p></dd>
+<dt><var>revert-to</var></dt>
+<dd><p>The focus <var>window</var> when focus is no longer viewable.
+</p></dd>
+<dt><var>time</var></dt>
+<dd><p>A <var>timestamp</var>.
+</p></dd>
+</dl>
+
+<p>Changes the keyboard input focus and the last-focus-change
+time. The function has no effect if the specified <em>time</em> is
+earlier than the current last-focus-change time or is later than
+the current server time; otherwise, the last-focus-change time is
+set to the specified <em>time</em>. The <var>set-input-focus</var>
+function causes the X server to generate <var>:focus-in</var> and
+<var>:focus-out</var> events.
+</p>
+<p>If <var>:none</var> is specified as the <em>focus</em>, all keyboard
+events are discarded until a new focus window is set. In this
+case, the <em>revert-to</em> argument is ignored.
+</p>
+<p>If a window is specified as the <em>focus</em> argument, it becomes
+the keyboard&rsquo;s focus window.  If a generated keyboard event would
+normally be reported to this window or one of its inferiors, the
+event is reported normally; otherwise, the event is reported with
+respect to the focus window.
+</p>
+<p>If <var>:pointer-root</var> is specified as the <em>focus</em> argument,
+the input focus window is set to the root window of the screen
+containing the pointer when each keyboard event occurs. In this
+case, the <em>revert-to</em> argument is ignored.
+</p>
+<p>The specified <em>focus</em> window must be viewable at the time of
+the request. If the <em>focus</em> window later becomes not
+viewable, the new focus window depends on the <em>revert-to</em>
+argument. If <em>revert-to</em> is specified as <var>:parent</var>, the
+<em>focus</em> reverts to the parent (or the closest viewable
+ancestor) and the new <em>revert-to</em> value is take to be
+<var>:none</var>. If <em>revert-to</em> is <var>:pointer-root</var> or
+<var>:none</var>, the <em>focus</em> reverts to that value. When the
+<em>focus</em> reverts, <var>:focus-in</var> and <var>:focus-out</var>
+events are generated, but the last-focus-change time is not
+affected.
+</p>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-input_002dfocus"></a>Function: <strong>input-focus</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+</dl>
+
+
+<p>Returns the <em>focus</em> window, <var>:pointer-root</var>, or
+<var>:none</var>, depending on the current state of the focus
+window. <em>revert-to</em> returns the current focus revert-to
+state.
+</p><dl compact="compact">
+<dt><var>focus</var></dt>
+<dd><p>Type (<var>or window</var> (<var>member :none :pointer-root</var>)).
+</p></dd>
+<dt><var>revert-to</var></dt>
+<dd><p>Type (<var>or window</var> (<var>member :none :pointer-root :parent</var>)).
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Grabbing-the-Pointer.html#Grabbing-the-Pointer" accesskey="n" rel="next">Grabbing the Pointer</a>, Previous: <a href="Pointer-Position.html#Pointer-Position" accesskey="p" rel="prev">Pointer Position</a>, Up: <a href="Events-and-Input.html#Events-and-Input" accesskey="u" rel="up">Events and Input</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

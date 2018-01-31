@@ -1,0 +1,187 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Creating Colormaps</title>
+
+<meta name="description" content="Common LISP X Interface: Creating Colormaps">
+<meta name="keywords" content="Common LISP X Interface: Creating Colormaps">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Colormap-Functions.html#Colormap-Functions" rel="up" title="Colormap Functions">
+<link href="Installing-Colormaps.html#Installing-Colormaps" rel="next" title="Installing Colormaps">
+<link href="Colormap-Functions.html#Colormap-Functions" rel="prev" title="Colormap Functions">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Creating-Colormaps"></a>
+<div class="header">
+<p>
+Next: <a href="Installing-Colormaps.html#Installing-Colormaps" accesskey="n" rel="next">Installing Colormaps</a>, Previous: <a href="Colormap-Functions.html#Colormap-Functions" accesskey="p" rel="prev">Colormap Functions</a>, Up: <a href="Colormap-Functions.html#Colormap-Functions" accesskey="u" rel="up">Colormap Functions</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Creating-Colormaps-1"></a>
+<h4 class="subsection">10.3.1 Creating Colormaps</h4>
+
+
+<p>CLX provides functions for creating and freeing new <var>colormap</var>
+objects.
+</p>
+<dl>
+<dt><a name="index-create_002dcolormap"></a>Function: <strong>create-colormap</strong> <em>visual window &amp;optional alloc-p</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>visual</var></dt>
+<dd><p>A <var>visual</var> type ID.
+</p></dd>
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+<dt><var>alloc-p</var></dt>
+<dd><p>Specifies whether <var>colormap</var> cells are permanently allocated read-write.
+</p></dd>
+</dl>
+
+
+<p>Creates and returns a <em>colormap</em> of the specified
+<em>visual</em> type for the screen containing the
+<em>window</em>. The <em>visual</em> type must be one of those
+supported by the screen.
+</p>
+<p>Initial color cell values are undefined for visual types belonging
+to the <var>:gray-scale</var>, <var>:pseudo-color</var>, and
+<var>:direct-color</var> classes. Color cell values for visual types
+belonging to the <var>:static-gray</var>, <var>:static-color</var>, and
+<var>:true-color</var> classes have initial values defined by the
+visual type. However, X does not define the set of possible visual
+types or their initial color cell values.
+</p>
+<p>If <em>alloc-p</em> is true, all colormap cells are permanently
+allocated read-write and cannot be freed by <var>free-colors</var>. It
+is an error for <em>alloc-p</em> to be true when the visual type
+belongs to the <var>:static-gray</var>, <var>:static-color</var>, or
+<var>:true-color</var> classes.
+</p>
+<dl compact="compact">
+<dt><var>colormap</var></dt>
+<dd><p>Type <var>colormap</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-copy_002dcolormap_002dand_002dfree"></a>Function: <strong>copy-colormap-and-free</strong> <em>colormap</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>colormap</var></dt>
+<dd><p>A <var>colormap</var>.
+</p></dd>
+</dl>
+
+<p>Creates and returns a new <var>colormap</var> by copying, then
+freeing, allocated cells from the specified <em>colormap</em>.
+</p>
+<p>All color cells allocated read-only or read-write in the original
+<var>colormap</var> have the same color values and the same allocation
+status in the <em>new-colormap</em>. The values of unallocated color
+cells in the <em>new-colormap</em> are undefined. After copying, all
+allocated color cells in the original <var>colormap</var> are freed,
+as if <var>free-colors</var> was called. The unallocated cells of the
+original <var>colormap</var> are not affected.
+</p>
+<p>If <em>alloc-p</em> was true when the original <var>colormap</var> was
+created, then all color cells of the <em>new-colormap</em> are
+permanently allocated read-write, and all the color cells of the
+original <var>colormap</var> are freed.
+</p>
+<dl compact="compact">
+<dt><var>new-colormap</var></dt>
+<dd><p>Type <var>colormap</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-free_002dcolormap"></a>Function: <strong>free-colormap</strong> <em>colormap</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>colormap</var></dt>
+<dd><p>A <var>colormap</var>.
+</p></dd>
+</dl>
+
+<p>Destroys the <em>colormap</em> and frees its server resource. If the
+<em>colormap</em> is installed, it is uninstalled. For any window
+associated with the <em>colormap</em>, the window is assigned a
+<var>nil</var> <var>colormap</var>, and a <var>:colormap-notify</var> event is
+generated. The colors displayed for a window with a <var>nil
+colormap</var> are undefined.
+</p>
+<p>However, this function has no effect if the <em>colormap</em> is a
+screen default <var>colormap</var>.
+</p>
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Installing-Colormaps.html#Installing-Colormaps" accesskey="n" rel="next">Installing Colormaps</a>, Previous: <a href="Colormap-Functions.html#Colormap-Functions" accesskey="p" rel="prev">Colormap Functions</a>, Up: <a href="Colormap-Functions.html#Colormap-Functions" accesskey="u" rel="up">Colormap Functions</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

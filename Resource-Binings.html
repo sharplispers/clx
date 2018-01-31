@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Resource Binings</title>
+
+<meta name="description" content="Common LISP X Interface: Resource Binings">
+<meta name="keywords" content="Common LISP X Interface: Resource Binings">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Resources.html#Resources" rel="up" title="Resources">
+<link href="Basic-Resource-Database-Functions.html#Basic-Resource-Database-Functions" rel="next" title="Basic Resource Database Functions">
+<link href="Resources.html#Resources" rel="prev" title="Resources">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Resource-Binings"></a>
+<div class="header">
+<p>
+Next: <a href="Basic-Resource-Database-Functions.html#Basic-Resource-Database-Functions" accesskey="n" rel="next">Basic Resource Database Functions</a>, Previous: <a href="Resources.html#Resources" accesskey="p" rel="prev">Resources</a>, Up: <a href="Resources.html#Resources" accesskey="u" rel="up">Resources</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Resource-Binings-1"></a>
+<h3 class="section">14.1 Resource Binings</h3>
+
+
+<p>Conceptually, a resource database is a set of resource name-value pairs
+(or <em>resource bindings</em>). The name in a resource binding is a list
+that is the concatenation of a <em>path list</em> and an <em>attribute
+name</em>.
+</p>
+<p>A path list is a list of symbols (or strings) that corresponds to a path
+through a tree-structured hierarchy. For example, the path:
+</p>
+<div class="lisp">
+<pre class="lisp">'(top middle bottom)
+</pre></div>
+
+
+<p>corresponds to a three-level hierarchy in which <code>middle</code> is
+the child of <code>top</code>, and <code>bottom</code> is the child of
+<code>middle</code>.
+</p>
+<p>Typically, the path of a resource name corresponds to a path in a
+hierarchy of windows, and each symbol/string names a window in the
+hierarchy. However, the first element of the path can also represent the
+overall name of the entire program, and subsequent path elements can
+refer to an application-specific hierarchy of resource names not
+strictly related to windows. In addition, a resource name can contain a
+partially-specified path list.  The asterisk symbol (*) is a wildcard
+that can correspond to any sequence of levels in the hierarchy
+(including the null sequence). For example, the path:
+</p>
+<div class="lisp">
+<pre class="lisp">'(top * bottom)
+</pre></div>
+
+
+<p>corresponds to a hierarchy of two or more levels in which
+<code>top</code> is at the top level and <code>bot-</code>
+<code>tom</code> is at the bottom level. An element of a path list can
+be the name of an individual window or the name of a class of windows.
+</p>
+<p>The final element of a resource name list is an attribute name. This
+symbol (or string) identifies a specific attribute of the object(s)
+named by the preceding path list. The attribute name can also be the
+symbol * or the string &quot;*&quot;, in which case the resource name refers to
+all attributes of the path object(s). However, this form of resource
+name is rarely useful.
+</p>
+<p>Some examples of resource bindings are shown below. In these examples,
+assume that <code>mail</code> is the resource name of a mail reading
+application. <code>mail</code> uses a window of the class
+<code>button</code> whose name is <code>reply</code>.
+</p>
+<table>
+<tr><td><code>(mail screen-1 reply background)</code></td><td><code>'green</code></td></tr>
+<tr><td><code>(mail * background)</code></td><td><code>'red</code></td></tr>
+<tr><td><code>(* button background)</code></td><td><code>'blue</code></td></tr>
+</table>
+
+<p>These resource bindings specify the following:
+</p><ul>
+<li> The <code>background</code> attribute resource of <code>mail</code>
+application<em>&rsquo;</em>s <code>reply</code> button has the value of
+<code>green</code> on <code>screen-1</code>.
+
+</li><li> The <code>background</code> attribute for the rest of the
+<code>mail</code> application is always <code>red</code> on all
+screens.
+
+</li><li> In general, the <code>background</code> attribute for all
+<code>button</code> windows is <code>blue</code>.
+</li></ul>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Basic-Resource-Database-Functions.html#Basic-Resource-Database-Functions" accesskey="n" rel="next">Basic Resource Database Functions</a>, Previous: <a href="Resources.html#Resources" accesskey="p" rel="prev">Resources</a>, Up: <a href="Resources.html#Resources" accesskey="u" rel="up">Resources</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

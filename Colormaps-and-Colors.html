@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Colormaps and Colors</title>
+
+<meta name="description" content="Common LISP X Interface: Colormaps and Colors">
+<meta name="keywords" content="Common LISP X Interface: Colormaps and Colors">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Colors.html#Colors" rel="up" title="Colors">
+<link href="Color-Functions.html#Color-Functions" rel="next" title="Color Functions">
+<link href="Colors.html#Colors" rel="prev" title="Colors">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Colormaps-and-Colors"></a>
+<div class="header">
+<p>
+Next: <a href="Color-Functions.html#Color-Functions" accesskey="n" rel="next">Color Functions</a>, Previous: <a href="Colors.html#Colors" accesskey="p" rel="prev">Colors</a>, Up: <a href="Colors.html#Colors" accesskey="u" rel="up">Colors</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Colormaps-and-Colors-1"></a>
+<h3 class="section">10.1 Colormaps and Colors</h3>
+
+
+<p>In X, a <em>color</em> is defined by a set of three numeric values,
+representing intensities of red, green, and blue. Red, green, and blue
+are referred to as the <em>primary</em> hues. A <em>colormap</em> is a list
+of colors, each indexed by an integer <em>pixel</em> value. Each entry in
+a colormap is called a color <em>cell</em>. Raster graphics displays store
+pixel values in a special screen hardware memory. As the screen hardware
+scans this memory, it reads each pixel value, looks up the color in the
+corresponding cell of a colormap, and displays the color on its screen.
+</p>
+<p>The colormap abstraction applies to all classes of visual types
+supported by X, including those for screens which are actually
+monochrome. For example, <var>:gray-scale</var> screens use colormaps in
+which colors actually specify the monochrome intensity. A typical
+black-and-white monochrome display has a <var>:static-gray</var> screen with
+a two-cell colormap.
+</p>
+<p>The following list describes how pixel values and colormaps are handled
+for each visual class.
+</p>
+<dl compact="compact">
+<dt><var>:direct-color</var></dt>
+<dd><p>A pixel value is decomposed into separate red, green, and blue
+subfields. Each subfield indexes a separate colormap. Entries in all colormaps can
+be changed.
+</p></dd>
+<dt><var>:gray-scale</var></dt>
+<dd><p>A pixel value indexes a single colormap that contains monochrome
+intensities. Colormap entries can be changed.
+</p></dd>
+<dt><var>:pseudo-color</var></dt>
+<dd><p>A pixel value indexes a single colormap that contains color
+intensities. Colormap entries can be changed.
+</p></dd>
+<dt><var>:static-color</var></dt>
+<dd><p>Same as <var>:pseudo-color</var>, except that the colormap entries are
+predefined by the hardware and cannot be changed.
+</p></dd>
+<dt><var>:static-gray</var></dt>
+<dd><p>Same as <var>:gray-scale</var>, except that the colormap entries are
+predefined by the hardware and cannot be changed.
+</p></dd>
+<dt><var>:true-color</var></dt>
+<dd><p>Same as <var>:direct-color</var>, except that the colormap entries are
+predefined by the hardware and cannot be changed. Typically, each of
+the red, green, and blue colormaps provides a (near) linear ramp of
+intensity.
+</p></dd>
+</dl>
+
+<p>CLX provides functions to create colormaps, access and modify colors and
+color cells, and install colormaps in screen hardware.
+</p>
+<hr>
+<div class="header">
+<p>
+Next: <a href="Color-Functions.html#Color-Functions" accesskey="n" rel="next">Color Functions</a>, Previous: <a href="Colors.html#Colors" accesskey="p" rel="prev">Colors</a>, Up: <a href="Colors.html#Colors" accesskey="u" rel="up">Colors</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

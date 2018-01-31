@@ -1,0 +1,244 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Glyphs and Glyphsets</title>
+
+<meta name="description" content="Common LISP X Interface: Glyphs and Glyphsets">
+<meta name="keywords" content="Common LISP X Interface: Glyphs and Glyphsets">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="RENDER-_002d-A-new-rendering-system-for-X11.html#RENDER-_002d-A-new-rendering-system-for-X11" rel="up" title="RENDER - A new rendering system for X11">
+<link href="Using-glyphs.html#Using-glyphs" rel="next" title="Using glyphs">
+<link href="The-picture-object.html#The-picture-object" rel="prev" title="The picture object">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Glyphs-and-Glyphsets"></a>
+<div class="header">
+<p>
+Next: <a href="Using-glyphs.html#Using-glyphs" accesskey="n" rel="next">Using glyphs</a>, Previous: <a href="The-picture-object.html#The-picture-object" accesskey="p" rel="prev">The picture object</a>, Up: <a href="RENDER-_002d-A-new-rendering-system-for-X11.html#RENDER-_002d-A-new-rendering-system-for-X11" accesskey="u" rel="up">RENDER - A new rendering system for X11</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Glyphs-and-Glyphsets-1"></a>
+<h4 class="subsection">16.3.3 Glyphs and Glyphsets</h4>
+
+
+<p>A glyph in XRENDER is an alpha mask and an associated orgin, advancement and numeric id. The application refers to them
+by the numeric id.
+</p>
+<p>Glyphs are stored in a glyph-set. The client is responsible for making sure the glyphs it uses are stored in
+the glyph-set, or there will be a Glyph-error.
+</p>
+<dl>
+<dt><a name="index-render_002dcreate_002dglyph_002dset"></a>Function: <strong>render-create-glyph-set</strong> <em>format &amp;key glyph-set</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>format</var></dt>
+<dd><p>A <var>picture-format</var> for the alpha masks that this font will use.
+</p></dd>
+<dt><var>glyph-set</var></dt>
+<dd><p>An optional <var>glyph-set</var> object to initialize with a server side glyphset resource.
+</p></dd>
+</dl>
+
+
+
+<p>Creates an initially empty glyph-set for the client to use.
+<em>Format</em> must be a Direct format. When it contains RGB values, the glyphs are composited using
+component-alpha True, otherwise they are composited using component-alpha False.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-render_002dreference_002dglyph_002dset"></a>Function: <strong>render-reference-glyph-set</strong> <em>existing-glyph-set &amp;key glyph-set</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>existing-glyph-set</var></dt>
+<dd><p>An existing <var>glyph-set</var>
+</p></dd>
+<dt><var>glyph-set</var></dt>
+<dd><p>An optional <var>glyph-set</var>, just like in <var>render-create-glyph-set</var>
+</p></dd>
+</dl>
+
+
+
+<p>Creates a new id refering to the existing-glyph-set. The glyph-set itself will not be freed until all
+ids has been removed.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-render_002dfree_002dglyph_002dset"></a>Function: <strong>render-free-glyph-set</strong> <em>glyph-set</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>glyph-set</var></dt>
+<dd><p>A glyphset resource to free
+</p></dd>
+</dl>
+
+<p>Removes an id to a glyph-set. When all ids have been removed the glyph-set itself is removed.
+</p>
+
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-render_002dadd_002dglyph"></a>Function: <strong>render-add-glyph</strong> <em>glyph-set id &amp;key x-origin y-origin x-advance y-advance data</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>glyph-set</var></dt>
+<dd><p>A <var>glyph-set</var>
+</p></dd>
+<dt><var>id</var></dt>
+<dd><p><var>card32</var>
+</p></dd>
+<dt><var>x-orgin</var></dt>
+<dd><p><var>int16</var>
+</p></dd>
+<dt><var>y-orgin</var></dt>
+<dd><p><var>int16</var>
+</p></dd>
+<dt><var>x-advance</var></dt>
+<dd><p><var>int16</var>
+</p></dd>
+<dt><var>y-advance</var></dt>
+<dd><p><var>int16</var>
+</p></dd>
+<dt><var>data</var></dt>
+<dd><p>An <var>array</var> of <var>card8</var> bytes.
+</p></dd>
+</dl>
+
+<p>Associates id with the given description of a glyph. An existing glyph
+with the same id is replaced.
+</p>
+<p>At the time of writing, only 8bit alpha masks are
+supported. Experimentation with glyph-sets in other pict-formats
+needed.
+</p>
+
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-render_002dadd_002dglyph_002dfrom_002dpicture"></a>Function: <strong>render-add-glyph-from-picture</strong> <em>glyph-set picture &amp;key x-origin y-origin x-advance y-advance width height</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>glyph-set</var></dt>
+<dd><p>glyph-set
+</p></dd>
+<dt><var>picture</var></dt>
+<dd><p>picture
+</p></dd>
+<dt><var>x-origin</var></dt>
+<dd><p>int16
+</p></dd>
+<dt><var>y-origin</var></dt>
+<dd><p>int16
+</p></dd>
+<dt><var>x-advance</var></dt>
+<dd><p>int16
+</p></dd>
+<dt><var>y-advance</var></dt>
+<dd><p>int16
+</p></dd>
+<dt><var>x</var></dt>
+<dd><p>int16
+</p></dd>
+<dt><var>y</var></dt>
+<dd><p>int16
+</p></dd>
+<dt><var>width</var></dt>
+<dd><p>card16
+</p></dd>
+<dt><var>height</var></dt>
+<dd><p>card16
+</p></dd>
+</dl>
+
+
+
+<p>This request add a glyph to <em>glyph-set</em> by copying it from the <em>x,y</em> location in the <em>picture</em>.
+</p>
+<p>Existing glyphs with the same names are replaced.
+The source <em>picture</em> may be in a different <var>picture-format</var> than <em>glyph-set</em>, in which case the images are converted to the glyph-set&rsquo;s format.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-render_002dfree_002dglyphs"></a>Function: <strong>render-free-glyphs</strong> <em>glyph-set glyphs</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>glyph-set</var></dt>
+<dd><p>A <var>glyph-set</var>
+</p></dd>
+<dt><var>glyphs</var></dt>
+<dd><p>sequence of <var>card32</var>
+</p></dd>
+</dl>
+
+
+
+
+<p>This request removes <em>glyphs</em> from <em>glyph-set</em>.
+Each glyph must exist in <em>glyph-set</em> (else a <var>Match</var> error results).
+</p></dd></dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Using-glyphs.html#Using-glyphs" accesskey="n" rel="next">Using glyphs</a>, Previous: <a href="The-picture-object.html#The-picture-object" accesskey="p" rel="prev">The picture object</a>, Up: <a href="RENDER-_002d-A-new-rendering-system-for-X11.html#RENDER-_002d-A-new-rendering-system-for-X11" accesskey="u" rel="up">RENDER - A new rendering system for X11</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

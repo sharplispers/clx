@@ -1,0 +1,319 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Processing Events</title>
+
+<meta name="description" content="Common LISP X Interface: Processing Events">
+<meta name="keywords" content="Common LISP X Interface: Processing Events">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Events-and-Input.html#Events-and-Input" rel="up" title="Events and Input">
+<link href="Managing-the-Event-Queue.html#Managing-the-Event-Queue" rel="next" title="Managing the Event Queue">
+<link href="Selecting-Events.html#Selecting-Events" rel="prev" title="Selecting Events">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Processing-Events"></a>
+<div class="header">
+<p>
+Next: <a href="Managing-the-Event-Queue.html#Managing-the-Event-Queue" accesskey="n" rel="next">Managing the Event Queue</a>, Previous: <a href="Selecting-Events.html#Selecting-Events" accesskey="p" rel="prev">Selecting Events</a>, Up: <a href="Events-and-Input.html#Events-and-Input" accesskey="u" rel="up">Events and Input</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Processing-Events-1"></a>
+<h3 class="section">13.2 Processing Events</h3>
+
+
+<p>Events received by a CLX client are stored in an <em>event queue</em>
+until they are read and processed. Events are processed by <em>handler
+functions</em>.
+</p>
+<dl>
+<dt><a name="index-handler_002dfunction"></a>Function: <strong>handler-function</strong> <em>&amp;rest event-slots &amp;key :display :event-key :send-event-p &amp;allow-other-keys</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>:display</var></dt>
+<dd><p>A <var>display</var> for the connection that returned the event.
+</p></dd>
+<dt><var>:event-key</var></dt>
+<dd><p>An <var>event-key</var> keyword specifying the event type.
+</p></dd>
+<dt><var>:send-event-p</var></dt>
+<dd><p>If true, the event was sent from another application using the
+<var>send-event</var> function.
+</p></dd>
+</dl>
+
+
+<p>The arguments to a handler function are keyword-value pairs that
+describe the contents of an event. The actual <em>event-slots</em>
+passed depend on the event type, except that <var>:display</var>,
+<var>:event-key</var>, and <var>:send-event-p</var> are given for all event
+types. The keyword symbols used for each event type are event slot
+names defined by the <var>declare-event</var> macro and are described in
+<a href="Declaring-Event-Types.html#Declaring-Event-Types">Declaring Event Types</a>.
+</p>
+<p>If a handler returns non-<var>nil</var>, the event is considered
+<em>processed</em> and can be removed from the event queue. Otherwise,
+if a handler function returns <var>nil</var>, the event can remain in
+the event queue for later processing.
+</p><dl compact="compact">
+<dt><var>handled-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-process_002devent"></a>Function: <strong>process-event</strong> <em>display &amp;key :handler :timeout :peek-p :discard-p (:force-output-p t)</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+<dt><var>:handler</var></dt>
+<dd><p>A handler function or a sequence of handler functions.
+</p></dd>
+<dt><var>:timeout</var></dt>
+<dd><p>Specifies the timeout delay in seconds.
+</p></dd>
+<dt><var>:peek-p</var></dt>
+<dd><p>If <var>nil</var>, events are removed from the event queue after processing.
+</p></dd>
+<dt><var>:discard-p</var></dt>
+<dd><p>If true, unprocessed events are discarded.
+</p></dd>
+<dt><var>:force-output-p</var></dt>
+<dd><p>If true, buffered output requests are sent.
+</p></dd>
+</dl>
+
+
+<p>Invokes <var>:handler</var> on each queued event until <var>:handler</var>
+returns non-<var>nil</var>. Then, the non-<var>nil :handler</var> value is
+returned by <var>process-event</var>. If <var>:handler</var> returns
+<var>nil</var> for each event in the event queue, <var>process-event</var>
+waits for another event to arrive. If timeout is non-<var>nil</var> and
+no event arrives within the specified timeout interval (given in
+seconds), <var>process-event</var> returns <var>nil</var>; if timeout is
+<var>nil</var>, <var>process-event</var> will not return until
+<var>:handler</var> returns non-<var>nil</var>. <var>process-event</var> may
+wait only once on network data, and therefore timeout prematurely.
+</p>
+<p>If <var>:force-output-p</var> is true, <var>process-event</var> first
+invokes <var>display-force-output</var> to send any buffered
+requests. If <var>:peek-p</var> is true, a processed event is not
+removed from the queue. If <var>:discard-p</var> is true, unprocessed
+events are removed from the queue; otherwise, unprocessed events are
+left in place.
+</p>
+<p>If <var>:handler</var> is a sequence, it is expected to contain handler
+functions for each event type.  The sequence index of the handler
+function for a particular event type is given by ( <var>position
+event-key *event-key-vector*</var>).
+</p><dl compact="compact">
+<dt><var>handled-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p></dd>
+</dl>
+
+<p>Please note that CLX keeps a cache of the keyboard mapping. It is the
+responsibility of the user of CLX to invalidate this cache when
+receiving a <var>:mapping-notify</var> event from
+the X Server. To help the user with this task CLX provides the function
+<var>mapping-notify</var>.
+</p>
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-event_002dcase"></a>Macro: <strong>event-case</strong> <em>display &amp;key :timeout :peek-p :discard-p (:force-output-p t) &amp;body clauses</em></dt>
+<dd><a name="event_002dcase"></a>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+<dt><var>:handler</var></dt>
+<dd><p>A handler function or a sequence of handler functions.
+</p></dd>
+<dt><var>:timeout</var></dt>
+<dd><p>Specifies the timeout delay, in seconds.
+</p></dd>
+<dt><var>:peek-p</var></dt>
+<dd><p>If <var>nil</var>, events are removed from the event queue after processing.
+</p></dd>
+<dt><var>:discard-p</var></dt>
+<dd><p>If true, unprocessed events are discarded.
+</p></dd>
+<dt><var>:force-output-p</var></dt>
+<dd><p>If true, buffered output requests are sent.
+</p></dd>
+<dt><var>clauses</var></dt>
+<dd><p>Code to process specified event types.
+</p></dd>
+</dl>
+
+<p>Executes the matching clause for each queued event until a clause
+returns non-<var>nil</var>. The non-<var>nil</var> clause value is then
+returned. Each of the clauses is a list of the form
+(<em>event-match</em> [<em>event-slots</em>] &amp;rest <em>forms</em>),
+where:
+</p><ul>
+<li> <em>event-match</em> &ndash; Either an <var>event-key</var>, a list of
+<var>event-keys</var>, otherwise, or <var>t</var>. It is an error for the
+same key to appear in more than one clause.
+
+</li><li> <em>event-slots</em> &ndash; If given, a list of (non-keyword) event slot
+symbols defined for the specified event type(s). See <a href="Declaring-Event-Types.html#Declaring-Event-Types">Declaring Event Types</a>.
+
+</li><li> <em>forms</em> &ndash; A list of forms that process the specified event
+type(s). The value of the last form is the value returned by the
+clause.
+</li></ul>
+
+<p>A clause matches an event if the <var>event-key</var> is equal to or a
+member of the <em>event-match</em>, or if the <em>event-match</em> is
+<var>t</var> or <var>otherwise</var>. If no <var>t</var> or <var>otherwise</var>
+clause appears, it is equivalent to having a final clause that
+returns <var>nil</var>. If <em>event-slots</em> is given, these symbols
+are bound to the value of the corresponding event slot in the clause
+forms. Each element of <em>event-slots</em> can also be a list of the
+form (<em>event-slot-keyword variable</em>), in which case the
+<em>variable</em> symbol is bound to the value of the event slot
+specified by the <em>event-slot-keyword</em>.
+</p>
+<p>If every clause returns <var>nil</var> for each event in the event
+queue, <var>event-case</var> waits for another event to arrive. If
+<var>:timeout</var> is non-<var>nil</var> and no event arrives within the
+specified timeout interval (given in seconds), <var>event-case</var>
+returns <var>nil</var>; if <var>:timeout</var> is <var>nil</var>,
+<var>event-case</var> will not return until a clause returns
+non-<var>nil</var>. <var>event-case</var> may wait only once on network data
+and therefore timeout prematurely.
+</p>
+<p>If <var>:force-output-p</var> is true, <var>event-case</var> first invokes
+<var>display-force-output</var> to send any buffered requests. If
+<var>:peek-p</var> is true, a processed event is not removed from the
+queue. If <var>:discard-p</var> is true, unprocessed events are removed
+from the queue; otherwise, unprocessed events are left in place.
+</p>
+<dl compact="compact">
+<dt><var>handled-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+
+<dl>
+<dt><a name="index-event_002dcond"></a>Macro: <strong>event-cond</strong> <em>display &amp;key :timeout :peek-p :discard-p (:force-output-p t) &amp;body clauses</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>handled-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p></dd>
+</dl>
+
+
+<p>Similar to <var>event-case</var> except that each of the clauses is a
+list of the form (<em>event-match</em> [<em>event-slots</em>]
+<em>test-form</em> &amp;rest <em>forms</em>). Executes the
+<em>test-form</em> of the clause that matches each queued event until
+a <em>test-form</em> returns non-<var>nil</var>. The body <em>forms</em> of
+the clause are then executed. The values returned by the last clause
+body form are then returned by <var>event-cond</var>.
+</p>
+<p>When a <em>test-form</em> returns true and <var>:peek-p</var> is
+<var>nil</var>, or when a <em>test-form</em> returns <var>nil</var> and
+<var>:discard-p</var> is true, the matching event is removed from the
+event queue before the body <em>forms</em> are executed.
+</p><dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+<dt><var>:handler</var></dt>
+<dd><p>A handler function or a sequence of handler functions.
+</p></dd>
+<dt><var>:timeout</var></dt>
+<dd><p>Specifies the timeout delay in seconds.
+</p></dd>
+<dt><var>:peek-p</var></dt>
+<dd><p>If <var>nil</var>, events are removed from the event queue after processing.
+</p></dd>
+<dt><var>:discard-p</var></dt>
+<dd><p>If true, unprocessed events are discarded.
+</p></dd>
+<dt><var>:force-output-p</var></dt>
+<dd><p>If true, buffered output requests are sent.
+</p></dd>
+<dt><var>clauses</var></dt>
+<dd><p>Code to process specified event types.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Managing-the-Event-Queue.html#Managing-the-Event-Queue" accesskey="n" rel="next">Managing the Event Queue</a>, Previous: <a href="Selecting-Events.html#Selecting-Events" accesskey="p" rel="prev">Selecting Events</a>, Up: <a href="Events-and-Input.html#Events-and-Input" accesskey="u" rel="up">Events and Input</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

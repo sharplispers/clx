@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Drawing Points</title>
+
+<meta name="description" content="Common LISP X Interface: Drawing Points">
+<meta name="keywords" content="Common LISP X Interface: Drawing Points">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Graphic-Operations.html#Graphic-Operations" rel="up" title="Graphic Operations">
+<link href="Drawing-Lines.html#Drawing-Lines" rel="next" title="Drawing Lines">
+<link href="Area-and-Plane-Operations.html#Area-and-Plane-Operations" rel="prev" title="Area and Plane Operations">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Drawing-Points"></a>
+<div class="header">
+<p>
+Next: <a href="Drawing-Lines.html#Drawing-Lines" accesskey="n" rel="next">Drawing Lines</a>, Previous: <a href="Area-and-Plane-Operations.html#Area-and-Plane-Operations" accesskey="p" rel="prev">Area and Plane Operations</a>, Up: <a href="Graphic-Operations.html#Graphic-Operations" accesskey="u" rel="up">Graphic Operations</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Drawing-Points-1"></a>
+<h3 class="section">7.2 Drawing Points</h3>
+
+<p>The <var>draw-point</var> and <var>draw-points</var> functions make use of the following graphics
+context components: function, plane-mask, foreground, subwindow-mode, clip-x,
+clip-y, clip-ordering, clip-region and clip-mask.
+</p>
+<p>The <var>draw-point</var> function uses the foreground pixel and function components of the
+graphics context to draw a single point into the specified drawable, while <var>draw-points</var>
+draws multiple points into the specified drawable. These functions are not affected by
+the tile or stipple in the graphics context.
+</p>
+
+<dl>
+<dt><a name="index-draw_002dpoint"></a>Function: <strong>draw-point</strong> <em>drawable gcontext x y</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>drawable</var></dt>
+<dd><p>The destination <var>drawable</var>.
+</p></dd>
+<dt><var>gcontext</var></dt>
+<dd><p>The graphics context for drawing the point.
+</p></dd>
+<dt><var>x</var></dt>
+<dt><var>y</var></dt>
+<dd><p>The <em>x</em> and <em>y</em> coordinates of the point drawn. Type is <var>int16</var>.
+</p></dd>
+</dl>
+<p>Combines the foreground pixel in the <em>gcontext</em> with the pixel in
+the <em>drawable</em> specified by the <em>x</em> and <em>y</em>
+coordinates.
+</p>
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-draw_002dpoints"></a>Function: <strong>draw-points</strong> <em>drawable gcontext points &amp;optional relative-p</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>drawable</var></dt>
+<dd><p>The destination <var>drawable</var>.
+</p></dd>
+<dt><var>gcontext</var></dt>
+<dd><p>The graphics context for drawing the points.
+</p></dd>
+<dt><var>points</var></dt>
+<dd><p>A list of points to be drawn in the order listed. The first point is always relative
+to the <em>drawable</em>&rsquo;s origin; if <em>relative-p</em>, the rest of the points are drawn relative to the
+previous point, else they are drawn relative to the <em>drawable</em>&rsquo;s origin. Type is
+<var>point-seq</var>.
+</p></dd>
+<dt><var>relative-p</var></dt>
+<dd><p>Specifies the coordinate mode used for drawing the pixels either relative to
+the origin or to the previous point. Type <var>boolean</var>.
+</p></dd>
+</dl>
+
+<p>Combines the foreground pixels in the graphics context with the pixels
+at each point in the <em>drawable</em>. The points are drawn in the
+order listed.
+</p>
+<p><var>draw-points</var> requires a mode argument, <em>relative-p</em> that
+indicates whether the points are relative to the destination origin or
+to the previous point. In either case, the first point is always
+relative to the destination origin. The rest of the points are
+relative either to the <em>drawable</em>&rsquo;s origin or to the previous
+point, depending on the value of <em>relative-p</em>.
+</p>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Drawing-Lines.html#Drawing-Lines" accesskey="n" rel="next">Drawing Lines</a>, Previous: <a href="Area-and-Plane-Operations.html#Area-and-Plane-Operations" accesskey="p" rel="prev">Area and Plane Operations</a>, Up: <a href="Graphic-Operations.html#Graphic-Operations" accesskey="u" rel="up">Graphic Operations</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

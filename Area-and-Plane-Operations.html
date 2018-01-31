@@ -1,0 +1,276 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Area and Plane Operations</title>
+
+<meta name="description" content="Common LISP X Interface: Area and Plane Operations">
+<meta name="keywords" content="Common LISP X Interface: Area and Plane Operations">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Graphic-Operations.html#Graphic-Operations" rel="up" title="Graphic Operations">
+<link href="Drawing-Points.html#Drawing-Points" rel="next" title="Drawing Points">
+<link href="Graphic-Operations.html#Graphic-Operations" rel="prev" title="Graphic Operations">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Area-and-Plane-Operations"></a>
+<div class="header">
+<p>
+Next: <a href="Drawing-Points.html#Drawing-Points" accesskey="n" rel="next">Drawing Points</a>, Previous: <a href="Graphic-Operations.html#Graphic-Operations" accesskey="p" rel="prev">Graphic Operations</a>, Up: <a href="Graphic-Operations.html#Graphic-Operations" accesskey="u" rel="up">Graphic Operations</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Area-and-Plane-Operations-1"></a>
+<h3 class="section">7.1 Area and Plane Operations</h3>
+
+
+<p><var>clear-area</var> clears an area or an entire window to the background.
+Since pixmaps do not have backgrounds, they cannot be filled by using
+the functions described in the following paragraphs. Instead, you
+should use <var>draw-rectangle</var>, which sets the pixmap to a known
+value. See <a href="Drawing-Rectangles.html#Drawing-Rectangles">Drawing Rectangles</a>, for information on
+<var>draw-rectangle</var>.
+</p>
+<dl>
+<dt><a name="index-clear_002darea"></a>Function: <strong>clear-area</strong> <em>window &amp;key (:x 0) (:y 0) :width :height :exposures-p</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p>
+</dd>
+<dt><var>:x</var></dt>
+<dt><var>:y</var></dt>
+<dd><p>Upper-left corner of the area to be cleared. These coordinates are
+relative to the <em>window</em> origin. Type is <var>int16</var>.
+</p>
+</dd>
+<dt><var>:width</var></dt>
+<dd><p>The width of the area to clear or <var>nil</var> to clear to the remaining
+width of the window. Type is <var>card16</var> or <var>null</var>.
+</p>
+</dd>
+<dt><var>:height</var></dt>
+<dd><p>The height of the area to clear or <var>nil</var> to clear to the remaining
+height of the window. Type is <var>card16</var> or <var>null</var>.
+</p>
+</dd>
+<dt><var>:exposures-p</var></dt>
+<dd><p>Specifies if <var>:exposure</var> events should be generated for the
+affected areas. Type <var>boolean</var>.
+</p></dd>
+</dl>
+
+<p>Draws a rectangular area in the specified <em>window</em> with the
+background pixel or pixmap of the <em>window</em>. The <var>:x</var> and
+<var>:y</var> coordinates are relative to the <em>window</em> origin, and
+specify the upper-left corner of the rectangular area that is to be
+cleared. A <var>nil</var> or zero value for <var>:height</var> or <var>:width</var>
+clears the remaining area (height - y or width - x). If the
+<em>window</em> has a defined background tile, the rectangle is tiled by
+using a plane-mask of all ones and a function of <var>:copy</var>. If the
+<em>window</em> has background <var>:none</var>, the contents of the
+<em>window</em> are not changed. In either case, if <var>:exposures-p</var>
+is non-<var>nil</var>, then one or more <var>:exposure</var> events are
+generated for regions of the rectangle that are either visible or are
+being retained in a backing store.
+</p>
+<p>To clear the entire area in a specified <em>window</em>, use
+(<var>clear-area</var> <em>window</em>).
+</p>
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-copy_002darea"></a>Function: <strong>copy-area</strong> <em>source gcontext source-x source-y width height destination destination-x destination-y</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>source</var></dt>
+<dd><p>Source <var>drawable</var>.
+</p>
+</dd>
+<dt><var>gcontext</var></dt>
+<dd><p>The graphics context to use during the copy operation.
+</p>
+</dd>
+<dt><var>source-x</var></dt>
+<dt><var>source-y</var></dt>
+<dd><p>The x and y coordinates of the upper-left corner of the area in the
+<em>source</em> <var>drawable</var>. These coordinates are relative to the
+<em>source</em> <var>drawable</var> origin.  Type is <var>int16</var>.
+</p>
+</dd>
+<dt><var>width</var></dt>
+<dt><var>height</var></dt>
+<dd><p>The width and height of the area being copied. These apply to both the
+<em>source</em> and <em>destination</em> areas. Type is <var>card16</var>.
+</p>
+</dd>
+<dt><var>destination</var></dt>
+<dd><p>The destination <var>drawable</var>.
+</p>
+</dd>
+<dt><var>destination-x</var></dt>
+<dt><var>destination-y</var></dt>
+<dd><p>The x and y coordinates of the upper left corner of the area in the
+<em>destination</em> <var>drawable</var>. These coordinates are relative to
+the <em>destination</em> <var>drawable</var> origin. Type is <var>int16</var>.
+</p></dd>
+</dl>
+
+<p>Copies the specified rectangular area from the <em>source</em>
+<var>drawable</var> to the specified rectangular area of the
+<em>destination</em> <var>drawable</var>, combining them as specified in the
+supplied graphics context (<em>gcontext</em>). The <em>x</em> and <em>y</em>
+coordinates are relative to their respective drawable origin, with
+each pair specifying the upper left corner of the area.
+</p>
+<p>If either regions of the <em>source</em> area are obscured and have not
+been retained in backing store, or regions outside the boundaries of
+the <em>source</em> <var>drawable</var> are specified, those regions are not
+copied. Instead, the following occurs on all corresponding
+<em>destination</em> regions that are either visible or are retained in
+backing store:
+</p>
+<ul>
+<li> If the <em>destination</em> rectangle is a window with a background
+other than <var>:none</var>, these corresponding regions of the
+<em>destination</em> are tiled, using plane-mask of all ones and
+function of <var>boole-1</var> (copy source), with that background.
+
+</li><li> If the exposures attribute of the graphics context is <var>:on</var>,
+then <var>:graphics-exposure</var> events for all corresponding
+<em>destination</em> regions are generated (regardless of tiling or
+whether the <em>destination</em> is a window or a pixmap).
+
+</li><li> If exposures is <var>:on</var> but no regions are exposed, a
+<var>:no-exposure</var> event is generated.  Note that by default,
+exposures is <var>:on</var> for new graphics contexts. See <a href="Graphics-Contexts.html#Graphics-Contexts">Graphics Contexts</a>, for further information.
+
+</li></ul>
+
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-copy_002dplane"></a>Function: <strong>copy-plane</strong> <em>source gcontext plane source-x source-y width height destination destination-x destination-y</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>source</var></dt>
+<dd><p>The source <var>drawable</var>.
+</p></dd>
+<dt><var>gcontext</var></dt>
+<dd><p>The graphics context to use during the copy operation.
+</p></dd>
+<dt><var>plane</var></dt>
+<dd><p>Specifies the bit-plane of the <em>source</em> <var>drawable</var>. Exactly one bit must be set.
+Type is <var>pixel</var>.
+</p></dd>
+<dt><var>source-x</var></dt>
+<dt><var>source-y</var></dt>
+<dd><p>The <em>x</em> and <em>y</em> coordinates of the upper-left corner of the
+area in the <em>source</em> <var>drawable</var>. These coordinates are
+relative to the <em>source</em> <var>drawable</var> origin.  Type is
+<var>int16</var>.
+</p>
+</dd>
+<dt><var>width</var></dt>
+<dt><var>height</var></dt>
+<dd><p>The width and height of the area being copied. These apply to both the
+<em>source</em> and <em>destination</em> areas. Type is <var>card16</var>.
+</p>
+</dd>
+<dt><var>destination</var></dt>
+<dd><p>The destination <var>drawable</var>.
+</p>
+</dd>
+<dt><var>destination-x</var></dt>
+<dt><var>destination-y</var></dt>
+<dd>
+<p>The x and y coordinates of the upper-left corner of the destination
+area in the <em>destination</em> <var>drawable</var>. These coordinates are
+relative to the <em>destination</em> <var>drawable</var> origin. Type is
+<var>int16</var>.
+</p></dd>
+</dl>
+
+<p>Uses a single bit plane of the specified rectangular area of the
+<em>source</em> <var>drawable</var> along with the specified graphics context
+(<em>gcontext</em>) to modify the specified rectangle area of the
+<em>destination</em> <var>drawabl</var>e. The drawables specified by the
+<em>source</em> and <em>destination</em> arguments must have the same root
+but need not have the same depth.
+</p>
+<p>Effectively, this operation forms a pixmap of the same depth as
+<em>destination</em> and with a size specified by the <em>source</em>
+area. It then uses the foreground and background from the graphics
+context (foreground where the bit-plane in <em>source</em> contains a
+one bit, background where the bit-plane in <em>source</em> contains a
+zero bit), and the equivalent of a <var>copy-area</var> operation is
+performed with all the same exposure semantics. This can also be
+thought of as using the specified region of the <em>source</em>
+bit-plane as a stipple with a fillstyle of <var>:opaque-stippled</var> for
+filling a rectangular area of the <em>destination</em>.
+</p>
+
+
+</dd></dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Drawing-Points.html#Drawing-Points" accesskey="n" rel="next">Drawing Points</a>, Previous: <a href="Graphic-Operations.html#Graphic-Operations" accesskey="p" rel="prev">Graphic Operations</a>, Up: <a href="Graphic-Operations.html#Graphic-Operations" accesskey="u" rel="up">Graphic Operations</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

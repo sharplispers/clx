@@ -1,0 +1,275 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Selections</title>
+
+<meta name="description" content="Common LISP X Interface: Selections">
+<meta name="keywords" content="Common LISP X Interface: Selections">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Atoms.html#Atoms" rel="up" title="Atoms">
+<link href="Events-and-Input.html#Events-and-Input" rel="next" title="Events and Input">
+<link href="Properties.html#Properties" rel="prev" title="Properties">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Selections"></a>
+<div class="header">
+<p>
+Previous: <a href="Properties.html#Properties" accesskey="p" rel="prev">Properties</a>, Up: <a href="Atoms.html#Atoms" accesskey="u" rel="up">Atoms</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Selections-1"></a>
+<h3 class="section">12.3 Selections</h3>
+
+
+<p>A selection is an atom used to identify data that can be shared among
+all client programs connected to an X server. Unlike properties, the
+data represented by a selection is stored by some client program, not by
+the server.
+</p>
+<p>The data named by a selection is associated with a client window, which
+is referred to as the <em>selection owner</em>. The server always knows
+which window is the owner of a selection.  Selections can be created
+freely by clients using <var>intern-atom</var> to create an atom. CLX
+provides functions to inquire or change the owner of a selection and to
+<em>convert</em> a selection.
+</p>
+<p>Conversion is the key to the use of selections for inter-client
+communication. Suppose Client A wants to paste the contents of the data
+named by selection <em>S</em> into his window <em>WA</em>. Client A calls
+<var>convert-selection</var> on selection atom <em>S</em>, sending a
+conversion request to the server. The server, in turn, sends a
+<var>:selection-request</var> event to the current owner of <em>S</em>, which
+is window <em>WB</em> belonging to Client B. The <var>:selection-request</var>
+event contains the <em>requestor</em> window (<em>WA</em>), the selection
+atom (<em>S</em>), an atom identifying a requested data type, and the name
+of a property of <em>WA</em> into which the value of <em>S</em> will be
+stored.
+</p>
+<p>Since <em>WB</em> is the owner of <em>S</em>, it must be associated with the
+data defined by Client B as the value of <em>S</em>. When <em>WB</em> gets
+the <var>:selection-request</var> event, Client B is expected to convert the
+value of <em>S</em> to the requested data type (if possible) and store the
+converted value in the given requestor property. Client B is then
+expected to send a <var>:selection-notify</var> event to the requestor
+window <em>WA</em>, informing the requestor that the converted value for
+<em>S</em> is ready. Upon receiving the <var>:selection-notify</var> event,
+Client A can call <var>get-property</var> to retrieve the converted value
+and to paste it into <em>WA</em>.
+</p>
+<p><var>NOTE:</var> Clients using selections must always be prepared to handle
+<var>:selection-request</var> events and/or <var>:selection-notify</var>
+events. There is no way for a client to ask not to receive these types
+of events.
+</p>
+<p>Type atoms used in selection conversion can represent arbitrary
+client-defined interpretations of the selection data. For example, if
+the value of selection <em>S</em> is a text string, Client A might request
+its typeface by requesting conversion to the <var>:font</var> type. A type
+<var>atom</var> can also represent a request to the selection owner to
+perform some action as a side-effect of conversion (for example,
+<var>:delete</var>). Some of the predefined atoms of an X server are
+intended to be used as selection types (for example, <var>:colormap</var>,
+<var>:bitmap</var>, <var>:string</var>, and so forth) However, X does not impose
+any requirements on the interpretation of type atoms.
+</p>
+<p>When multiple clients negotiate for ownership of a selection, certain
+race conditions might be possible. For example, two clients might each
+receive a user command to assert ownership of the <var>:primary</var>
+selection, but the order in which the server processes these client
+requests is unpredictable. As a result, the ownership request initiated
+most recently by the user might be incorrectly overridden by the other
+earlier ownership request. To prevent such anomalies, the server records
+a <em>last-changed</em> timestamp for each change of selection ownership.
+</p>
+<p>Although inter-client communication via selections is rather complex, it
+offers important benefits. Since selection communication is mediated by
+an X server, clients can share data even though they are running on
+different hosts and using different networking protocols. Data storage
+and conversion is distributed among clients so that the server is not
+required to provide all possible data types or to store multiple forms
+of selection data.
+</p>
+<p>Certain predefined atoms are used as standard selections, as described
+in the X11 Inter-client Communications Conventions Manual. Some of the
+standard selections covered by these conventions are:
+</p>
+<dl compact="compact">
+<dt><var>:primary</var></dt>
+<dd><p>The <em>primary selection</em>. The main vehicle for inter-client cut
+and paste operations.
+</p></dd>
+<dt><var>:secondary</var></dt>
+<dd><p>The <em>secondary selection</em>. In some environments, clients can use
+this as an auxiliary to <var>:primary</var>.
+</p></dd>
+<dt><var>:clipboard</var></dt>
+<dd><p>Analogous to akill ring. Represents the most recently deleted data
+item.
+</p></dd>
+</dl>
+
+
+<dl>
+<dt><a name="index-convert_002dselection"></a>Function: <strong>convert-selection</strong> <em>selection type requestor &amp;optional property time</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>selection</var></dt>
+<dd><p>The <var>xatom</var> for the selection name.
+</p></dd>
+<dt><var>type</var></dt>
+<dd><p>The <var>xatom</var> for the requested data type.
+</p></dd>
+<dt><var>requestor</var></dt>
+<dd><p>The <var>window</var> to receive the converted <em>selection</em> value.
+</p></dd>
+<dt><var>property</var></dt>
+<dd><p>The <var>xatom</var> for the requestor property to receive the converted value.
+</p></dd>
+<dt><var>time</var></dt>
+<dd><p>A <var>timestamp</var>.
+</p></dd>
+</dl>
+
+<p>Requests that the value of the <em>selection</em> be converted to the
+specified <em>type</em> and stored in the given <em>property</em> of the
+<em>requestor</em> window.
+</p>
+<p>If the <em>selection</em> has an owner, the X server sends a
+<var>:selection-request</var> event to the owner window. Otherwise, if
+no owner exists, the server generates on the requestor a
+<var>:selection-notify</var> event containing a <var>nil</var>
+<em>property</em> atom.
+</p>
+<p>The given <em>property</em> specifies the requestor property that will
+receive the converted value. If the <em>property</em> is omitted, the
+<em>selection</em> owner will define a property to use. The
+<em>time</em> furnishes a timestamp representing the time of the
+conversion request; by default, the current server time is used.
+</p>
+<p><var>NOTE:</var> Standard conventions for inter-client communication
+require that both the requestor property and the time must be
+specified. If possible, the time should be the time of a user event
+which initiated the conversion. Alternatively, a timestamp can be
+obtained by calling <var>change-property</var> to append zero-length
+data to some property; the timestamp in the resulting
+<var>:property-notify</var> event can then be used.
+</p>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-selection_002downer"></a>Function: <strong>selection-owner</strong> <em>display selection &amp;optional time</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+<dt><var>selection</var></dt>
+<dd><p>The <var>xatom</var> for the selection name.
+</p></dd>
+<dt><var>time</var></dt>
+<dd><p>A <var>timestamp</var>.
+</p></dd>
+</dl>
+
+
+<p>Returns and (with <code>setf</code>) changes the owner and the
+last-changed <em>time</em> for the <em>selection</em>. If the owner is
+<var>nil</var>, no owner for the <em>selection</em> exists. When the owner
+window for a <em>selection</em> is destroyed, the <em>selection</em>
+owner is set to <var>nil</var> without affecting the last-changed
+<em>time</em>.
+</p>
+<p>The <em>time</em> argument is used only when changing the
+<em>selection</em> owner. If the <em>time</em> is <var>nil</var>, the
+current server time is used. If the <em>time</em> is earlier than the
+current last-changed time of the <em>selection</em> or if the
+<em>time</em> is later than the current server time, the owner is not
+changed. Therefore, a client should always confirm successful change
+of ownership by immediately calling <var>selection-owner</var>. If the
+change in ownership is successful, the last-changed time of the
+<em>selection</em> is set to the specified <em>time</em>.
+</p>
+<p>If the change in ownership is successful and the new owner is
+different from the previous owner, and if the previous owner is not
+<var>nil</var>, a <var>:selection-clear</var> event is generated for the
+previous owner window.
+</p>
+<p><var>NOTE:</var> Standard conventions for inter-client communication
+require that a non-nil time must be specified. If possible, the time
+should be the time of a user event which initiated the change of
+ownership. Alternatively, a timestamp can be obtained by calling
+change-property to append zero-length data to some property; the
+timestamp in the resulting <var>:property-notify</var> event can then be
+used.
+</p><dl compact="compact">
+<dt><var>owner</var></dt>
+<dd><p>Type <var>window</var> or <var>null</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Previous: <a href="Properties.html#Properties" accesskey="p" rel="prev">Properties</a>, Up: <a href="Atoms.html#Atoms" accesskey="u" rel="up">Atoms</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

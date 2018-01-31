@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Querying Text Size</title>
+
+<meta name="description" content="Common LISP X Interface: Querying Text Size">
+<meta name="keywords" content="Common LISP X Interface: Querying Text Size">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Font-and-Characters.html#Font-and-Characters" rel="up" title="Font and Characters">
+<link href="Colors.html#Colors" rel="next" title="Colors">
+<link href="Chracter-Attributes.html#Chracter-Attributes" rel="prev" title="Chracter Attributes">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Querying-Text-Size"></a>
+<div class="header">
+<p>
+Previous: <a href="Chracter-Attributes.html#Chracter-Attributes" accesskey="p" rel="prev">Chracter Attributes</a>, Up: <a href="Font-and-Characters.html#Font-and-Characters" accesskey="u" rel="up">Font and Characters</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Querying-Text-Size-1"></a>
+<h3 class="section">9.5 Querying Text Size</h3>
+
+
+<p>CLX defines functions to return the size of text drawn in a specified
+font. See <a href="Drawing-Text.html#Drawing-Text">Drawing Text</a>, for a description of the
+<var>:translate</var> function used by the functions in the following
+paragraphs.
+</p>
+<dl>
+<dt><a name="index-text_002dextents"></a>Function: <strong>text-extents</strong> <em>font sequence &amp;key (:start 0) :end :translate</em></dt>
+<dd><a name="text_002dextents"></a>
+<dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>The font (or <var>gcontext</var>) used for measuring characters.
+</p></dd>
+<dt><var>sequence</var></dt>
+<dd><p>A sequence of characters or other objects to be translated into font indexes.
+</p></dd>
+<dt><var>:start</var></dt>
+<dt><var>:end</var></dt>
+<dd><p>Start and end indexes defining the elements to draw.
+</p></dd>
+<dt><var>:translate</var></dt>
+<dd><p>A function to translate text to font indexes. Default is
+<var>#&rsquo;translate-default</var>.
+</p></dd>
+</dl>
+
+<p>Returns the complete geometry of the given <em>sequence</em> when
+drawn in the given <em>fon</em>t. The <em>font</em> can be a
+<var>gcontext</var>, in which case the font attribute of the given
+graphics context is used. <var>:start</var> and <var>:end</var> define the
+elements of the <em>sequence</em> which are used.
+</p>
+<p>The returned <em>width</em> is the total pixel width of the
+translated character sequence. The returned <em>ascent</em> and
+<em>descent</em> give the vertical ascent and descent for characters
+in the translated <em>sequence</em>. The returned <em>left</em> gives
+the left bearing of the leftmost character. The returned
+<em>right</em> gives the right bearing of the rightmost
+character. The returned <em>font-ascent</em> and <em>font-descent</em>
+give the maximum vertical ascent and descent for all characters in
+the <em>fon</em>t. If <var>:translate</var> causes font changes, then
+<em>font-ascent</em> and <em>font-descent</em> will be the maximums
+over all fonts used. The <em>direction</em> returns the preferred
+draw direction for the font. If <var>:translate</var> causes font
+changes, then the <em>direction</em> will be <var>nil</var>. The
+<em>first-not-done</em> value returned is <var>nil</var> if all elements
+of the <em>sequence</em> were successfully translated; otherwise the
+index of the first untranslated element is returned.
+</p>
+<dl compact="compact">
+<dt><var>width</var></dt>
+<dd><p>Type <var>int32</var>.
+</p></dd>
+<dt><var>ascent</var></dt>
+<dd><p>Type <var>int16</var>.
+</p></dd>
+<dt><var>descent</var></dt>
+<dd><p>Type <var>int16</var>.
+</p></dd>
+<dt><var>left</var></dt>
+<dd><p>Type <var>int32</var>.
+</p></dd>
+<dt><var>right</var></dt>
+<dd><p>Type <var>int32</var>.
+</p></dd>
+<dt><var>font-ascent</var></dt>
+<dd><p>Type <var>int16</var>.
+</p></dd>
+<dt><var>direction</var></dt>
+<dd><p>Type <var>draw-direction</var>.
+</p></dd>
+<dt><var>first-not-done</var></dt>
+<dd><p>Type <var>array-index</var> or <var>null</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-text_002dwidth"></a>Function: <strong>text-width</strong> <em>font sequence &amp;key (:start 0) :end :translate</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>The font (or <var>gcontext</var>) used for measuring characters.
+</p></dd>
+<dt><var>sequence</var></dt>
+<dd><p>A sequence of characters or other objects to be translated into font indexes.
+</p></dd>
+<dt><var>:start</var></dt>
+<dt><var>:end</var></dt>
+<dd><p>Start and end indexes defining the elements to draw.
+</p></dd>
+<dt><var>:translate</var></dt>
+<dd><p>A function to translate text to font indexes. Default is
+<var>#&rsquo;translate-default</var>.
+</p></dd>
+</dl>
+
+
+<p>Returns the total pixel width of the given <em>sequence</em> when
+drawn in the given <em>font</em>. The <em>font</em> can be a
+<var>gcontext</var>, in which case the font attribute of the given
+graphics context is used. <var>:start</var> and <var>:end</var> define the
+elements of the <em>sequence</em> which are used. The second value
+returned is <var>nil</var> if all elements of the <em>sequence</em> were
+successfully translated; otherwise the index of the first
+untranslated element is returned.
+</p><dl compact="compact">
+<dt><var>width</var></dt>
+<dd><p>Type <var>int32</var>.
+</p></dd>
+<dt><var>first-not-done</var></dt>
+<dd><p>Type <var>array-index</var> or <var>null</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Previous: <a href="Chracter-Attributes.html#Chracter-Attributes" accesskey="p" rel="prev">Chracter Attributes</a>, Up: <a href="Font-and-Characters.html#Font-and-Characters" accesskey="u" rel="up">Font and Characters</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

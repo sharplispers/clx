@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Managing the Event Queue</title>
+
+<meta name="description" content="Common LISP X Interface: Managing the Event Queue">
+<meta name="keywords" content="Common LISP X Interface: Managing the Event Queue">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Events-and-Input.html#Events-and-Input" rel="up" title="Events and Input">
+<link href="Sending-Events.html#Sending-Events" rel="next" title="Sending Events">
+<link href="Processing-Events.html#Processing-Events" rel="prev" title="Processing Events">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Managing-the-Event-Queue"></a>
+<div class="header">
+<p>
+Next: <a href="Sending-Events.html#Sending-Events" accesskey="n" rel="next">Sending Events</a>, Previous: <a href="Processing-Events.html#Processing-Events" accesskey="p" rel="prev">Processing Events</a>, Up: <a href="Events-and-Input.html#Events-and-Input" accesskey="u" rel="up">Events and Input</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Managing-the-Event-Queue-1"></a>
+<h3 class="section">13.3 Managing the Event Queue</h3>
+
+
+<p>The following paragraphs describe CLX functions and macros used to:
+</p><ul>
+<li> Put a new event on the event queue
+
+</li><li> Discard the current event
+
+</li><li> Return the current length of the event queue
+
+</li><li> Gain exclusive access to the event queue for a client process
+</li></ul>
+
+<dl>
+<dt><a name="index-queue_002devent"></a>Function: <strong>queue-event</strong> <em>display event-key &amp;rest event-slots &amp;key :append-p &amp;allow-other-keys</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+<dt><var>event-key</var></dt>
+<dd><p>Specifies the type of event placed in the queue.
+</p></dd>
+<dt><var>event-slots</var></dt>
+<dd><p>Keyword-value pairs that describe the contents of an event.
+</p></dd>
+<dt><var>:append-p</var></dt>
+<dd><p>If true, the event is placed at the tail of the queue; otherwise, the event is
+placed at the head of the queue.
+</p></dd>
+</dl>
+
+<p>Places an event of the type given by <em>event-key</em> into the event
+queue. When <var>:append-p</var> is true, the event is placed at the
+tail of the queue; otherwise, the event is placed at the head of the
+queue. The actual <em>event-slots</em> passed depend on the event
+type. The keyword symbols used for each event type are event slot
+names defined by the <var>declare-event</var> macro and are described in
+<a href="Declaring-Event-Types.html#Declaring-Event-Types">Declaring Event Types</a>.
+</p>
+
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-discard_002dcurrent_002devent"></a>Function: <strong>discard-current-event</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+</dl>
+
+
+<p>Discards the current event for the <em>display</em>. Returns
+<var>nil</var> when the event queue is empty; otherwise, returns
+<var>t</var>. This function provides extra flexibility for discarding
+events, but it should be used carefully; use <var>event-cond</var>
+instead, if possible. Typically, <var>discard-current-event</var> is
+called inside a handler function or a clause of an <var>event-case</var>
+form and is followed by another call to <var>process-event</var>,
+<var>event-case</var>, or <var>event-cond</var>.
+</p><dl compact="compact">
+<dt><var>discarded-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-event_002dlisten"></a>Function: <strong>event-listen</strong> <em>display &amp;optional (timeout 0)</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+<dt><var>timeout</var></dt>
+<dd><p>The number of seconds to wait for events.
+</p></dd>
+</dl>
+
+
+<p>Returns the number of events queued locally. If the event queue is
+empty, <var>event-listen</var> waits for an event to arrive. If timeout
+is non-<var>nil</var> and no event arrives within the specified timeout
+interval (given in seconds), <var>event-listen</var> returns <var>nil</var>;
+if timeout is <var>nil</var>, <var>event-listen</var> will not return until
+an event arrives.
+</p><dl compact="compact">
+<dt><var>event-count</var></dt>
+<dd><p>Type <code>(or null integer)</code>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-with_002devent_002dqueue"></a>Macro: <strong>with-event-queue</strong> <em>display &amp;body body</em></dt>
+<dd><a name="with_002devent_002dqueue"></a>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+<dt><var>body</var></dt>
+<dd><p>Forms to execute.
+</p></dd>
+</dl>
+
+<p>Executes the <em>body</em> in a critical region in which the executing
+client process has exclusive access to the event queue.
+</p>
+</dd></dl>
+
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Sending-Events.html#Sending-Events" accesskey="n" rel="next">Sending Events</a>, Previous: <a href="Processing-Events.html#Processing-Events" accesskey="p" rel="prev">Processing Events</a>, Up: <a href="Events-and-Input.html#Events-and-Input" accesskey="u" rel="up">Events and Input</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

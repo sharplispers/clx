@@ -1,0 +1,191 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Using Keycodes and Keysyms</title>
+
+<meta name="description" content="Common LISP X Interface: Using Keycodes and Keysyms">
+<meta name="keywords" content="Common LISP X Interface: Using Keycodes and Keysyms">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Keyboard-Encodings.html#Keyboard-Encodings" rel="up" title="Keyboard Encodings">
+<link href="Client-Termination.html#Client-Termination" rel="next" title="Client Termination">
+<link href="Keyboard-Mapping.html#Keyboard-Mapping" rel="prev" title="Keyboard Mapping">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Using-Keycodes-and-Keysyms"></a>
+<div class="header">
+<p>
+Previous: <a href="Keyboard-Mapping.html#Keyboard-Mapping" accesskey="p" rel="prev">Keyboard Mapping</a>, Up: <a href="Keyboard-Encodings.html#Keyboard-Encodings" accesskey="u" rel="up">Keyboard Encodings</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Using-Keycodes-and-Keysyms-1"></a>
+<h4 class="subsection">15.4.3 Using Keycodes and Keysyms</h4>
+
+
+<p>The following paragraphs describe the CLX functions used to:
+</p><ul>
+<li> Convert a keycode into a keysym
+
+</li><li> Convert a keysym into a character
+</li></ul>
+
+<dl>
+<dt><a name="index-keycode_002d_003ekeysym"></a>Function: <strong>keycode-&gt;keysym</strong> <em>display keycode keysym-index</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+<dt><var>keycode</var></dt>
+<dd><p>A <var>card8</var>.
+</p></dd>
+<dt><var>keysym-index</var></dt>
+<dd><p>A <var>card8</var>.
+</p></dd>
+</dl>
+
+
+<p>Returns the <em>keysym</em> at the given <em>keysym-index</em> from the
+keysym list for the <em>keycode</em> in the current keyboard mapping
+for the <em>display</em> server.
+<em>This function was called keycode-keysym in X11R4 and older versions of CLX.</em>
+</p><dl compact="compact">
+<dt><var>keysym</var></dt>
+<dd><p>Type <var>keysym</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-keysym_002d_003echaracter"></a>Function: <strong>keysym-&gt;character</strong> <em>display keysym &amp;optional (state 0)</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+<dt><var>keysym</var></dt>
+<dd><p>A <var>keysym</var>.
+</p></dd>
+<dt><var>state</var></dt>
+<dd><p>A <var>mask16</var>.
+</p></dd>
+</dl>
+
+<p>Returns the <em>character</em> associated with the <em>keysym</em> and
+the <em>state</em>. The <em>state</em> is a <var>mask16</var> bit mask
+representing the state of the <em>display</em> modifier keys and
+pointer buttons. See <var>state-mask-key</var> in <a href="Data-Types.html#Data-Types">Data Types</a>. If the <em>keysym</em> does not represent a Common Lisp
+character, then <var>nil</var> is returned.
+<em>This function was called keysym-character in X11R4 and older versions of CLX.</em>
+</p>
+<p>The <em>state</em> determines the bits attribute of the returned
+<em>character</em>, as follows:
+</p><dl compact="compact">
+<dt><var>:control</var></dt>
+<dd><p><var>char-control-bit</var>
+</p></dd>
+<dt><var>:mod-1</var></dt>
+<dd><p><var>char-meta-bit</var>
+</p></dd>
+<dt><var>:mod-2</var></dt>
+<dd><p><var>char-super-bit</var>
+</p></dd>
+<dt><var>:mod-3</var></dt>
+<dd><p><var>char-hyper-bit</var>
+</p></dd>
+</dl>
+
+<dl compact="compact">
+<dt><var>character</var></dt>
+<dd><p>Type <var>character</var> or <var>null</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-character_002d_003ekeysyms"></a>Function: <strong>character-&gt;keysyms</strong> <em>character &amp;optional display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>character</var></dt>
+<dd><p>A <var>character</var>.
+</p></dd>
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+</dl>
+
+<p>Given a character, returns a list of all matching keysyms.  If
+<var>display</var> is given, translations specific to <var>display</var> are
+used.  Otherwise only global translations are used.
+</p>
+<p>This function is implementation dependent.
+</p>
+<p>Calling this function may be slow,  because it involves a linear
+search over all known keysyms.
+</p>
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Previous: <a href="Keyboard-Mapping.html#Keyboard-Mapping" accesskey="p" rel="prev">Keyboard Mapping</a>, Up: <a href="Keyboard-Encodings.html#Keyboard-Encodings" accesskey="u" rel="up">Keyboard Encodings</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Pixmaps</title>
+
+<meta name="description" content="Common LISP X Interface: Pixmaps">
+<meta name="keywords" content="Common LISP X Interface: Pixmaps">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Windows-and-Pixmaps.html#Windows-and-Pixmaps" rel="up" title="Windows and Pixmaps">
+<link href="Graphics-Contexts.html#Graphics-Contexts" rel="next" title="Graphics Contexts">
+<link href="Destroying-Windows.html#Destroying-Windows" rel="prev" title="Destroying Windows">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Pixmaps"></a>
+<div class="header">
+<p>
+Previous: <a href="Destroying-Windows.html#Destroying-Windows" accesskey="p" rel="prev">Destroying Windows</a>, Up: <a href="Windows-and-Pixmaps.html#Windows-and-Pixmaps" accesskey="u" rel="up">Windows and Pixmaps</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Pixmaps-1"></a>
+<h3 class="section">5.8 Pixmaps</h3>
+
+
+<p>A <em>pixmap</em> is a three-dimensional array of bits. A pixmap is
+normally thought of as a two-dimensional array of pixels, where each
+pixel can be a value from 0 to 2<em>n</em>-1, where <em>n</em>
+is the depth of the pixmap. A pixmap can also be thought of as a stack
+of <em>n</em> bitmaps. A <em>bitmap</em> is a single bit pixmap of depth
+1. CLX provides functions to:
+</p>
+<ul>
+<li> Create or free a pixmap
+
+</li><li> Test if an object is a pixmap
+
+</li><li> Test if two pixmap objects are equal
+
+</li><li> Return the pixmap resource ID from a <var>pixmap</var> object
+</li></ul>
+
+
+
+<p>Note that pixmaps can only be used on the screen where they were
+created. Pixmaps are off-screen server resources that are used for a
+number of operations. These include defining patterns for cursors or
+as the source for certain raster operations.
+</p>
+<dl>
+<dt><a name="index-create_002dpixmap"></a>Function: <strong>create-pixmap</strong> <em>&amp;key :width :height :depth :drawable</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>:width</var></dt>
+<dt><var>:height</var></dt>
+<dd><p>The nonzero width and height (type <var>card16</var>).
+</p>
+</dd>
+<dt><var>:depth</var></dt>
+<dd><p>The depth (type <var>card8</var>) of the pixmap.
+</p>
+</dd>
+<dt><var>:drawable</var></dt>
+<dd><p>A <var>drawable</var> which determines the screen where the pixmap will be used.
+</p></dd>
+</dl>
+
+<p>Creates a pixmap of the specified <var>:width</var>, <var>:height</var>, and
+<var>:depth</var>. It is valid to pass a window whose class is
+<var>:input-only</var> as the <var>:drawable</var> argument. The <var>:width</var>
+and <var>:height</var> arguments must be nonzero. The <var>:depth</var> must be
+supported by the screen of the specified <var>:drawable</var>.
+</p>
+<dl compact="compact">
+<dt><var>pixmap</var></dt>
+<dd><p>Type <var>pixmap</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-free_002dpixmap"></a>Function: <strong>free-pixmap</strong> <em>pixmap</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>pixmap</var></dt>
+<dd><p>A <var>pixmap</var>.
+</p></dd>
+</dl>
+
+<p>Allows the X server to free the pixmap storage when no other server
+resources reference it. The pixmap should never be referenced again.
+</p>
+
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-pixmap_002ddisplay"></a>Function: <strong>pixmap-display</strong> <em>pixmap</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>pixmap</var></dt>
+<dd><p>A <var>pixmap</var>.
+</p></dd>
+</dl>
+
+<p>Returns the <var>display</var> object associated with the specified <em>pixmap</em>.
+</p>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>Type <var>display</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-pixmap_002dequal"></a>Function: <strong>pixmap-equal</strong> <em>pixmap-1 pixmap-2</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>pixmap-1</var></dt>
+<dt><var>pixmap-2</var></dt>
+<dd><p>A three-dimensional array of bits to be tested.
+</p></dd>
+</dl>
+
+<p>Returns true if the two arguments refer to the same server resource,
+and <var>nil</var> if they do not.
+</p>
+
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-pixmap_002did"></a>Function: <strong>pixmap-id</strong> <em>pixmap</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>pixmap</var></dt>
+<dd><p>A <var>pixmap</var>.
+</p></dd>
+</dl>
+
+<p>Returns the unique resource ID that has been assigned to the specified
+<em>pixmap</em>.
+</p>
+<dl compact="compact">
+<dt><var>id</var></dt>
+<dd><p>Type <var>resource-id</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-pixmap_002dp"></a>Function: <strong>pixmap-p</strong> <em>object</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>pixmap</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p></dd>
+</dl>
+
+<p>Returns true if the argument is a <var>pixmap</var> object and <var>nil</var>
+otherwise.
+</p>
+</dd></dl>
+
+<dl>
+<dt><a name="index-pixmap_002dplist"></a>Function: <strong>pixmap-plist</strong> <em>pixmap</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>pixmap</var></dt>
+<dd><p>A <var>pixmap</var>.
+</p></dd>
+</dl>
+
+<p>Returns and (with <code>setf</code>) sets the property list for the specified
+<em>pixmap</em>. This function provides a hook where extensions can add
+data.
+</p>
+<dl compact="compact">
+<dt><var>plist</var></dt>
+<dd><p>A property list.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Previous: <a href="Destroying-Windows.html#Destroying-Windows" accesskey="p" rel="prev">Destroying Windows</a>, Up: <a href="Windows-and-Pixmaps.html#Windows-and-Pixmaps" accesskey="u" rel="up">Windows and Pixmaps</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

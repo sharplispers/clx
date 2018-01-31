@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: XY-Format Images</title>
+
+<meta name="description" content="Common LISP X Interface: XY-Format Images">
+<meta name="keywords" content="Common LISP X Interface: XY-Format Images">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Image-Types.html#Image-Types" rel="up" title="Image Types">
+<link href="Z_002dFormat-Images.html#Z_002dFormat-Images" rel="next" title="Z-Format Images">
+<link href="Basic-Images.html#Basic-Images" rel="prev" title="Basic Images">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="XY_002dFormat-Images"></a>
+<div class="header">
+<p>
+Next: <a href="Z_002dFormat-Images.html#Z_002dFormat-Images" accesskey="n" rel="next">Z-Format Images</a>, Previous: <a href="Basic-Images.html#Basic-Images" accesskey="p" rel="prev">Basic Images</a>, Up: <a href="Image-Types.html#Image-Types" accesskey="u" rel="up">Image Types</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="XY_002dFormat-Images-1"></a>
+<h4 class="subsection">8.1.2 XY-Format Images</h4>
+
+
+<p>The <var>image-xy</var> subtype represents an image as a sequence of
+bitmaps, one for each plane of the image, in most-significant to
+least-significant bit order. The following paragraphs describe the
+additional CLX functions that can be used to access <var>image-xy</var>
+objects.
+</p>
+<dl>
+<dt><a name="index-image_002dxy_002dbitmap_002dlist"></a>Function: <strong>image-xy-bitmap-list</strong> <em>image</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>image</var></dt>
+<dd><p>An <var>image-xy</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns and (with <code>setf</code>) changes the list of bitmap planes
+for the <em>image</em>.
+</p><dl compact="compact">
+<dt><var>bitmaps</var></dt>
+<dd><p>Type <var>list</var> of <var>bitmap</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+
+
+
+</body>
+</html>

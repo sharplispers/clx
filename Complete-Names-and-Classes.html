@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Complete Names and Classes</title>
+
+<meta name="description" content="Common LISP X Interface: Complete Names and Classes">
+<meta name="keywords" content="Common LISP X Interface: Complete Names and Classes">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Accessing-Resource-Values.html#Accessing-Resource-Values" rel="up" title="Accessing Resource Values">
+<link href="Matching-Resource-Names.html#Matching-Resource-Names" rel="next" title="Matching Resource Names">
+<link href="Accessing-Resource-Values.html#Accessing-Resource-Values" rel="prev" title="Accessing Resource Values">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Complete-Names-and-Classes"></a>
+<div class="header">
+<p>
+Next: <a href="Matching-Resource-Names.html#Matching-Resource-Names" accesskey="n" rel="next">Matching Resource Names</a>, Previous: <a href="Accessing-Resource-Values.html#Accessing-Resource-Values" accesskey="p" rel="prev">Accessing Resource Values</a>, Up: <a href="Accessing-Resource-Values.html#Accessing-Resource-Values" accesskey="u" rel="up">Accessing Resource Values</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Complete-Names-and-Classes-1"></a>
+<h4 class="subsection">14.3.1 Complete Names and Classes</h4>
+
+<p>A resource binding contains a resource name list that can contain names,
+class names, or a mixture of both. A class name is a symbol or string
+that represents a group of related objects. The set of names used as
+class names are not specified by CLX. Instead, class names are defined
+by agreement between those who use class names when creating resource
+bindings (that is, users) and those who use class names when accessing
+resource values (that is, application programmers).
+</p>
+<p>In order to access a value in a resource database, an application uses a
+key consisting of two items: a <em>complete resource name</em> and a
+<em>complete resource class</em>. A complete resource name is a resource
+name list containing no wildcard elements. A complete resource class is
+a list of exactly the same form. The distinction between a complete
+resource name and a complete resource class lies in how they are used to
+access resource bindings. The elements of a complete resource name are
+interpreted as names of individual objects; the elements of a complete
+resource class are interpreted as names of object classes. The complete
+resource name and class lists used in a resource database access must
+have the same length.
+</p>
+<p>Like any resource name list, a complete resource name consists of a path
+list and an attribute name. The first path list element is typically a
+symbol (or string) identifying the application as a whole. The second
+element can be a screen root identifier. Subsequent elements can be
+identifiers for each ancestor window of an application window. Thus, a
+path list typically identifies a specific window by tracing a path to it
+through the application window hierarchy. The final element of a
+complete resource name (its attribute name) is typically the name of a
+specific attribute of the window given by the path list (for example,
+<code>'background</code>). An attribute name can refer to a feature
+associated with the window by the application but not by the X server
+(for example, a font identifier).  Similarly, a complete resource class
+typically represents a path to a window in the application window
+hierarchy and a specific window attribute. However, a complete resource
+class contains the class name for each window and for the window
+attribute.
+</p>
+<p>For instance, in the previous example, the <code>mail</code> application
+can attempt to look up the value of the <code>background</code> resource
+for the <code>reply button</code> window by using the following complete
+resource name:
+</p>
+<div class="lisp">
+<pre class="lisp">(mail screen-1 reply background)
+</pre></div>
+
+<p>and the following complete resource class:
+</p>
+<div class="lisp">
+<pre class="lisp">(application root button fill)
+</pre></div>
+
+
+<p>This complete resource name contains a path list identifying the reply
+button window &ndash; <code>(mail screen-1 reply)</code> &ndash; and an attribute
+name for the window background. The corresponding resource class
+contains the class names for the same path list and window attribute.
+</p>
+<hr>
+<div class="header">
+<p>
+Next: <a href="Matching-Resource-Names.html#Matching-Resource-Names" accesskey="n" rel="next">Matching Resource Names</a>, Previous: <a href="Accessing-Resource-Values.html#Accessing-Resource-Values" accesskey="p" rel="prev">Accessing Resource Values</a>, Up: <a href="Accessing-Resource-Values.html#Accessing-Resource-Values" accesskey="u" rel="up">Accessing Resource Values</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

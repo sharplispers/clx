@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Sending Events</title>
+
+<meta name="description" content="Common LISP X Interface: Sending Events">
+<meta name="keywords" content="Common LISP X Interface: Sending Events">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Events-and-Input.html#Events-and-Input" rel="up" title="Events and Input">
+<link href="Pointer-Position.html#Pointer-Position" rel="next" title="Pointer Position">
+<link href="Managing-the-Event-Queue.html#Managing-the-Event-Queue" rel="prev" title="Managing the Event Queue">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Sending-Events"></a>
+<div class="header">
+<p>
+Next: <a href="Pointer-Position.html#Pointer-Position" accesskey="n" rel="next">Pointer Position</a>, Previous: <a href="Managing-the-Event-Queue.html#Managing-the-Event-Queue" accesskey="p" rel="prev">Managing the Event Queue</a>, Up: <a href="Events-and-Input.html#Events-and-Input" accesskey="u" rel="up">Events and Input</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Sending-Events-1"></a>
+<h3 class="section">13.4 Sending Events</h3>
+
+
+<p>A client can send an event to a window. Clients selecting this window
+event will receive it just like any other event sent by the X server.
+</p>
+<dl>
+<dt><a name="index-send_002devent"></a>Function: <strong>send-event</strong> <em>window event-key event-mask &amp;rest event-slots &amp;key :propagate-p :display &amp;allow-other-keys</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>The destination <var>window</var> for the event.
+</p></dd>
+<dt><var>event-key</var></dt>
+<dd><p>An <var>event-key</var> defining the type of event to send.
+</p></dd>
+<dt><var>event-mask</var></dt>
+<dd><p>Specifies the event types that receiving clients must select.
+</p></dd>
+<dt><var>event-slots</var></dt>
+<dd><p>Keyword-value pairs that describe the contents of an event.
+</p></dd>
+<dt><var>:propagate-p</var></dt>
+<dd><p>If true, the event can be propagated to ancestors of the destination window.
+</p></dd>
+<dt><var>:display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+</dl>
+
+<p>Sends an event specified by the <em>event-key</em> and
+<em>event-slots</em> to the given destination <em>window</em>. Any
+active grabs are ignored. The <em>event-slots</em> passed depend on
+the event type. The keyword symbols used for each event type are
+event slot names defined by the <var>declare-event</var> macro and are
+described in <a href="Declaring-Event-Types.html#Declaring-Event-Types">Declaring Event Types</a>.
+</p>
+<p>If the <em>window</em> is <var>:pointer-window</var>, the destination
+<em>window</em> is replaced with the window containing the
+pointer. If the <em>window</em> is <var>:input-focus</var>, the
+destination <em>window</em> is replaced with the descendant of the
+focus window that contains the pointer or (if no such descendant
+exists) the focus window. The <var>:display</var> keyword is only
+required if the <em>window</em> is <var>:pointer-window</var> or
+<var>:input-focus</var>.
+</p>
+<p>The <em>event-key</em> must be one of the core events, or one of the
+events defined by an extension, so the server can send the event
+with the correct byte-order. The contents of the event are
+otherwise unaltered and unchecked by the server, except that the
+<var>send-event-p</var> event slot is set to true.
+</p>
+<p>If the <em>event-mask</em> is <var>nil</var>, the event is sent to the
+client that created the destination <em>window</em> with an
+<em>event-mask</em> of 0; if that client no longer exists, no event
+is sent. Otherwise, the event is sent to every client selecting
+any of the event types specified by <em>event-mask</em> on the
+destination <em>window</em>.
+</p>
+<p>If <var>:propagate-p</var> is true and no clients have selected any of
+the event types in <em>event-mask</em> on the destination
+<em>window</em>, the destination is replaced with the closest
+ancestor of <em>window</em> for which some client has selected a
+type in <em>event-mask</em> and no intervening window has that type
+in its do-not-propagate mask. If no such window exists, or if the
+<em>window</em> is an ancestor of the focus window and
+<var>:input-focus</var> was originally specified as the destination,
+the event is not sent to any clients. Otherwise, the event is
+reported to every client selecting on the final destination any of
+the types specified in <em>event-mask</em>.
+</p>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Pointer-Position.html#Pointer-Position" accesskey="n" rel="next">Pointer Position</a>, Previous: <a href="Managing-the-Event-Queue.html#Managing-the-Event-Queue" accesskey="p" rel="prev">Managing the Event Queue</a>, Up: <a href="Events-and-Input.html#Events-and-Input" accesskey="u" rel="up">Events and Input</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

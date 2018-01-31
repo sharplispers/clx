@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Grabbing a Key</title>
+
+<meta name="description" content="Common LISP X Interface: Grabbing a Key">
+<meta name="keywords" content="Common LISP X Interface: Grabbing a Key">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Events-and-Input.html#Events-and-Input" rel="up" title="Events and Input">
+<link href="Event-Types.html#Event-Types" rel="next" title="Event Types">
+<link href="Grabbing-the-Keyboard.html#Grabbing-the-Keyboard" rel="prev" title="Grabbing the Keyboard">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Grabbing-a-Key"></a>
+<div class="header">
+<p>
+Next: <a href="Event-Types.html#Event-Types" accesskey="n" rel="next">Event Types</a>, Previous: <a href="Grabbing-the-Keyboard.html#Grabbing-the-Keyboard" accesskey="p" rel="prev">Grabbing the Keyboard</a>, Up: <a href="Events-and-Input.html#Events-and-Input" accesskey="u" rel="up">Events and Input</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Grabbing-a-Key-1"></a>
+<h3 class="section">13.10 Grabbing a Key</h3>
+
+
+<p>The following paragraphs describe the functions used for passively
+grabbing and releasing the keyboard.
+</p>
+<dl>
+<dt><a name="index-grab_002dkey"></a>Function: <strong>grab-key</strong> <em>window key &amp;key (:modifiers 0) :owner-p :sync-pointer-p :sync-keyboard-p :time</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+<dt><var>key</var></dt>
+<dd><p>The key (type <var>card8</var>) to be grabbed or <var>:any</var>.
+</p></dd>
+<dt><var>:modifiers</var></dt>
+<dd><p>A <var>modifier-mask</var>.
+</p></dd>
+<dt><var>:owner-p</var></dt>
+<dd><p>If true, all client windows receive keyboard input normally.
+</p></dd>
+<dt><var>:sync-pointer-p</var></dt>
+<dd><p>Indicates whether the pointer is in synchronous or asynchronous mode.
+</p></dd>
+<dt><var>:sync-keyboard-p</var></dt>
+<dd><p>Indicates whether the keyboard is in synchronous or asynchronous mode.
+</p></dd>
+<dt><var>:time</var></dt>
+<dd><p>A <var>timestamp</var>.
+</p></dd>
+</dl>
+
+<p>This request establishes a passive grab on the keyboard. If the
+specified <em>key</em> (which can also be a modifier key) is pressed
+(whether or not any specified modifier keys are down), and either of
+the following is true:
+</p><ul>
+<li> <em>window</em> is an ancestor of (or is) the focus window
+
+</li><li> <em>window</em> is a descendant of the focus window and contains the
+pointer
+
+</li><li> These constraints are not satisfied for any ancestor of
+<em>window</em>, then the following occurs:
+<ul>
+<li> The keyboard is actively grabbed as described in
+<var>grab-keyboard</var>
+
+</li><li> The last-keyboard-grab time is set to the time that the
+<em>key</em> was pressed (as transmitted in the
+<var>:key-press</var> event)
+
+</li><li> The <var>:key-press</var> event is reported
+</li></ul>
+</li></ul>
+<p>The interpretation of the remaining arguments is as for
+<var>grab-keyboard</var>. The active grab is terminated automatically when
+the specified <em>key</em> has been released, independent of the state
+of the modifier keys.
+</p>
+<p>A zero modifier mask is equivalent to issuing the request for all
+possible modifier combinations (including the combination of no
+modifiers). It is not required that all specified modifiers have
+currently assigned keycodes. A <em>key</em> of <var>:any</var> is
+equivalent to issuing the request for all possible
+keycodes. Otherwise, the <em>key</em> must be in the range specified
+by <var>display-min-keycode</var> and <var>display-max-keycode</var> in the
+connection setup.
+</p>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-ungrab_002dkey"></a>Function: <strong>ungrab-key</strong> <em>window key &amp;key (:modifiers 0)</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+<dt><var>key</var></dt>
+<dd><p>The key (type <var>card8</var>) to be released or <var>:any</var>.
+</p></dd>
+<dt><var>:modifiers</var></dt>
+<dd><p>A <var>modifier-mask</var>.
+</p></dd>
+</dl>
+
+<p>Releases the <em>key</em> combination on the specified <em>window</em>
+if it was grabbed by this client. A zero modifier mask of
+<var>:any</var> is equivalent to issuing the request for all possible
+modifier combinations (including the combination of no modifiers). A
+<em>key</em> of <var>:any</var> is equivalent to issuing the request for
+all possible keycodes. <var>ungrab-key</var> has no effect on an active
+grab.
+</p>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Event-Types.html#Event-Types" accesskey="n" rel="next">Event Types</a>, Previous: <a href="Grabbing-the-Keyboard.html#Grabbing-the-Keyboard" accesskey="p" rel="prev">Grabbing the Keyboard</a>, Up: <a href="Events-and-Input.html#Events-and-Input" accesskey="u" rel="up">Events and Input</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

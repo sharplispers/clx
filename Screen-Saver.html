@@ -1,0 +1,219 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Screen Saver</title>
+
+<meta name="description" content="Common LISP X Interface: Screen Saver">
+<meta name="keywords" content="Common LISP X Interface: Screen Saver">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Control-Functions.html#Control-Functions" rel="up" title="Control Functions">
+<link href="Extensions.html#Extensions" rel="next" title="Extensions">
+<link href="Managing-Host-Access.html#Managing-Host-Access" rel="prev" title="Managing Host Access">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Screen-Saver"></a>
+<div class="header">
+<p>
+Previous: <a href="Managing-Host-Access.html#Managing-Host-Access" accesskey="p" rel="prev">Managing Host Access</a>, Up: <a href="Control-Functions.html#Control-Functions" accesskey="u" rel="up">Control Functions</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Screen-Saver-1"></a>
+<h3 class="section">15.7 Screen Saver</h3>
+
+
+<p>To prevent monitor damage, an X server implements a screen saver
+function which blanks screens during periods of unuse. The screen saver
+can be in one of three states:
+</p><ul>
+<li> Disabled &ndash; No screen blanking is done and screen content remains unchanged.
+
+</li><li> Deactivated &ndash; The server is being used. When the server input devices
+are unused for a specific amount of time, the screen saver becomes
+activated.
+
+</li><li> Activated &ndash; The server input devices are unused. The screen saver
+blanks all server screens or displays a server-dependent image. As
+soon as an input event from either the pointer or the keyboard occurs,
+the screen saver is deactivated and its timer is reset.
+</li></ul>
+
+<p>The following paragraphs describe the CLX functions used to:
+</p><ul>
+<li> Return or change screen saver control values.
+
+</li><li> Activate or reset the screen saver
+</li></ul>
+
+<dl>
+<dt><a name="index-activate_002dscreen_002dsaver"></a>Function: <strong>activate-screen-saver</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+</dl>
+
+<p>Activates the screen saver for the <em>display</em> server.
+</p>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-reset_002dscreen_002dsaver"></a>Function: <strong>reset-screen-saver</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+</dl>
+
+<p>Deactivates the screen saver for the <em>display</em> server (if
+necessary) and resets its timer, just as if a pointer or keyboard
+event had occurred.
+</p>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-screen_002dsaver"></a>Function: <strong>screen-saver</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+</dl>
+<p>Returns the current control values for the <em>display</em> server
+screen saver. See <var>set-screen-saver</var>.
+</p><dl compact="compact">
+<dt><var>timeout</var></dt>
+<dt><var>period</var></dt>
+<dd><p>Type <var>int16</var>.
+</p></dd>
+<dt><var>blanking</var></dt>
+<dt><var>exposures</var></dt>
+<dd><p>One of <var>:yes</var> or <var>:no</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-set_002dscreen_002dsaver"></a>Function: <strong>set-screen-saver</strong> <em>display timeout period blanking exposures</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+<dt><var>timeout</var></dt>
+<dd><p>Specifies the delay until timeout takes over.
+</p></dd>
+<dt><var>period</var></dt>
+<dd><p>Specifies the periodic change interval, if used.
+</p></dd>
+<dt><var>blanking</var></dt>
+<dd><p>Specifies whether the blanking option is available.
+</p></dd>
+<dt><var>exposures</var></dt>
+<dd><p>Specifies whether exposures are allowed during blanking.
+</p></dd>
+</dl>
+
+<p>Changes the current control values for the <em>display</em> server
+screen saver. The screen saver is reset. The screen saver is also
+disabled if:
+</p><ul>
+<li> <em>timeout</em> is zero, or
+
+</li><li> Both <em>blanking</em> and <em>exposures</em> are disabled and the
+server cannot regenerate the screen contents without sending
+<var>:exposure</var> events.
+</li></ul>
+
+<p>The <em>timeout</em> specifies the (non-negative) number of seconds of
+input device inactivity that must elapse before the screen saver is
+activated. The <em>timeout</em> can be set to <var>:default</var> to
+restore the server default timeout interval.
+</p>
+<p>If <em>blanking</em> is <var>:yes</var> and the screen hardware supports
+blanking, blanking is enabled; that is, the screen saver will simply
+blank all screens when it is activated. <em>blanking</em> can be set
+to <var>:default</var> to restore the server default state for blanking.
+</p>
+<p>If <em>exposures</em> is <var>:yes</var>, exposures are enabled. If
+exposures are enabled, or if the server is capable of regenerating
+screen contents without sending <var>:exposure</var> events, the screen
+saver will display some server-dependent image when
+activated. Frequently, this image will consist of a repeating
+animation sequence, in which case <em>period</em> specifies the (
+non-negative) number of seconds for each repetition. A <em>period</em>
+of zero is a hint that no repetition should occur.
+</p>
+
+</dd></dl>
+
+
+
+<hr>
+<div class="header">
+<p>
+Previous: <a href="Managing-Host-Access.html#Managing-Host-Access" accesskey="p" rel="prev">Managing Host Access</a>, Up: <a href="Control-Functions.html#Control-Functions" accesskey="u" rel="up">Control Functions</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

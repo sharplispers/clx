@@ -1,0 +1,172 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Menu Input</title>
+
+<meta name="description" content="Common LISP X Interface: Menu Input">
+<meta name="keywords" content="Common LISP X Interface: Menu Input">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="A-Quick-Tour-of-CLX.html#A-Quick-Tour-of-CLX" rel="up" title="A Quick Tour of CLX">
+<link href="The-Main-Program.html#The-Main-Program" rel="next" title="The Main Program">
+<link href="Displaying-the-Menu.html#Displaying-the-Menu" rel="prev" title="Displaying the Menu">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Menu-Input"></a>
+<div class="header">
+<p>
+Next: <a href="The-Main-Program.html#The-Main-Program" accesskey="n" rel="next">The Main Program</a>, Previous: <a href="Displaying-the-Menu.html#Displaying-the-Menu" accesskey="p" rel="prev">Displaying the Menu</a>, Up: <a href="A-Quick-Tour-of-CLX.html#A-Quick-Tour-of-CLX" accesskey="u" rel="up">A Quick Tour of CLX</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Menu-Input-1"></a>
+<h4 class="subsection">2.2.3 Menu Input</h4>
+
+<p>Now that a menu can be displayed, the sample client program must define
+how the menu will process user input. The <code>menu-choose</code>
+function (shown in the following example) has the classic structure of
+an X client program. First, do some initialization (for example, present
+the menu at a given location). Then, enter an input event loop. Read an
+input event, process it, and repeat the loop until a termination event
+is received. The
+<var>event-case</var> (see <a href="Processing-Events.html#event_002dcase">event-case</a>)
+macro continues reading an event from the menu window&rsquo;s display object
+until one of its clauses returns non-<var>nil</var>. These clauses specify
+the action to be taken for each event type and also bind values from the
+event report to local variables, such as the <var>event-window</var>
+receiving the event. Notice that the <var>:force-output-p</var> option is
+enabled, causing
+<var>event-case</var> (see <a href="Processing-Events.html#event_002dcase">event-case</a>)
+to begin by sending any client requests which CLX has not yet output to
+the server. To improve performance, CLX quietly queues up requests and
+periodically sends them off in a batch. However, in an interactive
+feedback loop such as this, it is important to keep the display crisply
+up-to-date.
+</p>
+<div class="lisp">
+<pre class="lisp">(defun menu-choose (menu x y)
+  ;; Display the menu so that first item is at x,y.
+  (menu-present menu x y)
+
+  (let ((items (menu-item-alist menu))
+	(mw    (menu-window menu))
+	selected-item)
+
+    ;; Event processing loop
+    (do () (selected-item)
+      (EVENT-CASE ((DRAWABLE-DISPLAY mw) :force-output-p t)
+		  (:exposure
+		   (count)
+		   ;; Discard all but final :exposure then display the menu
+		   (when (zerop count) (menu-refresh menu))
+		   t)
+
+		  (:button-release
+		   (event-window)
+		   ;;Select an item
+		   (setf selected-item (second (assoc event-window items)))
+		   t)
+
+		  (:enter-notify
+		   (window)
+		   ;;Highlight an item
+		   (menu-highlight-item menu (find window items :key #'first))
+		   t)
+
+		  (:leave-notify
+		   (window kind)
+		   (if (eql mw window)
+		       ;; Quit if pointer moved out of main menu window
+		       (setf selected-item (when (eq kind :ancestor) :none))
+		     ;; Otherwise, unhighlight the item window left
+		     (menu-unhighlight-item menu (find window items :key #'first)))
+		   t)
+
+		  (otherwise
+		   ()
+		   ;;Ignore and discard any other event
+		   t)))
+
+    ;; Erase the menu
+    (UNMAP-WINDOW mw)
+
+    ;; Return selected item string, if any
+    (unless (eq selected-item :none) selected-item)))
+</pre></div>
+
+<p>The event loop in <code>menu-choose</code> demonstrates an idiom used in
+all X programs: the contents of a window are displayed (in this case, by
+calling <code>menu-refresh</code>) only when an
+<var>:exposure</var> (see <a href="Exposure-Events.html#exposure">exposure</a>)
+event is received, signaling that the server has actually made the
+window <em>viewable</em>. The handling of
+<var>:exposure</var> (see <a href="Exposure-Events.html#exposure">exposure</a>)
+in <code>menu-choose</code> also implements a little trick for improving
+efficiency. In general, when a window is exposed after being previously
+obscured (perhaps only partially), the server is free to send several
+<var>:exposure</var> (see <a href="Exposure-Events.html#exposure">exposure</a>)
+events, one for each rectangular tile of the exposed region. For small
+windows like this menu, it is not worth the trouble to redraw the image
+one tile at a time. So the code above just ignores all but the last tile
+exposure and redraws everything in one call to
+<code>menu-refresh</code>.
+</p>
+<hr>
+<div class="header">
+<p>
+Next: <a href="The-Main-Program.html#The-Main-Program" accesskey="n" rel="next">The Main Program</a>, Previous: <a href="Displaying-the-Menu.html#Displaying-the-Menu" accesskey="p" rel="prev">Displaying the Menu</a>, Up: <a href="A-Quick-Tour-of-CLX.html#A-Quick-Tour-of-CLX" accesskey="u" rel="up">A Quick Tour of CLX</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

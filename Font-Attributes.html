@@ -1,0 +1,754 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Font Attributes</title>
+
+<meta name="description" content="Common LISP X Interface: Font Attributes">
+<meta name="keywords" content="Common LISP X Interface: Font Attributes">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Font-and-Characters.html#Font-and-Characters" rel="up" title="Font and Characters">
+<link href="Chracter-Attributes.html#Chracter-Attributes" rel="next" title="Chracter Attributes">
+<link href="Listing-Fonts.html#Listing-Fonts" rel="prev" title="Listing Fonts">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Font-Attributes"></a>
+<div class="header">
+<p>
+Next: <a href="Chracter-Attributes.html#Chracter-Attributes" accesskey="n" rel="next">Chracter Attributes</a>, Previous: <a href="Listing-Fonts.html#Listing-Fonts" accesskey="p" rel="prev">Listing Fonts</a>, Up: <a href="Font-and-Characters.html#Font-and-Characters" accesskey="u" rel="up">Font and Characters</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Font-Attributes-1"></a>
+<h3 class="section">9.3 Font Attributes</h3>
+
+
+<p>The following paragraphs describe the CLX functions used to access font
+attributes.
+</p>
+<dl>
+<dt><a name="index-font_002dall_002dchars_002dexist_002dp"></a>Function: <strong>font-all-chars-exist-p</strong> <em>font</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>exists-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p></dd>
+</dl>
+
+
+<p>Returns true if glyphs exist for all indexes in the range returned
+by <var>font-min-char</var> and <var>font-max-char</var>. Returns
+<var>nil</var> if an index in the range corresponds to empty glyph.
+</p>
+<dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <var>font</var> object.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-font_002dascent"></a>Function: <strong>font-ascent</strong> <em>font</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>ascent</var></dt>
+<dd><p>Type <var>int16</var>.
+</p></dd>
+</dl>
+
+
+<p>Returns the vertical <em>ascent</em> of the <em>font</em> used for
+interline spacing. The <em>ascent</em> defines the nominal distance
+in pixels from the baseline to the bottom of the previous line of
+text.  Some font glyphs may actually extend beyond the font
+<em>ascent</em>.
+</p><dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <var>font</var> object.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-font_002ddefault_002dchar"></a>Function: <strong>font-default-char</strong> <em>font</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>index</var></dt>
+<dd><p>Type <var>card16</var>.
+</p></dd>
+</dl>
+
+
+<p>Returns the <em>index</em> of the glyph drawn when an invalid or
+empty glyph index is specified.  If the default index specifies an
+invalid or empty glyph, an invalid or empty index has no effect.
+</p><dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <var>font</var> object.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-font_002ddescent"></a>Function: <strong>font-descent</strong> <em>font</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>descent</var></dt>
+<dd><p>Type <var>int16</var>.
+</p></dd>
+</dl>
+
+
+<p>Returns the vertical <em>descent</em> of the <em>font</em> used for
+interline spacing. The <em>descent</em> defines the nominal distance
+in pixels from the baseline to the top of the next line of
+text. Some font glyphs may actually extend beyond the font
+<em>descent</em>.
+</p><dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <var>font</var> object.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-font_002ddirection"></a>Function: <strong>font-direction</strong> <em>font</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>direction</var></dt>
+<dd><p>Type <var>draw-direction</var>.
+</p></dd>
+</dl>
+
+
+<p>Returns the nominal drawing <em>direction</em> for the
+<em>font</em>. The font drawing direction is only a hint that
+indicates whether the <em>char-width</em> of most font glyphs is
+positive (<var>:left-to-right</var> direction) or negative
+(<var>:right-to-left</var> direction). Note that X does not provide
+any direct support for vertical text.
+</p><dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <var>font</var> object.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-font_002ddisplay"></a>Function: <strong>font-display</strong> <em>font</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <var>font</var> object.
+</p></dd>
+</dl>
+
+<p>Returns the <var>display</var> object associated with the specified
+<em>font</em>.
+</p>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>Type <var>display</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-font_002dequal"></a>Function: <strong>font-equal</strong> <em>font-1 font-2</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>font-1</var></dt>
+<dt><var>font-2</var></dt>
+<dd><p>The <var>font</var> objects.
+</p></dd>
+</dl>
+
+<p>Returns true if the two arguments refer to the same server
+resource and <var>nil</var> if they do not.
+</p>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-font_002did"></a>Function: <strong>font-id</strong> <em>font</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <var>font</var> object.
+</p></dd>
+</dl>
+
+<p>Returns the unique resource ID assigned to the specified <em>font</em>.
+</p>
+<dl compact="compact">
+<dt><var>id</var></dt>
+<dd><p>Type <var>resource-id</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-font_002dmax_002dbyte1"></a>Function: <strong>font-max-byte1</strong> <em>font</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <var>font</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns zero if the <em>font</em> uses linear index
+encoding. Otherwise, if the <em>font</em> uses matrix index
+encoding, a value between 1 and 255 is returned that specifies the
+maximum value for the most significant byte of font indexes.
+</p><dl compact="compact">
+<dt><var>max-byte1</var></dt>
+<dd><p>Type <var>card8</var><em>.</em>
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-font_002dmax_002dbyte2"></a>Function: <strong>font-max-byte2</strong> <em>font</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <var>font</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns zero if the <em>font</em> uses linear index
+encoding. Otherwise, if the <em>font</em> uses matrix index
+encoding, a value between 1 and 255 is returned that specifies the
+maximum value for the least significant byte of font indexes.
+</p><dl compact="compact">
+<dt><var>max-byte2</var></dt>
+<dd><p>Type <var>card8</var><em>.</em>
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-font_002dmax_002dchar"></a>Function: <strong>font-max-char</strong> <em>font</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <var>font</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns the maximum valid value used for linear encoded
+indexes. This function is not meaningful for fonts that use matrix
+index encoding.
+</p><dl compact="compact">
+<dt><var>index</var></dt>
+<dd><p>Type <var>card16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-font_002dmin_002dbyte1"></a>Function: <strong>font-min-byte1</strong> <em>font</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <var>font</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns zero if the <em>font</em> uses linear index
+encoding. Otherwise, if the <em>font</em> uses matrix index
+encoding, a value between 1 and 255 is returned that specifies the
+minimum value for the most significant byte of font indexes.
+</p><dl compact="compact">
+<dt><var>min-byte1</var></dt>
+<dd><p>Type <var>card8</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-font_002dmin_002dbyte2"></a>Function: <strong>font-min-byte2</strong> <em>font</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <var>font</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns zero if the <em>font</em> uses linear index
+encoding. Otherwise, if the <em>font</em> uses matrix index
+encoding, a value between 1 and 255 is returned that specifies the
+minimum value for the least significant byte of font indexes.
+</p><dl compact="compact">
+<dt><var>min-byte2</var></dt>
+<dd><p>Type <var>card8</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-font_002dmin_002dchar"></a>Function: <strong>font-min-char</strong> <em>font</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <var>font</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns the minimum valid value used for linear encoded
+indexes. This function is not meaningful for fonts that use matrix
+index encoding.
+</p><dl compact="compact">
+<dt><var>index</var></dt>
+<dd><p>Type <var>card16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-font_002dname"></a>Function: <strong>font-name</strong> <em>font</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <var>font</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns the name of the <em>font</em>, or <var>nil</var> if <em>font</em>
+is a pseudo-font.
+</p><dl compact="compact">
+<dt><var>name</var></dt>
+<dd><p>Type <var>string</var> or <var>null</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-font_002dp"></a>Function: <strong>font-p</strong> <em>font</em></dt>
+<dd>
+<p>Returns true if the argument is a <var>font</var> object and
+<var>nil</var> otherwise.
+</p>
+<dl compact="compact">
+<dt><var>font-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-font_002dplist"></a>Function: <strong>font-plist</strong> <em>font</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <var>font</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns and (with <code>setf</code>) sets the property list for the
+specified <em>font</em>. This function provides a hook where
+extensions can add data.
+</p><dl compact="compact">
+<dt><var>plist</var></dt>
+<dd><p>Type <var>list</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-font_002dproperties"></a>Function: <strong>font-properties</strong> <em>font</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <var>font</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns the list of font <em>properties</em> recorded by the X
+server. The returned list is a property list of keyword/value
+pairs. The set of possible font property keywords is
+implementation-dependent.
+</p><dl compact="compact">
+<dt><var>properties</var></dt>
+<dd><p>Type <var>list</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-font_002dproperty"></a>Function: <strong>font-property</strong> <em>font name</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <var>font</var> object.
+</p></dd>
+<dt><var>name</var></dt>
+<dd><p>A font property keyword.
+</p></dd>
+</dl>
+
+
+<p>Returns the value of the font <em>property</em> specified by the
+<em>name</em> keyword. The property value, if it exists, is returned
+as an uninterpreted 32-bit integer.
+</p><dl compact="compact">
+<dt><var>property</var></dt>
+<dd><p>Type <var>int32</var> or <var>null</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-max_002dchar_002dascent"></a>Function: <strong>max-char-ascent</strong> <em>font</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <var>font</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns the maximum <var>char-ascent</var> value for all characters in
+<em>font</em>.
+</p><dl compact="compact">
+<dt><var>ascent</var></dt>
+<dd><p>Type <var>int16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-max_002dchar_002dattributes"></a>Function: <strong>max-char-attributes</strong> <em>font</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <var>font</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns the maximum <var>char-attributes</var> value for all
+characters in <em>font</em>.
+</p><dl compact="compact">
+<dt><var>attributes</var></dt>
+<dd><p>Type <var>int16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-max_002dchar_002ddescent"></a>Function: <strong>max-char-descent</strong> <em>font</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <var>font</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns the maximum <var>char-descent</var> value for all characters
+in <em>font</em>.
+</p><dl compact="compact">
+<dt><var>descent</var></dt>
+<dd><p>Type <var>int16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-max_002dchar_002dleft_002dbearing"></a>Function: <strong>max-char-left-bearing</strong> <em>font</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <var>font</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns the maximum <var>char-left-bearing</var> value for all characters in <em>font</em>.
+</p><dl compact="compact">
+<dt><var>left-bearing</var></dt>
+<dd><p>Type <var>int16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-max_002dchar_002dright_002dbearing"></a>Function: <strong>max-char-right-bearing</strong> <em>font</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <var>font</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns the maximum <var>char-right-bearing</var> value for all
+characters in <em>font</em>.
+</p><dl compact="compact">
+<dt><var>right-bearing</var></dt>
+<dd><p>Type <var>int16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-max_002dchar_002dwidth"></a>Function: <strong>max-char-width</strong> <em>font</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <var>font</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns the maximum <var>char-width</var> value for all characters in
+<em>font</em>.
+</p><dl compact="compact">
+<dt><var>width</var></dt>
+<dd><p>Type <var>int16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-min_002dchar_002dascent"></a>Function: <strong>min-char-ascent</strong> <em>font</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <var>font</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns the minimum <var>char-ascent</var> for all characters in
+<em>font</em>.
+</p><dl compact="compact">
+<dt><var>ascent</var></dt>
+<dd><p>Type <var>int16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-min_002dchar_002dattributes"></a>Function: <strong>min-char-attributes</strong> <em>font</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <var>font</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns the minimum <var>char-attributes</var> for all characters in <em>font</em>.
+</p><dl compact="compact">
+<dt><var>attributes</var></dt>
+<dd><p>Type <var>int16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-min_002dchar_002ddescent"></a>Function: <strong>min-char-descent</strong> <em>font</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <var>font</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns the minimum <var>char-descent</var> for all characters in <em>font</em>.
+</p><dl compact="compact">
+<dt><var>descent</var></dt>
+<dd><p>Type <var>int16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-min_002dchar_002dleft_002dbearing"></a>Function: <strong>min-char-left-bearing</strong> <em>font</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <var>font</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns the minimum <var>char-left-bearing</var> for all characters in
+<em>font</em>.
+</p><dl compact="compact">
+<dt><var>left-bearing</var></dt>
+<dd><p>Type <var>int16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-min_002dchar_002dright_002dbearing"></a>Function: <strong>min-char-right-bearing</strong> <em>font</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <var>font</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns the minimum <var>char-right-bearing</var> for all characters
+in <em>font</em>.
+</p><dl compact="compact">
+<dt><var>right-bearing</var></dt>
+<dd><p>Type <var>int16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-min_002dchar_002dwidth"></a>Function: <strong>min-char-width</strong> <em>font</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <var>font</var> object.
+</p></dd>
+</dl>
+
+
+<p>Returns the minimum <var>char-width</var> for all characters in
+<em>font</em>.
+</p><dl compact="compact">
+<dt><var>width</var></dt>
+<dd><p>Type <var>int16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Chracter-Attributes.html#Chracter-Attributes" accesskey="n" rel="next">Chracter Attributes</a>, Previous: <a href="Listing-Fonts.html#Listing-Fonts" accesskey="p" rel="prev">Listing Fonts</a>, Up: <a href="Font-and-Characters.html#Font-and-Characters" accesskey="u" rel="up">Font and Characters</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

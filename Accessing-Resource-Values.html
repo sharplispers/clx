@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Accessing Resource Values</title>
+
+<meta name="description" content="Common LISP X Interface: Accessing Resource Values">
+<meta name="keywords" content="Common LISP X Interface: Accessing Resource Values">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Resources.html#Resources" rel="up" title="Resources">
+<link href="Complete-Names-and-Classes.html#Complete-Names-and-Classes" rel="next" title="Complete Names and Classes">
+<link href="Basic-Resource-Database-Functions.html#Basic-Resource-Database-Functions" rel="prev" title="Basic Resource Database Functions">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Accessing-Resource-Values"></a>
+<div class="header">
+<p>
+Next: <a href="Resource-Database-Files.html#Resource-Database-Files" accesskey="n" rel="next">Resource Database Files</a>, Previous: <a href="Basic-Resource-Database-Functions.html#Basic-Resource-Database-Functions" accesskey="p" rel="prev">Basic Resource Database Functions</a>, Up: <a href="Resources.html#Resources" accesskey="u" rel="up">Resources</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Accessing-Resource-Values-1"></a>
+<h3 class="section">14.3 Accessing Resource Values</h3>
+
+
+<p>The power and flexibility of resource management is the result of the
+way resource values in a resource database are accessed. A resource
+binding binding stored in the database generally contains only a partial
+resource name consisting of a mixture of name and class identifiers and
+wildcard elements (that is, *). To look up a resource value, an
+application program starts with two resource name lists of the same
+length containing no wildcard elements &ndash; a <em>complete resource
+name</em> and a <em>complete</em> <em>resource class</em>. The lookup
+algorithm returns the value for the resource binding whose resource name
+is the closest match to the complete name and class given. The
+definition of <em>closest match</em> takes into account the top-down,
+parent-child hierarchy of resource names and also the distinction
+between individual names and class names.
+</p>
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top">&bull; <a href="Complete-Names-and-Classes.html#Complete-Names-and-Classes" accesskey="1">Complete Names and Classes</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Matching-Resource-Names.html#Matching-Resource-Names" accesskey="2">Matching Resource Names</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Resource-Access-Functions.html#Resource-Access-Functions" accesskey="3">Resource Access Functions</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+</table>
+
+
+
+
+</body>
+</html>

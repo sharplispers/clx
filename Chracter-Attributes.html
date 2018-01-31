@@ -1,0 +1,247 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Chracter Attributes</title>
+
+<meta name="description" content="Common LISP X Interface: Chracter Attributes">
+<meta name="keywords" content="Common LISP X Interface: Chracter Attributes">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Font-and-Characters.html#Font-and-Characters" rel="up" title="Font and Characters">
+<link href="Querying-Text-Size.html#Querying-Text-Size" rel="next" title="Querying Text Size">
+<link href="Font-Attributes.html#Font-Attributes" rel="prev" title="Font Attributes">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Chracter-Attributes"></a>
+<div class="header">
+<p>
+Next: <a href="Querying-Text-Size.html#Querying-Text-Size" accesskey="n" rel="next">Querying Text Size</a>, Previous: <a href="Font-Attributes.html#Font-Attributes" accesskey="p" rel="prev">Font Attributes</a>, Up: <a href="Font-and-Characters.html#Font-and-Characters" accesskey="u" rel="up">Font and Characters</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Chracter-Attributes-1"></a>
+<h3 class="section">9.4 Chracter Attributes</h3>
+
+
+<p>The following paragraphs describe the CLX functions used to access the
+attributes of individual font glyphs.
+</p>
+<dl>
+<dt><a name="index-char_002dascent"></a>Function: <strong>char-ascent</strong> <em>font index</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <var>font</var> object.
+</p></dd>
+<dt><var>index</var></dt>
+<dd><p>An <var>int16</var> font index.
+</p></dd>
+</dl>
+
+
+<p>Returns the vertical distance in pixels from the baseline to the top
+of the given font glyph. Returns <var>nil</var> if the index is invalid
+or specifies an empty glyph, or if the <em>font</em> is a pseudo-font.
+</p><dl compact="compact">
+<dt><var>ascent</var></dt>
+<dd><p>Type <var>int16</var> or <var>null</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-char_002dattributes"></a>Function: <strong>char-attributes</strong> <em>font index</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <var>font</var> object.
+</p></dd>
+<dt><var>index</var></dt>
+<dd><p>An <var>int16</var> font index.
+</p></dd>
+</dl>
+
+
+<p>Returns font-specific <em>attributes</em> of the given glyph. The
+interpretation of such attributes is server-dependent. Returns
+<var>nil</var> if the <em>index</em> is invalid or specifies an empty
+glyph, or if the <em>font</em> is a pseudo-font.
+</p><dl compact="compact">
+<dt><var>attributes</var></dt>
+<dd><p>Type <var>int16</var> or <var>null</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-char_002ddescent"></a>Function: <strong>char-descent</strong> <em>font index</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <var>font</var> object.
+</p></dd>
+<dt><var>index</var></dt>
+<dd><p>An <var>int16</var> font index.
+</p></dd>
+</dl>
+
+
+<p>Returns the vertical distance in pixels from the baseline to the
+bottom of the given font glyph. Returns <var>nil</var> if the
+<em>index</em> is invalid or specifies an empty glyph, or if the
+<em>font</em> is a pseudo-font.
+</p><dl compact="compact">
+<dt><var>descent</var></dt>
+<dd><p>Type <var>int16</var> or <var>null</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-char_002dleft_002dbearing"></a>Function: <strong>char-left-bearing</strong> <em>font index</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <var>font</var> object.
+</p></dd>
+<dt><var>index</var></dt>
+<dd><p>An <var>int16</var> font index.
+</p></dd>
+</dl>
+
+
+<p>Returns the left side bearing of the given font glyph. If
+<var>draw-glyph</var> is called with horizontal position <em>x</em>,
+the leftmost pixel of the glyph is drawn at the position
+(+ <em>x left-bearing</em>). Returns <var>nil</var> if the
+<em>index</em> is invalid or specifies an empty glyph, or if the
+<em>font</em> is a pseudo-font.
+</p><dl compact="compact">
+<dt><var>left-bearing</var></dt>
+<dd><p>Type <var>int16</var> or <var>null</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-char_002dright_002dbearing"></a>Function: <strong>char-right-bearing</strong> <em>font index</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <em>font</em> object.
+</p></dd>
+<dt><var>index</var></dt>
+<dd><p>An <var>int16</var> font index.
+</p></dd>
+</dl>
+
+
+<p>Returns the right side bearing of the given font glyph. If
+n<var>draw-glyph</var> is called with horizontal position <em>x</em>,
+the rightmost pixel of the glyph is drawn at the position (+
+<em>x rightbearing</em>). Returns <var>nil</var> if the
+<em>index</em> is invalid or specifies an empty glyph, or if the
+<em>font</em> is a pseudo-font.
+</p>
+<dl compact="compact">
+<dt><var>right-bearing</var></dt>
+<dd><p>Type <var>int16</var> or <var>null</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-char_002dwidth"></a>Function: <strong>char-width</strong> <em>font index</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>font</var></dt>
+<dd><p>A <var>font</var> object.
+</p></dd>
+<dt><var>index</var></dt>
+<dd><p>An <var>int16</var> font index.
+</p></dd>
+</dl>
+
+<p>Returns the <em>width</em> of the given font glyph. The <em>width</em>
+is defined to be equal to (- <em>rightbearing
+left-bearing</em>). Returns <var>nil</var> if the <em>index</em> is invalid
+or specifies an empty glyph, or if the <em>font</em> is a pseudo-font.
+</p>
+<dl compact="compact">
+<dt><var>width</var></dt>
+<dd><p>Type <var>int16</var> or <var>null</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Querying-Text-Size.html#Querying-Text-Size" accesskey="n" rel="next">Querying Text Size</a>, Previous: <a href="Font-Attributes.html#Font-Attributes" accesskey="p" rel="prev">Font Attributes</a>, Up: <a href="Font-and-Characters.html#Font-and-Characters" accesskey="u" rel="up">Font and Characters</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

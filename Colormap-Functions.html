@@ -1,0 +1,149 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Colormap Functions</title>
+
+<meta name="description" content="Common LISP X Interface: Colormap Functions">
+<meta name="keywords" content="Common LISP X Interface: Colormap Functions">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Colors.html#Colors" rel="up" title="Colors">
+<link href="Creating-Colormaps.html#Creating-Colormaps" rel="next" title="Creating Colormaps">
+<link href="Color-Functions.html#Color-Functions" rel="prev" title="Color Functions">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Colormap-Functions"></a>
+<div class="header">
+<p>
+Previous: <a href="Color-Functions.html#Color-Functions" accesskey="p" rel="prev">Color Functions</a>, Up: <a href="Colors.html#Colors" accesskey="u" rel="up">Colors</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Colormap-Functions-1"></a>
+<h3 class="section">10.3 Colormap Functions</h3>
+
+
+<p>A colormap is represented in CLX by a <var>colormap</var> object. A CLX
+program can create and manipulate several <var>colormap</var>
+objects. However, the colors contained in a <var>colormap</var> are made
+visible only when the <var>colormap</var> is <em>installed</em>. Each window
+is associated with a <var>colormap</var> that is used to translate window
+pixels into colors (see <var>window-colormap</var>). However, a window will
+appear in its true colors only if its associated <var>colormap</var> is
+installed.
+</p>
+<p>The total number of colormaps that can be installed depends on the
+screen hardware.  Most hardware devices allow exactly one
+<var>colormap</var> to be installed at any time. That is,
+<var>screen-min-installed-maps</var> and <var>screen-max-installed-maps</var>
+are both equal to 1.  Installing a new <var>colormap</var> can cause a
+previously installed <var>colormap</var> to be uninstalled. It is important
+to remember that the set of installed <var>colormaps</var> is a hardware
+resource shared cooperatively among all client programs connected to an
+X server.
+</p>
+<p>A CLX program can control the contents of <var>colormaps</var> by allocating
+color cells in one of two ways: read-only or read-write. Allocating a
+read-only color cell establishes a color value for a specified pixel
+value that cannot be changed. However, read-only color cells can be
+shared among all client programs. Read-only allocation is the best
+strategy for making use of limited <var>colormap</var> hardware in a
+multi-client environment.
+</p>
+<p>Alternatively, allocating a read-write color cell allows a client the
+exclusive right to set the color value stored in the cell. A cell
+allocated read-write by one client cannot be allocated by another
+client, not even as a read-only cell. Note that read-write allocation is
+not allowed for screens whose visual type belongs to one of the
+<var>:static-gray</var>, <var>:static-color</var>, or <var>:true-color</var>
+classes. For screens of these classes, <var>colormap</var> cells cannot be
+modified.
+</p>
+<p>Two entries of the default colormap, typically containing the colors
+black and white, are automatically allocated read-only. The pixel values
+for these entries can be returned by the functions
+<var>screen-black-pixel</var> and <var>screen-white-pixel</var>. Applications
+that need only two colors and also need to operate on both monochrome
+and color screens should always use these pixel values. The names
+<em>black</em> and <em>white</em> are intended to reflect relative intensity
+levels and need not reflect the actual colors displayed for these pixel
+values.
+</p>
+<p>Each screen has a default <var>colormap</var>, which is initially
+installed. By conventions, clients should allocate only read-only cells
+from the default <var>colormap</var>.
+</p>
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top">&bull; <a href="Creating-Colormaps.html#Creating-Colormaps" accesskey="1">Creating Colormaps</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Installing-Colormaps.html#Installing-Colormaps" accesskey="2">Installing Colormaps</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Allocating-Colors.html#Allocating-Colors" accesskey="3">Allocating Colors</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Finding-Colors.html#Finding-Colors" accesskey="4">Finding Colors</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Changing-Colors.html#Changing-Colors" accesskey="5">Changing Colors</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Colormap-Attributes.html#Colormap-Attributes" accesskey="6">Colormap Attributes</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+</table>
+
+<hr>
+<div class="header">
+<p>
+Previous: <a href="Color-Functions.html#Color-Functions" accesskey="p" rel="prev">Color Functions</a>, Up: <a href="Colors.html#Colors" accesskey="u" rel="up">Colors</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

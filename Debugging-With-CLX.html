@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Debugging With CLX</title>
+
+<meta name="description" content="Common LISP X Interface: Debugging With CLX">
+<meta name="keywords" content="Common LISP X Interface: Debugging With CLX">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="A-Quick-Tour-of-CLX.html#A-Quick-Tour-of-CLX" rel="up" title="A Quick Tour of CLX">
+<link href="Naming-and-Argument-Conventions.html#Naming-and-Argument-Conventions" rel="next" title="Naming and Argument Conventions">
+<link href="The-Main-Program.html#The-Main-Program" rel="prev" title="The Main Program">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Debugging-With-CLX"></a>
+<div class="header">
+<p>
+Previous: <a href="The-Main-Program.html#The-Main-Program" accesskey="p" rel="prev">The Main Program</a>, Up: <a href="A-Quick-Tour-of-CLX.html#A-Quick-Tour-of-CLX" accesskey="u" rel="up">A Quick Tour of CLX</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Debugging-With-CLX-1"></a>
+<h4 class="subsection">2.2.5 Debugging With CLX</h4>
+
+<p>Typically, most CLX programs do not need to control the buffering of
+output requests directly. However, CLX programmers need to be aware of
+the asynchronous nature of client-server communication. It may be
+convenient to control the CLX output buffer more directly, especially
+during debugging.
+</p>
+<p>A client that wants a request to execute immediately instead of
+asynchronously can follow it with a call to
+<var>display-force-output</var> (see <a href="Managing-the-Output-Buffer.html#display_002dforce_002doutput">display-force-output</a>).
+This function <em>blocks</em> (does not return) until all previously
+buffered output requests have been sent. Otherwise, the output buffer is
+always flushed by a call to any function which returns a value from the
+server or which waits for input (for example,
+<var>get-property</var> (see <a href="Properties.html#get_002dproperty">get-property</a>).
+Certain output requests can cause input events to be sent. For example,
+<var>map-window</var> (see <a href="Mapping-Windows.html#map_002dwindow">map-window</a>)
+can cause
+<var>:exposure</var> (see <a href="Exposure-Events.html#exposure">exposure</a>)
+events to be sent. Synchronizing output with the resulting input can be
+done with the
+<var>display-finish-output</var> (see <a href="Managing-the-Output-Buffer.html#display_002dfinish_002doutput">display-finish-output</a>)
+function. This function blocks until all previously buffered output has
+been sent and all resulting input events have been received.
+</p>
+<p>Functions that return information from the server block until an
+explicit reply is received or an error occurs. If a nonblocking call
+results in an error, the error is generally not reported until later.
+All errors (synchronous and asynchronous) are processed by calling an
+error handler defined for the display. If the handler is a sequence it
+is expected to contain handler functions specific to each error. The
+error code is used to index the sequence, fetching the appropriate
+handler. Any results returned by the handler are ignored since it is
+assumed that the handler either takes care of the error completely, or
+else signals.
+</p>
+<hr>
+<div class="header">
+<p>
+Previous: <a href="The-Main-Program.html#The-Main-Program" accesskey="p" rel="prev">The Main Program</a>, Up: <a href="A-Quick-Tour-of-CLX.html#A-Quick-Tour-of-CLX" accesskey="u" rel="up">A Quick Tour of CLX</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

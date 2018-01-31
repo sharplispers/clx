@@ -1,0 +1,380 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Pointer Position</title>
+
+<meta name="description" content="Common LISP X Interface: Pointer Position">
+<meta name="keywords" content="Common LISP X Interface: Pointer Position">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Events-and-Input.html#Events-and-Input" rel="up" title="Events and Input">
+<link href="Managing-Input-Focus.html#Managing-Input-Focus" rel="next" title="Managing Input Focus">
+<link href="Sending-Events.html#Sending-Events" rel="prev" title="Sending Events">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Pointer-Position"></a>
+<div class="header">
+<p>
+Next: <a href="Managing-Input-Focus.html#Managing-Input-Focus" accesskey="n" rel="next">Managing Input Focus</a>, Previous: <a href="Sending-Events.html#Sending-Events" accesskey="p" rel="prev">Sending Events</a>, Up: <a href="Events-and-Input.html#Events-and-Input" accesskey="u" rel="up">Events and Input</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Pointer-Position-1"></a>
+<h3 class="section">13.5 Pointer Position</h3>
+
+
+<p>The CLX functions affecting pointer position are discussed in the
+following paragraphs.
+</p>
+<dl>
+<dt><a name="index-query_002dpointer"></a>Function: <strong>query-pointer</strong> <em>window</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var> specifying the coordinate system for the returned position.
+</p></dd>
+</dl>
+
+
+<p>Returns the current pointer coordinates relative to the given
+<em>window</em>. If <var>query-pointer</var> returns <var>nil</var> for
+<em>same-screen-p</em>, the pointer is not on the same screen as the
+<em>window</em>. In this case, <var>query-pointer</var> returns a value
+of <var>nil</var> for <em>child</em> and a value of zero for <em>x</em>
+and <em>y</em>. If <var>query-pointer</var> returns true for
+<em>same-screen-p</em>, the returned <em>x</em> and <em>y</em> are
+relative to the origin of window. The <em>child</em> is the child of
+the window containing the pointer, if any. The <em>state-mask</em>
+returned gives the current state of the modifier keys and pointer
+buttons. The returned <em>root</em> is the root window currently
+containing the pointer. The returned <em>root-x</em> and
+<em>root-y</em> specify the pointer coordinates relative to
+<em>root</em>.
+</p><dl compact="compact">
+<dt><var>x</var></dt>
+<dd><p>Type <var>int16</var>.
+</p></dd>
+<dt><var>y</var></dt>
+<dd><p>Type <var>int16</var>.
+</p></dd>
+<dt><var>same-screen-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p></dd>
+<dt><var>child</var></dt>
+<dd><p>Type <var>window</var> or <var>null</var>.
+</p></dd>
+<dt><var>state-mask</var></dt>
+<dd><p>Type <var>card16</var>.
+</p></dd>
+<dt><var>root-x</var></dt>
+<dd><p>Type <var>int16</var>.
+</p></dd>
+<dt><var>root-y</var></dt>
+<dd><p>Type <var>int16</var>.
+</p></dd>
+<dt><var>root</var></dt>
+<dd><p>Type <var>window</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-global_002dpointer_002dposition"></a>Function: <strong>global-pointer-position</strong> <em>display</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+</dl>
+
+
+<p>Returns the <em>root</em> window currently containing the <em>display</em> pointer and the current
+position of the pointer relative to the <em>root</em>.
+</p><dl compact="compact">
+<dt><var>root-x</var></dt>
+<dd><p>Type <var>int16</var>.
+</p></dd>
+<dt><var>root-y</var></dt>
+<dd><p>Type <var>int16</var>.
+</p></dd>
+<dt><var>root</var></dt>
+<dd><p>Type <var>window</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-pointer_002dposition"></a>Function: <strong>pointer-position</strong> <em>window</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var> specifying the coordinate system for the returned position.
+</p></dd>
+</dl>
+
+
+<p>Returns the current pointer coordinates relative to the given
+<em>window</em>. If <var>pointer-position</var> returns <var>nil</var> for
+<em>same-screen-p</em>, the pointer is not on the same screen as the
+<em>window</em>.  In this case, <var>pointer-position</var> returns a
+value of <var>nil</var> for <em>child</em> and a value of zero for
+<em>x</em> and <em>y</em>. If <var>pointer-position</var> returns true for
+<em>same-screen-p</em>, the returned <em>x</em> and <em>y</em> are
+relative to the origin of <em>window</em>.
+</p><dl compact="compact">
+<dt><var>x</var></dt>
+<dd><p>Type <var>int16</var>.
+</p></dd>
+<dt><var>y</var></dt>
+<dd><p>Type <var>int16</var>.
+</p></dd>
+<dt><var>same-screen-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p></dd>
+<dt><var>child</var></dt>
+<dd><p>Type <var>window</var> or <var>null</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-motion_002devents"></a>Function: <strong>motion-events</strong> <em>window &amp;key :start :stop (:result-type 'list)</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>The <var>window</var> containing the returned motion events.
+</p></dd>
+<dt><var>:start</var></dt>
+<dt><var>:stop</var></dt>
+<dd><p><var>timestamp</var> values for the time interval for returned motion events.
+</p></dd>
+<dt><var>:result-type</var></dt>
+<dd><p>The form of the returned motion events.
+</p></dd>
+</dl>
+
+
+<p>Many X server implementations maintain a more precise history of
+pointer motion between event notifications. The pointer position
+at each pointer hardware interrupt can be stored into a buffer for
+later retrieval.This is called the <em>motion history buffer</em>. A
+paint program, for example, may want to have a precise history of
+where the pointer traveled, even though for most other
+applications this amount of detail is grossly excessive.
+</p>
+<p>The <var>motion-events</var> function returns all events in the motion
+history buffer that fall between the specified <var>:start</var> and
+<var>:stop</var> timestamps (inclusive) and have coordinates that lie
+within the specified <em>window</em> (including borders) at its
+present placement. If the <var>:start</var> time is later than the
+<var>:stop</var> time or if the <var>:start</var> time is in the future,
+no events are returned.
+</p><dl compact="compact">
+<dt><var>motion-events</var></dt>
+<dd><p>Type <code>(repeat-seq (int16 x) (int16 y) (timestamp time))</code>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-warp_002dpointer"></a>Function: <strong>warp-pointer</strong> <em>destination destination-x destination-y</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>destination</var></dt>
+<dd><p>The <var>window</var> into which the pointer is moved.
+</p></dd>
+<dt><var>destination-x</var></dt>
+<dt><var>destination-y</var></dt>
+<dd><p>The new position of the pointer relative to the destination.
+</p></dd>
+</dl>
+
+<p>Moves the pointer to the given coordinates relative to the
+<em>destination</em> window.  <var>warp-pointer</var> should be rarely be
+used since the user should normally be in control of the pointer
+position. <var>warp-pointer</var> generates events just as if the user
+had instantaneously moved the pointer from one position to another.
+</p>
+<p><var>warp-pointer</var> cannot move the pointer outside the confine-to
+window of an active pointer grab; an attempt to do so only moves the
+pointer as far as the closest edge of the confine-to window.
+</p>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-warp_002dpointer_002drelative"></a>Function: <strong>warp-pointer-relative</strong> <em>display x-offset y-offset</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+<dt><var>x-offset</var></dt>
+<dt><var>y-offset</var></dt>
+<dd><p>The offsets used to adjust the pointer position.
+</p></dd>
+</dl>
+
+<p>Moves the pointer by the given offsets. This function should rarely
+be used since the user should normally be in control of the pointer
+position. <var>warp-pointer-relative</var> generates events just as if
+the user had instantaneously moved the pointer from one position to
+another.
+</p>
+<p><var>warp-pointer-relative</var> cannot move the pointer outside the
+confine-to window of an active pointer grab; an attempt to do so
+only moves the pointer as far as the closest edge of the confine-to
+window.
+</p>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-warp_002dpointer_002dif_002dinside"></a>Function: <strong>warp-pointer-if-inside</strong> <em>destination destination-x destination-y source source-x source-y &amp;optional (source-width 0) (source-height 0)</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>destination</var></dt>
+<dd><p>The <var>window</var> into which the pointer is moved.
+</p></dd>
+<dt><var>destination-x</var></dt>
+<dt><var>destination-y</var></dt>
+<dd><p>The new position of the pointer relative to the <em>destination</em>.
+</p></dd>
+<dt><var>source</var></dt>
+<dd><p>The <var>window</var> that must currently contain the pointer.
+</p></dd>
+<dt><var>source-x</var></dt>
+<dt><var>source-y</var></dt>
+<dt><var>source-width</var></dt>
+<dt><var>source-height</var></dt>
+<dd><p>The source rectangle that must currently contain the pointer.
+</p></dd>
+</dl>
+
+<p>Moves the pointer to the given position relative to the
+<em>destination</em> window. However, the move can only take place if
+the pointer is currently contained in a visible portion of the
+specified rectangle of the <em>source</em> window. If
+<em>source-height</em> is zero, it is replaced with the current height
+of <em>source</em> window minus <em>source-y</em>. If
+<em>source-width</em> is zero, it is replaced with the current width
+of <em>source</em> window minus <em>source-x</em>.
+</p>
+<p><var>warp-pointer-if-inside</var> generates events just as if the user
+had instantaneously moved the pointer from one position to
+another. <var>warp-pointer-if-inside</var> cannot move the pointer
+outside the confine-to window of an active pointer grab; an attempt
+to do so only moves the pointer as far as the closest edge of the
+confine-to window.
+</p>
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-warp_002dpointer_002drelative_002dif_002dinside"></a>Function: <strong>warp-pointer-relative-if-inside</strong> <em>x-offset y-offset source source-x source-y &amp;optional (source-width 0) (source-height 0)</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>x-offset</var></dt>
+<dt><var>y-offset</var></dt>
+<dd><p>The offsets used to adjust the pointer position.
+</p></dd>
+<dt><var>source</var></dt>
+<dd><p>The <var>window</var> that must currently contain the pointer.
+</p></dd>
+<dt><var>source-x</var></dt>
+<dt><var>source-y</var></dt>
+<dt><var>source-width</var></dt>
+<dt><var>source-height</var></dt>
+<dd><p>The source rectangle that must currently contain the pointer.
+</p></dd>
+</dl>
+
+<p>Moves the pointer by the given offsets. However, the move can only
+take place if the pointer is currently contained in a visible
+portion of the specified rectangle of the <em>source</em> window. If
+<em>source-height</em> is zero, it is replaced with the current height
+of <em>source-window</em> minus <em>source-y</em>. If
+<em>source-width</em> is zero, it is replaced with the current width
+of <em>source-window</em> minus <em>source-x</em>.
+</p>
+<p><var>warp-pointer-relative-if-inside</var> generates events just as if
+the user had instantaneously moved the pointer from one position to
+another. <var>warp-pointer-relative-if-inside</var> cannot move the
+pointer outside the confine-to window of an active pointer grab; an
+attempt to do so only moves the pointer as far as the closest edge
+of the confine-to window.
+</p>
+
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Managing-Input-Focus.html#Managing-Input-Focus" accesskey="n" rel="next">Managing Input Focus</a>, Previous: <a href="Sending-Events.html#Sending-Events" accesskey="p" rel="prev">Sending Events</a>, Up: <a href="Events-and-Input.html#Events-and-Input" accesskey="u" rel="up">Events and Input</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

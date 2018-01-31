@@ -1,0 +1,147 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Font and Characters</title>
+
+<meta name="description" content="Common LISP X Interface: Font and Characters">
+<meta name="keywords" content="Common LISP X Interface: Font and Characters">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="index.html#Top" rel="up" title="Top">
+<link href="Opening-Fonts.html#Opening-Fonts" rel="next" title="Opening Fonts">
+<link href="Direct-Image-Transfer.html#Direct-Image-Transfer" rel="prev" title="Direct Image Transfer">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Font-and-Characters"></a>
+<div class="header">
+<p>
+Next: <a href="Colors.html#Colors" accesskey="n" rel="next">Colors</a>, Previous: <a href="Images.html#Images" accesskey="p" rel="prev">Images</a>, Up: <a href="index.html#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Font-and-Characters-1"></a>
+<h2 class="chapter">9 Font and Characters</h2>
+
+<p>An X server maintains a set of fonts used in the text operations
+requested by client programs. An X font is an array of character bit
+maps (or <em>glyphs</em>) indexed by integer codes. In fact, font glyphs
+can also represent cursor shapes or other images and are not limited to
+character images. X supports both linear and matrix encoding of font
+indexes.  With linear encoding, a font index is interpreted as a single
+16-bit integer index into a one-dimensional array of glyphs. With matrix
+encoding, a font index is interpreted as a pair of 8-bit integer indexes
+into a two-dimensional array of glyphs. The type of index encoding used
+is font-dependent.
+</p>
+<p>In order to access or use a font, a client program must first open it
+using the <var>open-font</var> function, sending a font name string as an
+identifier. <var>open-font</var> creates a CLX <var>font</var> object used to
+refer to the font in subsequent functions. Afterward, calling
+<var>open-font</var> with the same font name returns the same <var>font</var>
+object. When a font is no longer in use, a client program can call
+<var>close-font</var> to destroy the <var>font</var> object.
+</p>
+<p>A font has several attributes which describe its geometry and its
+glyphs. CLX provides functions to return the attributes of a font, as
+well functions for accessing the attributes of individual font
+glyphs. Glyph attributes are referred to as <em>character attributes</em>,
+since characters are the most common type of font glyphs. A font also
+has a property list of values recorded by the X server. However, the set
+of possible font properties and their values are not standardized and
+are implementation-dependent. Typically, CLX maintains a cache of font
+and character attributes, in order to minimize server requests.
+However, the font cache mechanism is implementation-dependent and cannot
+be controlled by the client. In some cases, CLX may create a
+<em>pseudo-font</em> object solely for the purpose of accessing font
+attributes. A pseudo-font is represented by a special type of
+<var>font</var> object that cannot be used in a <var>gcontext</var>. If
+necessary, CLX can automatically convert a pseudo-font into a true font,
+if the name of the pseudo-font is known.
+</p>
+<p>The set of available fonts is server-dependent; that is, font names are
+not guaranteed to be portable from one server to the next. However, the
+public X implementation from MIT includes a set of fonts that are
+typically available with most X servers.
+</p>
+<p>The following paragraphs describe CLX functions to:
+</p>
+<ul>
+<li> Open and close fonts.
+</li><li> List available fonts.
+</li><li> Access font attributes.
+</li><li> Access character attributes.
+</li><li> Return the size of a text string.
+</li></ul>
+
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top">&bull; <a href="Opening-Fonts.html#Opening-Fonts" accesskey="1">Opening Fonts</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Listing-Fonts.html#Listing-Fonts" accesskey="2">Listing Fonts</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Font-Attributes.html#Font-Attributes" accesskey="3">Font Attributes</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Chracter-Attributes.html#Chracter-Attributes" accesskey="4">Chracter Attributes</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Querying-Text-Size.html#Querying-Text-Size" accesskey="5">Querying Text Size</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+</table>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Colors.html#Colors" accesskey="n" rel="next">Colors</a>, Previous: <a href="Images.html#Images" accesskey="p" rel="prev">Images</a>, Up: <a href="index.html#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

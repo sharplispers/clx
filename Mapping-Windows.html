@@ -1,0 +1,208 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Mapping Windows</title>
+
+<meta name="description" content="Common LISP X Interface: Mapping Windows">
+<meta name="keywords" content="Common LISP X Interface: Mapping Windows">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Windows-and-Pixmaps.html#Windows-and-Pixmaps" rel="up" title="Windows and Pixmaps">
+<link href="Destroying-Windows.html#Destroying-Windows" rel="next" title="Destroying Windows">
+<link href="Window-Hierarchy.html#Window-Hierarchy" rel="prev" title="Window Hierarchy">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Mapping-Windows"></a>
+<div class="header">
+<p>
+Next: <a href="Destroying-Windows.html#Destroying-Windows" accesskey="n" rel="next">Destroying Windows</a>, Previous: <a href="Window-Hierarchy.html#Window-Hierarchy" accesskey="p" rel="prev">Window Hierarchy</a>, Up: <a href="Windows-and-Pixmaps.html#Windows-and-Pixmaps" accesskey="u" rel="up">Windows and Pixmaps</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Mapping-Windows-1"></a>
+<h3 class="section">5.6 Mapping Windows</h3>
+
+<p>A window is considered mapped if a <var>map-window</var> call has been made
+on it. When windows are first created, they are not mapped because an
+application may wish to create a window long before it is mapped to
+the screen. A mapped window may not be visible on the screen for one
+of the following reasons:
+</p>
+<ul>
+<li> It is obscured by another opaque sibling window.
+</li><li> One of its ancestors is not mapped.
+</li><li> It is entirely clipped by an ancestor.
+
+</li></ul>
+
+
+<p>A subwindow will appear on the screen as long as all of its ancestors
+are mapped and not obscured by a sibling or clipped by an
+ancestor. Mapping a window that has an unmapped ancestor does not
+display the window, but marks it as eligible for display when the
+ancestor becomes mapped. Such a window is called unviewable. When all
+its ancestors are mapped, the window becomes viewable and remains
+visible on the screen if not obscured by any sibling or ancestor.
+</p>
+<p>Any output to a window not visible on the screen is
+discarded. <var>:exposure</var> events are generated for the window when
+part or all of it becomes visible on the screen. A client only
+receives the <var>:exposure</var> events if it has selected them. Mapping
+or unmapping a window does not change its stacking order priority.
+</p>
+<dl>
+<dt><a name="index-map_002dwindow"></a>Function: <strong>map-window</strong> <em>window</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+</dl>
+<a name="map_002dwindow"></a>
+<p>Maps the <em>window</em>. This function has no effect when the
+<em>window</em> is already mapped.
+</p>
+<p>If the override-redirect attribute of the <em>window</em> is <var>:off</var>
+and another client has selected <var>:substructure-redirect</var> on the
+parent window, the X server generates a <var>:map-request</var> event and
+the <var>map-window</var> function does not map the
+<em>window</em>. Otherwise, the <em>window</em> is mapped, and the X
+server generates a <var>:map-notify</var> event.
+</p>
+<p>If the <em>window</em> becomes visible and no earlier contents for it
+are remembered, <var>map-window</var> tiles the window with its
+background. If no background was defined for the window, the existing
+screen contents are not altered, and the X server generates one or
+more <var>:exposure</var> events. If a backing-store was maintained while
+the window was unmapped, no <var>:exposure</var> events are generated. If a
+backing-store will now be maintained, a full window exposure is always
+generated. Otherwise, only visible regions may be reported.  Similar
+tiling and exposure take place for any newly viewable inferiors.
+</p>
+<p><var>map-window</var> generates <var>:exposure</var> events on each
+<var>:input-output</var> window that it causes to become visible.
+</p>
+
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-map_002dsubwindows"></a>Function: <strong>map-subwindows</strong> <em>window</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+</dl>
+
+<p>Maps all child windows for a specified <em>window</em> in top-to-bottom
+stacking order. The X server generates an <var>:exposure</var> event on
+each newly visible window. This function is much more efficient than
+mapping each child individually.
+</p>
+
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-unmap_002dwindow"></a>Function: <strong>unmap-window</strong> <em>window</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+</dl>
+
+<p>Unmaps the specified <em>window</em> and causes the X server to generate
+an <var>:unmap-notify</var> event. If the specified <em>window</em> is
+already unmapped, <var>unmap-window</var> has no effect.  Normal exposure
+processing on formerly obscured windows is performed. Any child window
+is no longer viewable. Unmapping the <em>window</em> generates
+<var>:exposure</var> events on windows that were formerly obscured by
+<em>window</em> and its children.
+</p>
+
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-unmap_002dsubwindows"></a>Function: <strong>unmap-subwindows</strong> <em>window</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+</dl>
+
+<p>Unmaps all child windows for the specified <em>window</em> in bottom to
+top stacking order. The X server generates an <var>:unmap-notify</var>
+event on each child and <var>:exposure</var> events on formerly obscured
+windows. Using this function is much more efficient than unmapping
+child windows individually.
+</p>
+
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Destroying-Windows.html#Destroying-Windows" accesskey="n" rel="next">Destroying Windows</a>, Previous: <a href="Window-Hierarchy.html#Window-Hierarchy" accesskey="p" rel="prev">Window Hierarchy</a>, Up: <a href="Windows-and-Pixmaps.html#Windows-and-Pixmaps" accesskey="u" rel="up">Windows and Pixmaps</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

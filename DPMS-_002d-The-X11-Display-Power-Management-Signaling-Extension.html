@@ -1,0 +1,228 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: DPMS - The X11 Display Power Management Signaling Extension</title>
+
+<meta name="description" content="Common LISP X Interface: DPMS - The X11 Display Power Management Signaling Extension">
+<meta name="keywords" content="Common LISP X Interface: DPMS - The X11 Display Power Management Signaling Extension">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Extensions.html#Extensions" rel="up" title="Extensions">
+<link href="BIG_002dREQUESTS-_002d-Big-Requests-Extension.html#BIG_002dREQUESTS-_002d-Big-Requests-Extension" rel="next" title="BIG-REQUESTS - Big Requests Extension">
+<link href="Errors-_0028Extensions_0029.html#Errors-_0028Extensions_0029" rel="prev" title="Errors (Extensions)">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="DPMS-_002d-The-X11-Display-Power-Management-Signaling-Extension"></a>
+<div class="header">
+<p>
+Next: <a href="BIG_002dREQUESTS-_002d-Big-Requests-Extension.html#BIG_002dREQUESTS-_002d-Big-Requests-Extension" accesskey="n" rel="next">BIG-REQUESTS - Big Requests Extension</a>, Previous: <a href="RENDER-_002d-A-new-rendering-system-for-X11.html#RENDER-_002d-A-new-rendering-system-for-X11" accesskey="p" rel="prev">RENDER - A new rendering system for X11</a>, Up: <a href="Extensions.html#Extensions" accesskey="u" rel="up">Extensions</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="DPMS-_002d-The-X11-Display-Power-Management-Signaling-Extension-1"></a>
+<h3 class="section">16.4 DPMS - The X11 Display Power Management Signaling Extension</h3>
+
+<dl>
+<dt><a name="index-dpms_002dget_002dversion"></a>Function: <strong>dpms-get-version</strong> <em>display &amp;optional (major-version 1) (minor-version 1)</em></dt>
+<dd><dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p><var>display</var>
+</p></dd>
+<dt><var>major-version</var></dt>
+<dd><p><var>card16</var>
+</p></dd>
+<dt><var>minor-version</var></dt>
+<dd><p><var>card16</var>
+</p></dd>
+</dl>
+
+
+<p>Return two values: the major and minor version of the DPMS
+implementation the server supports.
+</p>
+<p>If supplied, the <var>major-version</var> and <var>minor-version</var>
+indicate what version of the protocol the client wants the server to
+implement.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-dpms_002dcapable"></a>Function: <strong>dpms-capable</strong> <em>display</em></dt>
+<dd><dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p><var>display</var>
+</p></dd>
+</dl>
+
+
+<p>True if the currently running server&rsquo;s devices are capable of DPMS
+operations.
+</p>
+<p>The truth value of this request is implementation defined, but is
+generally based on the capabilities of the graphic card and monitor
+combination.  Also, the return value in the case of heterogeneous
+multi-head servers is implementation defined.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-dpms_002dget_002dtimeouts"></a>Function: <strong>dpms-get-timeouts</strong> <em>display</em></dt>
+<dd><dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p><var>display</var>
+</p></dd>
+</dl>
+
+
+<p>Return three values: the current values of the DPMS timeout values.
+The timeout values are (in order returned): standby, suspend and off.
+All values are in units of seconds.  A value of zero for any timeout
+value indicates that the mode is disabled.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-dpms_002dset_002dtimeouts"></a>Function: <strong>dpms-set-timeouts</strong> <em>display standby suspend off</em></dt>
+<dd><dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p><var>display</var>
+</p></dd>
+<dt><var>standby</var></dt>
+<dd><p><var>card16</var>
+</p></dd>
+<dt><var>suspend</var></dt>
+<dd><p><var>card16</var>
+</p></dd>
+<dt><var>off</var></dt>
+<dd><p><var>card16</var>
+</p></dd>
+</dl>
+
+
+<p>Set the values of the DPMS timeouts.  All values are in units of
+seconds.  A value of zero for any timeout value disables that mode.
+</p></dd></dl>
+ 
+<dl>
+<dt><a name="index-dpms_002denable"></a>Function: <strong>dpms-enable</strong> <em>display</em></dt>
+<dd><dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p><var>display</var>
+</p></dd>
+</dl>
+
+
+<p>Enable the DPMS characteristics of the server using the server&rsquo;s
+currently stored timeouts.  If DPMS is already enabled, no change is
+affected.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-dpms_002ddisable"></a>Function: <strong>dpms-disable</strong> <em>display</em></dt>
+<dd><dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p><var>display</var>
+</p></dd>
+</dl>
+
+
+<p>Disable the DPMS characteristics of the server.  It does not affect
+the core or extension screen savers.  If DPMS is already disabled, no
+change is effected.
+</p>
+<p>This request is provided so that DPMS may be disabled without damaging
+the server&rsquo;s stored timeout values.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-dpms_002dforce_002dlevel"></a>Function: <strong>dpms-force-level</strong> <em>display power-level</em></dt>
+<dd><dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p><var>display</var>
+</p></dd>
+<dt><var>power-level</var></dt>
+<dd><p>(member :dpms-mode-on :dpms-mode-standby :dpms-mode-suspend :dpms-mode-off)
+</p></dd>
+</dl>
+
+
+<p>Forces a specific DPMS level on the server.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-dpms_002dinfo"></a>Function: <strong>dpms-info</strong> <em>display</em></dt>
+<dd><dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p><var>display</var>
+</p></dd>
+</dl>
+
+
+<p>Returns two values: the DPMS power-level and state value for the
+display.
+</p>
+<p>State is one of the keywords DPMS-ENABLED or DPMS-DISABLED.  
+</p>
+<p>If state is DPMS-ENABLED, then power-level is returned as one of the
+keywords DPMS-MODE-ON, DPMS-MODE-STANDBY, DPMS-MODE-SUSPEND or
+DPMS-MODE-OFF.  If state is DPMS-DISABLED, then power-level is
+undefined and returned as NIL.
+</p></dd></dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="BIG_002dREQUESTS-_002d-Big-Requests-Extension.html#BIG_002dREQUESTS-_002d-Big-Requests-Extension" accesskey="n" rel="next">BIG-REQUESTS - Big Requests Extension</a>, Previous: <a href="RENDER-_002d-A-new-rendering-system-for-X11.html#RENDER-_002d-A-new-rendering-system-for-X11" accesskey="p" rel="prev">RENDER - A new rendering system for X11</a>, Up: <a href="Extensions.html#Extensions" accesskey="u" rel="up">Extensions</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

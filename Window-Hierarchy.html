@@ -1,0 +1,244 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Window Hierarchy</title>
+
+<meta name="description" content="Common LISP X Interface: Window Hierarchy">
+<meta name="keywords" content="Common LISP X Interface: Window Hierarchy">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Windows-and-Pixmaps.html#Windows-and-Pixmaps" rel="up" title="Windows and Pixmaps">
+<link href="Mapping-Windows.html#Mapping-Windows" rel="next" title="Mapping Windows">
+<link href="Stacking-Order.html#Stacking-Order" rel="prev" title="Stacking Order">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Window-Hierarchy"></a>
+<div class="header">
+<p>
+Next: <a href="Mapping-Windows.html#Mapping-Windows" accesskey="n" rel="next">Mapping Windows</a>, Previous: <a href="Stacking-Order.html#Stacking-Order" accesskey="p" rel="prev">Stacking Order</a>, Up: <a href="Windows-and-Pixmaps.html#Windows-and-Pixmaps" accesskey="u" rel="up">Windows and Pixmaps</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Window-Hierarchy-1"></a>
+<h3 class="section">5.5 Window Hierarchy</h3>
+
+
+<p>All the windows in X are arranged in a strict hierarchy. At the top of
+the hierarchy are the root windows, which cover the display
+screens. Each root window is partially or completely covered by its
+child windows. All windows, except for root windows, have
+parents. Child windows can have their own children. In this way, a
+tree of arbitrary depth on each screen can be created. CLX provides
+several functions for examining and modifying the window hierarchy.
+</p>
+<dl>
+<dt><a name="index-drawable_002droot"></a>Function: <strong>drawable-root</strong> <em>drawable</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>drawable</var></dt>
+<dd><p>A <var>drawable</var>.
+</p></dd>
+</dl>
+
+<p>Returns the root window of the specified <em>drawable</em>.
+</p>
+<dl compact="compact">
+<dt><var>root-window</var></dt>
+<dd><p>Type <var>window</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-query_002dtree"></a>Function: <strong>query-tree</strong> <em>window &amp;key (:result-type `list)</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+<dt><var>:result-type</var></dt>
+<dd><p>A valid type specifier for a sub-type of <var>sequence</var>. The default is a <var>list</var>.
+</p></dd>
+</dl>
+
+<p>Returns the <em>children</em> windows, the <em>parent</em> window, and the
+<em>root</em> window for the specified <em>window</em>. The children are
+returned as a sequence of windows in current stacking order, from
+bottom-most (first) to top-most (last). The <var>:result-type</var>
+specifies the type of children sequence returned.
+</p>
+<dl compact="compact">
+<dt><var>children</var></dt>
+<dd><p>Type <var>sequence</var> of <var>window</var>.
+</p></dd>
+<dt><var>parent</var></dt>
+<dd><p>Type <var>window</var> or <var>null</var>.
+</p></dd>
+<dt><var>root</var></dt>
+<dd><p>Type <var>window</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-reparent_002dwindow"></a>Function: <strong>reparent-window</strong> <em>window parent x y</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+<dt><var>parent</var></dt>
+<dd><p>The new parent <var>window</var>.
+</p></dd>
+<dt><var>x</var></dt>
+<dt><var>y</var></dt>
+<dd><p>The position (type <var>int16</var>) of the <em>window</em> in its new
+<em>parent</em>. These coordinates are relative to the <em>parent</em>&rsquo;s
+origin, and specify the new position of the upper, left, outer corner
+of the <em>window</em>.
+</p></dd>
+</dl>
+
+<p>Changes a <em>window</em>&rsquo;s <em>parent</em> within a single
+screen. There is no way to move a window between screens.
+</p>
+<p>The specified <em>window</em> is reparented by inserting it as a child
+of the specified <em>parent</em>. If the <em>window</em> is mapped, an
+<var>unmap-window</var> operation is automatically performed on the
+specified <em>window</em>. The <em>window</em> is then removed from its
+current position in the hierarchy and inserted as the child of the
+specified <em>parent</em>. The <em>window</em> is placed on top in the
+stacking order with respect to sibling windows.
+</p>
+<p>After reparenting the specified <em>window,</em> a
+<var>:reparent-notify</var> event is generated. The override-redirect
+attribute of the <em>window</em> is passed on in this event. Window
+manager clients normally should ignore this event if this attribute is
+<var>:on</var>. See <a href="Events-and-Input.html#Events-and-Input">Events and Input</a>, for more information on
+<var>:reparent-notify</var> event processing. Finally, if the specified
+<em>window</em> was originally mapped, a <var>map-window</var> operation is
+automatically performed on it.
+</p>
+<p>The X server performs normal exposure processing on formerly obscured
+windows. It might not generate <var>:exposure</var> events for regions from
+the initial <var>unmap-window</var> operation if they are immediately
+obscured by the final <var>map-window</var> operation.
+</p>
+<p>It is an error if any of the following are true:
+</p>
+<ul>
+<li> The new <em>parent</em> window is not on the same screen as the old parent window.
+
+</li><li> The new <em>parent</em> window is the specified <em>window</em> or an
+inferior of the specified <em>window</em>.
+
+</li><li> The specified <em>window</em> has a <var>:parent-relative</var> background
+attribute and the new <em>parent</em> window is not the same depth as
+the specified <em>window</em>.
+</li></ul>
+
+
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-translate_002dcoordinates"></a>Function: <strong>translate-coordinates</strong> <em>source source-x source-y destination</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>source</var></dt>
+<dd><p>A <var>window</var> defining the source coordinate system.
+</p>
+</dd>
+<dt><var>source-x</var></dt>
+<dt><var>source-y</var></dt>
+<dd><p>Coordinates (<var>int16</var>) relative to the origin of the <em>source</em>
+<var>window</var>.
+</p>
+</dd>
+<dt><var>destination</var></dt>
+<dd><p>A <var>window</var> defining the destination coordinate system.
+</p>
+</dd>
+</dl>
+
+<p>Returns the position defined by <em>source-x</em> and <em>source-y</em>
+(relative to the origin of the <em>source</em> window), expressed as
+coordinates relative to the origin of the <em>destination</em> window.
+</p>
+<dl compact="compact">
+<dt><var>destination-x</var></dt>
+<dd><p>Type <var>int16</var> or <var>null</var>.
+</p></dd>
+<dt><var>destination-y</var></dt>
+<dd><p>Type <var>int16</var> or <var>null</var>.
+</p></dd>
+<dt><var>destination-child</var></dt>
+<dd><p>Type <var>window</var> or <var>null</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Mapping-Windows.html#Mapping-Windows" accesskey="n" rel="next">Mapping Windows</a>, Previous: <a href="Stacking-Order.html#Stacking-Order" accesskey="p" rel="prev">Stacking Order</a>, Up: <a href="Windows-and-Pixmaps.html#Windows-and-Pixmaps" accesskey="u" rel="up">Windows and Pixmaps</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

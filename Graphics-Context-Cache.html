@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Graphics Context Cache</title>
+
+<meta name="description" content="Common LISP X Interface: Graphics Context Cache">
+<meta name="keywords" content="Common LISP X Interface: Graphics Context Cache">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Graphics-Contexts.html#Graphics-Contexts" rel="up" title="Graphics Contexts">
+<link href="Graphic-Operations.html#Graphic-Operations" rel="next" title="Graphic Operations">
+<link href="Destroying-Graphics-Contexts.html#Destroying-Graphics-Contexts" rel="prev" title="Destroying Graphics Contexts">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Graphics-Context-Cache"></a>
+<div class="header">
+<p>
+Previous: <a href="Destroying-Graphics-Contexts.html#Destroying-Graphics-Contexts" accesskey="p" rel="prev">Destroying Graphics Contexts</a>, Up: <a href="Graphics-Contexts.html#Graphics-Contexts" accesskey="u" rel="up">Graphics Contexts</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Graphics-Context-Cache-1"></a>
+<h3 class="section">6.5 Graphics Context Cache</h3>
+
+<p>CLX provides a set of functions to control the automatic graphics context
+caching mechanism.
+</p>
+
+<dl>
+<dt><a name="index-force_002dgcontext_002dchanges"></a>Function: <strong>force-gcontext-changes</strong> <em>gcontext</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>gcontext</var></dt>
+<dd><p>A <var>gcontext</var>.
+</p></dd>
+</dl>
+
+<p>Forces any delayed changes to the specified graphics context to be
+sent out to the server.  Note that <var>force-gcontext-changes</var> is
+called by all of the graphics functions.
+</p>
+
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-with_002dgcontext"></a>Macro: <strong>with-gcontext</strong> <em>gcontext &amp;key :arc-mode :background :cap-style :clip-mask :clip-ordering :clip-x :clip-y :dashes :dash-offset :exposures :fill-rule :fill-style :font :foreground :function :join-style :line-style :line-width :plane-mask :stipple :subwindow-mode :tile :ts-x :ts-y &amp;allow-other-keys &amp;body body</em></dt>
+<dd><a name="with_002dgcontext"></a>
+<p>Changes the indicated graphics context components to the specified
+values only within the dynamic extent of the body. <var>with-gcontext</var>
+works on a per-process basis in a multiprocessing environment. The
+<em>body</em> is not surrounded by a <var>with-display</var> form. If there
+is no local cache for the specified graphics context, or if some of
+the component states are unknown, <var>with-gcontext</var> does the save
+and restore by creating a temporary graphics context and copying
+components to and from it using <var>copy-gcontext-components</var>.
+</p>
+<dl compact="compact">
+<dt><var>gcontext</var></dt>
+<dd><p>A <var>gcontext</var>.
+</p></dd>
+<dt><var>:arc-mode</var></dt>
+<dt><var>:background</var></dt>
+<dt><var>:cap-style</var></dt>
+<dt><var>:clip-mask</var></dt>
+<dt><var>:clip-ordering</var></dt>
+<dt><var>:clip-x</var></dt>
+<dt><var>:clip-y</var></dt>
+<dt><var>:dashes</var></dt>
+<dt><var>:dash-offset</var></dt>
+<dt><var>:exposures</var></dt>
+<dt><var>:fill-rule</var></dt>
+<dt><var>:fill-style</var></dt>
+<dt><var>:font</var></dt>
+<dt><var>:foreground</var></dt>
+<dt><var>:function</var></dt>
+<dt><var>:join-style</var></dt>
+<dt><var>:line-style</var></dt>
+<dt><var>:line-width</var></dt>
+<dt><var>:plane-mask</var></dt>
+<dt><var>:stipple</var></dt>
+<dt><var>:subwindow-mode</var></dt>
+<dt><var>:tile</var></dt>
+<dt><var>:ts-x</var></dt>
+<dt><var>:ts-y</var></dt>
+<dd><p>These keyword arguments and associated values specify which graphics
+context components are to be changed. Any components not specified are
+left unmodified. See <a href="Creating-Graphics-Contexts.html#Creating-Graphics-Contexts">Creating Graphics Contexts</a>, for more information.
+</p></dd>
+<dt><var>body</var></dt>
+<dd><p>The body of code which will have access to the altered graphics context.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+
+
+</body>
+</html>

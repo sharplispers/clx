@@ -1,0 +1,154 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Selecting Events</title>
+
+<meta name="description" content="Common LISP X Interface: Selecting Events">
+<meta name="keywords" content="Common LISP X Interface: Selecting Events">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Events-and-Input.html#Events-and-Input" rel="up" title="Events and Input">
+<link href="Processing-Events.html#Processing-Events" rel="next" title="Processing Events">
+<link href="Events-and-Input.html#Events-and-Input" rel="prev" title="Events and Input">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Selecting-Events"></a>
+<div class="header">
+<p>
+Next: <a href="Processing-Events.html#Processing-Events" accesskey="n" rel="next">Processing Events</a>, Previous: <a href="Events-and-Input.html#Events-and-Input" accesskey="p" rel="prev">Events and Input</a>, Up: <a href="Events-and-Input.html#Events-and-Input" accesskey="u" rel="up">Events and Input</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Selecting-Events-1"></a>
+<h3 class="section">13.1 Selecting Events</h3>
+
+
+<p>A client <em>selects</em> which types of events it receives from a
+specific window. The window event-mask attribute, set by the client,
+determines which event types are selected (see <var>window-event-mask</var>
+in <a href="Window-Attributes.html#Window-Attributes">Window Attributes</a>). Most types of events are received
+by a client only if they are selected for some window.
+</p>
+<p>In the X protocol, an event-mask is represented as a bit string. CLX
+also allows an event mask to be defined by a list of
+<var>event-mask-class</var> keywords. The functions <var>make-event-keys</var>
+and <var>make-event-mask</var> can be used to convert between these two
+forms of an event-mask. In general, including an <var>event-mask-class</var>
+keyword in an event-mask causes one or more related event types to be
+selected. The following table describes the event types selected by each
+<var>event-mask-class</var> keyword.
+</p>
+<table>
+<tr><td width="50%">Event Mask Keyword</td><td width="50%">Event Types Selected</td></tr>
+<tr><td width="50%"><var>:button-1-motion</var></td><td width="50%"><var>:motion-notify</var> when <var>:button-1</var> is down</td></tr>
+<tr><td width="50%"><var>:button-2-motion</var></td><td width="50%"><var>:motion-notify</var> when <var>:button-2</var> is down</td></tr>
+<tr><td width="50%"><var>:button-3-motion</var></td><td width="50%"><var>:motion-notify</var> when <var>:button-3</var> is down</td></tr>
+<tr><td width="50%"><var>:button-4-motion</var></td><td width="50%"><var>:motion-notify</var> when <var>:button-4</var> is down</td></tr>
+<tr><td width="50%"><var>:button-5-motion</var></td><td width="50%"><var>:motion-notify</var> when <var>:button-5</var> is down</td></tr>
+<tr><td width="50%"><var>:button-motion</var></td><td width="50%"><var>:motion-notify</var> when any pointer button is down</td></tr>
+<tr><td width="50%"><var>:button-press</var></td><td width="50%"><var>:button-press</var></td></tr>
+<tr><td width="50%"><var>:button-release</var></td><td width="50%"><var>:button-release</var></td></tr>
+<tr><td width="50%"><var>:colormap-change</var></td><td width="50%"><var>:colormap-notify</var></td></tr>
+<tr><td width="50%"><var>:enter-window</var></td><td width="50%"><var>:enter-notify</var></td></tr>
+<tr><td width="50%"><var>:exposure</var></td><td width="50%"><var>:exposure</var></td></tr>
+<tr><td width="50%"><var>:focus-change</var></td><td width="50%"><var>:focus-in</var> <var>:focus-out</var></td></tr>
+<tr><td width="50%"><var>:key-press</var></td><td width="50%"><var>:key-press</var></td></tr>
+<tr><td width="50%"><var>:key-release</var></td><td width="50%"><var>:key-release</var></td></tr>
+<tr><td width="50%"><var>:keymap-state</var></td><td width="50%"><var>:keymap-notify</var></td></tr>
+<tr><td width="50%"><var>:leave-window</var></td><td width="50%"><var>:leave-notify</var></td></tr>
+<tr><td width="50%"><var>:owner-grab-button</var></td><td width="50%">Pointer events while button is grabbed</td></tr>
+<tr><td width="50%"><var>:pointer-motion</var></td><td width="50%"><var>:motion-notify</var></td></tr>
+<tr><td width="50%"><var>:pointer-motion-hint</var></td><td width="50%">Single <var>:motion-notify</var> only</td></tr>
+<tr><td width="50%"><var>:property-change</var></td><td width="50%"><var>:property-notify</var></td></tr>
+<tr><td width="50%"><var>:resize-redirect</var></td><td width="50%"><var>:resize-request</var></td></tr>
+<tr><td width="50%"><var>:structure-notify</var></td><td width="50%"><var>:circulate-notify</var> <var>:configure-notify</var> <var>:destroy-notify</var> <var>:gravity-notify</var> <var>:map-notify</var> <var>:reparent-notify</var> <var>:unmap-notify</var></td></tr>
+<tr><td width="50%"><var>:substructure-redirect</var></td><td width="50%"><var>:circulate-request</var> <var>:configure-request</var> <var>:map-request</var></td></tr>
+<tr><td width="50%"><var>:visibility-change</var></td><td width="50%"><var>:visibility-notify</var></td></tr>
+</table>
+
+
+<p>Some types of events do not have to be selected to be received and
+therefore are not represented in an event-mask. For example, the
+<var>copy-plane</var> and <var>copy-area</var> functions cause
+<var>:graphics-exposure</var> and <var>:no-exposure</var> events to be reported,
+unless exposures are turned <var>:off</var> in the graphics context (see
+<var>copy-area</var> and <var>copy-plane</var> in <a href="Area-and-Plane-Operations.html#Area-and-Plane-Operations">Area and Plane Operations</a>,
+and <var>gcontext-exposures</var> in paragraph 5.4.6, Exposures).  Also, <var>:selection-clear</var>, <var>:selection-request</var>,
+<var>:selection-notify</var> and <var>:client-message</var> events can be
+received at any time, but they are generally sent only to clients using
+selections (see <a href="Client-Communications-Events.html#Client-Communications-Events">Client Communications Events</a>). <var>:mapping-notify</var> is always sent to clients when the
+keyboard mapping is changed.
+</p>
+<p>Any client can select events for any window. A window maintains a
+separate event-mask for each interested client. In general, multiple
+clients can select for the same events on a window. After the X server
+generates an event, it sends it to all clients which selected
+it. However, the following restrictions apply to sharing window events
+among multiple clients. For a given window:
+</p><ul>
+<li> Only one client at a time can include <var>:substructure-redirect</var> in its event-mask
+
+</li><li> Only one client at a time can can include <var>:button-press</var> in its event-mask
+
+</li><li> Only one client at a time can include <var>:resize-redirect</var> in its event-mask
+</li></ul>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Processing-Events.html#Processing-Events" accesskey="n" rel="next">Processing Events</a>, Previous: <a href="Events-and-Input.html#Events-and-Input" accesskey="p" rel="prev">Events and Input</a>, Up: <a href="Events-and-Input.html#Events-and-Input" accesskey="u" rel="up">Events and Input</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

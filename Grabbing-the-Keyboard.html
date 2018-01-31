@@ -1,0 +1,190 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Grabbing the Keyboard</title>
+
+<meta name="description" content="Common LISP X Interface: Grabbing the Keyboard">
+<meta name="keywords" content="Common LISP X Interface: Grabbing the Keyboard">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Events-and-Input.html#Events-and-Input" rel="up" title="Events and Input">
+<link href="Grabbing-a-Key.html#Grabbing-a-Key" rel="next" title="Grabbing a Key">
+<link href="Grabbing-a-Button.html#Grabbing-a-Button" rel="prev" title="Grabbing a Button">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Grabbing-the-Keyboard"></a>
+<div class="header">
+<p>
+Next: <a href="Grabbing-a-Key.html#Grabbing-a-Key" accesskey="n" rel="next">Grabbing a Key</a>, Previous: <a href="Grabbing-a-Button.html#Grabbing-a-Button" accesskey="p" rel="prev">Grabbing a Button</a>, Up: <a href="Events-and-Input.html#Events-and-Input" accesskey="u" rel="up">Events and Input</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Grabbing-the-Keyboard-1"></a>
+<h3 class="section">13.9 Grabbing the Keyboard</h3>
+
+
+<p>CLX provides the <var>grab-keyboard</var> and <var>ungrab-keyboard</var>
+functions for actively grabbing and releasing control of the keyboard.
+</p>
+<dl>
+<dt><a name="index-grab_002dkeyboard"></a>Function: <strong>grab-keyboard</strong> <em>window &amp;key :owner-p :sync-pointer-p :sync-keyboard-p :time</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+<dt><var>:owner-p</var></dt>
+<dd><p>If true, all client windows receive keyboard input normally.
+</p></dd>
+<dt><var>:sync-pointer-p</var></dt>
+<dd><p>Indicates whether the pointer is in synchronous or asynchronous mode.
+</p></dd>
+<dt><var>:sync-keyboard-p</var></dt>
+<dd><p>Indicates whether the keyboard is in synchronous or asynchronous mode.
+</p></dd>
+<dt><var>:time</var></dt>
+<dd><p>A <var>timestamp</var>.
+</p></dd>
+</dl>
+
+
+<p>Actively grabs control of the keyboard. Further key events are
+reported only to the grabbing client. The request overrides any
+active keyboard grab by this client.  <var>grab-keyboard</var> generates
+<var>:focus-in</var> and <var>:focus-out</var> events.
+</p>
+<p>If <var>:owner-p</var> is <var>nil</var>, all generated key events are
+reported with respect to <em>window</em>. If <var>:owner-p</var> is true,
+then a generated key event that would normally be reported to this
+client is reported normally; otherwise the event is reported with
+respect to the <em>window</em>.  Both <var>:key-press</var> and
+<var>:key-release</var> events are always reported, independent of any
+event selection made by the client.
+</p>
+<p>If <var>:sync-keyboard-p</var> is <var>nil</var>, keyboard event processing
+continues normally (asynchronously); if the keyboard is currently
+frozen by this client, then processing of keyboard events is
+resumed. If <var>:sync-keyboard-p</var> is true, the keyboard (as seen
+via the protocol) appears to freeze, and no further keyboard events
+are generated by the server until the grabbing client issues a
+releasing <var>allow-events</var> request. Actual keyboard changes are
+not lost while the keyboard is frozen; they are simply queued for
+later processing.
+</p>
+<p>If <var>:sync-pointer-p</var> is <var>nil</var>, pointer event processing is
+unaffected by activation of the grab. If <var>:sync-pointer-p</var> is
+true, the pointer (as seen via the protocol) appears to freeze, and
+no further pointer events are generated by the server until the
+grabbing client issues a releasing <var>allow-events</var>
+request. Actual pointer changes are not lost while the pointer is
+frozen; they are simply queued for later processing.
+</p>
+<p>The grab can fail with a status of:
+</p><ul>
+<li> <var>:already-grabbed</var> if the keyboard is actively grabbed by
+some other client
+
+</li><li> <var>:frozen</var> if the keyboard is frozen by an active grab from
+another client
+
+</li><li> <var>:not-viewable</var> if <em>window</em> is not viewable
+
+</li><li> <var>:invalid-time</var> if the specified time is earlier than the
+last-keyboard-grab time or later than the current server
+time. Otherwise, <var>grab-keyboard</var> returns a status of
+<var>:success</var> and last-keyboard-grab time is set to the
+specified time, with current-time replaced by current server time.
+</li></ul>
+<dl compact="compact">
+<dt><var>grab-status</var></dt>
+<dd><p>One of <var>:already-grabbed</var>, <var>:frozen</var>, <var>:invalid-time</var>,
+<var>:not-viewable</var>, or <var>:success</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-ungrab_002dkeyboard"></a>Function: <strong>ungrab-keyboard</strong> <em>display &amp;key :time</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+<dt><var>:time</var></dt>
+<dd><p>A <var>timestamp</var>.
+</p></dd>
+</dl>
+
+<p>Releases the keyboard if this client has it actively grabbed (from
+either <var>grab-keyboard</var> or <var>grab-key</var>), and releases any
+queued events. The request has no effect if the specified time is
+earlier than the last-keyboard-grab time or is later than the
+current server time.  An <var>ungrab-keyboard</var> is performed
+automatically if the event window for an active keyboard grab
+becomes not viewable.
+</p>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Grabbing-a-Key.html#Grabbing-a-Key" accesskey="n" rel="next">Grabbing a Key</a>, Previous: <a href="Grabbing-a-Button.html#Grabbing-a-Button" accesskey="p" rel="prev">Grabbing a Button</a>, Up: <a href="Events-and-Input.html#Events-and-Input" accesskey="u" rel="up">Events and Input</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

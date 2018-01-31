@@ -1,0 +1,186 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Creating Graphics Contexts</title>
+
+<meta name="description" content="Common LISP X Interface: Creating Graphics Contexts">
+<meta name="keywords" content="Common LISP X Interface: Creating Graphics Contexts">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Graphics-Contexts.html#Graphics-Contexts" rel="up" title="Graphics Contexts">
+<link href="Graphics-Context-Attributes.html#Graphics-Context-Attributes" rel="next" title="Graphics Context Attributes">
+<link href="Graphics-Contexts.html#Graphics-Contexts" rel="prev" title="Graphics Contexts">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Creating-Graphics-Contexts"></a>
+<div class="header">
+<p>
+Next: <a href="Graphics-Context-Attributes.html#Graphics-Context-Attributes" accesskey="n" rel="next">Graphics Context Attributes</a>, Previous: <a href="Graphics-Contexts.html#Graphics-Contexts" accesskey="p" rel="prev">Graphics Contexts</a>, Up: <a href="Graphics-Contexts.html#Graphics-Contexts" accesskey="u" rel="up">Graphics Contexts</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Creating-Graphics-Contexts-1"></a>
+<h3 class="section">6.1 Creating Graphics Contexts</h3>
+
+<p>To create a graphics context, use <var>create-gcontext</var>.
+</p>
+<dl>
+<dt><a name="index-create_002dgcontext"></a>Function: <strong>create-gcontext</strong> <em>&amp;key :arc-mode :background (:cache-p t) :cap-style :clip-mask :clip-ordering :clip-x :clip-y :dash-offset :dashes :drawable :exposures :fill-rule :fill-style :font :foreground :function :join-style :line-style :line-width :plane-mask :stipple :subwindow-mode :tile :ts-x :ts-y</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>:cache-p</var></dt>
+<dd><p>Specifies if this graphics context should be cached locally by CLX. If
+<var>nil</var> then the state is not cached, otherwise a local cache is
+kept.
+</p></dd>
+<dt><var>:drawable</var></dt>
+<dd><p>The <var>drawable</var> whose root and depth are to be associated with
+this graphics context. This is a required keyword argument.
+</p></dd>
+<dt><var>:arc-mode</var></dt>
+<dt><var>:background</var></dt>
+<dt><var>:cap-style</var></dt>
+<dt><var>:clip-mask</var></dt>
+<dt><var>:clip-ordering</var></dt>
+<dt><var>:clip-x</var></dt>
+<dt><var>:clip-y</var></dt>
+<dt><var>:dash-offset</var></dt>
+<dt><var>:dashes</var></dt>
+<dt><var>:exposures</var></dt>
+<dt><var>:fill-rule</var></dt>
+<dt><var>:fill-style</var></dt>
+<dt><var>:font</var></dt>
+<dt><var>:foreground</var></dt>
+<dt><var>:function</var></dt>
+<dt><var>:join-style</var></dt>
+<dt><var>:line-style</var></dt>
+<dt><var>:line-width</var></dt>
+<dt><var>:plane-mask</var></dt>
+<dt><var>:stipple</var></dt>
+<dt><var>:subwindow-mode</var></dt>
+<dt><var>:tile</var></dt>
+<dt><var>:ts-x</var></dt>
+<dt><var>:ts-y</var></dt>
+<dd><p>Initial attribute values for the graphics context.
+</p></dd>
+</dl>
+
+<p>Creates, initializes, and returns a graphics context
+(<var>gcontext</var>). The graphics context can only be used with
+destination drawables having the same root and depth as the specified
+<var>:drawable</var>. If <var>:cache-p</var> is non-<var>nil</var>, the graphics
+context state is cached locally, and changing a component has no
+effect unless the new value differs from the cached value.  Changes to
+a graphics context (<code>setf</code> and <var>with-gcontext</var>) are always
+deferred regardless of the cache mode and sent to the server only when
+required by a local operation or by an explicit call to
+<var>force-gcontext-changes</var>.
+</p>
+<p>All of the graphics context components are set to the values that are
+specified by the keyword arguments, except that a value of <var>nil</var>
+causes the default value to be used. These default values are as
+follows:
+</p>
+<table>
+<tr><td><var>arc-mode</var></td><td><var>:pie-slice</var></td></tr>
+<tr><td><var>background</var></td><td>1</td></tr>
+<tr><td><var>cap-style</var></td><td><var>:butt</var></td></tr>
+<tr><td><var>clip-mask</var></td><td><var>:none</var></td></tr>
+<tr><td><var>clip-ordering</var></td><td><var>:unsorted</var></td></tr>
+<tr><td><var>clip-x</var></td><td>0</td></tr>
+<tr><td><var>clip-y</var></td><td>0</td></tr>
+<tr><td><var>dash-offset</var></td><td>0</td></tr>
+<tr><td><var>dashes</var></td><td>4 (that is, the list &rsquo;(4, 4))</td></tr>
+<tr><td><var>exposures</var></td><td><var>:on</var></td></tr>
+<tr><td><var>fill-rule</var></td><td><var>:even-odd</var></td></tr>
+<tr><td><var>fill-style</var></td><td><var>:solid</var></td></tr>
+<tr><td><var>font</var></td><td>server dependent</td></tr>
+<tr><td><var>foreground</var></td><td>0</td></tr>
+<tr><td><var>function</var></td><td><var>boole-1</var></td></tr>
+<tr><td><var>join-style</var></td><td><var>:miter</var></td></tr>
+<tr><td><var>line-style</var></td><td><var>:solid</var></td></tr>
+<tr><td><var>line-width</var></td><td>0</td></tr>
+<tr><td><var>plane-mask</var></td><td>A bit mask of all ones</td></tr>
+<tr><td><var>stipple</var></td><td>Pixmap of unspecified size filled with ones</td></tr>
+<tr><td><var>subwindow-mode</var></td><td><var>:clip-by-children</var></td></tr>
+<tr><td><var>tile</var></td><td>Pixmap of an unspecified size filled with the foreground pixel (that is, the client-specified pixel if any, or else 0)</td></tr>
+<tr><td><var>ts-x</var></td><td>0</td></tr>
+<tr><td><var>ts-y</var></td><td>0</td></tr>
+</table>
+
+
+<p>Note that foreground and background do not default to any values that
+are likely to be useful on a color display. Since specifying a
+<var>nil</var> value means use the default, this implies for clip-mask that
+an empty rectangle sequence cannot be specified as an empty list;
+<var>:none</var> must be used instead. Specifying a <var>stringable</var> for
+font causes an implicit <var>open-font</var> call to occur.
+</p>
+<dl compact="compact">
+<dt><var>gcontext</var></dt>
+<dd><p>Type <var>gcontext</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Graphics-Context-Attributes.html#Graphics-Context-Attributes" accesskey="n" rel="next">Graphics Context Attributes</a>, Previous: <a href="Graphics-Contexts.html#Graphics-Contexts" accesskey="p" rel="prev">Graphics Contexts</a>, Up: <a href="Graphics-Contexts.html#Graphics-Contexts" accesskey="u" rel="up">Graphics Contexts</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

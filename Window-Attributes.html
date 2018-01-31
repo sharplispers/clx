@@ -1,0 +1,952 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- The Common LISP X Interface (CLX)
+
+Copyright (C) 1988, 1989 Texas Instruments Incorporated
+
+Permission is granted to any individual or institution to use, copy,
+modify and distribute this document, provided that this complete
+copyright and permission notice is maintained, intact, in all copies
+and supporting documentation. Texas Instruments Incorporated makes no
+representations about the suitability of this document or the software
+described herein for any purpose. It is provided "as is" without
+express or implied warranty.
+ -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Common LISP X Interface: Window Attributes</title>
+
+<meta name="description" content="Common LISP X Interface: Window Attributes">
+<meta name="keywords" content="Common LISP X Interface: Window Attributes">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Function-Index.html#Function-Index" rel="index" title="Function Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Windows-and-Pixmaps.html#Windows-and-Pixmaps" rel="up" title="Windows and Pixmaps">
+<link href="Stacking-Order.html#Stacking-Order" rel="next" title="Stacking Order">
+<link href="Creating-Windows.html#Creating-Windows" rel="prev" title="Creating Windows">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Window-Attributes"></a>
+<div class="header">
+<p>
+Next: <a href="Stacking-Order.html#Stacking-Order" accesskey="n" rel="next">Stacking Order</a>, Previous: <a href="Creating-Windows.html#Creating-Windows" accesskey="p" rel="prev">Creating Windows</a>, Up: <a href="Windows-and-Pixmaps.html#Windows-and-Pixmaps" accesskey="u" rel="up">Windows and Pixmaps</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Window-Attributes-1"></a>
+<h3 class="section">5.3 Window Attributes</h3>
+
+
+<p>The following paragraphs describe the CLX functions used to return or
+change window attributes. Using the <var>with-state</var> macro improves
+the performance of attribute access by batching related accesses in
+the minimum number of server requests.
+</p>
+<dl>
+<dt><a name="index-drawable_002dborder_002dwidth"></a>Function: <strong>drawable-border-width</strong> <em>drawable</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>drawable</var></dt>
+<dd><p>A <var>drawable</var> object.
+</p></dd>
+</dl>
+
+<p>Returns the <em>border-width</em> of the <em>drawable</em> in pixels. It
+always returns zero if the <em>drawable</em> is a pixmap or an
+<var>:input-only</var> window. Used with <code>setf</code>, this function also
+changes the border width of the <var>:input-only</var> window. The default
+border width of a new window is zero.
+</p>
+<p>Changing just the border width leaves the outer left corner of a
+window in a fixed position but moves the absolute position of the
+window&rsquo;s origin. It is an error to make the border width of an
+<var>:input-only</var> window nonzero.
+</p>
+<p>When changing the border-width of a window, if the override-redirect
+attribute of the window is <var>:off</var> and some other client has
+selected <var>:substructure-redirect</var> on the parent, a
+<var>:configure-request</var> event is generated, and no further processing
+is performed.  Otherwise, the border-width is changed.
+</p>
+<dl compact="compact">
+<dt><var>border-width</var></dt>
+<dd><p>Type <var>card16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-drawable_002ddepth"></a>Function: <strong>drawable-depth</strong> <em>drawable</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>drawable</var></dt>
+<dd><p>A <var>drawable</var> object.
+</p></dd>
+</dl>
+
+<p>Returns the depth of the specified <em>drawable</em> (bits per pixel).
+</p>
+<dl compact="compact">
+<dt><var>depth</var></dt>
+<dd><p>Type <var>card8</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-drawable_002dheight"></a>Function: <strong>drawable-height</strong> <em>drawable</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>inside-height</var></dt>
+<dd><p>Type <var>card16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-drawable_002dwidth"></a>Function: <strong>drawable-width</strong> <em>drawable</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>drawable</var></dt>
+<dd><p>A <var>drawable</var> object.
+</p></dd>
+</dl>
+
+<p>These functions return the height or width of the
+<em>drawable</em>. These coordinates define the inside size of the
+<em>drawable</em>, in pixels. Used with <code>setf</code>, these functions also
+change the inside height or width of a window. However, the height or
+width of a pixmap cannot be changed.
+</p>
+<p>Changing the width and height resizes a window without changing its
+position or stacking priority.
+</p>
+<p>Changing the size of a mapped window may cause the window to lose its
+contents and generate an <var>:exposure</var> event. If a mapped window is
+made smaller, <var>:exposure</var> events are generated on windows that it
+formerly obscured.
+</p>
+<p>When changing the size of a window, if the override-redirect attribute
+of the window is <var>:off</var> and some other client has selected
+<var>:substructure-redirect</var> on the parent, a <var>:configure-request</var>
+event is generated, and no further processing is performed. Otherwise,
+if another client has selected <var>:resize-redirect</var> on the window, a
+<var>:resize-request</var> event is generated, and the current inside width
+and height are maintained. Note that the override-redirect attribute
+of the window has no effect on <var>:resize-redirect</var> and that
+<var>:substructure-redirect</var> on the parent has precedence over
+<var>:resize-redirect</var> on the window.
+</p>
+<p>When the inside size of the window is changed, the children of the
+window can move according to their window gravity. Depending on the
+window&rsquo;s bit gravity, the contents of the window can also be moved.
+</p>
+<dl compact="compact">
+<dt><var>inside-width</var></dt>
+<dd><p>Type <var>card16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-drawable_002dx"></a>Function: <strong>drawable-x</strong> <em>drawable</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>outside-left</var></dt>
+<dd><p>Type <var>int16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-drawable_002dy"></a>Function: <strong>drawable-y</strong> <em>drawable</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>drawable</var></dt>
+<dd><p>A <var>drawable</var> object.
+</p></dd>
+</dl>
+
+<p>These functions return the x or y coordinate of the specified
+<em>drawable</em>. They always return zero if the <em>drawable</em> is a
+pixmap. These coordinates define the location of the top left pixel of
+the window&rsquo;s border or of the window, if it has no border. Used with
+<code>setf</code>, these functions also change the x or y coordinate of a
+window. However, the x or y coordinate of a pixmap cannot be changed.
+</p>
+<p>Changing the x and y coordinates moves a window without changing its
+size or stacking priority. Moving a mapped window generates
+<var>:exposure</var> events on any formerly obscured windows.
+</p>
+<p>When changing the position of a window, if the override-redirect
+attribute of the window is <var>:off</var> and some other client has
+selected <var>:substructure-redirect</var> on the parent, a
+<var>:configure-request</var> event is generated, and no further processing
+is performed.  Otherwise, the window is moved.
+</p>
+<dl compact="compact">
+<dt><var>outside-top</var></dt>
+<dd><p>Type <var>int16</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-window_002dall_002devent_002dmasks"></a>Function: <strong>window-all-event-masks</strong> <em>window</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+</dl>
+
+<p>Returns the inclusive-or of the event masks selected on the
+specified <em>window</em> by all clients.
+</p><dl compact="compact">
+<dt><var>all-event-masks</var></dt>
+<dd><p>Type <var>mask32</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-setf"></a>Function: <strong>setf</strong> <em>(window-background) window background</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+<dt><var>background</var></dt>
+<dd><p>Either a <var>pixel</var>, a <var>pixmap</var>, <var>:none</var>, or <var>:parent-relative</var>.
+</p></dd>
+</dl>
+
+<p>Changes the <em>background</em> attribute of the <em>window</em> to the
+specified value. This operation is not allowed on an <var>:input-only</var>
+window. Changing the background does not cause the window contents to
+be changed. Note that the background of a window cannot be returned
+from the X server. The default background of a new window is
+<var>:none</var>.
+</p>
+<p>In general, the server automatically fills in exposed areas of the
+window when they are first made visible. A background pixmap is tiled
+to fill each area. However, if the background is <var>:none</var>, the
+server will not modify exposed areas. If the background is
+<var>:parent-relative</var>, the window and its parent must have the same
+depth. In this case, the window shares the same background as its
+parent. The parent&rsquo;s background is not copied and is reexamined
+whenever the window&rsquo;s background is required. If the background is
+<var>:parent-relative</var>, the background pixmap tile origin is the same
+as the parent&rsquo;s; otherwise, the tile origin is the window origin.
+</p>
+<dl compact="compact">
+<dt><var>background</var></dt>
+<dd><p>Either a <var>pixel</var>, a <var>pixmap</var>, <var>:none</var>, or <var>:parent-relative</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-window_002dbacking_002dpixel"></a>Function: <strong>window-backing-pixel</strong> <em>window</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+</dl>
+
+<p>Returns and (with <code>setf</code>) changes the value of the backing-pixel
+attribute for the specified <em>window</em>. Changing the backing-pixel
+attribute of a mapped window may have no immediate effect. The default
+backing-pixel of a new window is zero.
+</p>
+<dl compact="compact">
+<dt><var>backing-pixel</var></dt>
+<dd><p>Type <var>pixel</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-window_002dbacking_002dplanes"></a>Function: <strong>window-backing-planes</strong> <em>window</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+</dl>
+
+<p>Returns and (with <code>setf</code>) changes the value of the backing-planes
+attribute for the specified <em>window</em>. Changing the backing-planes
+attribute of a mapped window may have no immediate effect. The default
+backing-planes of a new window is all one&rsquo;s.
+</p>
+<dl compact="compact">
+<dt><var>backing-planes</var></dt>
+<dd><p>Type <var>pixel</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-window_002dbacking_002dstore"></a>Function: <strong>window-backing-store</strong> <em>window</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+</dl>
+
+<p>Returns and (with <code>setf</code>) changes the value of the backing-store
+attribute for the specified <em>window</em>. Changing the backing-store
+attribute of an obscured window to <var>:when-mapped</var> or <var>:always</var>
+may have no immediate effect. The default backing-store of a new
+window is <var>:not-useful</var>.
+</p>
+<dl compact="compact">
+<dt><var>backing-store-type</var></dt>
+<dd><p>One of <var>:always</var>, <var>:not-useful</var>, or <var>:when-mapped</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-window_002dbit_002dgravity"></a>Function: <strong>window-bit-gravity</strong> <em>window</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+</dl>
+
+<p>Returns and (with <code>setf</code>) changes the bit-gravity attribute of the
+<em>window</em>. If a window is reconfigured without changing its inside
+width or height, the contents of the window move with the window and
+are not lost. Otherwise, the contents of the resized window are either
+moved or lost, depending on its bit-gravity attribute. The default
+bit-gravity of a new window is <var>:forget</var>.
+</p>
+<p>For example, suppose a window&rsquo;s size is changed by <em>W</em> pixels
+in width and <em>H</em> pixels in height. The following table shows,
+for each bit-gravity value, the change in position (relative to the
+window origin) that results for each pixel of the window contents.
+</p>
+<table>
+<tr><td><var>:center</var></td><td><em>W/</em>2</td><td><em>H/</em>2</td></tr>
+<tr><td><var>:east</var></td><td><em>W</em></td><td><em>H/</em>2</td></tr>
+<tr><td><var>:north</var></td><td><em>W/</em>2</td><td>0</td></tr>
+<tr><td><var>:north-east</var></td><td><em>W</em></td><td>0</td></tr>
+<tr><td><var>:north-west</var></td><td>0</td><td>0</td></tr>
+<tr><td><var>:south</var></td><td><em>W/</em>2</td><td><em>H</em></td></tr>
+<tr><td><var>:south-east</var></td><td>W</td><td>H</td></tr>
+<tr><td><var>:south-west</var></td><td>0</td><td>H</td></tr>
+<tr><td><var>:west</var></td><td>0</td><td>H/2</td></tr>
+</table>
+
+
+<p>A <var>:static</var> bit-gravity indicates the contents or window should
+not move relative to the origin of the root window.
+</p>
+<p>A server can choose to ignore the specified bit-gravity attribute
+and use <var>:forget</var> instead.  A <var>:forget</var> bit-gravity
+attribute indicates that the window contents are always discarded
+after a size change, even if backing-store or save-under attributes
+are <var>:on</var>. The window&rsquo;s background is displayed (unless it is
+<var>:none</var>), and zero or more <var>:exposure</var> events are
+generated.
+</p><dl compact="compact">
+<dt><var>bit-gravity</var></dt>
+<dd><p>Type <var>bit-gravity</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-setf-1"></a>Function: <strong>setf</strong> <em>(window-border) window border</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+<dt><var>border</var></dt>
+<dd><p>Either a <var>pixel</var>, a <var>pixmap</var>, or <var>:copy</var>.
+</p></dd>
+</dl>
+
+<p>Changes the <em>border</em> attribute of the <em>window</em> to the
+specified value. This operation is not allowed on an
+<var>:input-only</var> window. Changing the border attribute also causes
+the window border to be repainted. Note that the border of a window
+cannot be returned from the X server. The default border of a new
+window is <var>:copy</var>.
+</p>
+<p>A border pixmap is tiled to fill the border. The border pixmap tile
+origin is the same as the background tile origin. A border pixmap
+and the window must have the same root and depth. If the border is
+<var>:copy</var>, the parent&rsquo;s border is copied and used; subsequent
+changes to the parent&rsquo;s border do not affect the window border.
+</p><dl compact="compact">
+<dt><var>border</var></dt>
+<dd><p>Either a <var>pixel</var>, a <var>pixmap</var>, or <var>:copy</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-window_002dclass"></a>Function: <strong>window-class</strong> <em>window</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+</dl>
+
+<p>Returns the <em>class</em> of the specified <em>window</em>.
+</p><dl compact="compact">
+<dt><var>class</var></dt>
+<dd><p>Either <var>:input-output</var> or <var>:input-only</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-window_002dcolormap"></a>Function: <strong>window-colormap</strong> <em>window</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+</dl>
+
+<p>Returns and (with <code>setf</code>) changes the value of the colormap
+attribute for the specified <em>window</em>. A value of <var>:copy</var> is
+never returned, since the parent&rsquo;s colormap attribute is actually
+copied, but the attribute can be set to <var>:copy</var> in a <code>setf</code>
+form. Changing the colormap of a window (defining a new map, not
+changing the contents of the existing map) generates a
+<var>:colormap-notify</var> event. Changing the colormap of a visible
+window may have no immediate effect on the screen
+(see <a href="Installing-Colormaps.html#install_002dcolormap">install-colormap</a>). The default colormap of a new window is
+<var>:copy</var>.
+</p><dl compact="compact">
+<dt><var>colormap</var></dt>
+<dd><p>Type <var>colormap</var> or <var>null</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-window_002dcolormap_002dinstalled_002dp"></a>Function: <strong>window-colormap-installed-p</strong> <em>window</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+</dl>
+
+<p>Returns non-<var>nil</var> if the colormap associated with this
+<em>window</em> is installed. Otherwise, this function returns
+<var>nil</var>.
+</p><dl compact="compact">
+<dt><var>colormap-installed-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-setf-2"></a>Function: <strong>setf</strong> <em>(window-cursor) window cursor</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+<dt><var>cursor</var></dt>
+<dd><p>Either <var>cursor</var> or <var>:none</var>.
+</p></dd>
+</dl>
+
+<p>Changes the <em>cursor</em> attribute of the <em>window</em> to the
+specified value. Changing the cursor of a root window to <var>:none</var>
+restores the default cursor. Note that the cursor of window cannot be
+returned from the X server. The default cursor of a new window is
+<var>:none</var>.
+</p>
+<dl compact="compact">
+<dt><var>cursor</var></dt>
+<dd><p>Type <var>cursor</var> or <var>:none</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-window_002ddisplay"></a>Function: <strong>window-display</strong> <em>window</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+</dl>
+
+<p>Returns the <var>display</var> object associated with the specified
+<em>window</em>.
+</p><dl compact="compact">
+<dt><var>display</var></dt>
+<dd><p>Type <var>display</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-window_002ddo_002dnot_002dpropagate_002dmask"></a>Function: <strong>window-do-not-propagate-mask</strong> <em>window</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+</dl>
+
+<p>Returns and (with <code>setf</code>) changes the do-not-propagate-mask
+attribute for the window.  The default do-not-propagate-mask of a new
+window is zero.
+</p>
+<p>If a window receives an event from one of the user input devices, and
+if no client has selected to receive the event, the event can instead
+be propagated up the window hierarchy to the first ancestor for which
+some client has selected it. However, any event type selected by the
+do-not-propagate-mask is not be propagated. The types of events that
+can be selected by the do-not-propagate-mask are those of type
+<var>device-event-mask-class</var>. See <a href="Selecting-Events.html#Selecting-Events">Selecting Events</a>.
+</p><dl compact="compact">
+<dt><var>do-not-propagate-mask</var></dt>
+<dd><p>Type <var>mask32</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-window_002dequal"></a>Function: <strong>window-equal</strong> <em>window-1 window-2</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window-1</var></dt>
+<dt><var>window-2</var></dt>
+<dd><p>The windows to compare for equality.
+</p></dd>
+</dl>
+
+<p>Returns non-<var>nil</var> if the two arguments are the same window, and
+<var>nil</var> if they are not.
+</p><dl compact="compact">
+<dt><var>equal-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-window_002devent_002dmask"></a>Function: <strong>window-event-mask</strong> <em>window</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+</dl>
+
+<p>Returns and (with <code>setf</code>) changes the value of the event-mask
+attribute for the <em>window</em>.  The default event-mask of a new
+window is zero.
+</p><dl compact="compact">
+<dt><var>event-mask</var></dt>
+<dd><p>Type <var>mask32</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-window_002dgravity"></a>Function: <strong>window-gravity</strong> <em>window</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+</dl>
+
+<p>Returns and (with <code>setf</code>) changes the gravity attribute of the
+<em>window</em>. If a parent window is reconfigured without changing its
+inside width or height, then all child windows move with the parent
+and are not changed. Otherwise, each child of the resized parent is
+moved, depending on the child&rsquo;s gravity attribute. The default gravity
+of a new window is <var>:north-west</var>.
+</p>
+<p>For example, suppose the size of the window&rsquo;s parent is changed by
+<em>W</em> pixels in width and <em>H</em> pixels in height. The following
+table shows, for each possible gravity value, the resulting change in
+the window&rsquo;s position relative to its parent&rsquo;s origin. When the window
+is moved, two events are generated&ndash;a <var>:configure-notify</var> event
+followed by a <var>:gravity-notify</var> event.
+</p>
+<table>
+<tr><td><var>:center</var></td><td><em>W/</em>2</td><td><em>H/</em>2</td></tr>
+<tr><td><var>:east</var></td><td><em>W</em></td><td><em>H/</em>2</td></tr>
+<tr><td><var>:north</var></td><td><em>W/</em>2</td><td>0</td></tr>
+<tr><td><var>:north-east</var></td><td><em>W</em></td><td>0</td></tr>
+<tr><td><var>:north-west</var></td><td>0</td><td>0</td></tr>
+<tr><td><var>:south</var></td><td><em>W/</em>2</td><td><em>H</em></td></tr>
+<tr><td><var>:south-east</var></td><td>W</td><td>H</td></tr>
+<tr><td><var>:south-west</var></td><td>0</td><td>H</td></tr>
+<tr><td><var>:west</var></td><td>0</td><td>H/2</td></tr>
+</table>
+
+
+<p>A <var>:static</var> gravity indicates that the position of the window
+should not move relative to the origin of the root window.
+</p>
+<p>An <var>:unmap</var> gravity is like <var>:north-west</var>, except the window
+is also unmapped and an <var>:unmap-notify</var> event is generated. This
+<var>:unmap-notify</var> event is generated after the
+<var>:configure-notify</var> event is generated for the parent.
+</p><dl compact="compact">
+<dt><var>gravity</var></dt>
+<dd><p>Type <var>win-gravity</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-window_002did"></a>Function: <strong>window-id</strong> <em>window</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+</dl>
+
+<p>Returns the unique ID assigned to <em>window</em>.
+</p><dl compact="compact">
+<dt><var>id</var></dt>
+<dd><p>Type <var>resource-id</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-window_002dmap_002dstate"></a>Function: <strong>window-map-state</strong> <em>window</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+</dl>
+
+<p>Returns the map state of <em>window</em>. A window is <var>:unviewable</var>
+if it is mapped but some ancestor is unmapped.
+</p><dl compact="compact">
+<dt><var>map-state</var></dt>
+<dd><p>One of <var>:unmapped</var>, <var>:unviewable</var>, or <var>:viewable</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-window_002doverride_002dredirect"></a>Function: <strong>window-override-redirect</strong> <em>window</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+</dl>
+
+<p>Returns and (with <code>setf</code>) changes the value of the
+override-redirect attribute for <em>window</em>.  The default
+override-redirect of a new window is <var>:off</var>.
+</p>
+<p>The override-redirect attribute determines whether or not attempts to
+change window geometry or parent hierarchy can be <em>redirected</em> by
+a window manager or some other client. The functions that might be
+affected by the override-redirect attribute are
+<var>circulate-window-down</var>, <var>circulate-window-up</var>,
+<var>drawable-border-width</var>, <var>drawable-height</var>,
+<var>drawable-width</var>, <var>drawable-x</var>, <var>drawable-y</var>,
+<var>map-window</var>, and <var>window-priority</var>.
+</p><dl compact="compact">
+<dt><var>override-redirect</var></dt>
+<dd><p>Either <var>:on</var> or <var>:off</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-window_002dp"></a>Function: <strong>window-p</strong> <em>object</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window-p</var></dt>
+<dd><p>Type <var>boolean</var>.
+</p></dd>
+</dl>
+
+<p>Returns non-<var>nil</var> if the <em>object</em> argument is a window; otherwise, it returns <var>nil</var>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-window_002dplist"></a>Function: <strong>window-plist</strong> <em>window</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+</dl>
+
+<p>Returns and (with <code>setf</code>) sets the property list for the specified
+<em>window</em>. This function provides a hook where extensions can hang
+data.
+</p><dl compact="compact">
+<dt><var>plist</var></dt>
+<dd><p>A property list.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+
+<dl>
+<dt><a name="index-setf-3"></a>Function: <strong>setf</strong> <em>(window-priority window) (&amp;optional sibling) mode</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p>
+</dd>
+<dt><var>sibling</var></dt>
+<dd><p>An optional argument specifying that <em>window</em> is to be restacked
+relative to this sibling <var>window</var>.
+</p>
+</dd>
+<dt><var>mode</var></dt>
+<dd><p>One of <var>:above</var>, <var>:below</var>, <var>:bottom-if</var>, <var>:opposite</var>, or <var>:top-if</var>.
+</p></dd>
+</dl>
+
+<p>Changes the stacking priority element of the <em>window</em> to the
+specified value. It is an error if the <em>sibling</em> argument is
+specified and is not actually a sibling of the window. Note that the
+priority of an existing window cannot be returned from the X server.
+</p>
+<p>When changing the priority of a window, if the override-redirect
+attribute of the window is <var>:off</var> and some other client has
+selected :substructure-redirect on the parent, a :configure-request
+event is generated, and no further processing is
+performed. Otherwise, the priority is changed.
+</p><dl compact="compact">
+<dt><var>mode</var></dt>
+<dd><p>One of <var>:above</var>, <var>:below</var>, <var>:bottom-if</var>, <var>:opposite</var>, or <var>:top-if</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-window_002dsave_002dunder"></a>Function: <strong>window-save-under</strong> <em>window</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+</dl>
+
+<p>Returns and (with <code>setf</code>) changes the value of the save-under
+attribute for the specified <em>window</em>. Changing the save-under
+attribute of a mapped window may have no immediate effect.
+</p><dl compact="compact">
+<dt><var>save-under</var></dt>
+<dd><p>Either <var>:on</var> or <var>:off</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-window_002dvisual"></a>Function: <strong>window-visual</strong> <em>window</em></dt>
+<dd>
+<dl compact="compact">
+<dt><var>window</var></dt>
+<dd><p>A <var>window</var>.
+</p></dd>
+</dl>
+
+<p>Returns the <em>visual-type</em> associated with the specified <em>window</em>.
+</p><dl compact="compact">
+<dt><var>visual-type</var></dt>
+<dd><p>Type <var>card29</var>.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+
+<dl>
+<dt><a name="index-with_002dstate"></a>Macro: <strong>with-state</strong> <em>drawable &amp;body body</em></dt>
+<dd><a name="with_002dstate"></a>
+<p>Batches successive read and write accesses to window attributes and
+drawable geometry, in order to minimize the number of requests sent to
+the server. Batching occurs automatically within the dynamic extent of
+the <em>body</em>. The <em>body</em> is not executed within a
+<var>with-display</var> form.
+</p>
+<p>All window attributes can be returned or changed in a single
+request. Similarly, all drawable geometry values can be returned or
+changed in a single request. <var>with-state</var> combines accesses to
+these values into the minimum number of server requests necessary to
+guarantee that each read access returns the current server state of
+the <em>drawable</em>.  The number of server requests sent depends on
+the sequence of calls to reader and <code>setf</code> functions within the
+dynamic extent of the <em>body</em>. There are two groups of reader and
+<code>setf</code> functions&ndash;the Window Attributes group and the Drawable
+Geometry group&ndash;as shown in Table 4-1.
+</p>
+<table>
+<tr><td>Window Attributes</td><td><var>window-all-event-masks</var></td><td><var>window-background</var></td></tr>
+<tr><td></td><td><var>window-backing-pixel</var></td><td><var>window-backing-pixel</var></td></tr>
+<tr><td></td><td><var>window-backing-planes</var></td><td><var>window-backing-planes</var></td></tr>
+<tr><td></td><td><var>window-backing-store</var></td><td><var>window-backing-store</var></td></tr>
+<tr><td></td><td><var>window-bit-gravity</var></td><td><var>window-bit-gravity</var></td></tr>
+<tr><td></td><td><var>window-class</var></td><td><var>window-border</var></td></tr>
+<tr><td></td><td><var>window-colormap</var></td><td><var>window-colormap</var></td></tr>
+<tr><td></td><td><var>window-colormap-installed-p</var></td><td><var>window-cursor</var></td></tr>
+<tr><td></td><td><var>window-do-not-propagate-mask</var></td><td><var>window-do-not-propagate-mask</var></td></tr>
+<tr><td></td><td><var>window-event-mask</var></td><td><var>window-event-mask</var></td></tr>
+<tr><td></td><td><var>window-gravity</var></td><td><var>window-gravity</var></td></tr>
+<tr><td></td><td><var>window-map-state</var></td><td></td></tr>
+<tr><td></td><td><var>window-override-redirect</var></td><td><var>window-override-redirect</var></td></tr>
+<tr><td></td><td><var>window-save-under</var></td><td><var>window-save-under</var></td></tr>
+<tr><td></td><td><var>window-visual</var></td><td></td></tr>
+<tr><td>Drawable Geometry</td><td><var>drawable-border-width</var></td><td><var>drawable-border-width</var></td></tr>
+<tr><td></td><td><var>drawable-depth</var></td><td><var>drawable-height</var></td></tr>
+<tr><td></td><td><var>drawable-height</var></td><td><var>drawable-width</var></td></tr>
+<tr><td></td><td><var>drawable-root</var></td><td><var>drawable-x</var></td></tr>
+<tr><td></td><td><var>drawable-width</var></td><td><var>drawable-y</var></td></tr>
+<tr><td></td><td><var>drawable-x</var></td><td><var>window-priority</var></td></tr>
+<tr><td></td><td><var>drawable-y</var></td><td></td></tr>
+</table>
+
+
+<p>The results from a sequence of calls to <code>setf</code> functions in a
+given group are cached and sent in a single server request, either
+upon exit from the <em>body</em> or when a reader function from the
+corresponding group is called.
+</p>
+<p><var>with-state</var> sends a single request to update all its cached
+values for the <em>drawable</em> before the first call to a reader
+function within the <em>body</em> and also before the first call to a
+reader function following a sequence of calls to <code>setf</code> functions
+from the corresponding group.
+</p>
+<dl compact="compact">
+<dt><var>drawable</var></dt>
+<dd><p>A <var>display</var>.
+</p></dd>
+<dt><var>body</var></dt>
+<dd><p>The forms in which attributes accesses are batched.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Stacking-Order.html#Stacking-Order" accesskey="n" rel="next">Stacking Order</a>, Previous: <a href="Creating-Windows.html#Creating-Windows" accesskey="p" rel="prev">Creating Windows</a>, Up: <a href="Windows-and-Pixmaps.html#Windows-and-Pixmaps" accesskey="u" rel="up">Windows and Pixmaps</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Function-Index.html#Function-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>
