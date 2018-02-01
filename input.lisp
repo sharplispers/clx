@@ -81,7 +81,8 @@
 ;; Any event-code greater than 34 is for an extension
 (defparameter *first-extension-event-code* 35)
 
-(defvar *extensions* nil) ;; alist of (extension-name-symbol events errors)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defvar *extensions* nil)) ;; alist of (extension-name-symbol events errors)
 
 (defmacro define-extension (name &key events errors)
   ;; Define extension NAME with EVENTS and ERRORS.
@@ -106,10 +107,11 @@
     (declare (clx-values event-key))
     (kintern event)))
 
-(defun extension-event-key-p (key)
-  (dolist (extension *extensions* nil)
-    (when (member key (second extension))
-      (return t))))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defun extension-event-key-p (key)
+    (dolist (extension *extensions* nil)
+      (when (member key (second extension))
+        (return t)))))
     
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defun allocate-extension-event-code (name)
