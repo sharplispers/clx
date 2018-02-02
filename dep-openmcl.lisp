@@ -587,7 +587,7 @@
 	   (type array-index start end)
 	   (type (or null (real 0 *)) timeout))
   #.(declare-buffun)
-  (let ((stream (display-input-stream display)))
+  (let ((stream (buffer-input-stream display)))
     (declare (type (or null stream) stream))
     (or (cond ((null stream))
 	      ((listen stream) nil)
@@ -604,7 +604,7 @@
 	   (type display display)
 	   (type array-index start end))
   #.(declare-buffun)
-  (let ((stream (display-output-stream display)))
+  (let ((stream (buffer-output-stream display)))
     (declare (type (or null stream) stream))
     (unless (null stream)
       (ccl:stream-write-ivector stream vector start (- end start)))
@@ -615,7 +615,7 @@
 (defun buffer-force-output-default (display)
   ;; The default buffer force-output function for use with common-lisp streams
   (declare (type display display))
-  (let ((stream (display-output-stream display)))
+  (let ((stream (buffer-output-stream display)))
     (declare (type (or null stream) stream))
     (unless (null stream)
       (force-output stream))))
@@ -626,7 +626,7 @@
   ;; The default buffer close function for use with common-lisp streams
   (declare (type display display))
   #.(declare-buffun)
-  (let ((stream (display-output-stream display)))
+  (let ((stream (buffer-output-stream display)))
     (declare (type (or null stream) stream))
     (unless (null stream)
       (close stream :abort abort))))
@@ -639,7 +639,7 @@
 (defun buffer-input-wait-default (display timeout)
   (declare (type display display)
 	   (type (or null number) timeout))
-  (let ((stream (display-input-stream display)))
+  (let ((stream (buffer-input-stream display)))
     (declare (type (or null stream) stream))
     (cond ((null stream))
 	  ((listen stream) nil)
@@ -659,7 +659,7 @@
 
 (defun buffer-listen-default (display)
   (declare (type display display))
-  (let ((stream (display-input-stream display)))
+  (let ((stream (buffer-input-stream display)))
     (declare (type (or null stream) stream))
     (if (null stream)
 	t

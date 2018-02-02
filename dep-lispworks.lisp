@@ -677,11 +677,11 @@
   #.(declare-buffun)
 
   (cond ((and (eql timeout 0)
-	      (not (listen (display-input-stream display))))
+	      (not (listen (buffer-input-stream display))))
 	 :timeout)
 	(t
 	 (read-sequence vector
-			(display-input-stream display)
+			(buffer-input-stream display)
                         :start start
                         :end end)
 	 nil)))
@@ -694,7 +694,7 @@
 	   (type array-index start end))
   #.(declare-buffun)
 
-  (write-sequence vector (display-output-stream display) :start start :end end)
+  (write-sequence vector (buffer-output-stream display) :start start :end end)
   nil)
 
 ;;; buffer-force-output-default - force output to the X stream
@@ -703,7 +703,7 @@
   ;; The default buffer force-output function for use with common-lisp streams
   (declare (type display display))
 
-  (let ((stream (display-output-stream display)))
+  (let ((stream (buffer-output-stream display)))
     (declare (type (or null stream) stream))
 
     (unless (null stream)
@@ -716,7 +716,7 @@
   (declare (type display display))
   #.(declare-buffun)
 
-  (let ((stream (display-output-stream display)))
+  (let ((stream (buffer-output-stream display)))
     (declare (type (or null stream) stream))
 
     (unless (null stream)
@@ -731,7 +731,7 @@
   (declare (type display display)
 	   (type (or null (real 0 *)) timeout))
 
-  (let ((stream (display-input-stream display)))
+  (let ((stream (buffer-input-stream display)))
     (declare (type (or null stream) stream))
 
     (cond ((null stream))
@@ -749,7 +749,7 @@
 (defun buffer-listen-default (display)
   (declare (type display display))
 
-  (let ((stream (display-input-stream display)))
+  (let ((stream (buffer-input-stream display)))
     (declare (type (or null stream) stream))
 
     (if (null stream)

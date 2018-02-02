@@ -696,7 +696,7 @@
   #.(declare-buffun)
     
   (let* ((howmany (- end start))
-	 (fd (display-input-stream display)))
+	 (fd (buffer-input-stream display)))
     (declare (type array-index howmany))
     (or (cond ((fd-char-avail-p fd) nil)
 	      ((and timeout (= timeout 0)) :timeout)
@@ -719,7 +719,7 @@
 	   (type display display)
 	   (type array-index start end))
   #.(declare-buffun)
-  (let ((stream (display-output-stream display)))
+  (let ((stream (buffer-output-stream display)))
     (unless (null stream)
       (write-sequence vector stream :start start :end end)))
   )
@@ -736,7 +736,7 @@
 (defun buffer-force-output-default (display)
   ;; The default buffer force-output function for use with common-lisp streams
   (declare (type display display))
-  (let ((stream (display-output-stream display)))
+  (let ((stream (buffer-output-stream display)))
     (declare (type (or null stream) stream))
     (unless (null stream)
       (force-output stream))))
@@ -749,7 +749,7 @@
   ;; The default buffer close function for use with common-lisp streams
   (declare (type display display))
   #.(declare-buffun)
-  (let ((stream (display-output-stream display)))
+  (let ((stream (buffer-output-stream display)))
     (declare (type (or null stream) stream))
     (unless (null stream)
       (close stream :abort abort))))
@@ -779,7 +779,7 @@
   (declare (type display display)
 	   (type (or null (real 0 *)) timeout))
   (declare (clx-values timeout))
-  (let ((fd (display-input-stream display)))
+  (let ((fd (buffer-input-stream display)))
     (when (streamp fd)
       (cond ((fd-char-avail-p fd)
 	     nil)
@@ -829,7 +829,7 @@
 #+(and excl clx-use-allegro-streams)
 (defun buffer-listen-default (display)
   (declare (type display display))
-  (let ((stream (display-input-stream display)))
+  (let ((stream (buffer-input-stream display)))
     (declare (type (or null stream) stream))
     (if (null stream)
 	t
@@ -838,7 +838,7 @@
 #+(and excl (not clx-use-allegro-streams))
 (defun buffer-listen-default (display)
   (declare (type display display))
-  (let ((fd (display-input-stream display)))
+  (let ((fd (buffer-input-stream display)))
     (declare (type fixnum fd))
     (if (= fd -1)
 	t
