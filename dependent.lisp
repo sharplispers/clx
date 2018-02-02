@@ -2756,7 +2756,9 @@ Returns a list of (host display-number screen protocol)."
 	 (slash-i (or (position #\/ name) -1))
 	 (colon-i (position #\: name :start (1+ slash-i)))
 	 (decnet-colon-p (eql (elt name (1+ colon-i)) #\:))
-	 (host (subseq name (1+ slash-i) colon-i))
+	 (host (subseq name (1+ slash-i) (if decnet-colon-p
+                                             (1+ colon-i)
+                                             colon-i)))
 	 (dot-i (and colon-i (position #\. name :start colon-i)))
 	 (display (when colon-i
 		    (parse-integer name
