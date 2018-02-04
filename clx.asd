@@ -38,7 +38,7 @@ Independent FOSS developers"
     :maintainer "sharplispers"
     :license "MIT"
     :depends-on (#+(or ecl sbcl) sb-bsd-sockets)
-    :version "0.7.4"
+    :version "0.7.5"
     :serial t
     :default-component-class clx-source-file
     :in-order-to ((test-op (test-op "clx/test")))
