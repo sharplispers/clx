@@ -1,10 +1,19 @@
 -*- Text -*-
+
+-- Changes in CLX 0.7.5, 2018-02-04 --
+
+Various OpenMCL (CCL) issues fixed
+Correct Decnet host parsing
+Automated tests for "displays" and "core protocol"
+Manual improvements with regard to inconsistencies with code
+"RandR", "DRI2", "XC-MISC" and "Composite" extensions support
+
+Thanks to Manuel Giraud, Daniel Kochmański, Tomasz Kurcz, Javier Olaechea, Luis Oliveira
+
 -- Changes in CLX 0.7.4, 2017-08-18 --
 
 Unit test framework fiasco has been added to the codebase.
-
 Demos and tests are put in a separate system clx/demo and clx/tests.
-
 Option `win-gravity' is fixed so it doesn't crash in some scenarios.
 
 -- Changes in telent CLX 0.7.3, Tue Mar 28 2006 ---

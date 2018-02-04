@@ -146,6 +146,10 @@
     (:big-endian)
     (:little-endian (pushnew :clx-little-endian *features*))))
 
+#+openmcl
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  #+little-endian-target (pushnew :clx-little-endian *features*))
+
 ;;; Steele's Common-Lisp states:  "It is an error if the array specified
 ;;; as the :displaced-to argument  does not have the same :element-type
 ;;; as the array being created" If this is the case on your lisp, then

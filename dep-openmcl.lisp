@@ -29,6 +29,17 @@
 ;;; Number of seconds to wait for a reply to a server request
 (defparameter *reply-timeout* nil) 
 
+#-(or clx-overlapping-arrays (not clx-little-endian))
+(progn
+  (defconstant +word-0+ 0)
+  (defconstant +word-1+ 1)
+
+  (defconstant +long-0+ 0)
+  (defconstant +long-1+ 1)
+  (defconstant +long-2+ 2)
+  (defconstant +long-3+ 3))
+
+#-(or clx-overlapping-arrays clx-little-endian)
 (progn
   (defconstant +word-0+ 1)
   (defconstant +word-1+ 0)
@@ -922,7 +933,9 @@ Returns a list of (host display-number screen protocol)."
 	 (slash-i (or (position #\/ name) -1))
 	 (colon-i (position #\: name :start (1+ slash-i)))
 	 (decnet-colon-p (eql (elt name (1+ colon-i)) #\:))
-	 (host (subseq name (1+ slash-i) colon-i))
+	 (host (subseq name (1+ slash-i) (if decnet-colon-p
+                                             (1+ colon-i)
+                                             colon-i)))
 	 (dot-i (and colon-i (position #\. name :start colon-i)))
 	 (display (when colon-i
 		    (parse-integer name

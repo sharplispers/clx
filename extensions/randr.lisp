@@ -61,6 +61,7 @@
 	  rr-set-provider-output-source
 	  rr-set-provider-offload-sink
 	  rr-list-provider-properties
+	  rr-select-input
 
 	  ;; mask related
 	  make-mode-flag-keys
@@ -86,6 +87,8 @@
 	  rr-panning
 	  make-rr-transform
 	  ))
+
+(pushnew :clx-ext-randr *features*)
 
 (define-extension "RANDR"
   :events (:rr-screen-change-notify
@@ -162,16 +165,18 @@
 ;;; status returns
   
 
-(defconstant +rr-config-status+ '#(:success :invalid-config-time :invalid-time :failed))
-(defconstant +rr-connection+ '#(:connected :disconnected :unknown-connection))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defconstant +rr-config-status+ '#(:success :invalid-config-time :invalid-time :failed))
+  (defconstant +rr-connection+ '#(:connected :disconnected :unknown-connection)))
 
 ;;; mask-vectors and types
 
   ;; Rotation
   
 
-(defconstant +rotation-mask-vector+
-  '#(:rotate-0 :rotate-90 :rotate-180 :rotate-270 :reflect-x :reflect-y))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defconstant +rotation-mask-vector+
+    '#(:rotate-0 :rotate-90 :rotate-180 :rotate-270 :reflect-x :reflect-y)))
 
 (deftype rotation-mask-class ()
   '(member :rotate-0 :rotate-90 :rotate-180 :rotate-270 :reflect-x :reflect-y))
@@ -182,8 +187,9 @@
   ;; Select
   
 
-(defconstant +rr-select-mask-vector+
-  '#(:screen-change-notify-mask :crtc-change-notify-mask :output-change-notify-mask :output-property-notify-mask))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defconstant +rr-select-mask-vector+
+    '#(:screen-change-notify-mask :crtc-change-notify-mask :output-change-notify-mask :output-property-notify-mask)))
 
 (deftype rr-select-mask-class ()
   '(member :screen-change-notify-mask :crtc-change-notify-mask :output-change-notify-mask :output-property-notify-mask))
@@ -193,10 +199,10 @@
 
   ;; Mode-flag
   
-
-(defconstant +mode-flag-mask-vector+
-  '#(:hsync-positive :hsync-negative :vsync-positive :vsync-negative :interlace :double-scan :csync 
-     :csync-positive :csync-negative :hskew-present :b-cast :pixel-multiplex :double-clock :clock-divide-by-2))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defconstant +mode-flag-mask-vector+
+    '#(:hsync-positive :hsync-negative :vsync-positive :vsync-negative :interlace :double-scan :csync 
+       :csync-positive :csync-negative :hskew-present :b-cast :pixel-multiplex :double-clock :clock-divide-by-2)))
 
 (deftype mode-flag-mask-class () 
   '(member :hsync-positive :hsync-negative :vsync-positive :vsync-negative :interlace :double-scan 
@@ -209,8 +215,9 @@
   ;; temporarily here since not in xrender.lisp
   
 
-(defconstant +render-subpixel-order+
-  '#(:unknown :horizontal-RGB :horizontal-BGR :vertical-RGB :vertical-BGR :none))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defconstant +render-subpixel-order+
+    '#(:unknown :horizontal-RGB :horizontal-BGR :vertical-RGB :vertical-BGR :none)))
 
   ;; mask encode-decode functions
 
@@ -689,16 +696,17 @@
 	 value-length
 	 (when (not (eql value-length 0)) 
 	   (case byte-format 
-	     ('card8 ( sequence-get :format card8 :index +replysize+ :length value-length :result-type result-type))
-	     ('card16 ( sequence-get :format card16 :index +replysize+ :length value-length :result-type result-type))
-	     ('card32 ( sequence-get :format card32 :index +replysize+ :length value-length :result-type result-type))))
-	 )
-	))))
+	     (card8 (sequence-get :format card8 :index +replysize+
+                                  :length value-length :result-type result-type))
+	     (card16 (sequence-get :format card16 :index +replysize+
+                                   :length value-length :result-type result-type))
+	     (card32 (sequence-get :format card32 :index +replysize+
+                                   :length value-length :result-type result-type)))))))))
 
 
 
 (defun rr-create-mode (window mode-info name)
-"FIXME"
+  "FIXME"
   (let ((display (window-display window)))
     (declare (type display display)
 	     (type window window)
