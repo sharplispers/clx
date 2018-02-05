@@ -538,8 +538,14 @@
 ;; This should use GET-SETF-METHOD to avoid evaluating subforms multiple times.
 ;; It doesn't because CLtL doesn't pass the environment to GET-SETF-METHOD.
 
+(defvar *conditional-store-lock*
+  (ccl:make-lock "Conditional store lock"))
+
 (defmacro conditional-store (place old-value new-value)
-  `(ccl::conditional-store ,place ,old-value ,new-value))
+  `(ccl:with-lock-grabbed (*conditional-store-lock*)
+     (cond ((eq ,place ,old-value)
+            (setf ,place ,new-value)
+            t))))
 
 ;;;----------------------------------------------------------------------------
 ;;; IO Error Recovery
