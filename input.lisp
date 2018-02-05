@@ -1180,7 +1180,7 @@
       (if event-decoder
 	  (let ((event-handler (if (functionp handler)
 				   handler
-				   (and (type? handler 'sequence)
+				   (and (typep handler 'sequence)
 					(< event-code (length handler))
 					(elt handler event-code)))))
 	    (if event-handler
@@ -1511,7 +1511,7 @@
   ;;    :value integer
   (let* ((handler (display-error-handler display))
 	 (handler-function
-	   (if (type? handler 'sequence)
+	   (if (typep handler 'sequence)
 	       (elt handler error-code)
 	     handler)))
     (apply handler-function display error-key params)))

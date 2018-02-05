@@ -344,7 +344,7 @@
 	((integerp background) ;; Background pixel
 	 (change-window-attribute window 0 0) ;; pixmap :NONE
 	 (change-window-attribute window 1 background))
-	((type? background 'pixmap) ;; Background pixmap
+	((typep background 'pixmap) ;; Background pixmap
 	 (change-window-attribute window 0 (drawable-id background)))
 	(t (x-type-error background '(or (member :none :parent-relative) integer pixmap))))
   background)
@@ -357,7 +357,7 @@
   (declare (type window window)
 	   (type (or (member :copy) pixel pixmap) border))
   (cond ((eq border :copy) (change-window-attribute window 2 0))
-	((type? border 'pixmap) ;; Border pixmap
+	((typep border 'pixmap) ;; Border pixmap
 	 (change-window-attribute window 2 (drawable-id border)))
 	((integerp border) ;; Border pixel
 	 (change-window-attribute window 3 border))

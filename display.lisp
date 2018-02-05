@@ -240,8 +240,8 @@
 					,(cond ((null +type-check?+)
 						`(t ,type))
 					       ((member type '(window pixmap))
-						`((type? ,type 'drawable) ,type))
-					       (t `((type? ,type ',type) ,type)))
+						`((typep ,type 'drawable) ,type))
+					       (t `((typep ,type ',type) ,type)))
 					,@(when +type-check?+
 					    `((t (x-error 'lookup-error
 							  :id id

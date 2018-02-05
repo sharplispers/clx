@@ -70,7 +70,7 @@
       (:none (setq back-pixmap 0))
       (:parent-relative (setq back-pixmap 1))
       (otherwise
-       (if (type? background 'pixmap)
+       (if (typep background 'pixmap)
 	   (setq back-pixmap (drawable-id background))
 	 (if (integerp background)
 	     (setq back-pixel background)
@@ -80,7 +80,7 @@
       ((nil) nil)
       (:copy (setq border-pixmap 0))
       (otherwise
-       (if (type? border 'pixmap)
+       (if (typep border 'pixmap)
 	   (setq border-pixmap (drawable-id border))
 	 (if (integerp border)
 	     (setq border-pixel border)
@@ -1164,7 +1164,7 @@
   (declare (clx-values width height))
   ;; Drawable can be a display for compatibility.
   (multiple-value-bind (display drawable)
-      (if (type? drawable 'drawable)
+      (if (typep drawable 'drawable)
 	  (values (drawable-display drawable) drawable)
 	(values drawable (screen-root (display-default-screen drawable))))
     (with-buffer-request-and-reply (display +x-querybestsize+ 12 :sizes 16)

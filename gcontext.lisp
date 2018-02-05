@@ -320,7 +320,7 @@
   (declare (type gcontext gcontext)
 	   (type (or card8 sequence) dashes))
   (multiple-value-bind (dashes dash)
-      (if (type? dashes 'sequence)
+      (if (typep dashes 'sequence)
 	  (if (zerop (length dashes))
 	      (x-type-error dashes '(or card8 sequence) "non-empty sequence")
 	    (values nil (or (copy-seq dashes) (vector))))
