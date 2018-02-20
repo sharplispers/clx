@@ -4607,7 +4607,8 @@ A @var{window} defining the destination coordinate system.
 
 Returns the position defined by @emph{source-x} and @emph{source-y}
 (relative to the origin of the @emph{source} window), expressed as
-coordinates relative to the origin of the @emph{destination} window.
+coordinates (two @var{int16} values) relative to the origin of the
+@emph{destination} window.
 
 @table @var
 @item destination-x
@@ -4826,13 +4827,13 @@ as the source for certain raster operations.
 @table @var
 @item :width
 @itemx :height
-The nonzero width and height (type @var{card16}).
+The nonzero width and height (type @var{card16}). These parameters are required.
 
 @item :depth
-The depth (type @var{card8}) of the pixmap.
+The depth (type @var{card8}) of the pixmap. This parameter is required.
 
 @item :drawable
-A @var{drawable} which determines the screen where the pixmap will be used.
+A @var{drawable} which determines the screen where the pixmap will be used. This parameter is required.
 @end table
 
 Creates a pixmap of the specified @var{:width}, @var{:height}, and
