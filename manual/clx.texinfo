@@ -5905,7 +5905,7 @@ Returns non-@var{nil} if the argument is a graphics context and
 A @var{gcontext}.
 @end table
 
-Returns the @emph{plane-mask} of the specified graphics context.
+Returns the @emph{plane-mask} (type @var{mask32}) of the specified graphics context.
 
 The plane-mask attribute of a graphics context specifies which bit
 planes of the destination drawable are modified during a graphic
