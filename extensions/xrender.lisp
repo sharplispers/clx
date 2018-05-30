@@ -128,6 +128,7 @@
           ;; render-query-picture-formats
           render-fill-rectangle
           render-triangles
+          render-triangle-fan
           render-trapezoids
           render-composite
           render-create-glyph-set
@@ -616,6 +617,23 @@ by every function, which attempts to generate RENDER requests."
          (guts)))
       (t
        (guts)))))
+
+(defun render-triangle-fan (picture op source src-x src-y format coord-sequence)
+  (let ((display (picture-display picture)))
+    (synchronise-picture-state picture)
+    (synchronise-picture-state source)
+    (labels ((funk (x) (truncate (* x #x10000))))
+      (with-buffer-request (display (extension-opcode display "RENDER"))
+        (data +X-RenderTriFan+)
+        (render-op op)
+        (pad8 0)
+        (pad16 0)
+        (resource-id (picture-id source))
+        (resource-id (picture-id picture))
+        ((or (member :none) picture-format) format)
+        (int16 src-x)
+        (int16 src-y)
+        ((sequence :format int32 :transform #'funk) coord-sequence)))))
 
 #||
 (defun render-set-picture-transform (picture mxx mxy dx mxy myy dy &optional (mwx 0) (mwy 0) (dw 1))
