@@ -177,5 +177,4 @@
     wm-size-hints-user-specified-position-p wm-size-hints-user-specified-size-p
     wm-size-hints-width wm-size-hints-width-inc wm-size-hints-win-gravity
     wm-size-hints-x wm-size-hints-y wm-zoom-hints write-bitmap-file
-    write-resources xatom
-    #:render-set-picture-transform))
+    write-resources xatom))

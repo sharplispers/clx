@@ -130,6 +130,7 @@
           render-triangles
           render-triangle-fan
           render-triangle-strip
+          render-set-picture-transform
           render-trapezoids
           render-composite
           render-create-glyph-set
