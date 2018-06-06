@@ -128,6 +128,9 @@
           ;; render-query-picture-formats
           render-fill-rectangle
           render-triangles
+          render-triangle-fan
+          render-triangle-strip
+          render-set-picture-transform
           render-trapezoids
           render-composite
           render-create-glyph-set
@@ -589,26 +592,27 @@ by every function, which attempts to generate RENDER requests."
 
 ;; fill rectangles, colors.
 
-(defun render-triangles (picture op source src-x src-y format coord-sequence)
+(declaim (inline render-triangles-impl))
+(defun render-triangles-impl (code picture op source src-x src-y format coord-sequence)
   ;; For performance reasons we do a special typecase on (simple-array
   ;; (unsigned-byte 32) (*)), so that it'll be possible to have high
   ;; performance rasters.
   (macrolet ((guts ()
                '(let ((display (picture-display picture)))
-                 (synchronise-picture-state picture)
-                 (synchronise-picture-state source)
-                 (labels ((funk (x) (ash x 16)))
-                   (with-buffer-request (display (extension-opcode display "RENDER"))
-                     (data +X-RenderTriangles+)
-                     (render-op op)
-                     (pad8 0)
-                     (pad16 0)
-                     (resource-id (picture-id source))
-                     (resource-id (picture-id picture))
-                     (picture-format format)
-                     (int16 src-x)
-                     (int16 src-y)
-                     ((sequence :format int32 :transform #'funk) coord-sequence))))))
+                  (synchronise-picture-state picture)
+                  (synchronise-picture-state source)
+                  (labels ((funk (x) (truncate (* x #x10000))))
+                    (with-buffer-request (display (extension-opcode display "RENDER"))
+                      (data code)
+                      (render-op op)
+                      (pad8 0)
+                      (pad16 0)
+                      (resource-id (picture-id source))
+                      (resource-id (picture-id picture))
+                      ((or (member :none) picture-format) format)
+                      (int16 src-x)
+                      (int16 src-y)
+                      ((sequence :format int32 :transform #'funk) coord-sequence))))))
     (typecase coord-sequence
       ((simple-array (unsigned-byte 32) (*))
        (locally
@@ -616,6 +620,15 @@ by every function, which attempts to generate RENDER requests."
          (guts)))
       (t
        (guts)))))
+
+(defun render-triangles (picture op source src-x src-y format coord-sequence)
+  (render-triangles-impl +X-RenderTriangles+ picture op source src-x src-y format coord-sequence))
+
+(defun render-triangle-fan (picture op source src-x src-y format coord-sequence)
+  (render-triangles-impl +X-RenderTriFan+ picture op source src-x src-y format coord-sequence))
+
+(defun render-triangle-strip (picture op source src-x src-y format coord-sequence)
+  (render-triangles-impl +X-RenderTriStrip+ picture op source src-x src-y format coord-sequence))
 
 #||
 (defun render-set-picture-transform (picture mxx mxy dx mxy myy dy &optional (mwx 0) (mwy 0) (dw 1))
