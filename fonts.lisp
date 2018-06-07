@@ -47,8 +47,8 @@
 
 (deftype char-info-vec () '(simple-array int16 (*)))
 
-(macrolet ((def-char-info-accessors (useless-name &body fields)
-	    `(within-definition (,useless-name def-char-info-accessors)
+(macrolet ((def-char-info-accessors (&body fields)
+	    `(progn
 	       ,@(do ((field fields (cdr field))
 		      (n 0 (1+ n))
 		      (name) (type)
@@ -132,7 +132,7 @@
 					 `(,(xintern type '->int16) ,var)))
 			     result))
 		   result)))))
-  (def-char-info-accessors ignore
+  (def-char-info-accessors
     (left-bearing int16)
     (right-bearing int16)
     (width int16)
@@ -212,7 +212,7 @@
 	     (nchar-infos (index* (card32-get 56) 6))
 	     (char-info (make-array nchar-infos :element-type 'int16)))
 	(setq font-info
-	      (make-font-info
+	      (make-instance 'font-info
 		:direction (member8-get 48 :left-to-right :right-to-left)
 		:min-char min-char
 		:max-char max-char
@@ -302,7 +302,7 @@
 		   :display display
 		   :name nil
 		   :font-info-internal
-		   (make-font-info
+		   (make-instance 'font-info
 		     :direction (member8-get 48 :left-to-right :right-to-left)
 		     :min-char min-char
 		     :max-char max-char

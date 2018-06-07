@@ -150,7 +150,7 @@ Font and Characters
 * Opening Fonts::
 * Listing Fonts::
 * Font Attributes::
-* Chracter Attributes::
+* Character Attributes::
 * Querying Text Size::
 
 Colors
@@ -8083,7 +8083,7 @@ The following paragraphs describe CLX functions to:
 * Opening Fonts::
 * Listing Fonts::
 * Font Attributes::
-* Chracter Attributes::
+* Character Attributes::
 * Querying Text Size::
 @end menu
 
@@ -8251,7 +8251,7 @@ Type @var{sequence} of @var{font}.
 @end defun
 
 
-@node Font Attributes, Chracter Attributes, Listing Fonts, Font and Characters
+@node Font Attributes, Character Attributes, Listing Fonts, Font and Characters
 @section Font Attributes
 
 
@@ -8833,8 +8833,8 @@ Type @var{int16}.
 @end defun
 
 
-@node Chracter Attributes, Querying Text Size, Font Attributes, Font and Characters
-@section Chracter Attributes
+@node Character Attributes, Querying Text Size, Font Attributes, Font and Characters
+@section Character Attributes
 
 
 The following paragraphs describe the CLX functions used to access the
@@ -8976,7 +8976,7 @@ Type @var{int16} or @var{null}.
 @end defun
 
 
-@node Querying Text Size,  , Chracter Attributes, Font and Characters
+@node Querying Text Size,  , Character Attributes, Font and Characters
 @section Querying Text Size
 
 

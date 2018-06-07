@@ -30,7 +30,7 @@
 (defmacro type-check (value type)
   value type
   (when +type-check?+
-    `(unless (type? ,value ,type)
+    `(unless (typep ,value ,type)
        (x-type-error ,value ,type))))
 
 ;;; This variable is used by the required-arg macro just to satisfy compilers.
@@ -90,7 +90,7 @@
     (error "Too many parameters to define-accessor: ~s" (cdddr get-put-macros)))
   (let ((get-macro (or (first get-put-macros) (error "No GET macro form for ~s" name)))
 	(put-macro (or (second get-put-macros) (error "No PUT macro form for ~s" name))))
-    `(within-definition (,name define-accessor)
+    `(progn
        (setf (get ',name 'byte-width) ,(and width (floor width 8)))
        (defmacro ,(getify name) ,(car get-macro)
 	 ,@(cdr get-macro))
@@ -161,12 +161,12 @@
 (define-accessor window (32)
   ((index &optional (buffer '%buffer))
    `(lookup-window ,buffer (read-card29 ,index)))
-  ((index thing) `(write-card29 ,index (window-id ,thing))))
+  ((index thing) `(write-card29 ,index (drawable-id ,thing))))
 
 (define-accessor pixmap (32)
   ((index &optional (buffer '%buffer))
    `(lookup-pixmap ,buffer (read-card29 ,index)))
-  ((index thing) `(write-card29 ,index (pixmap-id ,thing))))
+  ((index thing) `(write-card29 ,index (drawable-id ,thing))))
 
 (define-accessor gcontext (32)
   ((index &optional (buffer '%buffer))
@@ -472,12 +472,12 @@
      `(write-card8 1 ,thing)))
   ((index thing &optional stuff)
    (if stuff
-       `(and (type? ,thing ',stuff)
+       `(and (typep ,thing ',stuff)
 	     ,(if (consp stuff)
 		  `(macrolet ((write-card32 (index value) index value))
 		     (write-card8 1 (,(putify (car stuff)) ,index ,thing ,@(cdr stuff))))
 		`(,(putify stuff) 1 ,thing)))
-     `(and (type? ,thing 'card8) (write-card8 1 ,thing)))))
+     `(and (typep ,thing 'card8) (write-card8 1 ,thing)))))
 
 ;; Macroexpand the result of OR-GET to allow the macros file to not be loaded
 ;; when using event-case.  This is pretty gross.
@@ -529,7 +529,7 @@
 	       type-name (car type)))
        (push
 	 `(,@(cond ((get type-name 'predicating-put) nil)
-		   ((or +type-check?+ (cdr types)) `((type? ,value ',type)))
+		   ((or +type-check?+ (cdr types)) `((typep ,value ',type)))
 		   (t '(t)))
 	   (,(putify type-name (get type-name 'predicating-put)) ,index ,value ,@args))
 	 result)))))
@@ -623,7 +623,7 @@
 	     (if (get type 'predicating-put)
 		 `(or (,(putify type t) ,index ,var ,@args)
 		      (x-type-error ,var ',(if args `(,type ,@args) type)))
-	       `(if (type? ,var ',type)
+	       `(if (typep ,var ',type)
 		    (,(putify type) ,index ,var ,@args)
 		  (x-type-error ,var ',(if args `(,type ,@args) type)))))))
     (if (eq var value)

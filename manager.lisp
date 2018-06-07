@@ -122,25 +122,30 @@
 ;;-----------------------------------------------------------------------------
 ;; WM_HINTS
 
-(def-clx-class (wm-hints)
-  (input nil :type (or null (member :off :on)))
-  (initial-state nil :type (or null (member :dont-care :normal :zoom :iconic :inactive)))
-  (icon-pixmap nil :type (or null pixmap))
-  (icon-window nil :type (or null window))
-  (icon-x nil :type (or null card16))
-  (icon-y nil :type (or null card16))
-  (icon-mask nil :type (or null pixmap))
-  (window-group nil :type (or null resource-id))
-  (flags 0 :type card32)    ;; Extension-hook.  Exclusive-Or'ed with the FLAGS field
-  ;; may be extended in the future
-  )
+(defclass wm-hints ()
+  ((input :initarg :input :initform nil :type (or null (member :off :on)) :accessor wm-hints-input)
+   (initial-state :initform nil :type (or null (member :dont-care :normal :zoom :iconic :inactive))
+		  :accessor wm-hints-initial-state)
+   (icon-pixmap :initform nil :type (or null pixmap) :accessor wm-hints-icon-pixmap)
+   (icon-window :initform nil :type (or null window) :accessor wm-hints-icon-window)
+   (icon-x :initform nil :type (or null card16) :accessor wm-hints-icon-x)
+   (icon-y :initform nil :type (or null card16) :accessor wm-hints-icon-y)
+   (icon-mask :initform nil :type (or null pixmap) :accessor wm-hints-icon-mask)
+   (window-group :initform nil :type (or null resource-id) :accessor wm-hints-window-group)
+   (flags :initform 0 :type card32 :accessor wm-hints-flags
+	  :documentation "Extension-hook.  Exclusive-Or'ed with the
+FLAGS field may be extended in the future.")))
+
+;; Interface used downstream (e.g. McCLIM)
+(defun make-wm-hints (&rest args)
+  (apply #'make-instance 'wm-hints args))
 
 (defun wm-hints (window)
   (declare (type window window))
   (declare (clx-values wm-hints))
   (let ((prop (get-property window :WM_HINTS :type :WM_HINTS :result-type 'vector)))
     (when prop
-      (decode-wm-hints prop (window-display window)))))
+      (decode-wm-hints prop (drawable-display window)))))
 
 (defsetf wm-hints set-wm-hints)
 (defun set-wm-hints (window wm-hints)
@@ -163,7 +168,7 @@
 	(icon-mask-hint 5)
 	(window-group-hint 6))
     (let ((flags (aref vector 0))
-	  (hints (make-wm-hints))
+	  (hints (make-instance 'wm-hints))
 	  (%buffer display))
       (declare (type card32 flags)
 	       (type wm-hints hints)
@@ -234,31 +239,50 @@
 ;;-----------------------------------------------------------------------------
 ;; WM_SIZE_HINTS
 
-(def-clx-class (wm-size-hints)
-  (user-specified-position-p nil :type generalized-boolean) ;; True when user specified x y
-  (user-specified-size-p nil :type generalized-boolean)     ;; True when user specified width height
-  ;; the next four fields are obsolete when using a modern window manager
-  ;; (that will use min-width and friends instead), but they should be set by
-  ;; clients in case an old window manager is used
-  (x nil :type (or null int32))
-  (y nil :type (or null int32))
-  (width nil :type (or null card32))
-  (height nil :type (or null card32))
-  (min-width nil :type (or null card32))
-  (min-height nil :type (or null card32))
-  (max-width nil :type (or null card32))
-  (max-height nil :type (or null card32))
-  (width-inc nil :type (or null card32))
-  (height-inc nil :type (or null card32))
-  (min-aspect nil :type (or null number))
-  (max-aspect nil :type (or null number))
-  (base-width nil :type (or null card32))
-  (base-height nil :type (or null card32))
-  (win-gravity nil :type (or null win-gravity))
-  (program-specified-position-p nil :type generalized-boolean) ;; True when program specified x y
-  (program-specified-size-p nil :type generalized-boolean)     ;; True when program specified width height
-  )
+(defclass wm-size-hints ()
+  ((user-specified-position-p :initarg :user-specified-position-p
+			      :initform nil :type generalized-boolean
+			      :accessor wm-size-hints-user-specified-position-p
+			      :documentation "True when user specified x y.")
+   (user-specified-size-p :initform nil :type generalized-boolean
+			  :accessor wm-size-hints-user-specified-size-p
+			  :documentation "True when user specified width height.")
+   ;; The next four fields are obsolete when using a modern window manager
+   ;; (that will use min-width and friends instead), but they should be set by
+   ;; clients in case an old window manager is used
+   (x :initarg :x :initform nil :type (or null int32) :accessor wm-size-hints-x)
+   (y :initarg :y :initform nil :type (or null int32) :accessor wm-size-hints-y)
+   (width :initarg :width :initform nil :type (or null card32)
+	  :accessor wm-size-hints-width)
+   (height :initarg :height :initform nil :type (or null card32)
+	   :accessor wm-size-hints-height)
+   (min-width :initarg :min-width :initform nil :type (or null card32)
+	      :accessor wm-size-hints-min-width)
+   (min-height :initarg :min-height :initform nil :type (or null card32)
+	       :accessor wm-size-hints-min-height)
+   (max-width :initarg :max-width :initform nil :type (or null card32)
+	      :accessor wm-size-hints-max-width)
+   (max-height :initarg :max-height :initform nil :type (or null card32)
+	       :accessor wm-size-hints-max-height)
+   (width-inc :initarg :width-inc :initform nil :type (or null card32)
+	      :accessor wm-size-hints-width-inc)
+   (height-inc :initarg :height-inc :initform nil :type (or null card32)
+	       :accessor wm-size-hints-height-inc)
+   (min-aspect :initform nil :type (or null number) :accessor wm-size-hints-min-aspect)
+   (max-aspect :initform nil :type (or null number) :accessor wm-size-hints-max-aspect)
+   (base-width :initform nil :type (or null card32) :accessor wm-size-hints-base-width)
+   (base-height :initform nil :type (or null card32) :accessor wm-size-hints-base-height)
+   (win-gravity :initform nil :type (or null win-gravity) :accessor wm-size-hints-win-gravity)
+   (program-specified-position-p :initform nil :type generalized-boolean
+				 :accessor wm-size-hints-program-specified-position-p
+				 :documentation "True when program specified x y.")
+   (program-specified-size-p :initform nil :type generalized-boolean
+			     :accessor wm-size-hints-program-specified-size-p
+			     :documentation "True when program specified width height")))
 
+;; Interface used downstream (e.g. McCLIM)
+(defun make-wm-size-hints (&rest args)
+  (apply #'make-instance 'wm-size-hints args))
 
 (defun wm-normal-hints (window)
   (declare (type window window))
@@ -294,7 +318,7 @@
   (declare (clx-values (or null wm-size-hints)))
   (when vector
     (let ((flags (aref vector 0))
-	  (hints (make-wm-size-hints)))
+	  (hints (make-instance 'wm-size-hints)))
       (declare (type card16 flags)
 	       (type wm-size-hints hints))
       (setf (wm-size-hints-user-specified-position-p hints) (logbitp 0 flags))
@@ -413,7 +437,7 @@
   (let ((vector (get-property window :WM_ICON_SIZE :type :WM_ICON_SIZE :result-type 'vector)))
     (declare (type (or null (simple-vector 6)) vector))
     (when vector
-      (make-wm-size-hints
+      (make-instance 'wm-size-hints
 	:min-width (aref vector 0)
 	:min-height (aref vector 1)
 	:max-width (aref vector 2)
@@ -438,13 +462,13 @@
 ;; WM-Protocols
 
 (defun wm-protocols (window)
-  (map 'list #'(lambda (id) (atom-name (window-display window) id))
+  (map 'list #'(lambda (id) (atom-name (drawable-display window) id))
        (get-property window :WM_PROTOCOLS :type :ATOM)))
 
 (defsetf wm-protocols set-wm-protocols)
 (defun set-wm-protocols (window protocols)
   (change-property window :WM_PROTOCOLS
-		   (map 'list #'(lambda (atom) (intern-atom (window-display window) atom))
+		   (map 'list #'(lambda (atom) (intern-atom (drawable-display window) atom))
 			protocols)
 		   :ATOM 32)
   protocols)
@@ -455,12 +479,12 @@
 (defun wm-colormap-windows (window)
   (values (get-property window :WM_COLORMAP_WINDOWS :type :WINDOW
 			:transform #'(lambda (id)
-				       (lookup-window (window-display window) id)))))
+				       (lookup-window (drawable-display window) id)))))
 
 (defsetf wm-colormap-windows set-wm-colormap-windows)
 (defun set-wm-colormap-windows (window colormap-windows)
   (change-property window :WM_COLORMAP_WINDOWS colormap-windows :WINDOW 32
-		   :transform #'window-id)
+		   :transform #'drawable-id)
   colormap-windows)
 
 ;;-----------------------------------------------------------------------------
@@ -468,12 +492,12 @@
 
 (defun transient-for (window)
   (let ((prop (get-property window :WM_TRANSIENT_FOR :type :WINDOW :result-type 'list)))
-    (and prop (lookup-window (window-display window) (car prop)))))
+    (and prop (lookup-window (drawable-display window) (car prop)))))
 
 (defsetf transient-for set-transient-for)
 (defun set-transient-for (window transient)
   (declare (type window window transient))
-  (change-property window :WM_TRANSIENT_FOR (list (window-id transient)) :WINDOW 32)
+  (change-property window :WM_TRANSIENT_FOR (list (drawable-id transient)) :WINDOW 32)
   transient)
 
 ;;-----------------------------------------------------------------------------
@@ -534,7 +558,7 @@
   (if (dolist (arg '(:input :initial-state :icon-pixmap :icon-window
 			    :icon-x :icon-y :icon-mask :window-group))
 	(when (getf options arg) (return t)))
-      (let ((wm-hints (if hints (copy-wm-hints hints) (make-wm-hints))))
+      (let ((wm-hints (if hints hints (make-instance 'wm-hints))))
 	(when input (setf (wm-hints-input wm-hints) input))
 	(when initial-state (setf (wm-hints-initial-state wm-hints) initial-state))
 	(when icon-pixmap (setf (wm-hints-icon-pixmap wm-hints) icon-pixmap))
@@ -552,7 +576,7 @@
 			:program-specified-position-p :program-specified-size-p
 			:base-width :base-height :win-gravity))
 	(when (getf options arg) (return t)))
-      (let ((size (if normal-hints (copy-wm-size-hints normal-hints) (make-wm-size-hints))))
+      (let ((size (if normal-hints normal-hints (make-instance 'wm-size-hints))))
 	(when x (setf (wm-size-hints-x size) x))
 	(when y (setf (wm-size-hints-y size) y))
 	(when width (setf (wm-size-hints-width size) width))
@@ -610,14 +634,20 @@
 ;;-----------------------------------------------------------------------------
 ;; Colormaps
 
-(def-clx-class (standard-colormap (:copier nil) (:predicate nil))
-  (colormap nil :type (or null colormap))
-  (base-pixel 0 :type pixel)
-  (max-color nil :type (or null color))
-  (mult-color nil :type (or null color))
-  (visual nil :type (or null visual-info))
-  (kill nil :type (or (member nil :release-by-freeing-colormap)
-		      drawable gcontext cursor colormap font)))
+(defclass standard-colormap ()
+  ((colormap :initarg :colormap :initform nil :type (or null colormap)
+	     :reader standard-colormap-colormap)
+   (base-pixel :initarg :base-pixel :initform 0 :type pixel
+	       :reader standard-colormap-base-pixel)
+   (max-color :initarg :max-color :initform nil :type (or null color)
+	      :reader standard-colormap-max-color)
+   (mult-color :initarg :mult-color :initform nil :type (or null color)
+	       :reader standard-colormap-mult-color)
+   (visual :initarg :visual :initform nil :type (or null visual-info)
+	   :reader standard-colormap-visual)
+   (kill :initarg :kill :initform nil :type (or (member nil :release-by-freeing-colormap)
+						drawable gcontext cursor colormap font)
+	 :reader standard-colormap-kill)))
 
 (defun rgb-colormaps (window property)
   (declare (type window window)
@@ -626,8 +656,8 @@
   (let ((prop (get-property window property :type :RGB_COLOR_MAP :result-type 'vector)))
     (declare (type (or null simple-vector) prop))
     (when prop
-      (list (make-standard-colormap
-	      :colormap (lookup-colormap (window-display window) (aref prop 0))
+      (list (make-instance 'standard-colormap
+	      :colormap (lookup-colormap (drawable-display window) (aref prop 0))
 	      :base-pixel (aref prop 7)
 	      :max-color (make-color :red   (card16->rgb-val (aref prop 1))
 				     :green (card16->rgb-val (aref prop 3))
@@ -636,12 +666,12 @@
 				      :green (card16->rgb-val (aref prop 4))
 				      :blue  (card16->rgb-val (aref prop 6)))
 	      :visual (and (<= 9 (length prop))
-			   (visual-info (window-display window) (aref prop 8)))
+			   (visual-info (drawable-display window) (aref prop 8)))
 	      :kill (and (<= 10 (length prop))
 			 (let ((killid (aref prop 9)))
 			   (if (= killid 1)
 			       :release-by-freeing-colormap
-			       (lookup-resource-id (window-display window) killid)))))))))
+			       (lookup-resource-id (drawable-display window) killid)))))))))
 
 (defsetf rgb-colormaps set-rgb-colormaps)
 (defun set-rgb-colormaps (window property maps)
@@ -693,7 +723,7 @@
   (let ((prop (get-property window property :type :RGB_COLOR_MAP :result-type 'vector)))
     (declare (type (or null simple-vector) prop))
     (when prop
-      (values (lookup-colormap (window-display window) (aref prop 0))
+      (values (lookup-colormap (drawable-display window) (aref prop 0))
 	      (aref prop 7)			;Base Pixel
 	      (make-color :red   (card16->rgb-val (aref prop 1))	;Max Color
 			  :green (card16->rgb-val (aref prop 3))

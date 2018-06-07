@@ -155,7 +155,7 @@
 	  (setf (aref changes 0) (logior (aref changes 0) (ash 1 number))) ;; set mask bit
 	  (setf (aref changes (1+ number)) value))	;; save value
 						; Send change to the server
-      (with-buffer-request ((window-display window) +x-changewindowattributes+)
+      (with-buffer-request ((drawable-display window) +x-changewindowattributes+)
 	(window window)
 	(card32 (ash 1 number) value)))))
 ;;
@@ -196,7 +196,7 @@
 				      :test (window-equal-function)))
 	     (null (setq changes (state-attribute-changes state-entry)))
 	     (state-attributes state-entry))
-	(let ((display (window-display window)))
+	(let ((display (drawable-display window)))
 	  (with-display (display)
 	    ;; When SETF's have been done, flush changes to the server
 	    (when changes
@@ -248,7 +248,7 @@
   ;; Always from Called within a WITH-DISPLAY
   (declare (type window window)
 	   (type gcontext-state changes))
-  (let* ((display (window-display window))
+  (let* ((display (drawable-display window))
 	 (mask (aref changes 0)))
     (declare (type display display)
 	     (type mask32 mask))
@@ -275,7 +275,7 @@
   ;; Always from Called within a WITH-DISPLAY
   (declare (type window window)
 	   (type gcontext-state changes))
-  (let* ((display (window-display window))
+  (let* ((display (drawable-display window))
 	 (mask (aref changes 0)))
     (declare (type display display)
 	     (type mask16 mask))
@@ -328,7 +328,7 @@
   (declare (type window window))
   (declare (clx-values visual-info))
   (with-attributes (window :sizes 32)
-    (visual-info (window-display window) (resource-id-get 8))))
+    (visual-info (drawable-display window) (resource-id-get 8))))
 
 (defun window-class (window)
   (declare (type window window))
@@ -344,8 +344,8 @@
 	((integerp background) ;; Background pixel
 	 (change-window-attribute window 0 0) ;; pixmap :NONE
 	 (change-window-attribute window 1 background))
-	((type? background 'pixmap) ;; Background pixmap
-	 (change-window-attribute window 0 (pixmap-id background)))
+	((typep background 'pixmap) ;; Background pixmap
+	 (change-window-attribute window 0 (drawable-id background)))
 	(t (x-type-error background '(or (member :none :parent-relative) integer pixmap))))
   background)
 
@@ -357,8 +357,8 @@
   (declare (type window window)
 	   (type (or (member :copy) pixel pixmap) border))
   (cond ((eq border :copy) (change-window-attribute window 2 0))
-	((type? border 'pixmap) ;; Border pixmap
-	 (change-window-attribute window 2 (pixmap-id border)))
+	((typep border 'pixmap) ;; Border pixmap
+	 (change-window-attribute window 2 (drawable-id border)))
 	((integerp border) ;; Border pixel
 	 (change-window-attribute window 3 border))
 	(t (x-type-error border '(or (member :copy) integer pixmap))))
@@ -497,10 +497,10 @@
     (let ((id (resource-id-get 28)))
       (if (zerop id)
 	  nil
-	  (let ((colormap (lookup-colormap (window-display window) id)))
+	  (let ((colormap (lookup-colormap (drawable-display window) id)))
 	    (unless (colormap-visual-info colormap)
 	      (setf (colormap-visual-info colormap)
-		    (visual-info (window-display window) (resource-id-get 8))))
+		    (visual-info (drawable-display window) (resource-id-get 8))))
 	    colormap)))))
 
 (defun set-window-colormap (window colormap)

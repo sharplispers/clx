@@ -677,11 +677,11 @@
   #.(declare-buffun)
 
   (cond ((and (eql timeout 0)
-	      (not (listen (display-input-stream display))))
+	      (not (listen (buffer-input-stream display))))
 	 :timeout)
 	(t
 	 (read-sequence vector
-			(display-input-stream display)
+			(buffer-input-stream display)
                         :start start
                         :end end)
 	 nil)))
@@ -694,7 +694,7 @@
 	   (type array-index start end))
   #.(declare-buffun)
 
-  (write-sequence vector (display-output-stream display) :start start :end end)
+  (write-sequence vector (buffer-output-stream display) :start start :end end)
   nil)
 
 ;;; buffer-force-output-default - force output to the X stream
@@ -703,7 +703,7 @@
   ;; The default buffer force-output function for use with common-lisp streams
   (declare (type display display))
 
-  (let ((stream (display-output-stream display)))
+  (let ((stream (buffer-output-stream display)))
     (declare (type (or null stream) stream))
 
     (unless (null stream)
@@ -716,7 +716,7 @@
   (declare (type display display))
   #.(declare-buffun)
 
-  (let ((stream (display-output-stream display)))
+  (let ((stream (buffer-output-stream display)))
     (declare (type (or null stream) stream))
 
     (unless (null stream)
@@ -731,7 +731,7 @@
   (declare (type display display)
 	   (type (or null (real 0 *)) timeout))
 
-  (let ((stream (display-input-stream display)))
+  (let ((stream (buffer-input-stream display)))
     (declare (type (or null stream) stream))
 
     (cond ((null stream))
@@ -749,7 +749,7 @@
 (defun buffer-listen-default (display)
   (declare (type display display))
 
-  (let ((stream (display-input-stream display)))
+  (let ((stream (buffer-input-stream display)))
     (declare (type (or null stream) stream))
 
     (if (null stream)
@@ -1315,26 +1315,25 @@ Returns a list of (host display-number screen protocol)."
 	   (type (member 1 4 8 16 24 32) bits-per-pixel)
 	   (ignore bits-per-pixel))
   #.(declare-buffun)
-  (with-vector (buffer-bbuf buffer-bytes)
-    (with-underlying-simple-vector (vector pixarray-24-element-type array)
-      (do* ((h 0 (index1+ h))
-	    (y y (index1+ y))
-	    (start index (index+ start padded-bytes-per-line)))
-	   ((index>= h height))
-	(declare (type array-index y start))
-	(do* ((end (index+ start (index* width 3)))
-	      (i start (index+ i 3))
-	      (x (array-row-major-index array y x) (index1+ x)))
-	     ((index>= i end))
-	  (declare (type array-index end i x))
-	  (let ((pixel (aref vector x)))
-	    (declare (type pixarray-24-element-type pixel))
-	    (setf (aref buffer-bbuf (index+ i 0))
-		  (write-image-load-byte 0 pixel 24))
-	    (setf (aref buffer-bbuf (index+ i 1))
-		  (write-image-load-byte 8 pixel 24))
-	    (setf (aref buffer-bbuf (index+ i 2))
-		  (write-image-load-byte 16 pixel 24)))))))
+  (with-underlying-simple-vector (vector pixarray-24-element-type array)
+    (do* ((h 0 (index1+ h))
+	  (y y (index1+ y))
+	  (start index (index+ start padded-bytes-per-line)))
+	 ((index>= h height))
+      (declare (type array-index y start))
+      (do* ((end (index+ start (index* width 3)))
+	    (i start (index+ i 3))
+	    (x (array-row-major-index array y x) (index1+ x)))
+	   ((index>= i end))
+	(declare (type array-index end i x))
+	(let ((pixel (aref vector x)))
+	  (declare (type pixarray-24-element-type pixel))
+	  (setf (aref buffer-bbuf (index+ i 0))
+		(write-image-load-byte 0 pixel 24))
+	  (setf (aref buffer-bbuf (index+ i 1))
+		(write-image-load-byte 8 pixel 24))
+	  (setf (aref buffer-bbuf (index+ i 2))
+		(write-image-load-byte 16 pixel 24))))))
   t)
 
 #+(or cmu sbcl)

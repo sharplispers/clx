@@ -221,8 +221,8 @@
 
 ;; Define functions to find the CLX data types given a display and resource-id
 ;; If the data type is being cached, look there first.
-(macrolet ((generate-lookup-functions (useless-name &body types)
-	    `(within-definition (,useless-name generate-lookup-functions)
+(macrolet ((generate-lookup-functions (&body types)
+	     `(progn
 	       ,@(mapcar
 		   #'(lambda (type)
 		       `(defun ,(xintern 'lookup- type)
@@ -233,15 +233,15 @@
 			  ,(if (member type +clx-cached-types+)
 			       `(let ((,type (lookup-resource-id display id)))
 				  (cond ((null ,type) ;; Not found, create and save it.
-					 (setq ,type (,(xintern 'make- type)
-						      :display display :id id))
+					 (setq ,type (make-instance ',type
+								    :display display :id id))
 					 (save-id display id ,type))
 					;; Found.  Check the type
 					,(cond ((null +type-check?+)
 						`(t ,type))
 					       ((member type '(window pixmap))
-						`((type? ,type 'drawable) ,type))
-					       (t `((type? ,type ',type) ,type)))
+						`((typep ,type 'drawable) ,type))
+					       (t `((typep ,type ',type) ,type)))
 					,@(when +type-check?+
 					    `((t (x-error 'lookup-error
 							  :id id
@@ -249,10 +249,9 @@
 							  :type ',type
 							  :object ,type))))))
 			       ;; Not being cached.  Create a new one each time.
-			       `(,(xintern 'make- type)
-				 :display display :id id))))
+			       `(make-instance ',type :display display :id id))))
 		   types))))
-  (generate-lookup-functions ignore
+  (generate-lookup-functions
     drawable
     window
     pixmap
@@ -394,9 +393,12 @@ gethostname(3) - is used instead."
 				  protocol))))
   ;; PROTOCOL is the network protocol (something like :TCP :DNA or :CHAOS). See OPEN-X-STREAM.
   (let* ((stream (open-x-stream host display protocol))
-	 (disp (make-buffer *output-buffer-size* #'make-display-internal
-			    :host host :display display
-			    :output-stream stream :input-stream stream))
+	 (disp (make-instance 'display :host host :display display
+				       :size *output-buffer-size*
+				       :obuf8 (make-array *output-buffer-size* :element-type 'card8
+									       :initial-element 0)
+				       :output-stream stream
+				       :input-stream stream))
 	 (ok-p nil))
     (unwind-protect
 	(progn
@@ -498,9 +500,9 @@ gethostname(3) - is used instead."
 	      (dotimes (i num-formats) ;; loop gathering pixmap formats
 		(declare (ignorable i))
 		(buffer-input display buffer-bbuf 0 8)
-		(push (make-pixmap-format :depth (card8-get 0)
-					  :bits-per-pixel (card8-get 1)
-					  :scanline-pad (card8-get 2))
+		(push (make-instance 'pixmap-format :depth (card8-get 0)
+						    :bits-per-pixel (card8-get 1)
+						    :scanline-pad (card8-get 2))
 						; 5 unused bytes
 		      (display-pixmap-formats display)))
 	      (setf (display-pixmap-formats display)
@@ -510,13 +512,13 @@ gethostname(3) - is used instead."
 		(declare (ignorable i))
 		(buffer-input display buffer-bbuf 0 40)
 		(let* ((root-id (card32-get 0))
-		       (root (make-window :id root-id :display display))
+		       (root (make-instance 'window :id root-id :display display))
 		       (root-visual (card32-get 32))
 		       (default-colormap-id (card32-get 4))
 		       (default-colormap
-			 (make-colormap :id default-colormap-id :display display))
+			 (make-instance 'colormap :id default-colormap-id :display display))
 		       (screen
-			 (make-screen
+			 (make-instance 'screen
 			   :root root
 			   :default-colormap default-colormap
 			   :white-pixel (card32-get 8)
@@ -547,7 +549,7 @@ gethostname(3) - is used instead."
 			(declare (ignorable k))
 			(buffer-input display buffer-bbuf 0 24)
 			(let* ((visual (card32-get 0))
-			       (visual-info (make-visual-info
+			       (visual-info (make-instance 'visual-info
 					      :id visual
 					      :display display
 					      :class (member8-get 4 :static-gray :gray-scale
@@ -626,7 +628,7 @@ gethostname(3) - is used instead."
 (defvar *inside-display-after-function* nil)
 
 (defun display-invoke-after-function (display)
-  ; Called after every protocal request is generated
+  ; Called after every protocol request is generated
   (declare (type display display))
   (when (and (display-after-function display)
 	     (not *inside-display-after-function*))

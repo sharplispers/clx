@@ -211,12 +211,11 @@
   alpha-byte
   colormap)
 
-(def-clx-class (glyph-set (:copier nil)
-                        )
-  (id 0 :type resource-id)
-  (display nil :type (or null display))
-  (plist nil :type list)                ; Extension hook
-  (format))
+(defclass glyph-set ()
+  ((id :initform 0 :type resource-id :accessor glyph-set-id)
+   (display :initarg :display :initform nil :type (or null display)
+	    :reader glyph-set-display)
+   (format :accessor glyph-set-format)))
 
 (defstruct render-info
   major-version
@@ -391,18 +390,15 @@ by every function, which attempts to generate RENDER requests."
 ;; provides no provision to actually query a picture object's values. 
 ;; *sigh*
 
-(def-clx-class (picture (:copier nil))
-  (id 0 :type resource-id)
-  (display nil :type (or null display))
-  (plist nil :type list)                ; Extension hook
-  (format)
-  (%changed-p)
-  (%server-values)
-  (%values)
-  (%drawable))
-
-(defun picture-drawable (picture)
-  (picture-%drawable picture))
+(defclass picture ()
+  ((id :initform 0 :type resource-id :accessor picture-id)
+   (display :initarg :display :initform nil :type (or null display)
+	    :reader picture-display)
+   (format :accessor picture-format)
+   (%changed-p :initform t :accessor picture-changed-p)
+   (%server-values :accessor picture-server-values)
+   (%values :accessor picture-values)
+   (%drawable :accessor picture-drawable)))
 
 ;; xx make id, display, format readonly
 
@@ -425,13 +421,13 @@ by every function, which attempts to generate RENDER requests."
                        collect
                        `(progn
                          (defun ,(xintern 'picture- slot) (picture)
-                           (aref (picture-%values picture) ,index))
+                           (aref (picture-values picture) ,index))
                          (defun (setf ,(xintern 'picture- slot)) (new-value picture)
-                           (setf (picture-%changed-p picture) t)
-                           (setf (aref (picture-%values picture) ,index) new-value))))
+                           (setf (picture-changed-p picture) t)
+                           (setf (aref (picture-values picture) ,index) new-value))))
     
                (defun synchronise-picture-state (picture)
-                 (when (picture-%changed-p picture)
+                 (when (picture-changed-p picture)
                    (let ((display (picture-display picture)))
                      (ensure-render-initialized display)
                      (with-buffer-request (display (extension-opcode display "RENDER"))
@@ -443,29 +439,29 @@ by every function, which attempts to generate RENDER requests."
                                 collect
                                 `(,type (and
                                          ,(cond ((eql slot 'clip-mask)
-                                                 `(not (typep (aref (picture-%values picture) ,index)
+                                                 `(not (typep (aref (picture-values picture) ,index)
                                                         'sequence)))
                                                 (t
                                                  't))
-                                         (not (eq (aref (picture-%values picture) ,index)
-                                                  (aref (picture-%server-values picture) ,index)))
-                                         (setf (aref (picture-%server-values picture) ,index)
-                                          (aref (picture-%values picture) ,index))))))))
+                                         (not (eq (aref (picture-values picture) ,index)
+                                                  (aref (picture-server-values picture) ,index)))
+                                         (setf (aref (picture-server-values picture) ,index)
+                                          (aref (picture-values picture) ,index))))))))
                    ,(let ((index (position 'clip-mask specs :key #'second)))
-                         `(unless (eql (aref (picture-%values picture) ,index)
-                                   (aref (picture-%server-values picture)
+                         `(unless (eql (aref (picture-values picture) ,index)
+                                   (aref (picture-server-values picture)
                                     ,index))
                            (%render-change-picture-clip-rectangles
-                            picture (aref (picture-%values picture) ,index))
-                           (setf (aref (picture-%server-values picture) ,index)
-                                 (aref (picture-%values picture) ,index))))
+                            picture (aref (picture-values picture) ,index))
+                           (setf (aref (picture-server-values picture) ,index)
+                                 (aref (picture-values picture) ,index))))
 
-                   (setf (picture-%changed-p picture) nil)))
+                   (setf (picture-changed-p picture) nil)))
 
                (defun render-create-picture
                    (drawable
                     &key format
-                         (picture (make-picture :display (drawable-display drawable)))
+                         (picture (make-instance 'picture :display (drawable-display drawable)))
                          ,@(loop for (type slot default-value) in specs
                                  collect (cond ((eql slot 'clip-mask)
                                                 `(clip-mask :none))
@@ -498,12 +494,12 @@ by every function, which attempts to generate RENDER requests."
                    (when (typep clip-mask 'sequence)
                      (%render-change-picture-clip-rectangles picture clip-mask))
                    (setf (picture-format picture) format)
-                   (setf (picture-%server-values picture)
+                   (setf (picture-server-values picture)
                          (vector ,@(loop for (type slot default) in specs
                                          collect
                                          `(or ,slot ,default))))
-                   (setf (picture-%values picture) (copy-seq (picture-%server-values picture)))
-                   (setf (picture-%drawable picture) drawable)
+                   (setf (picture-values picture) (copy-seq (picture-server-values picture)))
+                   (setf (picture-drawable picture) drawable)
                    picture))
     
                (defconstant +picture-state-length+
@@ -777,7 +773,7 @@ by every function, which attempts to generate RENDER requests."
 
 (defun render-create-glyph-set (format &key glyph-set)
   (let ((display (picture-format-display format)))
-    (let* ((glyph-set (or glyph-set (make-glyph-set :display display)))
+    (let* ((glyph-set (or glyph-set (make-instance 'glyph-set :display display)))
            (gsid (setf (glyph-set-id glyph-set)
                        (allocate-resource-id display glyph-set 'glyph-set))))
       (declare (ignore gsid))
@@ -790,7 +786,7 @@ by every function, which attempts to generate RENDER requests."
 
 (defun render-reference-glyph-set (existing-glyph-set &key glyph-set)
   (let ((display (glyph-set-display existing-glyph-set)))
-    (let* ((glyph-set (or glyph-set (make-glyph-set :display display)))
+    (let* ((glyph-set (or glyph-set (make-instance 'glyph-set :display display)))
            (gsid (setf (glyph-set-id glyph-set)
                        (allocate-resource-id display glyph-set 'glyph-set))))
       (declare (ignore gsid))

@@ -85,7 +85,7 @@
 	  rr-panning-border-bottom
 	  rr-panning-border-right
 	  rr-panning
-	  make-rr-transform
+	  rr-transform
 	  ))
 
 (pushnew :clx-ext-randr *features*)
@@ -264,69 +264,77 @@
 
 ;; structs
 
-(def-clx-class (screen-size (:constructor make-screen-size (width-in-pixels
-							    height-in-pixels
-							    width-in-mm
-							    height-in-mm)))
-  (width-in-pixels 0 :type card16)
-  (height-in-pixels 0 :type card16)
-  (width-in-mm 0 :type card16)
-  (height-in-mm 0 :type card16))
+(defclass screen-size ()
+  ((width-in-pixels :initarg :width-in-pixels :initform 0 :type card16)
+   (height-in-pixels :initarg :height-in-pixels :initform 0 :type card16)
+   (width-in-mm :initarg :width-in-mm :initform 0 :type card16)
+   (height-in-mm :initarg :height-in-mm :initform 0 :type card16)))
 
-(def-clx-class (rr-mode-info 
-		(:constructor make-rr-mode-info (id width height dot-clock
-						 h-sync-start h-sync-end h-sync-total h-sync-skew
-						 v-sync-start v-sync-end v-total name-length mode-flags)))
-  (id  0 :type card32)
-  (width  0 :type card16)
-  (height  0 :type card16)
-  (dot-clock  0 :type card32)
-  (h-sync-start  0 :type card16)
-  (h-sync-end  0 :type card16)
-  (h-sync-total  0 :type card16)
-  (h-sync-skew  0 :type card16)
-  (v-sync-start  0 :type card16)
-  (v-sync-end  0 :type card16)
-  (v-total  0 :type card16)
-  (name-length  0 :type card16)
-  (mode-flags  0 :type mode-flag-mask))
+(defmethod print-object ((screen-size screen-size) stream)
+  (with-slots (width-in-pixels height-in-pixels width-in-mm height-in-mm) screen-size
+    (print-unreadable-object (screen-size stream :type t)
+      (format stream "~dx~d (~dmm x ~dmm)" width-in-pixels height-in-pixels
+	      width-in-mm height-in-mm))))
 
+(defclass rr-mode-info ()
+  ((id :initarg :id :initform 0 :type card32 :reader rr-mode-info-id)
+   (width :initarg :width :initform 0 :type card16 :reader rr-mode-info-width)
+   (height :initarg :height :initform 0 :type card16 :reader rr-mode-info-height)
+   (dot-clock :initarg :dot-clock :initform 0 :type card32 :reader rr-mode-info-dot-clock)
+   (h-sync-start :initarg :h-sync-start :initform 0 :type card16
+		 :reader rr-mode-info-h-sync-start)
+   (h-sync-end :initarg :h-sync-end :initform 0 :type card16
+	       :reader rr-mode-info-h-sync-end)
+   (h-sync-total :initarg :h-sync-total :initform 0 :type card16
+		 :reader rr-mode-info-h-sync-total)
+   (h-sync-skew :initarg :h-sync-skew :initform 0 :type card16
+		:reader rr-mode-info-h-sync-skew)
+   (v-sync-start :initarg :v-sync-start :initform 0 :type card16
+		 :reader rr-mode-info-v-sync-start)
+   (v-sync-end :initarg :v-sync-end :initform 0 :type card16
+	       :reader rr-mode-info-v-sync-end)
+   (v-total :initarg :v-total :initform 0 :type card16
+	    :reader rr-mode-info-v-total)
+   (name-length :initarg :name-length :initform 0 :type card16
+		:reader rr-mode-info-name-length)
+   (mode-flags :initarg :mode-flags :initform 0 :type mode-flag-mask
+	       :reader rr-mode-info-mode-flags)))
 
-(def-clx-class (rr-panning)
-  (left 0 :type card16)
-  (top 0 :type card16)
-  (width 0 :type card16)
-  (height 0 :type card16)
-  (track-left 0 :type card16)  
-  (track-top 0 :type card16)
-  (track-width 0 :type card16)
-  (track-height 0 :type card16)
-  (border-left 0 :type int16)
-  (border-top 0 :type int16)
-  (border-right 0 :type int16)
-  (border-bottom 0 :type int16))
+(defclass rr-panning ()
+  ((left :initform 0 :type card16)
+   (top :initform 0 :type card16)
+   (width :initform 0 :type card16)
+   (height :initform 0 :type card16)
+   (track-left :initform 0 :type card16)
+   (track-top :initform 0 :type card16)
+   (track-width :initform 0 :type card16)
+   (track-height :initform 0 :type card16)
+   (border-left :initform 0 :type int16)
+   (border-top :initform 0 :type int16)
+   (border-right :initform 0 :type int16)
+   (border-bottom :initform 0 :type int16)))
 
-(def-clx-class (rr-transform ( :type vector) :named )
-  (x  0 :type card32)
-  (y  0 :type card32)
-  (z  0 :type card32)
-  (i 0 :type card32)
-  (j 0 :type card32)
-  (k 0 :type card32)
-  (d 0 :type card32)
-  (e 0 :type card32)
-  (f 0 :type card32))
+(defclass rr-transform ()
+  ((x :initarg :x :initform 0 :type card32)
+   (y :initarg :y :initform 0 :type card32)
+   (z :initarg :z :initform 0 :type card32)
+   (i :initarg :i :initform 0 :type card32)
+   (j :initarg :j :initform 0 :type card32)
+   (k :initarg :k :initform 0 :type card32)
+   (d :initarg :d :initform 0 :type card32)
+   (e :initarg :e :initform 0 :type card32)
+   (f :initarg :f :initform 0 :type card32)))
 
 ;; accessors
 ;; fricken macroexpansions !!! figure it out!!
 
 (define-accessor rr-transform (36)
-  ((index) `(make-rr-transform :x (card32-get (index+ ,index 0))
-			       :y (card32-get (index+ ,index 4)) :z (card32-get (index+ ,index 8))
-			       :i (card32-get (index+ ,index 12)) :j (card32-get (index+ ,index 16))
-			       :k (card32-get (index+ ,index 20)) :d (card32-get (index+ ,index 24))
-			       :e (card32-get (index+ ,index 28)) :f (card32-get (index+ ,index 32))
-			       ))
+  ((index) `(make-instance 'rr-transform
+	     :x (card32-get (index+ ,index 0))
+	     :y (card32-get (index+ ,index 4)) :z (card32-get (index+ ,index 8))
+	     :i (card32-get (index+ ,index 12)) :j (card32-get (index+ ,index 16))
+	     :k (card32-get (index+ ,index 20)) :d (card32-get (index+ ,index 24))
+	     :e (card32-get (index+ ,index 28)) :f (card32-get (index+ ,index 32))))
   ((index thing) `(sequence-put ,index ,thing :start 1)))
 
 ;; (define-accessor rr-panning (24)
@@ -361,20 +369,20 @@
 
 (define-accessor rr-mode-info (32)
   ((index)
-   `(make-rr-mode-info 
-     (card32-get ,index)
-     (card16-get (+ ,index 4))
-     (card16-get (+ ,index 6))
-     (card32-get (+ ,index 8))
-     (card16-get (+ ,index 12))
-     (card16-get (+ ,index 14))
-     (card16-get (+ ,index 16))					
-     (card16-get (+ ,index 18))
-     (card16-get (+ ,index 20))
-     (card16-get (+ ,index 22))
-     (card16-get (+ ,index 24))
-     (card16-get (+ ,index 26))
-     (card32-get (+ ,index 28)))) 
+   `(make-instance 'rr-mode-info
+		   :id (card32-get ,index)
+		   :width (card16-get (+ ,index 4))
+		   :height (card16-get (+ ,index 6))
+		   :dot-clock (card32-get (+ ,index 8))
+		   :h-sync-start (card16-get (+ ,index 12))
+		   :h-sync-end (card16-get (+ ,index 14))
+		   :h-sync-total (card16-get (+ ,index 16))
+		   :h-sync-skew (card16-get (+ ,index 18))
+		   :v-sync-start (card16-get (+ ,index 20))
+		   :v-sync-end (card16-get (+ ,index 22))
+		   :v-total (card16-get (+ ,index 24))
+		   :name-length (card16-get (+ ,index 26))
+		   :mode-flags (card32-get (+ ,index 28))))
   ((index thing)
    `(progn (card32-put ,index (rr-mode-info-id ,thing))
      (card16-put (index+ ,index 4) (rr-mode-info-width ,thing))
@@ -506,10 +514,11 @@
 	   (card16-get 26) ; current rate
 	   (loop :for x fixnum :from 1 :to num-screens
 		 :for offset fixnum := 32 :then (+ offset 8)
-		 :collect (make-screen-size (card16-get offset)
-					    (card16-get (index+ offset 2))
-					    (card16-get (index+ offset 4))
-					    (card16-get (index+ offset 6)))
+		 :collect (make-instance 'screen-size
+					 :width-in-pixels (card16-get offset)
+					 :height-in-pixels (card16-get (index+ offset 2))
+					 :width-in-mm (card16-get (index+ offset 4))
+					 :height-in-mm (card16-get (index+ offset 6)))
 		 :finally (setf rates-location (+ offset 8 2)))
 	   (sequence-get :format card16 :length num-rates :index rates-location :result-type result-type))))))
 

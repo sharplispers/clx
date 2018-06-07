@@ -50,7 +50,7 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
 (defconstant +gcontext-fast-change-length+ #.(length +gcontext-components+))
 
-(macrolet ((def-gc-internals (name &rest extras)
+(macrolet ((def-gc-internals (&rest extras)
 	    (let ((macros nil)
 		  (indexes nil)
 		  (masks nil)
@@ -75,7 +75,7 @@
 				  0))
 		      masks)
 		(incf index))
-	      `(within-definition (def-gc-internals ,name)
+	      `(progn
 		 ,@(nreverse macros)
 		 (eval-when (:compile-toplevel :load-toplevel :execute)
 		   (defvar *gcontext-data-length* ,index)
@@ -83,7 +83,7 @@
 		   (defvar *gcontext-masks*
 		     ',(coerce (nreverse masks) 'simple-vector)
 		     ))))))
-  (def-gc-internals ignore
+  (def-gc-internals
     (:clip :clip-mask) (:dash :dashes) (:font-obj :font) (:timestamp)))
 
 ) ;; end EVAL-WHEN
@@ -139,7 +139,7 @@
 
 (defun allocate-temp-gcontext ()
   (or (threaded-atomic-pop *temp-gcontext-cache* gcontext-next gcontext)
-      (make-gcontext :local-state '#() :server-state '#())))
+      (make-instance 'gcontext :local-state '#() :server-state '#())))
 
 (defun deallocate-temp-gcontext (gc)
   (declare (type gcontext gc))
@@ -182,7 +182,7 @@
   (let* ((gcontext-name (xintern 'gcontext- name))
 	 (internal-accessor (xintern 'gcontext-internal- name))
 	 (internal-setfer (xintern 'set- gcontext-name)))
-    `(within-definition (,name def-gc-accessor)
+    `(progn
 
        (defun ,gcontext-name (gcontext)
 	 (declare (type gcontext gcontext))
@@ -277,7 +277,7 @@
   (unless clip-mask (x-type-error clip-mask '(or (member :none) pixmap rect-seq)))
   (multiple-value-bind (clip-mask clip)
       (typecase clip-mask
-	(pixmap (values (pixmap-id clip-mask) nil))
+	(pixmap (values (drawable-id clip-mask) nil))
 	((member :none) (values 0 nil))
 	(sequence
 	  (values nil
@@ -320,7 +320,7 @@
   (declare (type gcontext gcontext)
 	   (type (or card8 sequence) dashes))
   (multiple-value-bind (dashes dash)
-      (if (type? dashes 'sequence)
+      (if (typep dashes 'sequence)
 	  (if (zerop (length dashes))
 	      (x-type-error dashes '(or card8 sequence) "non-empty sequence")
 	    (values nil (or (copy-seq dashes) (vector))))
@@ -360,7 +360,7 @@
 (defun set-gcontext-font (gcontext font)
   (declare (type gcontext gcontext)
 	   (type fontable font))
-  (let* ((font-object (if (font-p font) font (open-font (gcontext-display gcontext) font)))
+  (let* ((font-object (if (typep font 'font) font (open-font (gcontext-display gcontext) font)))
 	 (font (and font-object (font-id font-object))))
     ;; XXX need to check font has id (and name?)
     (modify-gcontext (gcontext local-state)
@@ -702,7 +702,7 @@
 	   (type generalized-boolean cache-p))
   (declare (clx-values gcontext))
   (let* ((display (drawable-display drawable))
-	 (gcontext (make-gcontext :display display :drawable drawable :cache-p cache-p))
+	 (gcontext (make-instance 'gcontext :display display :drawable drawable :cache-p cache-p))
 	 (local-state (gcontext-local-state gcontext))
 	 (server-state (gcontext-server-state gcontext))
 	 (gcontextid (allocate-resource-id display gcontext 'gcontext)))

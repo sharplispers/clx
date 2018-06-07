@@ -32,7 +32,7 @@
     (with-display (display)
       (force-gcontext-changes-internal gcontext)
       (with-buffer-output (display :length +requestsize+)
-	(let* ((last-request-byte (display-last-request display))
+	(let* ((last-request-byte (buffer-last-request display))
 	       (current-boffset buffer-boffset))
 	  ;; To append or not append, that is the question
 	  (if (and (not *inhibit-appending*)
@@ -57,7 +57,7 @@
 		(set-buffer-offset current-boffset)
 		(put-items (0)			; Insert new point
 		  (int16 x y))
-		(setf (display-boffset display) (index+ buffer-boffset 4)))
+		(setf (buffer-boffset display) (index+ buffer-boffset 4)))
 	    ;; New Request
 	    (progn
 	      (put-items (4)
@@ -69,7 +69,7 @@
 		(int16 x y))
 	      (buffer-new-request-number display)
 	      (setf (buffer-last-request display) buffer-boffset)
-	      (setf (display-boffset display) (index+ buffer-boffset 16)))))))
+	      (setf (buffer-boffset display) (index+ buffer-boffset 16)))))))
     (display-invoke-after-function display))) 
 
 
@@ -98,7 +98,7 @@
     (with-display (display)
       (force-gcontext-changes-internal gcontext)
       (with-buffer-output (display :length +requestsize+)
-	(let* ((last-request-byte (display-last-request display))
+	(let* ((last-request-byte (buffer-last-request display))
 	       (current-boffset buffer-boffset))
 	  ;; To append or not append, that is the question
 	  (if (and (not *inhibit-appending*)
@@ -122,7 +122,7 @@
 		(set-buffer-offset current-boffset)
 		(put-items (0)			; Insert new point
 		  (int16 x1 y1 x2 y2))
-		(setf (display-boffset display) (index+ buffer-boffset 8)))
+		(setf (buffer-boffset display) (index+ buffer-boffset 8)))
 	    ;; New Request
 	    (progn
 	      (put-items (4)
@@ -133,7 +133,7 @@
 		(int16 x1 y1 x2 y2))
 	      (buffer-new-request-number display)
 	      (setf (buffer-last-request display) buffer-boffset)
-	      (setf (display-boffset display) (index+ buffer-boffset 20)))))))
+	      (setf (buffer-boffset display) (index+ buffer-boffset 20)))))))
     (display-invoke-after-function display))) 
 
 (defun draw-lines (drawable gcontext points &key relative-p fill-p (shape :complex))
@@ -189,7 +189,7 @@
     (with-display (display)
       (force-gcontext-changes-internal gcontext)
       (with-buffer-output (display :length +requestsize+)
-	(let* ((last-request-byte (display-last-request display))
+	(let* ((last-request-byte (buffer-last-request display))
 	       (current-boffset buffer-boffset))
 	  ;; To append or not append, that is the question
 	  (if (and (not *inhibit-appending*)
@@ -214,7 +214,7 @@
 		(put-items (0)			; Insert new point
 		  (int16 x y)
 		  (card16 width height))
-		(setf (display-boffset display) (index+ buffer-boffset 8)))
+		(setf (buffer-boffset display) (index+ buffer-boffset 8)))
 	    ;; New Request
 	    (progn
 	      (put-items (4)
@@ -226,7 +226,7 @@
 		(card16 width height))
 	      (buffer-new-request-number display)
 	      (setf (buffer-last-request display) buffer-boffset)
-	      (setf (display-boffset display) (index+ buffer-boffset 20)))))))
+	      (setf (buffer-boffset display) (index+ buffer-boffset 20)))))))
     (display-invoke-after-function display))) 
 
 (defun draw-rectangles (drawable gcontext rectangles &optional fill-p)
@@ -257,7 +257,7 @@
     (with-display (display)
       (force-gcontext-changes-internal gcontext)
       (with-buffer-output (display :length +requestsize+)
-	(let* ((last-request-byte (display-last-request display))
+	(let* ((last-request-byte (buffer-last-request display))
 	       (current-boffset buffer-boffset))
 	  ;; To append or not append, that is the question
 	  (if (and (not *inhibit-appending*)
@@ -283,7 +283,7 @@
 		  (int16 x y)
 		  (card16 width height)
 		  (angle angle1 angle2))
-		(setf (display-boffset display) (index+ buffer-boffset 12)))
+		(setf (buffer-boffset display) (index+ buffer-boffset 12)))
 	    ;; New Request
 	    (progn
 	      (put-items (4)
@@ -296,7 +296,7 @@
 		(angle angle1 angle2))
 	      (buffer-new-request-number display)
 	      (setf (buffer-last-request display) buffer-boffset)
-	      (setf (display-boffset display) (index+ buffer-boffset 24)))))))
+	      (setf (buffer-boffset display) (index+ buffer-boffset 24)))))))
     (display-invoke-after-function display))) 
 
 (defun draw-arcs-list (drawable gcontext arcs &optional fill-p)

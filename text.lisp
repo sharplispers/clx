@@ -118,7 +118,7 @@
   (declare (clx-values width ascent descent left right
 		  font-ascent font-descent direction
 		  (or null array-index)))
-  (when (type? font 'gcontext)
+  (when (typep font 'gcontext)
     (force-gcontext-changes font)
     (setq font (gcontext-font font t)))
   (check-type font font)
@@ -138,7 +138,7 @@
 	     (type (or null array-index) next-start)
 	     (type display display))
     (with-display (display)
-      (do* ((wbuf (display-tbuf16 display))
+      (do* ((wbuf (buffer-tbuf16 display))
 	    (src-end (or end (length sequence)))
 	    (src-start start (index+ src-start buf-end))
 	    (end (index-min src-end (index+ src-start +buffer-text16-size+))
@@ -189,7 +189,7 @@
 		 (setq ascent (the int16 (max ascent (the int16 a))))
 		 (setq descent (the int16 (max descent (the int16 d)))))))
 
-	(when (type? new-font 'font)
+	(when (typep new-font 'font)
 	  (setq font new-font))
 
 	(setq overall-ascent (the int16 (max overall-ascent font-ascent)))
@@ -220,7 +220,7 @@
   (declare (type (or null translation-function) translate)
 	   (dynamic-extent translate))
   (declare (clx-values integer (or null integer)))
-  (when (type? font 'gcontext)
+  (when (typep font 'gcontext)
     (force-gcontext-changes font)
     (setq font (gcontext-font font t)))
   (check-type font font)
@@ -231,7 +231,7 @@
 	     (type (or null array-index) next-start)
 	     (type display display))
     (with-display (display)
-      (do* ((wbuf (display-tbuf16 display))
+      (do* ((wbuf (buffer-tbuf16 display))
 	    (src-end (or end (length sequence)))
 	    (src-start start (index+ src-start buf-end))
 	    (end (index-min src-end (index+ src-start +buffer-text16-size+))
@@ -257,7 +257,7 @@
 	      (if (or (font-char-infos-internal font) (font-local-only-p font))
 		  (text-extents-local font wbuf 0 buf-end :width-only)
 		(text-width-server font wbuf 0 buf-end)))
-	(when (type? new-font 'font)
+	(when (typep new-font 'font)
 	  (setq font new-font))))
     (values width next-start)))
 
@@ -472,7 +472,7 @@
 	  (funcall (or translate #'translate-default)
 		   vector 0 1 (gcontext-font gcontext nil) vector 1)
 	;; Allow translate to set a new font
-	(when (type? new-font 'font) 
+	(when (typep new-font 'font)
 	  (setf (gcontext-font gcontext) new-font)
 	  (multiple-value-setq (new-start new-font translate-width)
 	    (funcall translate vector 0 1 new-font vector 1)))
@@ -588,7 +588,7 @@
 		     (unless (index= src-chunk dst-chunk)
 		       (setq stop-p t)))
 		    ((integerp new-font) (setq offset new-font))
-		    ((type? new-font 'font)
+		    ((typep new-font 'font)
 		     (setq font new-font)
 		     (let ((font-id (font-id font))
 			   (buffer-boffset boffset))
@@ -635,7 +635,7 @@
 	 (request-length (* length 3))		; Leave lots of room for font shifts.
 	 (display (gcontext-display gcontext))
 	 (font (gcontext-font gcontext nil))
-	 (buffer (display-tbuf16 display)))
+	 (buffer (buffer-tbuf16 display)))
     (declare (type array-index src-start src-end length)
 	     (type (or null array-index) next-start)
 	     (type display display)
@@ -690,7 +690,7 @@
 		     (unless (index= src-chunk dst-chunk) 
 		       (setq stop-p t)))
 		    ((integerp new-font) (setq offset new-font))
-		    ((type? new-font 'font)
+		    ((typep new-font 'font)
 		     (setq font new-font)
 		     (let ((font-id (font-id font))
 			   (buffer-boffset boffset))
@@ -739,7 +739,7 @@
 	  (funcall (or translate #'translate-default)
 		   vector 0 1 (gcontext-font gcontext nil) vector 1)
 	;; Allow translate to set a new font
-	(when (type? new-font 'font) 
+	(when (typep new-font 'font)
 	  (setf (gcontext-font gcontext) new-font)
 	  (multiple-value-setq (new-start new-font translate-width)
 	    (funcall translate vector 0 1 new-font vector 1)))
@@ -834,7 +834,7 @@
 	    ;; Number of glyphs translated
 	    (setq chunk (index- new-start start))		
 	    ;; Check for initial font change
-	    (when (and (index-zerop chunk) (type? font 'font))
+	    (when (and (index-zerop chunk) (typep font 'font))
 	      (setq font-change t) ;; Loop around changing font
 	      (return-from change-font))
 	    ;; Quit when nothing translated
@@ -899,7 +899,7 @@
 	    ;; Number of glyphs translated
 	    (setq chunk (index- new-start start))
 	    ;; Check for initial font change
-	    (when (and (index-zerop chunk) (type? font 'font))
+	    (when (and (index-zerop chunk) (typep font 'font))
 	      (setq font-change t) ;; Loop around changing font
 	      (return-from change-font))
 	    ;; Quit when nothing translated
