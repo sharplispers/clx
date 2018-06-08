@@ -1196,7 +1196,7 @@
 		"Server Error: event with unknown event code ~d received."
 		event-code)))))
 
-(defun make-event-handlers (&key (type 'array) default)
+(defun make-event-handlers (&key (type 'vector) default)
   (declare (type t type)			;Sequence type specifier
 	   (type (or null function) default)
 	   (clx-values sequence))			;Default handler for initial content
