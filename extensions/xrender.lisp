@@ -896,6 +896,9 @@ by every function, which attempts to generate RENDER requests."
                                      (end (length sequence)))
   ;; xxx do we want to go with some translate function as draw-glyphs?
   (declare (type array-index start end))
+  (when (or (< dest-x -1000) (> dest-x #x7fff)
+            (< dest-y -1000) (> dest-y #x7fff))
+    (return-from render-composite-glyphs nil))
   (let ((display (picture-display dest)))
     (ensure-render-initialized display)
     (synchronise-picture-state dest)
