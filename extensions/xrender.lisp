@@ -264,13 +264,13 @@
 (defconstant +PictOpHSLLuminosity+            #x3e)
 
 ;;; Filters (some work done, needs more)
-(defconstant +FilterNearest+            "nearest") ; 0.6
-(defconstant +FilterBilinear+          "bilinear") ; 0.6
-(defconstant +FilterConvolution+    "convolution") ; 0.10
+(defvar +FilterNearest+            "nearest") ; 0.6
+(defvar +FilterBilinear+          "bilinear") ; 0.6
+(defvar +FilterConvolution+    "convolution") ; 0.10
 ;;; Filter quality (ditto)
-(defconstant +FilterFast+  "fast")
-(defconstant +FilterGood+  "good")
-(defconstant +FilterBest+  "best")
+(defvar +FilterFast+  "fast")
+(defvar +FilterGood+  "good")
+(defvar +FilterBest+  "best")
 
 ;;; Subpixel orders (>=0.6)
 (defconstant +SubPixelUnknown+            0)
