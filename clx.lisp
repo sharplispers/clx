@@ -472,13 +472,14 @@
 
 (defclass cursor ()
   ((id :initform 0 :type resource-id :accessor cursor-id)
-   (display :initarg :display :initform nil :type (or null display))))
+   (display :initarg :display :initform nil :reader display-cursor
+            :type (or null display))))
 
 (defmethod print-object ((cursor cursor) stream)
   (with-slots (id display) cursor
     (print-unreadable-object (cursor stream :type t)
       (print-display-name display stream)
-      (format stream " ~d" id))))
+      (format stream " ~D" id))))
 
 ; Atoms are accepted as strings or symbols, and are always returned as keywords.
 ; Protocol-level integer atom ids are hidden, using a cache in the display object.
