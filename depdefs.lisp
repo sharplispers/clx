@@ -68,7 +68,7 @@
 ;;; useful for much beyond xatoms and windows (since almost nothing else
 ;;; ever comes back in events).
 ;;;--------------------------------------------------------------------------
-(defconstant +clx-cached-types+
+(define-constant +clx-cached-types+
  '(drawable
    window
    pixmap
@@ -597,7 +597,7 @@ used, since NIL is the empty list.")
 
 ;; These are here because dep-openmcl.lisp, dep-lispworks.lisp and
 ;; dependent.lisp need them
-(defconstant +X-unix-socket-path+
+(define-constant +X-unix-socket-path+
   "/tmp/.X11-unix/X"
   "The location of the X socket")
 

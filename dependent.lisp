@@ -689,7 +689,7 @@
   (the short-float (* (the int16 value) #.(coerce (/ pi 180.0 64.0) 'short-float))))
 
 
-#+(or cmu sbcl clisp ecl)
+#+(or cmu sbcl clasp clisp ecl)
 (progn
 
 ;;; This overrides the (probably incorrect) definition in clx.lisp.  Since PI
@@ -862,7 +862,7 @@
 
 ;;; MAKE-PROCESS-LOCK: Creating a process lock.
 
-#-(or LispM excl Minima sbcl (and cmu mp) (and ecl threads))
+#-(or LispM excl Minima sbcl (and cmu mp) (and ecl threads)(and clasp threads))
 (defun make-process-lock (name)
   (declare (ignore name))
   nil)
@@ -895,6 +895,10 @@
 (defun make-process-lock (name)
   (mp:make-lock :name name :recursive t))
 
+#+(and clasp threads)
+(defun make-process-lock (name)
+  (mp:make-recursive-mutex name))
+
 ;;; HOLDING-LOCK: Execute a body of code with a lock held.
 
 ;;; The holding-lock macro takes a timeout keyword argument.  EVENT-LISTEN
@@ -903,7 +907,7 @@
 
 ;; If you're not sharing DISPLAY objects within a multi-processing
 ;; shared-memory environment, this is sufficient
-#-(or lispm excl lcl3.0 Minima sbcl (and CMU mp) (and ecl threads))
+#-(or lispm excl lcl3.0 Minima sbcl (and CMU mp) (and ecl threads)(and clasp threads))
 (defmacro holding-lock ((locator display &optional whostate &key timeout) &body body)
   (declare (ignore locator display whostate timeout))
   `(progn ,@body))
@@ -947,6 +951,14 @@
      ,@body))
 
 #+(and ecl threads)
+(defmacro holding-lock ((lock display &optional (whostate "CLX wait")
+                              &key timeout)
+                        &body body)
+  (declare (ignore display))
+  `(mp::with-lock (,lock)
+     ,@body))
+
+#+(and clasp threads)
 (defmacro holding-lock ((lock display &optional (whostate "CLX wait")
                               &key timeout)
                         &body body)
@@ -1121,7 +1133,7 @@
 ;;; Caller guarantees that PROCESS-WAKEUP will be called after the predicate's
 ;;; value changes.
 
-#-(or lispm excl lcl3.0 Minima (and sb-thread sbcl) (and cmu mp) (and ecl threads))
+#-(or lispm excl lcl3.0 Minima (and sb-thread sbcl) (and cmu mp) (and ecl threads)(and clasp threads))
 (defun process-block (whostate predicate &rest predicate-args)
   (declare (ignore whostate))
   (or (apply predicate predicate-args)
@@ -1188,7 +1200,16 @@
   (loop
    (when (apply predicate predicate-args)
      (return))
-   (mp:process-yield)))
+     (mp:process-yield)))
+
+#+(and clasp threads)
+(defun process-block (whostate predicate &rest predicate-args)
+  (declare (ignore whostate))
+  (declare (type function predicate))
+  (loop
+   (when (apply predicate predicate-args)
+     (return))
+     (mp:process-yield)))
 
 ;;; FIXME: the below implementation for threaded PROCESS-BLOCK using
 ;;; queues and condition variables might seem better, but in fact it
@@ -1225,7 +1246,7 @@
 
 (declaim (inline process-wakeup))
 
-#-(or excl Genera Minima (and sbcl sb-thread) (and cmu mp) (and ecl threads))
+#-(or excl Genera Minima (and sbcl sb-thread) (and cmu mp) (and ecl threads)(and clasp threads))
 (defun process-wakeup (process)
   (declare (ignore process))
   nil)
@@ -1265,6 +1286,11 @@
   (declare (ignore process))
   (mp:process-yield))
 
+#+(and clasp threads)
+(defun process-wakeup (process)
+  (declare (ignore process))
+  (mp:process-yield))
+
 #+(or)
 (defun process-wakeup (process)
   (declare (ignore process))
@@ -1283,7 +1309,7 @@
 
 ;;; Default return NIL, which is acceptable even if there is a scheduler.
 
-#-(or lispm excl lcl3.0 sbcl Minima (and cmu mp) (and ecl threads))
+#-(or lispm excl lcl3.0 sbcl Minima (and cmu mp) (and ecl threads)(and clasp threads))
 (defun current-process ()
   nil)
 
@@ -1304,7 +1330,7 @@
 (defun current-process ()
   (minima:current-process))
 
-#+(or (and cmu mp) (and ecl threads))
+#+(or (and cmu mp) (and ecl threads)(and clasp threads))
 (defun current-process ()
   mp:*current-process*)
 
@@ -1314,7 +1340,7 @@
 
 ;;; WITHOUT-INTERRUPTS -- provide for atomic operations.
 
-#-(or lispm excl lcl3.0 Minima cmu sbcl)
+#-(or lispm excl lcl3.0 Minima cmu sbcl ecl)
 (defmacro without-interrupts (&body body)
   `(progn ,@body))
 
@@ -1338,13 +1364,14 @@
 (defmacro without-interrupts (&body body)
   `(system:without-interrupts ,@body))
 
-#+ecl
+#+(or ecl clasp)
 (defmacro without-interrupts (&body body)
   `(mp:without-interrupts ,@body))
 
 #+sbcl
 (defvar *without-interrupts-sic-lock*
   (sb-thread:make-mutex :name "lock simulating *without-interrupts*"))
+
 #+sbcl
 (defmacro without-interrupts (&body body)
   `(sb-thread:with-recursive-lock (*without-interrupts-sic-lock*)
@@ -1433,7 +1460,7 @@
 ;;; OPEN-X-STREAM - create a stream for communicating to the appropriate X
 ;;; server
 
-#-(or explorer Genera lucid kcl ibcl excl Minima CMU sbcl ecl clisp)
+#-(or explorer Genera lucid kcl ibcl excl Minima CMU sbcl ecl clisp clasp)
 (defun open-x-stream (host display protocol)
   host display protocol ;; unused
   (error "OPEN-X-STREAM not implemented yet."))
@@ -1582,6 +1609,24 @@
    :element-type '(unsigned-byte 8)
    :input t :output t :buffering :none))
 
+#+clasp
+(defun open-x-stream (host display protocol)  
+  (declare (ignore protocol)
+           (type (integer 0) display))
+  (SB-BSD-SOCKETS:socket-make-stream
+   (let ((unix-domain-socket-path (unix-socket-path-from-host host display)))
+     (if unix-domain-socket-path
+         (let ((s (make-instance 'SB-BSD-SOCKETS:local-socket :type :stream)))
+           (SB-BSD-SOCKETS:socket-connect s unix-domain-socket-path)
+           s)
+         (let ((host (car (SB-BSD-SOCKETS:host-ent-addresses (SB-BSD-SOCKETS:get-host-by-name host)))))
+           (when host
+             (let ((s (make-instance 'SB-BSD-SOCKETS:inet-socket :type :stream :protocol :tcp)))
+               (SB-BSD-SOCKETS:socket-connect s host (+ 6000 display))
+               s)))))
+   :element-type '(unsigned-byte 8)
+   :input t :output t :buffering :none))
+
 ;;; BUFFER-READ-DEFAULT - read data from the X stream
 
 #+(or Genera explorer)
@@ -1694,7 +1739,7 @@
 	  vector start (- end start))
 	 nil)))
 
-#+(or ecl clisp)
+#+(or ecl clisp clasp)
 (defun buffer-read-default (display vector start end timeout)
   (declare (type display display)
 	   (type buffer-bytes vector)
@@ -1716,7 +1761,7 @@
 ;;;	receiving all data from the X Window System server.
 ;;;	You are encouraged to write a specialized version of
 ;;;	buffer-read-default that does block transfers.
-#-(or Genera explorer excl lcl3.0 Minima CMU sbcl ecl clisp)
+#-(or Genera explorer excl lcl3.0 Minima CMU sbcl ecl clisp clasp)
 (defun buffer-read-default (display vector start end timeout)
   (declare (type display display)
 	   (type buffer-bytes vector)
@@ -1798,7 +1843,7 @@
   (system:output-raw-bytes (buffer-output-stream display) vector start end)
   nil)
 
-#+(or sbcl ecl clisp)
+#+(or sbcl ecl clisp clasp)
 (defun buffer-write-default (vector display start end)
   (declare (type buffer-bytes vector)
 	   (type display display)
@@ -1813,7 +1858,7 @@
 ;;;	You are STRONGLY encouraged to write a specialized version
 ;;;	of buffer-write-default that does block transfers.
 
-#-(or Genera explorer excl lcl3.0 Minima CMU sbcl clisp ecl)
+#-(or Genera explorer excl lcl3.0 Minima CMU sbcl clisp ecl clasp)
 (defun buffer-write-default (vector display start end)
   ;; The default buffer write function for use with common-lisp streams
   (declare (type buffer-bytes vector)
@@ -2370,7 +2415,7 @@
 ;;  HOST hacking
 ;;-----------------------------------------------------------------------------
 
-#-(or explorer Genera Minima Allegro CMU sbcl ecl clisp)
+#-(or explorer Genera Minima Allegro CMU sbcl ecl clasp clisp)
 (defun host-address (host &optional (family :internet))
   ;; Return a list whose car is the family keyword (:internet :DECnet :Chaos)
   ;; and cdr is a list of network address bytes.
@@ -2578,6 +2623,18 @@
       ((:internet nil 0)
        (cons :internet (coerce (host-ent-address hostent) 'list))))))
 
+#+clasp
+(defun host-address (host &optional (family :internet))
+  ;; Return a list whose car is the family keyword (:internet :DECnet :Chaos)
+  ;; and cdr is a list of network address bytes.
+  (declare (type stringable host)
+	   (type (or null (member :internet :decnet :chaos) card8) family))
+  (declare (clx-values list))
+  (let ((hostent (SB-BSD-SOCKETS:get-host-by-name (string host))))
+    (ecase family
+      ((:internet nil 0)
+       (cons :internet (coerce (SB-BSD-SOCKETS:host-ent-address hostent) 'list))))))
+
 #+ecl
 (defun host-address (host &optional (family :internet))
   ;; Return a list whose car is the family keyword (:internet :DECnet :Chaos)
@@ -2690,18 +2747,19 @@
   #+CMU (cdr (assoc name ext:*environment-list* :test #'string=))
   #+sbcl (sb-ext:posix-getenv name)
   #+ecl (si:getenv name)
+  #+clasp (ext:getenv name)
   #+clisp (ext:getenv name)
-  #-(or sbcl excl lcl3.0 CMU ecl clisp) (progn name nil))
+  #-(or sbcl excl lcl3.0 CMU ecl clisp clasp) (progn name nil))
 
 (defun get-host-name ()
   "Return the same hostname as gethostname(3) would"
   ;; machine-instance probably works on a lot of lisps, but clisp is not
   ;; one of them
-  #+(or cmu sbcl ecl) (machine-instance)
+  #+(or cmu sbcl ecl clasp) (machine-instance)
   ;; resources-pathname was using short-site-name for this purpose
   #+excl (short-site-name)
   #+clisp (let ((s (machine-instance))) (subseq s 0 (position #\Space s)))
-  #-(or excl cmu sbcl ecl clisp) (error "get-host-name not implemented"))
+  #-(or excl cmu sbcl ecl clisp clasp) (error "get-host-name not implemented"))
 
 (defun homedir-file-pathname (name)
   (and #-(or unix mach) (search "Unix" (software-type) :test #'char-equal)
