@@ -213,13 +213,3 @@ Independent FOSS developers"
 				 (return nil))))
 		    (abort c))))))))
     (call-next-method)))
-
-;;; same problem as for sbcl above
-#+clasp
-(defmacro define-constant (name value &optional doc)
-  `(defconstant ,name (if (boundp ',name) (symbol-value ',name) ,value)
-     ,@(when doc (list doc))))
-
-#-clasp
-(defmacro define-constant (name value &optional doc)
-  `(defconstant ,name ,value ,@(when doc (list doc))))

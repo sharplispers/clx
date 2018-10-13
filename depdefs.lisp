@@ -68,6 +68,15 @@
 ;;; useful for much beyond xatoms and windows (since almost nothing else
 ;;; ever comes back in events).
 ;;;--------------------------------------------------------------------------
+#+clasp
+(defmacro define-constant (name value &optional doc)
+  `(defconstant ,name (if (boundp ',name) (symbol-value ',name) ,value)
+     ,@(when doc (list doc))))
+
+#-clasp
+(defmacro define-constant (name value &optional doc)
+  `(defconstant ,name ,value ,@(when doc (list doc))))
+
 (define-constant +clx-cached-types+
  '(drawable
    window
