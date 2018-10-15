@@ -94,42 +94,44 @@ for these NOT exported."))
   (:documentation "Public class. Use this format for image processing."))
 
 (defun create-image (&key width height depth
-		     (data (required-arg data))
-		     plist name x-hot y-hot
-		     red-mask blue-mask green-mask
-		     bits-per-pixel format bytes-per-line
-		     (byte-lsb-first-p 
-		       #+clx-little-endian t
-		       #-clx-little-endian nil)
-		     (bit-lsb-first-p
-		       #+clx-little-endian t
-		       #-clx-little-endian nil)
-		     unit pad left-pad)
+		       (data (required-arg data))
+		       plist name x-hot y-hot
+		       red-mask blue-mask green-mask
+		       bits-per-pixel format bytes-per-line
+		       (byte-lsb-first-p 
+		        #+clx-little-endian t
+		        #-clx-little-endian nil)
+		       (bit-lsb-first-p
+		        #+clx-little-endian t
+		        #-clx-little-endian nil)
+		       unit pad left-pad)
   ;; Returns an image-x image-xy or image-z structure, depending on the
   ;; type of the :DATA parameter.
   (declare
-    (type (or null card16) width height)	; Required
-    (type (or null card8) depth)		; Defualts to 1
-    (type (or buffer-bytes			; Returns image-x
-	      list				; Returns image-xy
-	      pixarray) data)			; Returns image-z
-    (type list plist)
-    (type (or null stringable) name)
-    (type (or null card16) x-hot y-hot)
-    (type (or null pixel) red-mask blue-mask green-mask)
-    (type (or null (member 1 4 8 16 24 32)) bits-per-pixel)
-    
-    ;; The following parameters are ignored for image-xy and image-z:
-    (type (or null (member :bitmap :xy-pixmap :z-pixmap))
-	  format)				; defaults to :z-pixmap
-    (type (or null card16) bytes-per-line)
-    (type generalized-boolean byte-lsb-first-p bit-lsb-first-p)
-    (type (or null (member 8 16 32)) unit pad)
-    (type (or null card8) left-pad))
+   (type (or null card16) width height)	; Required
+   (type (or null card8) depth)		; Defualts to 1
+   (type (or buffer-bytes			; Returns image-x
+	     list				; Returns image-xy
+	     pixarray) data)			; Returns image-z
+   (type list plist)
+   (type (or null stringable) name)
+   (type (or null card16) x-hot y-hot)
+   (type (or null pixel) red-mask blue-mask green-mask)
+   (type (or null (member 1 4 8 16 24 32)) bits-per-pixel)
+   
+   ;; The following parameters are ignored for image-xy and image-z:
+   (type (or null (member :bitmap :xy-pixmap :z-pixmap))
+	 format)				; defaults to :z-pixmap
+   (type (or null card16) bytes-per-line)
+   (type generalized-boolean byte-lsb-first-p bit-lsb-first-p)
+   (type (or null (member 8 16 32)) unit pad)
+   (type (or null card8) left-pad))
   (declare (clx-values image))
-  (let ((image
-	  (etypecase data
-	    (buffer-bytes			; image-x
+  (locally (declare #+clasp (notinline typep))
+    ;;; clasp issue #617
+    (let ((image
+	   (etypecase data
+	     (buffer-bytes			; image-x
 	      (let ((data data))
 		(declare (type buffer-bytes data))
 		(unless depth (setq depth (or bits-per-pixel 1)))
@@ -150,7 +152,7 @@ for these NOT exported."))
 		  (let* ((pad (or pad 8))
 			 (bits-per-line (index* width bits-per-pixel))
 			 (padded-bits-per-line
-			   (index* (index-ceiling bits-per-line pad) pad)))
+			  (index* (index-ceiling bits-per-line pad) pad)))
 		    (declare (type array-index pad bits-per-line
 				   padded-bits-per-line))
 		    (setq bytes-per-line (index-ceiling padded-bits-per-line 8))))
@@ -160,19 +162,19 @@ for these NOT exported."))
 			(dolist (pad '(32 16 8))
 			  (when (and (index<= pad +image-pad+)
 				     (zerop
-				       (index-mod
-					 (index* bytes-per-line 8) pad)))
+				      (index-mod
+				       (index* bytes-per-line 8) pad)))
 			    (return pad)))))
 		(unless left-pad (setq left-pad 0))
 		(make-instance 'image-x
-		  :width width :height height :depth depth :plist plist
-		  :format format :data data
-		  :bits-per-pixel bits-per-pixel 
-		  :bytes-per-line bytes-per-line
-		  :byte-lsb-first-p byte-lsb-first-p
-		  :bit-lsb-first-p bit-lsb-first-p
-		  :unit unit :pad pad :left-pad left-pad)))
-	    (list				; image-xy
+		               :width width :height height :depth depth :plist plist
+		               :format format :data data
+		               :bits-per-pixel bits-per-pixel 
+		               :bytes-per-line bytes-per-line
+		               :byte-lsb-first-p byte-lsb-first-p
+		               :bit-lsb-first-p bit-lsb-first-p
+		               :unit unit :pad pad :left-pad left-pad)))
+	     (list				; image-xy
 	      (let ((data data))
 		(declare (type list data))
 		(unless depth (setq depth (length data)))
@@ -180,9 +182,9 @@ for these NOT exported."))
 		  (unless width (setq width (array-dimension (car data) 1)))
 		  (unless height (setq height (array-dimension (car data) 0))))
 		(make-instance 'image-xy
-		  :width width :height height :plist plist :depth depth
-		  :bitmap-list data)))
-	    (pixarray				; image-z
+		               :width width :height height :plist plist :depth depth
+		               :bitmap-list data)))
+	     (pixarray				; image-z
 	      (let ((data data))
 		(declare (type pixarray data))
 		(unless width (setq width (array-dimension data 1)))
@@ -198,8 +200,8 @@ for these NOT exported."))
 			  (pixarray-1   1)))))
 	      (unless depth (setq depth bits-per-pixel))
 	      (make-instance 'image-z
-		:width width :height height :depth depth :plist plist
-		:bits-per-pixel bits-per-pixel :pixarray data)))))
+		             :width width :height height :depth depth :plist plist
+		             :bits-per-pixel bits-per-pixel :pixarray data))))))
     (declare (type image image))
     (when name (setf (image-name image) name))
     (when x-hot (setf (image-x-hot image) x-hot))
