@@ -409,7 +409,7 @@
 (defclass drawable ()
   ((id :initarg :id :initform 0 :type resource-id :accessor drawable-id)
    (display :initarg :display :initform nil :type (or null display)
-	    :reader drawable-display)
+            :reader drawable-display)
    (plist :initform nil :type list
 	  :accessor drawable-plist
 	  :documentation "Extension hook")))
@@ -420,18 +420,19 @@
       (print-display-name display stream)
       (format stream " ~x" id))))
 
-(defclass window (drawable) ())
-(defclass pixmap (drawable) ())
+(defclass window (drawable)
+  ((id :accessor window-id)
+   (display :accessor window-display)
+   (plist :accessor window-plist)))
 
-;; Those window-* functions are used as interface everywhere
-;; downstream so we have to keep'em
+(defclass pixmap (drawable)
+  ((id :accessor pixmap-id)
+   (display :accessor pixmap-display)
+   (plist :accessor pixmap-plist)))
+
+(defun drawable-p (thing) (typep thing 'drawable))
 (defun window-p (thing) (typep thing 'window))
-(defun window-id (window) (drawable-id window))
-(defun (setf window-id) (value window) (setf (drawable-id window) value))
-(defun window-display (window) (drawable-display window))
-(defun (setf window-display) (value window) (setf (drawable-display window) value))
-(defun window-plist (window) (drawable-plist window))
-(defun (setf window-plist) (value window) (setf (drawable-plist window) value))
+(defun pixmap-p (thing) (typep thing 'pixmap))
 
 (defclass visual-info ()
   ((id :initarg :id :initform 0 :type resource-id :reader visual-info-id)
