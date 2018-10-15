@@ -201,7 +201,7 @@ for these NOT exported."))
 	      (unless depth (setq depth bits-per-pixel))
 	      (make-instance 'image-z
 		             :width width :height height :depth depth :plist plist
-		             :bits-per-pixel bits-per-pixel :pixarray data))))))
+		             :bits-per-pixel bits-per-pixel :pixarray data)))))
     (declare (type image image))
     (when name (setf (image-name image) name))
     (when x-hot (setf (image-x-hot image) x-hot))
@@ -209,7 +209,7 @@ for these NOT exported."))
     (when red-mask (setf (image-red-mask image) red-mask))
     (when blue-mask (setf (image-blue-mask image) blue-mask))
     (when green-mask (setf (image-green-mask image) green-mask))
-    image))
+    image)))
 
 ;;;-----------------------------------------------------------------------------
 ;;; Swapping stuff
