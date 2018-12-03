@@ -473,7 +473,7 @@
 
 (defclass cursor ()
   ((id :initform 0 :type resource-id :accessor cursor-id)
-   (display :initarg :display :initform nil :reader display-cursor
+   (display :initarg :display :initform nil :reader cursor-display
             :type (or null display))))
 
 (defmethod print-object ((cursor cursor) stream)
