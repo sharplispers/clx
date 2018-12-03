@@ -83,14 +83,15 @@ for these NOT exported."))
 
 (defclass image-xy (image)
   ((bitmap-list :initarg :bitmap-list :initform nil :type list
-		:reader image-xy-bitmap-list))
+		:accessor image-xy-bitmap-list))
   (:documentation "Public class. Use this format for image processing."))
 
 (defclass image-z (image)
   ((bits-per-pixel :initarg :bits-per-pixel :initform 1
-		   :type (member 1 4 8 16 24 32) :reader image-z-bits-per-pixel)
+		   :type (member 1 4 8 16 24 32)
+                   :accessor image-z-bits-per-pixel)
    (pixarray :initarg :pixarray :initform +empty-data-z+ :type pixarray
-	     :reader image-z-pixarray))
+	     :accessor image-z-pixarray))
   (:documentation "Public class. Use this format for image processing."))
 
 (defun create-image (&key width height depth

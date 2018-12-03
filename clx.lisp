@@ -400,9 +400,6 @@
       (print-display-name dpy stream)
       (format stream " (~a R~d)" vendor-name release-number))))
 
-(defun display-p (thing)
-  (typep thing 'display))
-
 (defun display-input-stream (display)
   (buffer-input-stream display))
 
@@ -429,10 +426,6 @@
   ((id :accessor pixmap-id)
    (display :accessor pixmap-display)
    (plist :accessor pixmap-plist)))
-
-(defun drawable-p (thing) (typep thing 'drawable))
-(defun window-p (thing) (typep thing 'window))
-(defun pixmap-p (thing) (typep thing 'pixmap))
 
 (defclass visual-info ()
   ((id :initarg :id :initform 0 :type resource-id :reader visual-info-id)
@@ -461,7 +454,9 @@
    (display :initarg :display :initform nil :type (or null display)
 	    :reader colormap-display)
    (visual-info :initform nil :type (or null visual-info)
-		:accessor colormap-visual-info)))
+		:accessor colormap-visual-info)
+   (plist :initform nil :type list :accessor colormap-plist
+          :documentation "Extension hook")))
 
 (defmethod print-object ((colormap colormap) stream)
   (with-slots (id display visual-info) colormap
@@ -474,7 +469,9 @@
 (defclass cursor ()
   ((id :initform 0 :type resource-id :accessor cursor-id)
    (display :initarg :display :initform nil :reader cursor-display
-            :type (or null display))))
+            :type (or null display))
+   (plist :initform nil :type list :accessor cursor-plist
+          :documentation "Extension hook")))
 
 (defmethod print-object ((cursor cursor) stream)
   (with-slots (id display) cursor
@@ -583,7 +580,7 @@
 	    :reader gcontext-display)
    (drawable :initarg :drawable :initform nil :type (or null drawable))
    (cache-p :initarg :cache-p :initform t :type generalized-boolean
-	    :reader gcontext-cache-p)
+	    :accessor gcontext-cache-p)
    (server-state :initarg :server-state :initform (allocate-gcontext-state)
 		 :type gcontext-state
 		 :reader gcontext-server-state)
@@ -755,9 +752,6 @@
 	   (clx-values resource-id))
   (visual-info-id (screen-root-visual-info screen)))
 
-(defun screen-p (object)
-  (typep object 'screen))
-
 ;; The list contains alternating keywords and integers.
 (deftype font-props () 'list)
 
@@ -919,6 +913,22 @@
   (make-mumble-equal gcontext)
   (make-mumble-equal colormap)
   (make-mumble-equal drawable))
+
+(macrolet ((make-mumble-p (type)
+             (let ((predicate (xintern type '-p)))
+               `(defun ,predicate (thing)
+                  (typep thing ',type)))))
+  (make-mumble-p display)
+  (make-mumble-p screen)
+  (make-mumble-p drawable)
+  (make-mumble-p window)
+  (make-mumble-p pixmap)
+  (make-mumble-p font)
+  (make-mumble-p gcontext)
+  (make-mumble-p color)
+  (make-mumble-p colormap)
+  (make-mumble-p cursor)
+  (make-mumble-p image))
 
 ;;;
 ;;; Event-mask encode/decode functions
