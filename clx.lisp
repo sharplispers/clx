@@ -805,7 +805,7 @@
    (reference-count :initarg :reference-count :initform 0 :type fixnum
 		    :accessor font-reference-count)
    (name :initarg :name :initform "" :type (or null string)
-	 :reader font-name
+	 :accessor font-name
 	 :documentation "NIL when ID is for a GContext")
    (font-info-internal :initarg :font-info-internal :initform nil
 		       :type (or null font-info)
