@@ -813,6 +813,7 @@
    (char-infos-internal :initform nil :type (or null (simple-array int16 (*)))
 			:accessor font-char-infos-internal)
    (local-only-p :initarg :local-only-p :initform t :type generalized-boolean
+                 :reader font-local-only-p
 		 :documentation "When T, always calculate text extents locally")
    (plist :initform nil :type list :documentation "Extension hook" :reader font-plist)))
 
