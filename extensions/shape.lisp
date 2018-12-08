@@ -107,7 +107,7 @@
       (window window)
       (int16 x-offset)
       (int16 y-offset)
-      ((or pixmap (member :none)) pixmap))))
+      ((or (member :none) pixmap) pixmap))))
 
 (defun shape-combine (window source-window
                              &key (kind :bounding)
