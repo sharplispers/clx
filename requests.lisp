@@ -464,7 +464,7 @@
   ;; with declare-event, except that both resource-ids and resource objects are
   ;; accepted in the event components.  The display argument is only required if the
   ;; window is :pointer-window or :input-focus.
-  (declare (type (or window (member :pointer-window :input-focus)) window)
+  (declare (type (or (member :pointer-window :input-focus) window) window)
 	   (type event-key event-key)
 	   (type (or null event-mask) event-mask)
 	   (type generalized-boolean propagate-p)
@@ -756,7 +756,7 @@
 	   (type timestamp time))
   (with-buffer-request (display +x-setinputfocus+)
     ((data (member :none :pointer-root :parent)) revert-to)
-    ((or window (member :none :pointer-root)) focus)
+    ((or (member :none :pointer-root) window) focus)
     ((or null card32) time)))
 
 (defun input-focus (display)
@@ -765,8 +765,8 @@
   (with-buffer-request-and-reply (display +x-getinputfocus+ 16 :sizes (8 32))
        ()
     (values
-      (or-get 8 window (member :none :pointer-root))
-      (member8-get 1 :none :pointer-root :parent))))
+     (or-get 8 (member :none :pointer-root) window)
+     (member8-get 1 :none :pointer-root :parent))))
 
 (defun query-keymap (display &optional bit-vector)
   (declare (type display display)
