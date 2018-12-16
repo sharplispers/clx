@@ -884,7 +884,7 @@
    :element-type '(unsigned-byte 8)
    :input t :output t :buffering :none))
 
-#+cmucl
+#+cmu
 (defun open-x-stream (host display protocol)
   (let ((stream-fd
          (ecase protocol
