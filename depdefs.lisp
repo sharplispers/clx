@@ -387,9 +387,7 @@
   ;; FIXME: maybe we should reevaluate this?
   (defvar *def-clx-class-use-defclass*
     #+(or Genera allegro) t
-    #+(and cmu pcl) '(XLIB:DRAWABLE XLIB:WINDOW XLIB:PIXMAP)
-    #+(and cmu (not pcl)) nil
-    #-(or Genera cmu allegro) nil
+    #-(or Genera allegro) nil
     "Controls whether DEF-CLX-CLASS uses DEFCLASS.
 
 If it is a list, it is interpreted by DEF-CLX-CLASS to be a list of

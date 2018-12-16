@@ -884,6 +884,47 @@
    :element-type '(unsigned-byte 8)
    :input t :output t :buffering :none))
 
+#+cmu
+(defun open-x-stream (host display protocol)
+  (let ((stream-fd
+         (ecase protocol
+           ;; establish a TCP connection to the X11 server, which is
+           ;; listening on port 6000 + display-number
+           ((:internet :tcp nil)
+            (let ((fd (ext:connect-to-inet-socket host (+ *x-tcp-port* display))))
+              (unless (plusp fd)
+                (error 'connection-failure
+                       :major-version *protocol-major-version*
+                       :minor-version *protocol-minor-version*
+                       :host host
+                       :display display
+                       :reason (format nil "Cannot connect to internet socket: ~S"
+                                       (unix:get-unix-error-msg))))
+              fd))
+           ;; establish a connection to the X11 server over a Unix
+           ;; socket.  (:|| comes from Darwin's weird DISPLAY
+           ;; environment variable)
+           ((:unix :local :||)
+            (let ((path (unix-socket-path-from-host host display)))
+              (unless (probe-file path)
+                (error 'connection-failure
+                       :major-version *protocol-major-version*
+                       :minor-version *protocol-minor-version*
+                       :host host
+                       :display display
+                       :reason (format nil "Unix socket ~s does not exist" path)))
+              (let ((fd (ext:connect-to-unix-socket (namestring path))))
+                (unless (plusp fd)
+                  (error 'connection-failure
+                         :major-version *protocol-major-version*
+                         :minor-version *protocol-minor-version*
+                         :host host
+                         :display display
+                         :reason (format nil "Can't connect to unix socket: ~S"
+                                         (unix:get-unix-error-msg))))
+                fd))))))
+    (system:make-fd-stream stream-fd :input t :output t :element-type '(unsigned-byte 8))))
+
 ;;; BUFFER-READ-DEFAULT for CMU Common Lisp.
 ;;;
 ;;;    If timeout is 0, then we call LISTEN to see if there is any input.
@@ -1643,7 +1684,7 @@ Returns a list of (host display-number screen protocol)."
 (defmacro with-underlying-simple-vector
     ((variable element-type pixarray) &body body)
   (declare (ignore element-type))
-  `(#+cmu kernel::with-array-data #+sbcl sb-kernel:with-array-data
+  `(#+cmu lisp::with-array-data #+sbcl sb-kernel:with-array-data
           ((,variable ,pixarray) (start) (end))
           (declare (ignore start end))
           ,@body))
@@ -1762,11 +1803,11 @@ Returns a list of (host display-number screen protocol)."
                       height width)
   (declare (type array-index source-width sx sy dest-width dx dy height width))
   #.(declare-buffun)
-  (kernel::with-array-data ((sdata source)
+  (lisp::with-array-data ((sdata source)
                             (sstart)
                             (send))
     (declare (ignore send))
-    (kernel::with-array-data ((ddata dest)
+    (lisp::with-array-data ((ddata dest)
                               (dstart)
                               (dend))
       (declare (ignore dend))
