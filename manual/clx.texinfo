@@ -15162,11 +15162,11 @@ a keycode.
 
 @item
 Convert the keycode into its corresponding keysym, based on the
-current keyboard mapping. See @var{keycode-&gt;keysym}.
+current keyboard mapping. See @var{keycode->keysym}.
 
 @item
 Convert the keysym into the corresponding Common Lisp character. See
-@var{keysym-&gt;character}.
+@var{keysym->character}.
 @end enumerate
 
 @menu
