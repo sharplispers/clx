@@ -17,35 +17,3 @@
 (in-package :common-lisp-user)
 
 (provide :clx)
-
-(defvar *clx-source-pathname*
-	(pathname "/src/local/clx/*.l"))
-
-(defvar *clx-binary-pathname*
-	(let ((lisp
-		(or #+lucid "lucid"
-		    #+akcl  "akcl"
-		    #+kcl   "kcl"
-		    #+ibcl  "ibcl"
-		    (error "Can't provide CLX for this lisp.")))
-	      (architecture
-		(or #+(or sun3 (and sun (or mc68000 mc68020))) "sun3"
-		    #+(or sun4 sparc) "sparc"
-		    #+(and hp (or mc68000 mc68020)) "hp9000s300"
-		    #+vax "vax"
-		    #+prime "prime"
-		    #+sunrise "sunrise"
-		    #+ibm-rt-pc "ibm-rt-pc"
-		    #+mips "mips"
-		    #+prism "prism"
-		    (error "Can't provide CLX for this architecture."))))
-	  (pathname (format nil "/src/local/clx/~A.~A/" lisp architecture))))
-
-(defvar *compile-clx*
-	nil)
-
-(load (merge-pathnames "defsystem" *clx-source-pathname*))
-
-(if *compile-clx*
-    (compile-clx *clx-source-pathname* *clx-binary-pathname*)
-  (load-clx *clx-binary-pathname*))
