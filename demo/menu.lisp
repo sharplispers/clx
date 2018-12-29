@@ -27,7 +27,8 @@
 ;;;                                                                                  |
 ;;;----------------------------------------------------------------------------------+
 
-
+;;; Some changes are backported from CMUCL CLX source (our implementation had
+;;; errors when we tried to use menu). This one is a little shorter.
 
 (defstruct (menu)
   "A simple menu of text strings."
@@ -45,29 +46,27 @@
 
 (defun create-menu (parent-window text-color background-color text-font)
   (make-menu
-    ;; Create menu graphics context
-    :gcontext (CREATE-GCONTEXT :drawable   parent-window
-			       :foreground text-color
-			       :background background-color
-			       :font       text-font)
-    ;; Create menu window
-    :window   (CREATE-WINDOW
-		:parent       parent-window
-		:class        :input-output
-		:x            0			;temporary value
-		:y            0			;temporary value
-		:width        16		;temporary value
-		:height       16		;temporary value		
-		:border-width 2
-		:border       text-color
-		:background   background-color
-		:save-under   :on
-		:override-redirect :on		;override window mgr when positioning
-		:event-mask   (MAKE-EVENT-MASK :leave-window					       
-					       :exposure))))
+   ;; Create menu graphics context
+   :gcontext (CREATE-GCONTEXT :drawable   parent-window
+			      :foreground text-color
+			      :background background-color
+			      :font       text-font)
+   ;; Create menu window
+   :window   (CREATE-WINDOW
+	      :parent       parent-window
+	      :class        :input-output
+	      :x            0			;temporary value
+	      :y            0			;temporary value
+	      :width        16			;temporary value
+	      :height       16			;temporary value		
+	      :border-width 2
+	      :border       text-color
+	      :background   background-color
+	      :save-under   :on
+	      ;; :override-redirect :on		;override window mgr when positioning
+	      :event-mask   (MAKE-EVENT-MASK :leave-window :exposure))))
 
-
-(defun menu-set-item-list (menu &rest item-strings)
+(defun menu-set-item-list (menu item-strings)
   ;; Assume the new items will change the menu's width and height
   (setf (menu-geometry-changed-p menu) t)
 
@@ -148,7 +147,11 @@
 
 
 (defun menu-refresh (menu)
- (let* ((gcontext   (menu-gcontext menu))
+  (xlib:set-wm-properties (menu-window menu)
+			  :name (menu-title menu)
+			  :icon-name (menu-title menu)
+			  :resource-name (menu-title menu))
+  (let* ((gcontext   (menu-gcontext menu))
         (baseline-y (FONT-ASCENT (GCONTEXT-FONT gcontext))))
    
    ;; Show title centered in "reverse-video"
@@ -217,7 +220,7 @@
 		   t)))
     
     ;; Erase the menu
-    (UNMAP-WINDOW mw)
+;;;    (UNMAP-WINDOW mw)
     
     ;; Return selected item string, if any
     (unless (eq selected-item :none) selected-item)))
@@ -272,111 +275,3 @@
 
     ;; Make menu visible
     (MAP-WINDOW menu-window)))
-
-(defun just-say-lisp (&optional (font-name "fixed"))
-  (let* ((display   (open-default-display))
-	 (screen    (first (DISPLAY-ROOTS display)))
-	 (fg-color  (SCREEN-BLACK-PIXEL screen))
-	 (bg-color  (SCREEN-WHITE-PIXEL screen))
-	 (nice-font (OPEN-FONT display font-name))
-	 (a-menu    (create-menu (screen-root screen)	;the menu's parent
-				 fg-color bg-color nice-font)))
-    
-    (setf (menu-title a-menu) "Please pick your favorite language:")
-    (menu-set-item-list a-menu "Fortran" "APL" "Forth" "Lisp")
-    
-    ;; Bedevil the user until he picks a nice programming language
-    (unwind-protect
-	(do (choice)
-	    ((and (setf choice (menu-choose a-menu 100 100))
-		  (string-equal "Lisp" choice))))
-
-      (CLOSE-DISPLAY display))))
-  
-
-(defun pop-up (host strings &key (title "Pick one:") (font "fixed"))
-  (let* ((display   (OPEN-DISPLAY host))
-	 (screen    (first (DISPLAY-ROOTS display)))
-	 (fg-color  (SCREEN-BLACK-PIXEL screen))
-	 (bg-color  (SCREEN-WHITE-PIXEL screen))
-	 (font      (OPEN-FONT display font))
-	 (parent-width 400)
-	 (parent-height 400)
-	 (parent    (CREATE-WINDOW :parent (SCREEN-ROOT screen)
-				   :override-redirect :on
-				   :x 100 :y 100
-				   :width parent-width :height parent-height
-				   :background bg-color
-				   :event-mask (MAKE-EVENT-MASK :button-press
-								:exposure)))
-	 (a-menu    (create-menu parent fg-color bg-color font))
-	 (prompt    "Press a button...")	 
-	 (prompt-gc (CREATE-GCONTEXT :drawable parent
-				     :foreground fg-color
-				     :background bg-color
-				     :font font))
-	 (prompt-y  (FONT-ASCENT font))
-	 (ack-y     (- parent-height  (FONT-DESCENT font))))
-    
-    (setf (menu-title a-menu) title)
-    (apply #'menu-set-item-list a-menu strings)
-    
-    ;; Present main window
-    (MAP-WINDOW parent)
-    
-    (flet ((display-centered-text
-	     (window string gcontext height width)	     
-	     (multiple-value-bind (w a d l r fa fd) (text-extents gcontext string)
-	       (declare (ignore a d l r))
-	       (let ((box-height (+ fa fd)))
-		 
-		 ;; Clear previous text
-		 (CLEAR-AREA window
-			     :x 0 :y (- height fa)
-			     :width width :height box-height)
-		 
-		 ;; Draw new text
-		 (DRAW-IMAGE-GLYPHS window gcontext (round (- width w) 2) height string)))))
-      
-      (unwind-protect
-	  (loop
-	    (EVENT-CASE (display :force-output-p t)
-	      
-	      (:exposure (count)
-			 
-			 ;; Display prompt
-			 (when (zerop count)
-			   (display-centered-text
-			     parent
-			     prompt
-			     prompt-gc
-			     prompt-y
-			     parent-width))
-			 t)
-	      
-	      (:button-press (x y)
-			     
-			     ;; Pop up the menu
-			     (let ((choice (menu-choose a-menu x y)))
-			       (if choice
-				   (display-centered-text
-				     parent
-				     (format nil "You have selected ~a." choice)
-				     prompt-gc
-				     ack-y
-				     parent-width)
-				   
-				   (display-centered-text
-				     parent
-				     "No selection...try again."
-				     prompt-gc
-				     ack-y
-				     parent-width)))
-			     t)	    	    
-	      
-	      (otherwise ()
-			 ;;Ignore and discard any other event
-			 t)))
-	
-	(CLOSE-DISPLAY display)))))
-
