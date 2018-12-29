@@ -11,8 +11,9 @@
 ;;;
 ;;; Backported some changes found in CMUCL repository -- jd 2018-12-29.
 
-(defpackage #:xlib-demo/demos (:use :common-lisp)
-  (:export do-all-demos demo))
+(defpackage #:xlib-demo/demos
+  (:use :common-lisp)
+  (:export #:demo))
 
 (in-package :xlib-demo/demos)
 
@@ -75,13 +76,6 @@
     ',fun-name))
 
 
-;;;; Main entry points.
-
-(defun do-all-demos ()
-  (dolist (demo *demos*)
-    (funcall demo)
-    (sleep 3)))
-
 ;;; DEMO
 
 (defvar *name-to-function* (make-hash-table :test #'eq))
@@ -766,27 +760,28 @@
 	  (when (= prev-neg-velocity 0) (return t))
 	  (let ((negative-velocity (minusp y-velocity)))
 	    (loop
-	      (let ((next-y (+ y y-velocity))
-		    (next-y-velocity (+ y-velocity gravity)))
-		(declare (fixnum next-y next-y-velocity))
-		(when (> next-y top-of-window-at-bottom)
-		  (cond
-		   (number-problems
-		    (setf y-velocity (incf prev-neg-velocity)))
-		   (t
-		    (setq y-velocity
-			  (- (truncate (* elasticity y-velocity))))
-		    (when (= y-velocity prev-neg-velocity)
-		      (incf y-velocity)
-		      (setf number-problems t))
-		    (setf prev-neg-velocity y-velocity)))
-		  (setf y top-of-window-at-bottom)
-		  (setf (xlib:drawable-x window) x
-			(xlib:drawable-y window) y)
-		  (xlib:display-force-output *display*)
-		  (return))
-		(setq y-velocity next-y-velocity)
-		(setq y next-y))
+               (let ((next-y (+ y y-velocity))
+                     (next-y-velocity (+ y-velocity gravity)))
+                 (declare (fixnum next-y next-y-velocity))
+                 (when (> next-y top-of-window-at-bottom)
+                   (cond
+                     (number-problems
+                      (setf y-velocity (incf prev-neg-velocity)))
+                     (t
+                      (setq y-velocity
+                            (- (truncate (* elasticity y-velocity))))
+                      (when (= y-velocity prev-neg-velocity)
+                        (incf y-velocity)
+                        (setf number-problems t))
+                      (setf prev-neg-velocity y-velocity)))
+                   (setf y top-of-window-at-bottom)
+                   (setf (xlib:drawable-x window) x
+                         (xlib:drawable-y window) y)
+                   (xlib:display-force-output *display*)
+                   (return))
+                 (setq y-velocity next-y-velocity)
+                 (setq y next-y)
+                 (sleep (/ *delay* 100)))
 	      (when (and negative-velocity (>= y-velocity 0))
 		(setf negative-velocity nil))
 	      (let ((next-x (+ x x-velocity)))
@@ -805,7 +800,7 @@
   100 100 300 300
   "Drops the demo window with an inital X velocity which bounces off
   screen borders."
-  (bounce-window *window* 30))
+  (bounce-window *window* 3))
 
 (defdemo bounce-demo "Bounce" ()
   100 100 300 300
@@ -930,9 +925,12 @@
 (defvar *ball-size-x* 38)
 (defvar *ball-size-y* 34)
 
-(defmacro xor-ball (pixmap window gcontext x y)
-  `(xlib:copy-area ,pixmap ,gcontext 0 0 *ball-size-x* *ball-size-y*
-		   ,window ,x ,y))
+(defun xor-ball (pixmap window gcontext x y)
+  (xlib:copy-plane pixmap gcontext 1
+		  0 0
+		  *ball-size-x* *ball-size-y*
+		  window
+		  x y))
 
 (defconstant bball-gravity 1)
 (defconstant maximum-x-drift 7)
@@ -1008,7 +1006,7 @@
 
 (defun bounce-balls (display window how-many duration)
   (xlib:clear-area window)
-  (xlib:display-force-output display)
+  (xlib:display-finish-output display)
   (multiple-value-bind (*max-bball-x* *max-bball-y*) (full-window-state window)
     (let* ((balls (do ((i 0 (1+ i))
 		       (list () (cons (make-ball) list)))
@@ -1028,12 +1026,12 @@
       (xlib:free-gcontext pixmap-gc)
       (dolist (ball balls)
 	(xor-ball bounce-pixmap window gcontext (ball-x ball) (ball-y ball)))
-      (xlib:display-force-output display)
+      (xlib:display-finish-output display)
       (dotimes (i duration)
 	(dolist (ball balls)
 	  (bounce-1-ball bounce-pixmap window gcontext ball)
-	  (xlib:display-force-output display))
-	(sleep *delay*))
+          (xlib:display-finish-output display))
+	(sleep (/ *delay* 50.0)))
       (xlib:free-pixmap bounce-pixmap)
       (xlib:free-gcontext gcontext))))
 
