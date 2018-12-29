@@ -1061,36 +1061,35 @@
 ;;; :TIMEOUT if it times out, NIL otherwise.
 
 ;;; The default implementation
+#-(or cmu sbcl clisp)
+(progn
+  ;; Issue a warning to incentivize providing better implementation.
+  (warn "XLIB::BUFFER-INPUT-WAIT-DEFAULT: timeout polling used.")
+  ;; Poll for input every *buffer-read-polling-time* SECONDS.
+  (defparameter *buffer-read-polling-time* 0.01)
+  (defun buffer-input-wait-default (display timeout)
+    (declare (type display display)
+             (type (or null (real 0 *)) timeout))
+    (declare (clx-values timeout))
+    (let ((stream (display-input-stream display)))
+      (declare (type (or null stream) stream))
+      (cond ((null stream))
+            ((listen stream) nil)
+            ((and timeout (= timeout 0)) :timeout)
+            ((not (null timeout))
+             (multiple-value-bind (npoll fraction)
+                 (truncate timeout *buffer-read-polling-time*)
+               (dotimes (i npoll)        ; Sleep for a time, then listen again
+                 (sleep *buffer-read-polling-time*)
+                 (when (listen stream)
+                   (return-from buffer-input-wait-default nil)))
+               (when (plusp fraction)
+                 (sleep fraction)        ; Sleep a fraction of a second
+                 (when (listen stream)   ; and listen one last time
+                   (return-from buffer-input-wait-default nil)))
+               :timeout))))))
 
-;; Poll for input every *buffer-read-polling-time* SECONDS.
-#-(or CMU sbcl)
-(defparameter *buffer-read-polling-time* 0.5)
-
-#-(or CMU sbcl clisp)
-(defun buffer-input-wait-default (display timeout)
-  (declare (type display display)
-           (type (or null (real 0 *)) timeout))
-  (declare (clx-values timeout))
-
-  (let ((stream (display-input-stream display)))
-    (declare (type (or null stream) stream))
-    (cond ((null stream))
-          ((listen stream) nil)
-          ((and timeout (= timeout 0)) :timeout)
-          ((not (null timeout))
-           (multiple-value-bind (npoll fraction)
-               (truncate timeout *buffer-read-polling-time*)
-             (dotimes (i npoll)			; Sleep for a time, then listen again
-               (sleep *buffer-read-polling-time*)
-               (when (listen stream)
-                 (return-from buffer-input-wait-default nil)))
-             (when (plusp fraction)
-               (sleep fraction)			; Sleep a fraction of a second
-               (when (listen stream)		; and listen one last time
-                 (return-from buffer-input-wait-default nil)))
-             :timeout)))))
-
-#+(or CMU sbcl clisp)
+#+(or cmu sbcl clisp)
 (defun buffer-input-wait-default (display timeout)
   (declare (type display display)
            (type (or null number) timeout))
@@ -1099,18 +1098,14 @@
     (cond ((null stream))
           ((listen stream) nil)
           ((eql timeout 0) :timeout)
-          (t
-           (if #+sbcl (sb-sys:wait-until-fd-usable (sb-sys:fd-stream-fd stream)
-                                                   :input timeout)
-               #+mp (mp:process-wait-until-fd-usable
-                     (system:fd-stream-fd stream) :input timeout)
+          ;; MP package protocol may be shared between clisp and cmu.
+          ((or #+sbcl (sb-sys:wait-until-fd-usable (sb-sys:fd-stream-fd stream) :input timeout)
+               #+mp (mp:process-wait-until-fd-usable (system:fd-stream-fd stream) :input timeout)
                #+clisp (multiple-value-bind (sec usec) (floor (or timeout 0))
-                         (ext:socket-status stream (and timeout sec)
-                                            (round usec 1d-6)))
-               #-(or sbcl mp clisp) (system:wait-until-fd-usable
-                                     (system:fd-stream-fd stream) :input timeout)
-               nil
-               :timeout)))))
+                         (ext:socket-status stream (and timeout sec) (round usec 1d-6)))
+               #+cmu (system:wait-until-fd-usable (system:fd-stream-fd stream) :input timeout))
+           nil)
+          (T :timeout))))
 
 ;;; BUFFER-LISTEN-DEFAULT - returns T if there is input available for the
 ;;; buffer. This should never block, so it can be called from the scheduler.
