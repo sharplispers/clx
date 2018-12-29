@@ -203,7 +203,7 @@
 			  (xlib:clear-area window)
 			  (sleep .1))
 			 (t
-			  (sleep *delay*)))
+			  (sleep (/ *delay* 20))))
 		   (if (< (random 3) 2)
 		       (let* ((w (+ border-x
 				    (truncate (* (random (- width
