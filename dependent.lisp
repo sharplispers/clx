@@ -1061,10 +1061,11 @@
 ;;; :TIMEOUT if it times out, NIL otherwise.
 
 ;;; The default implementation
-#-(or cmu sbcl clisp)
+#-(or cmu sbcl clisp (and ecl serve-event))
 (progn
   ;; Issue a warning to incentivize providing better implementation.
-  (warn "XLIB::BUFFER-INPUT-WAIT-DEFAULT: timeout polling used.")
+  (eval-when (:compile-toplevel :load-toplevel :execute)
+    (warn "XLIB::BUFFER-INPUT-WAIT-DEFAULT: timeout polling used."))
   ;; Poll for input every *buffer-read-polling-time* SECONDS.
   (defparameter *buffer-read-polling-time* 0.01)
   (defun buffer-input-wait-default (display timeout)
@@ -1088,6 +1089,26 @@
                  (when (listen stream)   ; and listen one last time
                    (return-from buffer-input-wait-default nil)))
                :timeout))))))
+
+#+(and ecl serve-event)
+(defun buffer-input-wait-default (display timeout)
+  (declare (type display display)
+           (type (or null number) timeout))
+  (let ((stream (display-input-stream display)))
+    (declare (type (or null stream) stream))
+    (cond ((null stream))
+          ((listen stream) nil)
+          ((eql timeout 0) :timeout)
+          (T (flet ((usable! (fd)
+                      (declare (ignore fd))
+                      (return-from buffer-input-wait-default)))
+               (serve-event:with-fd-handler ((ext:file-stream-fd
+                                              (typecase stream
+                                                (two-way-stream (two-way-stream-input-stream stream))
+                                                (otherwise stream)))
+                                             :input #'usable!)
+                 (serve-event:serve-event timeout)))
+             :timeout))))
 
 #+(or cmu sbcl clisp)
 (defun buffer-input-wait-default (display timeout)
