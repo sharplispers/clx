@@ -5,6 +5,11 @@
 ;;;
 ;;; This file should be portable to any valid Common Lisp with CLX -- DEC 88.
 ;;;
+;;; CMUCL MP support by Douglas Crosher 1998.
+;;; Enhancements including the CLX menu, rewrite of the greynetic
+;;; demo, and other fixes by Fred Gilham 1998.
+;;;
+;;; Backported some changes found in CMUCL repository -- jd 2018-12-29.
 
 (defpackage #:xlib-demo/demos (:use :common-lisp)
   (:export do-all-demos demo))
@@ -21,6 +26,7 @@
 ;;; it is running.
 
 (defparameter *demos* nil)
+(defparameter *delay* 0.5)
 
 (defvar *display* nil)
 (defvar *screen* nil)
@@ -33,42 +39,38 @@
   `(progn
      (defun ,fun-name ,args
        ,doc
-       (unless *display*
-	 #+:cmu
-	 (multiple-value-setq (*display* *screen*) (ext:open-clx-display))
-	 #+(or sbcl allegro clisp lispworks)
-	 (progn
-	   (setf *display* (xlib::open-default-display))
-	   (setf *screen* (xlib:display-default-screen *display*)))
-	 #-(or cmu sbcl allegro clisp lispworks)
-	 (progn
-	   ;; Portable method
-	   (setf *display* (xlib:open-display (machine-instance)))
-	   (setf *screen* (xlib:display-default-screen *display*)))
-	 (setf *root* (xlib:screen-root *screen*))
-	 (setf *black-pixel* (xlib:screen-black-pixel *screen*))
-	 (setf *white-pixel* (xlib:screen-white-pixel *screen*)))
-       (let ((*window* (xlib:create-window :parent *root*
-					   :x ,x :y ,y
-					   :event-mask nil
-					   :width ,width :height ,height
-					   :background *white-pixel*
-					   :border *black-pixel*
-					   :border-width 2
-					   :override-redirect :on)))
+       (let* ((*display* (or *display*
+                             (xlib:open-default-display)
+                             (xlib:open-display (machine-instance))))
+              (*screen* (xlib:display-default-screen *display*))
+              (*root* (xlib:screen-root *screen*))
+              (*black-pixel* (xlib:screen-black-pixel *screen*))
+              (*white-pixel* (xlib:screen-white-pixel *screen*))
+              (*window* (xlib:create-window :parent *root*
+                                            :x ,x :y ,y
+                                            :event-mask '(:visibility-change)
+                                            :width ,width :height ,height
+                                            :background *white-pixel*
+                                            :border *black-pixel*
+                                            :border-width 2
+                                            :override-redirect :off)))
+         (xlib:set-wm-properties *window*
+				 :name ,demo-name
+				 :icon-name ,demo-name
+				 :resource-name ,demo-name
+				 :x ,x :y ,y :width ,width :height ,height
+				 :user-specified-position-p t
+				 :user-specified-size-p t
+				 :min-width ,width :min-height ,height
+				 :width-inc nil :height-inc nil)
 	 (xlib:map-window *window*)
-	 ;; 
-	 ;; I hate to do this since this is not something any normal
-	 ;; program should do ...
-	 (setf (xlib:window-priority *window*) :above)
-	 (xlib:display-finish-output *display*)
-	 (unwind-protect
-	      (progn ,@forms)
-	   (xlib:unmap-window *window*)
-	   (xlib:display-finish-output *display*))))
+	 ;; Wait until we get mapped before doing anything.
+         (xlib:display-finish-output *display*)
+	 (unwind-protect (progn ,@forms)
+           (xlib:display-finish-output *display*)
+	   (xlib:unmap-window *window*))))
     (setf (get ',fun-name 'demo-name) ',demo-name)
     (setf (get ',fun-name 'demo-doc) ',doc)
-    (export ',fun-name)
     (pushnew ',fun-name *demos*)
     ',fun-name))
 
@@ -76,62 +78,50 @@
 ;;;; Main entry points.
 
 (defun do-all-demos ()
-  (loop
-   (dolist (demo *demos*)
-     (funcall demo)
-     (sleep 3))))
+  (dolist (demo *demos*)
+    (funcall demo)
+    (sleep 3)))
 
-;;; DEMO is a hack to get by.  It should be based on creating a menu.  At
-;;; that time, *name-to-function* should be deleted, since this mapping will
-;;; be manifested in the menu slot name cross its action.  Also the
-;;; "Shove-bounce" demo should be renamed to "Shove bounce"; likewise for
-;;; "Fast-towers-of-Hanoi" and "Slow-towers-of-hanoi".
-;;;
+;;; DEMO
 
 (defvar *name-to-function* (make-hash-table :test #'eq))
 (defvar *keyword-package* (find-package "KEYWORD"))
+(defvar *demo-names* nil)
 
 (defun demo ()
-  (macrolet ((read-demo ()
-	       `(let ((*package* *keyword-package*))
-		  (read))))
+  (let ((*demo-names* '("Quit")))
     (dolist (d *demos*)
       (setf (gethash (intern (string-upcase (get d 'demo-name))
 			     *keyword-package*)
 		     *name-to-function*)
-	    d))
-    (loop
-      (fresh-line)
-      (dolist (d *demos*)
-	(write-string "   ")
-	(write-line (get d 'demo-name)))
-      (write-string "   ")
-      (write-line "Help <demo name>")
-      (write-string "   ")
-      (write-line "Quit")
-      (write-string "Enter demo name: ")
-      (let ((demo (read-demo)))
-	(case demo
-	  (:help
-	   (let* ((demo (read-demo))
-		  (fun (gethash demo *name-to-function*)))
-	     (fresh-line)
-	     (if fun
-		 (format t "~&~%~A~&~%" (get fun 'demo-doc))
-		 (format t "Unknown demo name -- ~A." demo))))
-	  (:quit (return t))
-	  (t
-	   (let ((fun (gethash demo *name-to-function*)))
-	     (if fun
-		 #+mp
-		 (mp:make-process #'(lambda ()
-				      (loop
-				       (funcall fun)
-				       (sleep 2)))
-				  :name (format nil "~S" demo))
-		 #-mp
-		 (funcall fun)
-		 (format t "~&~%Unknown demo name -- ~A.~&~%" demo)))))))))
+	    d)
+      (push (get d 'demo-name) *demo-names*))
+  
+    (let* ((display (xlib:open-default-display))
+           (screen (xlib:display-default-screen display))
+           (fg-color (xlib:screen-white-pixel screen))
+           (bg-color (xlib:screen-black-pixel screen))
+           (nice-font (xlib:open-font display "fixed")))
+      
+      (let ((a-menu (xlib::create-menu
+                     (xlib::screen-root screen) ;the menu's parent
+                     fg-color bg-color nice-font)))
+        
+        (setf (xlib::menu-title a-menu) "Please pick your favorite demo:")
+        (xlib::menu-set-item-list a-menu *demo-names*)
+        (ignore-errors ;; closing window is not handled properly in menu.
+          (unwind-protect
+               (do ((choice (xlib::menu-choose a-menu 100 100)
+                            (xlib::menu-choose a-menu 100 100)))
+                   ((and choice (string-equal "Quit" choice)))
+                 (let* ((demo-choice (intern (string-upcase choice)
+                                             *keyword-package*))
+                        (fun (gethash demo-choice *name-to-function*)))
+                   (setf choice nil)
+                   (when fun
+                     (ignore-errors (funcall fun)))))
+            (xlib:display-finish-output display)
+            (xlib:close-display display)))))))
 
 
 ;;;; Shared demo utilities.
@@ -677,6 +667,7 @@
 			    start-needle
 			    end-needle)
 	     end-needle)
+  (sleep *delay*)
   t)
 
 ;;; Move-N-Disks moves the top N disks from START-NEEDLE to END-NEEDLE
@@ -846,8 +837,8 @@
     (multiple-value-bind (width height) (full-window-state window)
       (xlib:clear-area window)
       (draw-ppict window gc point-count 0.0 0.0 (* width 0.5) (* height 0.5))
-      (xlib:display-force-output display)
-      (sleep 4))
+      (xlib:display-finish-output display)
+      (sleep 1))
     (xlib:free-gcontext gc)))
 
 ;;; Draw points.  X assumes points are in the range of width x height,
@@ -892,8 +883,8 @@
 					:function boole-c2
 					:plane-mask (logxor *white-pixel*
 							    *black-pixel*)
-					:background *white-pixel*
-					:foreground *black-pixel*
+					:background *black-pixel*
+					:foreground *white-pixel*
 					:fill-style :solid))
 	(rectangles (make-array (* 4 num-rectangles)
 				:element-type 'number
@@ -920,6 +911,7 @@
 	      (decf y-off (ash y-dir 1))
 	      (setf y-dir (- y-dir))))
 	  (xlib:draw-rectangles window gcontext rectangles t)
+	  (sleep *delay*)
 	  (xlib:display-force-output display))))
     (xlib:free-gcontext gcontext)))
 
@@ -1039,13 +1031,13 @@
       (xlib:display-force-output display)
       (dotimes (i duration)
 	(dolist (ball balls)
-	  (bounce-1-ball bounce-pixmap window gcontext ball))
-	(xlib:display-force-output display))
+	  (bounce-1-ball bounce-pixmap window gcontext ball)
+	  (xlib:display-force-output display))
+	(sleep *delay*))
       (xlib:free-pixmap bounce-pixmap)
       (xlib:free-gcontext gcontext))))
 
-#+nil
 (defdemo bouncing-ball-demo "Bouncing-Ball" (&optional (how-many 5) (duration 500))
-  34 34 700 500
+  36 34 700 500
   "Bouncing balls in space."
   (bounce-balls *display*  *window* how-many duration))

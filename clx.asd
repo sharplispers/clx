@@ -116,7 +116,8 @@ Independent FOSS developers"
   :components
   ((:module "demo"
 	    :components
-	    ((:file "bezier")
+	    ((:file "menu")
+             (:file "bezier")
 	     (:file "beziertest" :depends-on ("bezier"))
 	     (:file "clclock")
 	     (:file "clipboard")
@@ -126,7 +127,6 @@ Independent FOSS developers"
 	     ;; deletion notes.  Find out why, and either fix or
 	     ;; workaround the problem.
 	     (:file "mandel")
-	     (:file "menu")
 	     (:file "zoid")
 	     (:file "image")
 	     (:file "trapezoid" :depends-on ("zoid"))))))
