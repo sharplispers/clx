@@ -986,7 +986,7 @@
 ;;; Ported to CLX by Blaine Burks
 ;;; 
 
-(defvar *ball-size-x* 38)
+(defvar *ball-size-x* 36)
 (defvar *ball-size-y* 34)
 
 (defun xor-ball (pixmap window gcontext x y)
