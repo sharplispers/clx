@@ -127,60 +127,124 @@
 	    (xlib:window-map-state w))))
 
 
-;;;; Greynetic.
-
-;;; GREYNETIC displays random sized and shaded boxes in a window.  This is
-;;; real slow.  It needs work.
-;;; 
-(defun greynetic (window duration)
-  (let* ((pixmap (xlib:create-pixmap :width 32 :height 32 :depth 1
-				     :drawable window))
-	 (gcontext (xlib:create-gcontext :drawable window
-					 :background *white-pixel*
-					 :foreground *black-pixel*
-					 :tile pixmap
-					 :fill-style :tiled)))
-    (multiple-value-bind (width height) (full-window-state window)
-      (dotimes (i duration)
-	(let* ((pixmap-data (greynetic-pixmapper))
-	       (image (xlib:create-image :width 32 :height 32
-					 :depth 1 :data pixmap-data)))
-	  (xlib:put-image pixmap gcontext image :x 0 :y 0 :width 32 :height 32)
-	  (xlib:draw-rectangle window gcontext
-			       (- (random width) 5)
-			       (- (random height) 5)
-			       (+ 4 (random (truncate width 3)))
-			       (+ 4 (random (truncate height 3)))
-			       t))
-	(xlib:display-force-output *display*)))
-    (xlib:free-gcontext gcontext)
-    (xlib:free-pixmap pixmap)))
-
-(defvar *greynetic-pixmap-array*
-  (make-array '(32 32) :initial-element 0 :element-type 'xlib:pixel))
-
-(defun greynetic-pixmapper ()
-  (let ((pixmap-data *greynetic-pixmap-array*))
+(defun make-random-bitmap ()
+  (let ((bitmap-data (make-array '(32 32) :initial-element 0
+				 :element-type 'xlib::bit)))
     (dotimes (i 4)
       (declare (fixnum i))
       (let ((nibble (random 16)))
-	(setf nibble (logior nibble (ash nibble 4))
-	      nibble (logior nibble (ash nibble 8))
-	      nibble (logior nibble (ash nibble 12))
-	      nibble (logior nibble (ash nibble 16)))
-	(dotimes (j 32)
-	  (let ((bit (if (logbitp j nibble) 1 0)))
-	    (setf (aref pixmap-data i j) bit
-		  (aref pixmap-data (+ 4 i) j) bit
-		  (aref pixmap-data (+ 8 i) j) bit
-		  (aref pixmap-data (+ 12 i) j) bit
-		  (aref pixmap-data (+ 16 i) j) bit
-		  (aref pixmap-data (+ 20 i) j) bit
-		  (aref pixmap-data (+ 24 i) j) bit
-		  (aref pixmap-data (+ 28 i) j) bit)))))
-    pixmap-data))
+        (setf nibble (logior nibble (ash nibble 4))
+              nibble (logior nibble (ash nibble 8))
+              nibble (logior nibble (ash nibble 12))
+              nibble (logior nibble (ash nibble 16)))
+        (dotimes (j 32)
+          (let ((bit (if (logbitp j nibble) 1 0)))
+            (setf (aref bitmap-data i j) bit
+                  (aref bitmap-data (+ 4 i) j) bit
+                  (aref bitmap-data (+ 8 i) j) bit
+                  (aref bitmap-data (+ 12 i) j) bit
+                  (aref bitmap-data (+ 16 i) j) bit
+                  (aref bitmap-data (+ 20 i) j) bit
+                  (aref bitmap-data (+ 24 i) j) bit
+                  (aref bitmap-data (+ 28 i) j) bit)))))
+    bitmap-data))
 
-#+nil
+
+(defun make-random-pixmap ()
+  (let ((image (xlib:create-image :depth 1 :data (make-random-bitmap))))
+    (make-pixmap image 32 32)))
+
+(defvar *pixmaps* nil)
+
+(defun make-pixmap (image width height)
+  (let* ((pixmap (xlib:create-pixmap :width width :height height
+				     :depth 1 :drawable *root*))
+	 (gc (xlib:create-gcontext :drawable pixmap
+				   :background *black-pixel*
+				   :foreground *white-pixel*)))
+    (xlib:put-image pixmap gc image :x 0 :y 0 :width width :height height)
+    (xlib:free-gcontext gc)
+    pixmap))
+
+
+;;;
+;;; This function returns one of the pixmaps in the *pixmaps* array.
+(defun greynetic-pixmapper ()
+  (aref *pixmaps* (random (length *pixmaps*))))
+
+
+(defun greynetic (window duration)
+  (let* ((depth (xlib:drawable-depth window))
+	 (draw-gcontext (xlib:create-gcontext :drawable window
+					      :foreground *white-pixel*
+					      :background *black-pixel*))
+	 ;; Need a random state per process.
+	 (*random-state* (make-random-state t))
+	 (*pixmaps* (let ((pixmap-array (make-array 30)))
+		      (dotimes (i 30)
+			(setf (aref pixmap-array i) (make-random-pixmap)))
+		      pixmap-array)))
+
+    (unwind-protect
+	(multiple-value-bind (width height) (full-window-state window)
+	  (declare (fixnum width height))
+	  (let ((border-x (truncate width 20))
+		(border-y (truncate height 20)))
+	    (declare (fixnum border-x border-y))
+	    (dotimes (i duration)
+	      (let ((pixmap (greynetic-pixmapper)))
+		(xlib:with-gcontext (draw-gcontext
+				     :foreground (random (ash 1 depth))
+				     :background (random (ash 1 depth))
+				     :stipple pixmap
+				     :fill-style
+				     :opaque-stippled)
+		   (cond ((zerop (mod i 500))
+			  (xlib:clear-area window)
+			  (sleep .1))
+			 (t
+			  (sleep *delay*)))
+		   (if (< (random 3) 2)
+		       (let* ((w (+ border-x
+				    (truncate (* (random (- width
+							    (* 2 border-x)))
+						 (random width)) width)))
+			      (h (+ border-y
+				    (truncate (* (random (- height
+							    (* 2 border-y)))
+						 (random height)) height)))
+			      (x (random (- width w)))
+			      (y (random (- height h))))
+			 (declare (fixnum w h x y))
+			 (if (zerop (random 2))
+			     (xlib:draw-rectangle window draw-gcontext
+						  x y w h t)
+			     (xlib:draw-arc window draw-gcontext
+					    x y w h 0 (* 2 pi) t)))
+		       (let ((p1-x (+ border-x
+				      (random (- width (* 2 border-x)))))
+			     (p1-y (+ border-y
+				      (random (- height (* 2 border-y)))))
+			     (p2-x (+ border-x
+				      (random (- width (* 2 border-x)))))
+			     (p2-y (+ border-y
+				      (random (- height (* 2 border-y)))))
+			     (p3-x (+ border-x
+				      (random (- width (* 2 border-x)))))
+			     (p3-y (+ border-y
+				      (random (- height (* 2 border-y))))))
+			 (declare (fixnum p1-x p1-y p2-x p2-y p3-x p3-y))
+			 (xlib:draw-lines window draw-gcontext
+					  (list p1-x p1-y p2-x p2-y p3-x p3-y)
+					  :relative-p nil
+					  :fill-p t
+					  :shape :convex)))
+		   (xlib:display-force-output *display*))))))
+      (dotimes (i (length *pixmaps*))
+	(xlib:free-pixmap (aref *pixmaps* i)))
+      (xlib:free-gcontext draw-gcontext))))
+
+
 (defdemo greynetic-demo "Greynetic" (&optional (duration 300))
   100 100 600 600
   "Displays random grey rectangles."
