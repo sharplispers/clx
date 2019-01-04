@@ -1,30 +1,30 @@
 (in-package :xlib)
 
 (defstruct moddef
-  (mask			0 :type keymask)
-  (real-mods		0 :type keymask)
-  (vmods		0 :type vmodmask))
+  (mask 0 :type keymask)
+  (real-mods 0 :type keymask)
+  (vmods 0 :type vmodmask))
 
 ;; TODO
 (defstruct action
-  (type			0 :type card8))
+  (type 0 :type card8))
 
-(defstruct device-state 
-  (device-id		0 :type card8)
-  (mods			0 :type keymask)
-  (base-mods		0 :type keymask)
-  (latched-mods		0 :type keymask)
-  (locked-mods		0 :type keymask)
-  (group		0 :type group)
-  (locked-group		0 :type group)
-  (base-group		0 :type int16)
-  (latched-group	0 :type int16)
-  (compat-state		0 :type keymask)
-  (grab-mods		0 :type keymask)
-  (compat-grab-mods	0 :type keymask)
-  (lookup-mods		0 :type keymask)
-  (compat-lookup-mods	0 :type keymask)
-  (ptr-btn-state	0 :type butmask))
+(defstruct device-state
+  (device-id 0 :type card8)
+  (mods 0 :type keymask)
+  (base-mods 0 :type keymask)
+  (latched-mods 0 :type keymask)
+  (locked-mods 0 :type keymask)
+  (group 0 :type group)
+  (locked-group 0 :type group)
+  (base-group 0 :type int16)
+  (latched-group 0 :type int16)
+  (compat-state 0 :type keymask)
+  (grab-mods 0 :type keymask)
+  (compat-grab-mods 0 :type keymask)
+  (lookup-mods 0 :type keymask)
+  (compat-lookup-mods 0 :type keymask)
+  (ptr-btn-state 0 :type butmask))
 
 (defstruct modmap
   (keycode 0 :type keycode)
