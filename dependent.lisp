@@ -1139,7 +1139,6 @@
                    (return-from buffer-input-wait-default nil)))
                :timeout))))))
 
-;;; Need to verify, if clasp can also use this definition
 #+(and ecl serve-event)
 (defun buffer-input-wait-default (display timeout)
   (declare (type display display)
@@ -1767,8 +1766,6 @@ Returns a list of (host display-number screen protocol)."
           ((,variable ,pixarray) (start) (end))
           (declare (ignore start end))
           ,@body))
-
-;;; clasp verify if CLASP-CLEAVIR::WITH-ARRAY-DATA can be used
 
 ;;; These are used to read and write pixels from and to CARD8s.
 

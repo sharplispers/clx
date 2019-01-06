@@ -438,7 +438,7 @@
 
 (deftype xatom () '(or string symbol))
 
-(define-constant-uneql +predefined-atoms+
+(defconstant +predefined-atoms+
  '#(nil :PRIMARY :SECONDARY :ARC :ATOM :BITMAP
     :CARDINAL :COLORMAP :CURSOR
     :CUT_BUFFER0 :CUT_BUFFER1 :CUT_BUFFER2 :CUT_BUFFER3
@@ -468,7 +468,7 @@
 
 (deftype timestamp () '(or null card32))
 
-(define-constant-uneql +bit-gravity-vector+
+(defconstant +bit-gravity-vector+
  '#(:forget :north-west :north :north-east :west
     :center :east :south-west :south
     :south-east :static))
@@ -477,7 +477,7 @@
   '(member :forget :north-west :north :north-east :west
 	   :center :east :south-west :south :south-east :static))
 
-(define-constant-uneql +win-gravity-vector+
+(defconstant +win-gravity-vector+
  '#(:unmap :north-west :north :north-east :west
     :center :east :south-west :south :south-east
     :static))
@@ -547,7 +547,7 @@
     (write-string " " stream)
     (prin1 (gcontext-id gcontext) stream)))
 
-(define-constant-uneql +event-mask-vector+
+(defconstant +event-mask-vector+
  '#(:key-press :key-release :button-press :button-release
     :enter-window :leave-window :pointer-motion :pointer-motion-hint
     :button-1-motion :button-2-motion :button-3-motion :button-4-motion
@@ -566,7 +566,7 @@
 (deftype event-mask ()
   '(or mask32 (clx-list event-mask-class)))
 
-(define-constant-uneql +pointer-event-mask-vector+
+(defconstant +pointer-event-mask-vector+
   ;; the first two elements used to be '%error '%error (i.e. symbols, 
   ;; and not keywords) but the vector is supposed to contain 
   ;; keywords, so I renamed them -dan 2004.11.13
@@ -584,7 +584,7 @@
 (deftype pointer-event-mask ()
   '(or mask32 (clx-list pointer-event-mask-class)))
 
-(define-constant-uneql +device-event-mask-vector+
+(defconstant +device-event-mask-vector+
  '#(:key-press :key-release :button-press :button-release :pointer-motion
     :button-1-motion :button-2-motion :button-3-motion :button-4-motion
     :button-5-motion :button-motion))
@@ -597,7 +597,7 @@
 (deftype device-event-mask ()
   '(or mask32 (clx-list device-event-mask-class)))
 
-(define-constant-uneql +state-mask-vector+
+(defconstant +state-mask-vector+
  '#(:shift :lock :control :mod-1 :mod-2 :mod-3 :mod-4 :mod-5
     :button-1 :button-2 :button-3 :button-4 :button-5))
 
@@ -610,7 +610,7 @@
 (deftype state-mask-key ()
   '(or modifier-key (member :button-1 :button-2 :button-3 :button-4 :button-5)))
 
-(define-constant-uneql +gcontext-components+
+(defconstant +gcontext-components+
  '(:function :plane-mask :foreground :background
    :line-width :line-style :cap-style :join-style :fill-style
    :fill-rule :tile :stipple :ts-x :ts-y :font :subwindow-mode
@@ -643,7 +643,7 @@
 (deftype draw-direction ()
   '(member :left-to-right :right-to-left))
 
-(define-constant-uneql +boole-vector+
+(defconstant +boole-vector+
  '#(#.boole-clr #.boole-and #.boole-andc2 #.boole-1
     #.boole-andc1 #.boole-2 #.boole-xor #.boole-ior
     #.boole-nor #.boole-eqv #.boole-c2 #.boole-orc2

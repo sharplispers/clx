@@ -35,6 +35,14 @@
 	(lisp:rational x)))
   (deftype rational (&optional l u) `(lisp:rational ,l ,u)))
 
+;;; Fix an issue with implementations which insist that constant values must be
+;;; eql. Redefine defconstant macro to ensure a desired behavior.
+#+(or clasp sbcl)
+(defmacro defconstant (name value &optional doc)
+  `(cl:defconstant ,name
+     (if (boundp ',name) (symbol-value ',name) ,value)
+     ,@(when doc (list doc))))
+
 ;;; CLX-VALUES value1 value2 ... -- Documents the values returned by the function.
 
 #-Genera
@@ -96,19 +104,7 @@
 ;;; ever comes back in events).
 ;;;--------------------------------------------------------------------------
 
-;;; see http://www.sbcl.org/manual/#Defining-Constants
-;;; in short, using defconstant of things that are not eql is undefined behaviour
-;;; See also definition of (defmethod perform :around (o (f clx-source-file)) in clx.asf for sbcl
-#+clasp
-(defmacro define-constant-uneql (name value &optional doc)
-  `(defconstant ,name (if (boundp ',name) (symbol-value ',name) ,value)
-     ,@(when doc (list doc))))
-
-#-clasp
-(defmacro define-constant-uneql (name value &optional doc)
-  `(defconstant ,name ,value ,@(when doc (list doc))))
-
-(define-constant-uneql +clx-cached-types+
+(defconstant +clx-cached-types+
  '(drawable
    window
    pixmap
@@ -631,7 +627,7 @@ used, since NIL is the empty list.")
 
 ;; These are here because dep-openmcl.lisp, dep-lispworks.lisp and
 ;; dependent.lisp need them
-(define-constant-uneql +X-unix-socket-path+
+(defconstant +X-unix-socket-path+
   "/tmp/.X11-unix/X"
   "The location of the X socket")
 

@@ -166,8 +166,8 @@
   
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (define-constant-uneql +rr-config-status+ '#(:success :invalid-config-time :invalid-time :failed))
-  (define-constant-uneql +rr-connection+ '#(:connected :disconnected :unknown-connection)))
+  (defconstant +rr-config-status+ '#(:success :invalid-config-time :invalid-time :failed))
+  (defconstant +rr-connection+ '#(:connected :disconnected :unknown-connection)))
 
 ;;; mask-vectors and types
 
@@ -175,7 +175,7 @@
   
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (define-constant-uneql +rotation-mask-vector+
+  (defconstant +rotation-mask-vector+
     '#(:rotate-0 :rotate-90 :rotate-180 :rotate-270 :reflect-x :reflect-y)))
 
 (deftype rotation-mask-class ()
@@ -188,7 +188,7 @@
   
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (define-constant-uneql +rr-select-mask-vector+
+  (defconstant +rr-select-mask-vector+
     '#(:screen-change-notify-mask :crtc-change-notify-mask :output-change-notify-mask :output-property-notify-mask)))
 
 (deftype rr-select-mask-class ()
@@ -200,7 +200,7 @@
   ;; Mode-flag
   
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (define-constant-uneql +mode-flag-mask-vector+
+  (defconstant +mode-flag-mask-vector+
     '#(:hsync-positive :hsync-negative :vsync-positive :vsync-negative :interlace :double-scan :csync 
        :csync-positive :csync-negative :hskew-present :b-cast :pixel-multiplex :double-clock :clock-divide-by-2)))
 
@@ -216,7 +216,7 @@
   
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (define-constant-uneql +render-subpixel-order+
+  (defconstant +render-subpixel-order+
     '#(:unknown :horizontal-RGB :horizontal-BGR :vertical-RGB :vertical-BGR :none)))
 
   ;; mask encode-decode functions

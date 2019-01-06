@@ -361,7 +361,7 @@ mode will occur first. The last remaining mode can not be deleted."
       (card32 (screen-position scr dpy))
       ((sequence :format card16) v))))
 
-(define-constant-uneql +mode-status+
+(defconstant +mode-status+
   '#(:MODE_BAD             ; unspecified reason 
      :MODE_ERROR           ; error condition 
      :MODE_OK              ; Mode OK 
