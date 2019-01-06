@@ -95,7 +95,20 @@
 ;;; useful for much beyond xatoms and windows (since almost nothing else
 ;;; ever comes back in events).
 ;;;--------------------------------------------------------------------------
-(defconstant +clx-cached-types+
+
+;;; see http://www.sbcl.org/manual/#Defining-Constants
+;;; in short, using defconstant of things that are not eql is undefined behaviour
+;;; See also definition of (defmethod perform :around (o (f clx-source-file)) in clx.asf for sbcl
+#+clasp
+(defmacro define-constant-uneql (name value &optional doc)
+  `(defconstant ,name (if (boundp ',name) (symbol-value ',name) ,value)
+     ,@(when doc (list doc))))
+
+#-clasp
+(defmacro define-constant-uneql (name value &optional doc)
+  `(defconstant ,name ,value ,@(when doc (list doc))))
+
+(define-constant-uneql +clx-cached-types+
  '(drawable
    window
    pixmap
@@ -618,7 +631,7 @@ used, since NIL is the empty list.")
 
 ;; These are here because dep-openmcl.lisp, dep-lispworks.lisp and
 ;; dependent.lisp need them
-(defconstant +X-unix-socket-path+
+(define-constant-uneql +X-unix-socket-path+
   "/tmp/.X11-unix/X"
   "The location of the X socket")
 

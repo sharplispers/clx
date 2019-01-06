@@ -30,7 +30,7 @@
   #+lcl3.0 (:import-from lcl arglist)
   #+lispm (:import-from lisp char-bit)
   #+lispm (:import-from sys arglist with-stack-list with-stack-list*)
-  #+(or sbcl ecl) (:use sb-bsd-sockets)
+  #+(or sbcl ecl clasp) (:use sb-bsd-sockets)
   (:export
     *version* access-control access-error access-hosts
     activate-screen-saver add-access-host add-resource add-to-save-set

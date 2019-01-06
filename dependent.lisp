@@ -372,7 +372,7 @@
   (the short-float (* (the int16 value) #.(coerce (/ pi 180.0 64.0) 'short-float))))
 
 
-#+(or cmu sbcl clisp ecl)
+#+(or cmu sbcl clisp ecl clasp)
 (progn
 
 ;;; This overrides the (probably incorrect) definition in clx.lisp.  Since PI
@@ -530,7 +530,7 @@
 
 ;;; MAKE-PROCESS-LOCK: Creating a process lock.
 
-#-(or sbcl (and cmu mp) (and ecl threads))
+#-(or sbcl (and cmu mp) (and ecl threads) (and clasp threads))
 (defun make-process-lock (name)
   (declare (ignore name))
   nil)
@@ -547,6 +547,10 @@
 (defun make-process-lock (name)
   (mp:make-lock :name name :recursive t))
 
+#+(and clasp threads)
+(defun make-process-lock (name)
+  (mp:make-recursive-mutex name))
+
 ;;; HOLDING-LOCK: Execute a body of code with a lock held.
 
 ;;; The holding-lock macro takes a timeout keyword argument.  EVENT-LISTEN
@@ -555,7 +559,7 @@
 
 ;; If you're not sharing DISPLAY objects within a multi-processing
 ;; shared-memory environment, this is sufficient
-#-(or sbcl (and CMU mp) (and ecl threads))
+#-(or sbcl (and CMU mp) (and ecl threads) (and clasp threads))
 (defmacro holding-lock ((locator display &optional whostate &key timeout) &body body)
   (declare (ignore locator display whostate timeout))
   `(progn ,@body))
@@ -606,6 +610,14 @@
   `(mp::with-lock (,lock)
      ,@body))
 
+#+(and clasp threads)
+(defmacro holding-lock ((lock display &optional (whostate "CLX wait")
+                              &key timeout)
+                        &body body)
+  (declare (ignore display))
+  `(mp::with-lock (,lock)
+      ,@body))
+
 #+sbcl
 (defmacro holding-lock ((lock display &optional (whostate "CLX wait")
                               &key timeout)
@@ -642,7 +654,7 @@
 ;;; Caller guarantees that PROCESS-WAKEUP will be called after the predicate's
 ;;; value changes.
 
-#-(or (and sb-thread sbcl) (and cmu mp) (and ecl threads))
+#-(or (and sb-thread sbcl) (and cmu mp) (and ecl threads) (and clasp threads))
 (defun process-block (whostate predicate &rest predicate-args)
   (declare (ignore whostate))
   (or (apply predicate predicate-args)
@@ -681,6 +693,15 @@
        (return))
      (mp:process-yield)))
 
+#+(and clasp threads)
+(defun process-block (whostate predicate &rest predicate-args)
+  (declare (ignore whostate))
+  (declare (type function predicate))
+  (loop
+   (when (apply predicate predicate-args)
+     (return))
+     (mp:process-yield)))
+
 ;;; FIXME: the below implementation for threaded PROCESS-BLOCK using
 ;;; queues and condition variables might seem better, but in fact it
 ;;; turns out to make performance extremely suboptimal, at least as
@@ -716,7 +737,7 @@
 
 (declaim (inline process-wakeup))
 
-#-(or (and sbcl sb-thread) (and cmu mp) (and ecl threads))
+#-(or (and sbcl sb-thread) (and cmu mp) (and ecl threads) (and clasp threads))
 (defun process-wakeup (process)
   (declare (ignore process))
   nil)
@@ -732,6 +753,11 @@
   (yield))
 
 #+(and ecl threads)
+(defun process-wakeup (process)
+  (declare (ignore process))
+  (mp:process-yield))
+
+#+(and clasp threads)
 (defun process-wakeup (process)
   (declare (ignore process))
   (mp:process-yield))
@@ -754,11 +780,11 @@
 
 ;;; Default return NIL, which is acceptable even if there is a scheduler.
 
-#-(or sbcl (and cmu mp) (and ecl threads))
+#-(or sbcl (and cmu mp) (and ecl threads) (and clasp threads))
 (defun current-process ()
   nil)
 
-#+(or (and cmu mp) (and ecl threads))
+#+(or (and cmu mp) (and ecl threads) (and clasp threads))
 (defun current-process ()
   mp:*current-process*)
 
@@ -768,7 +794,7 @@
 
 ;;; WITHOUT-INTERRUPTS -- provide for atomic operations.
 
-#-(or ecl cmu sbcl)
+#-(or ecl cmu sbcl clasp)
 (defmacro without-interrupts (&body body)
   `(progn ,@body))
 
@@ -777,6 +803,10 @@
   `(system:without-interrupts ,@body))
 
 #+ecl
+(defmacro without-interrupts (&body body)
+  `(mp:without-interrupts ,@body))
+
+#+clasp
 (defmacro without-interrupts (&body body)
   `(mp:without-interrupts ,@body))
 
@@ -794,6 +824,7 @@
 ;; It doesn't because CLtL doesn't pass the environment to GET-SETF-METHOD.
 
 ;; FIXME: both sbcl and ecl has compare-and-swap these days.
+;; FIXME: Verify for clasp 
 
 #-sbcl
 (defmacro conditional-store (place old-value new-value)
@@ -839,7 +870,7 @@
 ;;; OPEN-X-STREAM - create a stream for communicating to the appropriate X
 ;;; server
 
-#-(or CMU sbcl ecl clisp)
+#-(or CMU sbcl ecl clisp clasp)
 (defun open-x-stream (host display protocol)
   host display protocol ;; unused
   (error "OPEN-X-STREAM not implemented yet."))
@@ -880,6 +911,24 @@
            (when host
              (let ((s (make-instance 'inet-socket :type :stream :protocol :tcp)))
                (socket-connect s host (+ 6000 display))
+               s)))))
+   :element-type '(unsigned-byte 8)
+   :input t :output t :buffering :none))
+
+#+clasp
+(defun open-x-stream (host display protocol)  
+  (declare (ignore protocol)
+           (type (integer 0) display))
+  (SB-BSD-SOCKETS:socket-make-stream
+   (let ((unix-domain-socket-path (unix-socket-path-from-host host display)))
+     (if unix-domain-socket-path
+         (let ((s (make-instance 'SB-BSD-SOCKETS:local-socket :type :stream)))
+           (SB-BSD-SOCKETS:socket-connect s unix-domain-socket-path)
+           s)
+         (let ((host (car (SB-BSD-SOCKETS:host-ent-addresses (SB-BSD-SOCKETS:get-host-by-name host)))))
+           (when host
+             (let ((s (make-instance 'SB-BSD-SOCKETS:inet-socket :type :stream :protocol :tcp)))
+               (SB-BSD-SOCKETS:socket-connect s host (+ 6000 display))
                s)))))
    :element-type '(unsigned-byte 8)
    :input t :output t :buffering :none))
@@ -948,7 +997,7 @@
                 vector start (- end start))
          nil)))
 
-#+(or ecl clisp)
+#+(or ecl clisp clasp)
 (defun buffer-read-default (display vector start end timeout)
   (declare (type display display)
            (type buffer-bytes vector)
@@ -970,7 +1019,7 @@
 ;;;	receiving all data from the X Window System server.
 ;;;	You are encouraged to write a specialized version of
 ;;;	buffer-read-default that does block transfers.
-#-(or CMU sbcl ecl clisp)
+#-(or CMU sbcl ecl clisp clasp)
 (defun buffer-read-default (display vector start end timeout)
   (declare (type display display)
            (type buffer-bytes vector)
@@ -1003,7 +1052,7 @@
   (system:output-raw-bytes (display-output-stream display) vector start end)
   nil)
 
-#+(or sbcl ecl clisp)
+#+(or sbcl ecl clisp clasp)
 (defun buffer-write-default (vector display start end)
   (declare (type buffer-bytes vector)
            (type display display)
@@ -1018,7 +1067,7 @@
 ;;;	You are STRONGLY encouraged to write a specialized version
 ;;;	of buffer-write-default that does block transfers.
 
-#-(or CMU sbcl clisp ecl)
+#-(or CMU sbcl clisp ecl clasp)
 (defun buffer-write-default (vector display start end)
   ;; The default buffer write function for use with common-lisp streams
   (declare (type buffer-bytes vector)
@@ -1090,6 +1139,7 @@
                    (return-from buffer-input-wait-default nil)))
                :timeout))))))
 
+;;; Need to verify, if clasp can also use this definition
 #+(and ecl serve-event)
 (defun buffer-input-wait-default (display timeout)
   (declare (type display display)
@@ -1355,7 +1405,7 @@
 ;;  HOST hacking
 ;;-----------------------------------------------------------------------------
 
-#-(or CMU sbcl ecl clisp)
+#-(or CMU sbcl ecl clisp clasp)
 (defun host-address (host &optional (family :internet))
   ;; Return a list whose car is the family keyword (:internet :DECnet :Chaos)
   ;; and cdr is a list of network address bytes.
@@ -1480,6 +1530,18 @@
             (ldb (byte 8  8) addr)
             (ldb (byte 8  0) addr)))))
 
+#+clasp
+(defun host-address (host &optional (family :internet))
+  ;; Return a list whose car is the family keyword (:internet :DECnet :Chaos)
+  ;; and cdr is a list of network address bytes.
+  (declare (type stringable host)
+	   (type (or null (member :internet :decnet :chaos) card8) family))
+  (declare (clx-values list))
+  (let ((hostent (SB-BSD-SOCKETS:get-host-by-name (string host))))
+    (ecase family
+      ((:internet nil 0)
+       (cons :internet (coerce (SB-BSD-SOCKETS:host-ent-address hostent) 'list))))))
+
 
 ;;-----------------------------------------------------------------------------
 ;; Whether to use closures for requests or not.
@@ -1510,13 +1572,14 @@
   #+sbcl (sb-ext:posix-getenv name)
   #+ecl (si:getenv name)
   #+clisp (ext:getenv name)
-  #-(or sbcl CMU ecl clisp) (progn name nil))
+  #+clasp (ext:getenv name)
+  #-(or sbcl CMU ecl clisp clasp) (progn name nil))
 
 (defun get-host-name ()
   "Return the same hostname as gethostname(3) would"
   ;; machine-instance probably works on a lot of lisps, but clisp is not
   ;; one of them
-  #+(or cmu sbcl ecl) (machine-instance)
+  #+(or cmu sbcl ecl clasp) (machine-instance)
   #+clisp (let ((s (machine-instance))) (subseq s 0 (position #\Space s)))
   #-(or cmu sbcl ecl clisp) (error "get-host-name not implemented"))
 
@@ -1704,6 +1767,8 @@ Returns a list of (host display-number screen protocol)."
           ((,variable ,pixarray) (start) (end))
           (declare (ignore start end))
           ,@body))
+
+;;; clasp verify if CLASP-CLEAVIR::WITH-ARRAY-DATA can be used
 
 ;;; These are used to read and write pixels from and to CARD8s.
 
