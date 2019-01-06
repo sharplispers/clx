@@ -35,6 +35,14 @@
 	(lisp:rational x)))
   (deftype rational (&optional l u) `(lisp:rational ,l ,u)))
 
+;;; Fix an issue with implementations which insist that constant values must be
+;;; eql. Redefine defconstant macro to ensure a desired behavior.
+#+(or clasp sbcl)
+(defmacro defconstant (name value &optional doc)
+  `(cl:defconstant ,name
+     (if (boundp ',name) (symbol-value ',name) ,value)
+     ,@(when doc (list doc))))
+
 ;;; CLX-VALUES value1 value2 ... -- Documents the values returned by the function.
 
 #-Genera
@@ -95,6 +103,7 @@
 ;;; useful for much beyond xatoms and windows (since almost nothing else
 ;;; ever comes back in events).
 ;;;--------------------------------------------------------------------------
+
 (defconstant +clx-cached-types+
  '(drawable
    window
