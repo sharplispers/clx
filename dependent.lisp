@@ -1581,7 +1581,7 @@
   ;; one of them
   #+(or cmu sbcl ecl clasp) (machine-instance)
   #+clisp (let ((s (machine-instance))) (subseq s 0 (position #\Space s)))
-  #-(or cmu sbcl ecl clisp) (error "get-host-name not implemented"))
+  #-(or cmu sbcl ecl clisp clasp) (error "get-host-name not implemented"))
 
 (defun homedir-file-pathname (name)
   (and #-(or unix mach) (search "Unix" (software-type) :test #'char-equal)
