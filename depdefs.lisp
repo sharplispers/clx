@@ -35,13 +35,41 @@
 	(lisp:rational x)))
   (deftype rational (&optional l u) `(lisp:rational ,l ,u)))
 
-;;; Fix an issue with implementations which insist that constant values must be
-;;; eql. Redefine defconstant macro to ensure a desired behavior.
-#+(or clasp sbcl)
-(defmacro defconstant (name value &optional doc)
-  `(cl:defconstant ,name
-     (if (boundp ',name) (symbol-value ',name) ,value)
-     ,@(when doc (list doc))))
+;;; DEFINE-CONSTANT allows to portably define constants with predicate different
+;;; than EQL. This utility is taken from Alexandria library (Public
+;;; Domain). Implementations which require that are sbcl and clasp.
+
+#+ (or sbcl clasp)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defun %reevaluate-constant (name value test)
+    (if (not (boundp name))
+        value
+        (let ((old (symbol-value name))
+              (new value))
+          (if (not (constantp name))
+              (prog1 new
+                (cerror "Try to redefine the variable as a constant."
+                        "~@<~S is an already bound non-constant variable ~
+                       whose value is ~S.~:@>" name old))
+              (if (funcall test old new)
+                  old
+                  (restart-case
+                      (error "~@<~S is an already defined constant whose value ~
+                              ~S is not equal to the provided initial value ~S ~
+                              under ~S.~:@>" name old new test)
+                    (ignore ()
+                      :report "Retain the current value."
+                      old)
+                    (continue ()
+                      :report "Try to redefine the constant."
+                      new)))))))
+
+  (defmacro define-constant (name initial-value &key (test ''eql) documentation)
+    `(cl:defconstant ,name (%reevaluate-constant ',name ,initial-value ,test)
+       ,@(when documentation `(,documentation))))
+
+  (defmacro defconstant (name value &optional doc)
+    `(define-constant ,name ,value :test #'equalp :documentation ,doc)))
 
 ;;; CLX-VALUES value1 value2 ... -- Documents the values returned by the function.
 
