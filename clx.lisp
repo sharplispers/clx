@@ -140,6 +140,9 @@
 
 
 (deftype generalized-boolean () 't)	; (or null (not null))
+(deftype card64 () '(unsigned-byte 64))
+
+(deftype int64 () '(signed-byte 64))
 
 (deftype card32 () '(unsigned-byte 32))
 
@@ -278,7 +281,7 @@
   (byte-order #+clx-little-endian :lsbfirst     ; connection byte order
 	      #-clx-little-endian :msbfirst)
   (release-number 0 :type card32)		; release of the server
-  (max-request-length 0 :type card16)		; maximum number 32 bit words in request
+  (max-request-length 0 :type card32)		; maximum number 32 bit words in request
   (default-screen)				; default screen for operations
   (roots nil :type list)			; List of screens
   (motion-buffer-size 0 :type card32)		; size of motion buffer

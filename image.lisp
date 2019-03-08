@@ -2044,7 +2044,7 @@
 		   (request-words (index-ceiling request-bytes 4))
 		   (request-length (index+ request-words 6)))
 	      (declare (type array-index request-bytes)
-		       (type card16 request-words request-length))
+		       (type card32 request-words request-length))
 	      (with-buffer-request (display +x-putimage+ :gc-force gcontext)
 		((data (member :bitmap :xy-pixmap :z-pixmap))
 		 (cond ((or (eq format :bitmap) bitmap-p) :bitmap)

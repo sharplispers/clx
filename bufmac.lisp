@@ -69,6 +69,23 @@
   `(aset-card29 (the card29 ,item) buffer-bbuf
 		(index+ buffer-boffset ,byte-index)))
 
+(defmacro write-card64 (byte-index item)
+  #+clx-overlapping-arrays
+  `(aset-card64 (the card64 ,item) buffer-lbuf
+		(index+ buffer-loffset (index-ash ,byte-index -4))) ;test
+  #-clx-overlapping-arrays
+  `(aset-card64 (the card64 ,item) buffer-bbuf
+		(index+ buffer-boffset ,byte-index)))
+
+(defmacro write-int64 (byte-index item)
+  #+clx-overlapping-arrays
+  `(aset-int64 (the int64 ,item) buffer-lbuf
+	       (index+ buffer-loffset (index-ash ,byte-index -4)))  ;test
+  #-clx-overlapping-arrays
+  `(aset-int64 (the int64 ,item) buffer-bbuf
+	       (index+ buffer-boffset ,byte-index)))
+
+
 ;; This is used for 2-byte characters, which may not be aligned on 2-byte boundaries
 ;; and always are written high-order byte first.
 (defmacro write-char2b (byte-index item)

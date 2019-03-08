@@ -132,6 +132,18 @@
   #-clx-overlapping-arrays
   `(aref-card29 buffer-bbuf (index+ buffer-boffset ,byte-index)))
 
+(defmacro read-card64 (byte-index)
+  #+clx-overlapping-arrays
+  `(aref-card64 buffer-lbuf (index+ buffer-loffset (index-ash ,byte-index -4)))
+  #-clx-overlapping-arrays
+  `(aref-card64 buffer-bbuf (index+ buffer-boffset ,byte-index)))
+
+(defmacro read-int64 (byte-index)
+  #+clx-overlapping-arrays
+  `(aref-int64 buffer-lbuf (index+ buffer-loffset (index-ash ,byte-index -4)))
+  #-clx-overlapping-arrays
+  `(aref-int64 buffer-bbuf (index+ buffer-boffset ,byte-index)))
+
 (defmacro event-code (reply-buffer)
   ;; The reply-buffer structure is used for events.
   ;; The size slot is used for the event code.

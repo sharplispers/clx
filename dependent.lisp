@@ -44,7 +44,17 @@
   (defconstant +long-0+ 0)
   (defconstant +long-1+ 1)
   (defconstant +long-2+ 2)
-  (defconstant +long-3+ 3))
+  (defconstant +long-3+ 3)
+  
+  (defconstant +longlong-0+ 0)
+  (defconstant +longlong-1+ 1)
+  (defconstant +longlong-2+ 2)
+  (defconstant +longlong-3+ 3)
+  (defconstant +longlong-4+ 4)
+  (defconstant +longlong-5+ 5)
+  (defconstant +longlong-6+ 6)
+  (defconstant +longlong-7+ 7)
+  )
 
 #-(or clx-overlapping-arrays clx-little-endian)
 (progn
@@ -54,7 +64,17 @@
   (defconstant +long-0+ 3)
   (defconstant +long-1+ 2)
   (defconstant +long-2+ 1)
-  (defconstant +long-3+ 0))
+  (defconstant +long-3+ 0)
+
+  (defconstant +longlong-0+ 7)
+  (defconstant +longlong-1+ 6)
+  (defconstant +longlong-2+ 5)
+  (defconstant +longlong-3+ 4)
+  (defconstant +longlong-4+ 3)
+  (defconstant +longlong-5+ 2)
+  (defconstant +longlong-6+ 1)
+  (defconstant +longlong-7+ 0)
+  )
 
 ;;; Set some compiler-options for often used code
 
@@ -316,7 +336,48 @@
           (aref a (index+ i +long-2+)) (the card8 (ldb (byte 8 16) v))
           (aref a (index+ i +long-1+)) (the card8 (ldb (byte 8 8) v))
           (aref a (index+ i +long-0+)) (the card8 (ldb (byte 8 0) v)))
-    v))
+    v)
+
+    (defun aref-int64 (a i)
+    (declare (type buffer-bytes a)
+             (type array-index i))
+    (declare (clx-values int64))
+    #.(declare-buffun)
+    (the int64
+         (logior (the int64 
+                      (ash (the int8 (aref-int8 a (index+ i +longlong-7+))) 56))
+		 (the int64 
+                      (ash (the int8 (aref-int8 a (index+ i +longlong-6+))) 48))
+		 (the int64 
+                      (ash (the int8 (aref-int8 a (index+ i +longlong-5+))) 40))
+		 (the int64 
+                      (ash (the int8 (aref-int8 a (index+ i +longlong-4+))) 32))
+		 (the int32 
+                      (ash (the int8 (aref-int8 a (index+ i +longlong-3+))) 24))
+                 (the int32
+                      (ash (the int8 (aref a (index+ i +longlong-2+))) 16))
+                 (the int16
+                      (ash (the int8 (aref a (index+ i +longlong-1+))) 8))
+                 (the int8
+                      (aref a (index+ i +longlong-0+))))))
+
+  (defun aset-int64 (v a i)
+    (declare (type int64 v)
+             (type buffer-bytes a)
+             (type array-index i))
+    #.(declare-buffun)
+    (setf (aref a (index+ i +longlong-7+)) (the card8 (ldb (byte 8 56) v))
+	  (aref a (index+ i +longlong-6+)) (the card8 (ldb (byte 8 48) v))
+	  (aref a (index+ i +longlong-5+)) (the card8 (ldb (byte 8 40) v))
+	  (aref a (index+ i +longlong-4+)) (the card8 (ldb (byte 8 32) v))
+	  (aref a (index+ i +longlong-3+)) (the card8 (ldb (byte 8 24) v))
+          (aref a (index+ i +longlong-2+)) (the card8 (ldb (byte 8 16) v))
+          (aref a (index+ i +longlong-1+)) (the card8 (ldb (byte 8 8) v))
+          (aref a (index+ i +longlong-0+)) (the card8 (ldb (byte 8 0) v)))
+    v)
+)
+
+
 
 (defsetf aref-card8 (a i) (v)
   `(aset-card8 ,v ,a ,i))
@@ -338,6 +399,12 @@
 
 (defsetf aref-card29 (a i) (v)
   `(aset-card29 ,v ,a ,i))
+
+(defsetf aref-card64 (a i) (v)
+  `(aset-card64 ,v ,a ,i))
+
+(defsetf aref-int64 (a i) (v)
+  `(aset-int64 ,v ,a ,i))
 
 ;;; Other random conversions
 
