@@ -1133,8 +1133,7 @@ Returns a list of (host display-number screen protocol)."
 (defmacro with-underlying-simple-vector
     ((variable element-type pixarray) &body body)
   (declare (ignore element-type))
-  `(#+cmu kernel::with-array-data #+sbcl sb-kernel:with-array-data
-    ((,variable ,pixarray) (start) (end))
+  `(sb-kernel:with-array-data ((,variable ,pixarray) (start) (end))
     (declare (ignore start end))
     ,@body))
 
@@ -1267,8 +1266,8 @@ Returns a list of (host display-number screen protocol)."
   (declare (type (array * 2) pixarray))
   #.(declare-buffun)
   (copy-bit-rect bbuf
-		 (index* padded-bytes-per-line #+cmu vm:byte-bits #+sbcl sb-vm:n-byte-bits)
-		 (index* boffset #+cmu vm:byte-bits #+sbcl sb-vm:n-byte-bits) 0
+		 (index* padded-bytes-per-line sb-vm:n-byte-bits)
+		 (index* boffset sb-vm:n-byte-bits) 0
 		 pixarray
 		 (index* (array-dimension pixarray 1) bits-per-pixel)
 		 x y
@@ -1382,28 +1381,20 @@ Returns a list of (host display-number screen protocol)."
 	   (type card16 x y width height)
 	   (type (member 1 4 8 16 24 32) bits-per-pixel))
   (progn pixarray copy x y width height bits-per-pixel nil)
-  (or
-   #+(or cmu)
-   (let* ((pixarray-padded-pixels-per-line
-            (array-dimension pixarray 1))
-          (pixarray-padded-bits-per-line
-            (* pixarray-padded-pixels-per-line bits-per-pixel))
-          (copy-padded-pixels-per-line
-            (array-dimension copy 1))
-          (copy-padded-bits-per-line
-            (* copy-padded-pixels-per-line bits-per-pixel)))
-     #-(or cmu)
-     (when (and (= (sys:array-element-size pixarray) bits-per-pixel)
-                (zerop (index-mod pixarray-padded-bits-per-line 32))
-                (zerop (index-mod copy-padded-bits-per-line 32)))
-       (sys:bitblt boole-1 width height pixarray x y copy 0 0)
-       t)
-     #+(or cmu)
-     (when (index= (pixarray-element-size pixarray)
-                   (pixarray-element-size copy)
-                   bits-per-pixel)
-       (copy-bit-rect pixarray pixarray-padded-bits-per-line x y
-                      copy copy-padded-bits-per-line 0 0
-                      height
-                      (index* width bits-per-pixel))
-       t))))
+  #+cmu
+  (let* ((pixarray-padded-pixels-per-line
+           (array-dimension pixarray 1))
+         (pixarray-padded-bits-per-line
+           (* pixarray-padded-pixels-per-line bits-per-pixel))
+         (copy-padded-pixels-per-line
+           (array-dimension copy 1))
+         (copy-padded-bits-per-line
+           (* copy-padded-pixels-per-line bits-per-pixel)))
+    (when (index= (pixarray-element-size pixarray)
+                  (pixarray-element-size copy)
+                  bits-per-pixel)
+      (copy-bit-rect pixarray pixarray-padded-bits-per-line x y
+                     copy copy-padded-bits-per-line 0 0
+                     height
+                     (index* width bits-per-pixel))
+      t)))
