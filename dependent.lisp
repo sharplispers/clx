@@ -573,16 +573,15 @@
 ;;; display connection.  We inhibit GC notifications since display of them
 ;;; could cause recursive entry into CLX.
 ;;;
-#+(and CMU (not mp))
+#+(and cmu (not mp))
 (defmacro holding-lock ((locator display &optional whostate &key timeout)
                         &body body)
-  `(let #+cmu((ext:*gc-verbose* nil)
-              (ext:*gc-inhibit-hook* nil)
-              (ext:*before-gc-hooks* nil)
-              (ext:*after-gc-hooks* nil))
-        #+sbcl()
-        ,locator ,display ,whostate ,timeout
-        (system:without-interrupts (progn ,@body))))
+  `(let ((ext:*gc-verbose* nil)
+         (ext:*gc-inhibit-hook* nil)
+         (ext:*before-gc-hooks* nil)
+         (ext:*after-gc-hooks* nil))
+     ,locator ,display ,whostate ,timeout
+     (system:without-interrupts (progn ,@body))))
 
 ;;; HOLDING-LOCK for CMU Common Lisp with multi-processes.
 ;;;
@@ -1237,11 +1236,11 @@
            (type array-index start1 end1 start2))
   #.(declare-buffun)
   (kernel:bit-bash-copy
-   buf2 (+ (* start2 #+cmu vm:byte-bits #+sbcl sb-vm:n-byte-bits)
-           (* vm:vector-data-offset #+cmu vm:word-bits #+sbcl sb-vm:n-word-bits))
-   buf1 (+ (* start1 #+cmu vm:byte-bits #+sbcl sb-vm:n-byte-bits)
-           (* vm:vector-data-offset #+cmu vm:word-bits #+sbcl sb-vm:n-word-bits))
-   (* (- end1 start1) #+cmu vm:byte-bits #+sbcl sb-vm:n-byte-bits)))
+   buf2 (+ (* start2 vm:byte-bits)
+           (* vm:vector-data-offset vm:word-bits))
+   buf1 (+ (* start1 vm:byte-bits)
+           (* vm:vector-data-offset vm:word-bits))
+   (* (- end1 start1) vm:byte-bits)))
 
 #+clx-overlapping-arrays
 (defun buffer-replace (buf1 buf2 start1 end1 &optional (start2 0))
@@ -1869,7 +1868,6 @@ Returns a list of (host display-number screen protocol)."
           (t
            (error "Invalid pixarray: ~S." pixarray)))))
 
-#+CMU
 ;;; COPY-BIT-RECT  --  Internal
 ;;;
 ;;;    This is the classic BITBLT operation, copying a rectangular subarray
@@ -1877,6 +1875,7 @@ Returns a list of (host display-number screen protocol)."
 ;;; Widths are specified in bits.  Neither array can have a non-zero
 ;;; displacement.  We allow extra random bit-offset to be thrown into the X.
 ;;;
+#+cmu
 (defun copy-bit-rect (source source-width sx sy dest dest-width dx dy
                       height width)
   (declare (type array-index source-width sx sy dest-width dx dy height width))
@@ -1890,10 +1889,10 @@ Returns a list of (host display-number screen protocol)."
                               (dend))
       (declare (ignore dend))
       (assert (and (zerop sstart) (zerop dstart)))
-      (do ((src-idx (index+ (* vm:vector-data-offset #+cmu vm:word-bits #+sbcl sb-vm:n-word-bits)
+      (do ((src-idx (index+ (* vm:vector-data-offset vm:word-bits)
                             sx (index* sy source-width))
                     (index+ src-idx source-width))
-           (dest-idx (index+ (* vm:vector-data-offset #+cmu vm:word-bits #+sbcl sb-vm:n-word-bits)
+           (dest-idx (index+ (* vm:vector-data-offset vm:word-bits)
                              dx (index* dy dest-width))
                      (index+ dest-idx dest-width))
            (count height (1- count)))
