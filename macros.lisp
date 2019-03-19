@@ -104,6 +104,10 @@
                      ,@(cdr predicating-put)))))))))
   ) ;; End eval-when
 
+(define-accessor card64 (64)
+  ((index) `(read-card64 ,index))
+  ((index thing) `(write-card64 ,index ,thing)))
+
 (define-accessor card32 (32)
   ((index) `(read-card32 ,index))
   ((index thing) `(write-card32 ,index ,thing)))
@@ -452,6 +456,12 @@
   ((index) (declare (ignore index)) '(read-card16 2))
   ((index value) (declare (ignore index)) `(write-card16 2 ,value))
   ((index value) (declare (ignore index)) `(write-card16 2 ,value)))
+
+;;test me. Use LENGTH above to write 0 before big-request
+(define-accessor extended-length (0)
+  ((index) (declare (ignore index)) '(read-card32 4))
+  ((index value) (declare (ignore index)) `(write-card32 4 ,value))
+  ((index value) (declare (ignore index)) `(write-card32 4 ,value)))
 
 (deftype data () 'card8)
 

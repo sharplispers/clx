@@ -27,7 +27,7 @@
       `("    CLX X Library " ,*version*))
 
 
-;;; The size of the output buffer.  Must be a multiple of 4.
+;;; The size of the output buffer in bytes.  Must be a multiple of 4.
 (defparameter *output-buffer-size* 8192)
 
 #+explorer
@@ -46,14 +46,15 @@
   (defconstant +long-2+ 2)
   (defconstant +long-3+ 3)
   
-  (defconstant +longlong-0+ 0)
-  (defconstant +longlong-1+ 1)
-  (defconstant +longlong-2+ 2)
-  (defconstant +longlong-3+ 3)
-  (defconstant +longlong-4+ 4)
-  (defconstant +longlong-5+ 5)
-  (defconstant +longlong-6+ 6)
-  (defconstant +longlong-7+ 7)
+  ;;An INT64 is encoded in 8 bytes with the most significant 4 bytes first followed by the least significant 4 bytes. Within these 4-byte groups, the byte ordering determined during connection setup is used. 
+  (defconstant +longlong-0+ 4)
+  (defconstant +longlong-1+ 5)
+  (defconstant +longlong-2+ 6)
+  (defconstant +longlong-3+ 7)
+  (defconstant +longlong-4+ 0)
+  (defconstant +longlong-5+ 1)
+  (defconstant +longlong-6+ 2)
+  (defconstant +longlong-7+ 3)
   )
 
 #-(or clx-overlapping-arrays clx-little-endian)
