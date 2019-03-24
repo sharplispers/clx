@@ -31,6 +31,7 @@
   #+lcl3.0 (:import-from lcl arglist)
   #+lispm (:import-from lisp char-bit)
   #+lispm (:import-from sys arglist with-stack-list with-stack-list*)
+  #+clasp (:shadow arglist)
   #+(or sbcl ecl clasp) (:use sb-bsd-sockets)
   (:export
     *version* access-control access-error access-hosts
