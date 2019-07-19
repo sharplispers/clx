@@ -64,7 +64,7 @@
 (defmacro state-attribute-changes (state) `(third ,state))
 (defmacro state-geometry (state) `(fourth ,state))
 (defmacro state-geometry-changes (state) `(fifth ,state))
- 
+
 (defmacro drawable-equal-function ()
   ;; Since drawables are not always cached, we must use drawable-equal
   ;; to determine equality.
@@ -298,7 +298,7 @@
 (defmacro with-attributes ((window &rest options) &body body)
   `(let ((.with-attributes-reply-buffer. (get-window-attributes-buffer ,window)))
      (declare (type reply-buffer .with-attributes-reply-buffer.))
-     (prog1 
+     (prog1
        (with-buffer-input (.with-attributes-reply-buffer. ,@options) ,@body)
        (unless *window-attributes*
 	 (deallocate-context .with-attributes-reply-buffer.)))))
@@ -309,7 +309,7 @@
 (defmacro with-geometry ((window &rest options) &body body)
   `(let ((.with-geometry-reply-buffer. (get-drawable-geometry-buffer ,window)))
      (declare (type reply-buffer .with-geometry-reply-buffer.))
-     (prog1 
+     (prog1
        (with-buffer-input (.with-geometry-reply-buffer. ,@options) ,@body)
        (unless *window-attributes*
 	 (deallocate-context .with-geometry-reply-buffer.)))))
@@ -336,32 +336,43 @@
   (with-attributes (window :sizes 16)
     (member16-get 12 :copy :input-output :input-only)))
 
+(deftype window-background ()
+  '(or (member :none :parent-relative) pixel pixmap))
+
 (defun set-window-background (window background)
-  (declare (type window window)
-	   (type (or (member :none :parent-relative) pixel pixmap) background))
-  (cond ((eq background :none) (change-window-attribute window 0 0))
-	((eq background :parent-relative) (change-window-attribute window 0 1))
-	((integerp background) ;; Background pixel
-	 (change-window-attribute window 0 0) ;; pixmap :NONE
-	 (change-window-attribute window 1 background))
-	((type? background 'pixmap) ;; Background pixmap
-	 (change-window-attribute window 0 (pixmap-id background)))
-	(t (x-type-error background '(or (member :none :parent-relative) integer pixmap))))
+  (declare (type window window))
+  (if (not (typep background 'window-background))
+      (x-type-error background '(or (member :none :parent-relative) integer pixmap))
+      (locally (declare (type window-background background))
+        (cond ((eq background :none)
+               (change-window-attribute window 0 0))
+              ((eq background :parent-relative)
+               (change-window-attribute window 0 1))
+              ((integerp background) ; Background pixel
+               (change-window-attribute window 0 0) ; pixmap :NONE
+               (change-window-attribute window 1 background))
+              ((type? background 'pixmap) ; Background pixmap
+               (change-window-attribute window 0 (pixmap-id background))))))
   background)
 
 #+Genera (eval-when (compile) (compiler:function-defined 'window-background))
 
 (defsetf window-background set-window-background)
 
+(deftype window-border ()
+  '(or (member :copy) pixel pixmap))
+
 (defun set-window-border (window border)
-  (declare (type window window)
-	   (type (or (member :copy) pixel pixmap) border))
-  (cond ((eq border :copy) (change-window-attribute window 2 0))
-	((type? border 'pixmap) ;; Border pixmap
-	 (change-window-attribute window 2 (pixmap-id border)))
-	((integerp border) ;; Border pixel
-	 (change-window-attribute window 3 border))
-	(t (x-type-error border '(or (member :copy) integer pixmap))))
+  (declare (type window window))
+  (if (not (typep border 'window-border))
+      (x-type-error border '(or (member :copy) integer pixmap))
+      (locally (declare (type window-border border))
+        (cond ((eq border :copy)
+               (change-window-attribute window 2 0))
+              ((type? border 'pixmap) ; Border pixmap
+               (change-window-attribute window 2 (pixmap-id border)))
+              ((integerp border) ; Border pixel
+               (change-window-attribute window 3 border)))))
   border)
 
 #+Genera (eval-when (compile) (compiler:function-defined 'window-border))
@@ -405,7 +416,7 @@
 
 (defun set-window-backing-store (window when)
   (change-window-attribute
-    window 6 (encode-type (member :not-useful :when-mapped :always) when))
+   window 6 (encode-type (member :not-useful :when-mapped :always) when))
   when)
 
 (defsetf window-backing-store set-window-backing-store)
