@@ -96,12 +96,11 @@
            ,@(cdr get-macro))
          (defmacro ,(putify name) ,(car put-macro)
            ,@(cdr put-macro))
-         ,@(when +type-check?+
-             (let ((predicating-put (third get-put-macros)))
-               (when predicating-put
-                 `((setf (get ',name 'predicating-put) t)
-                   (defmacro ,(putify name t) ,(car predicating-put)
-                     ,@(cdr predicating-put)))))))))
+         ,@(let ((predicating-put (third get-put-macros)))
+             (when predicating-put
+               `((setf (get ',name 'predicating-put) t)
+                 (defmacro ,(putify name t) ,(car predicating-put)
+                   ,@(cdr predicating-put))))))))
   ) ;; End eval-when
 
 (define-accessor card32 (32)
@@ -219,6 +218,29 @@
     :descent       (int16-get ,(+ index 8))
     :attributes   (card16-get ,(+ index 10))))
 
+(defun generate-member-case (thing keywords mismatch-error-p)
+  `(case ,thing
+     ,@(loop :for i :from 0
+             :for keyword :in keywords
+             :collect `(,keyword ,i))
+     ,@(when mismatch-error-p
+         `((t (x-type-error ,thing '(member ,@keywords)))))))
+
+(defun generate-member-lookup (thing keywords mismatch-error-p)
+  (let ((lookup `(position ,thing
+                           #+lispm ',keywords ;; Lispm's prefer lists
+                           #-lispm (the simple-vector ',(apply #'vector keywords))
+                           :test #'eq)))
+    (if mismatch-error-p
+        `(or ,lookup
+             (x-type-error ,thing '(member ,@keywords)))
+        lookup)))
+
+(defun generate-member-to-integer (thing keywords mismatch-error-p)
+  (if (< (length keywords) 8)
+      (generate-member-case thing keywords mismatch-error-p)
+      (generate-member-lookup thing keywords mismatch-error-p)))
+
 (define-accessor member8 (8)
   ((index &rest keywords)
    (let ((value (gensym)))
@@ -227,16 +249,10 @@
         (type-check ,value '(integer 0 (,(length keywords))))
         (svref ',(apply #'vector keywords) ,value))))
   ((index thing &rest keywords)
-   `(write-card8 ,index (position ,thing
-                                  #+lispm ',keywords ;; Lispm's prefer lists
-                                  #-lispm (the simple-vector ',(apply #'vector keywords))
-                                  :test #'eq)))
+   `(write-card8 ,index ,(generate-member-to-integer thing keywords t)))
   ((index thing &rest keywords)
    (let ((value (gensym)))
-     `(let ((,value (position ,thing
-                              #+lispm ',keywords
-                              #-lispm (the simple-vector ',(apply #'vector keywords))
-                              :test #'eq)))
+     `(let ((,value ,(generate-member-to-integer thing keywords t)))
         (and ,value (write-card8 ,index ,value))))))
 
 (define-accessor member16 (16)
@@ -247,16 +263,10 @@
         (type-check ,value '(integer 0 (,(length keywords))))
         (svref ',(apply #'vector keywords) ,value))))
   ((index thing &rest keywords)
-   `(write-card16 ,index (position ,thing
-                                   #+lispm ',keywords ;; Lispm's prefer lists
-                                   #-lispm (the simple-vector ',(apply #'vector keywords))
-                                   :test #'eq)))
+   `(write-card16 ,index ,(generate-member-to-integer thing keywords t)))
   ((index thing &rest keywords)
    (let ((value (gensym)))
-     `(let ((,value (position ,thing
-                              #+lispm ',keywords
-                              #-lispm (the simple-vector ',(apply #'vector keywords))
-                              :test #'eq)))
+     `(let ((,value ,(generate-member-to-integer thing keywords nil)))
         (and ,value (write-card16 ,index ,value))))))
 
 (define-accessor member (32)
@@ -267,19 +277,11 @@
         (type-check ,value '(integer 0 (,(length keywords))))
         (svref ',(apply #'vector keywords) ,value))))
   ((index thing &rest keywords)
-   `(write-card29 ,index (position ,thing
-                                   #+lispm ',keywords ;; Lispm's prefer lists
-                                   #-lispm (the simple-vector ',(apply #'vector keywords))
-                                   :test #'eq)))
+   `(write-card29 ,index ,(generate-member-to-integer thing keywords t)))
   ((index thing &rest keywords)
-   (if (cdr keywords) ;; IF more than one
-       (let ((value (gensym)))
-         `(let ((,value (position ,thing
-                                  #+lispm ',keywords
-                                  #-lispm (the simple-vector ',(apply #'vector keywords))
-                                  :test #'eq)))
-            (and ,value (write-card29 ,index ,value))))
-       `(and (eq ,thing ,(car keywords)) (write-card29 ,index 0)))))
+   (let ((value (gensym)))
+     `(let ((,value ,(generate-member-to-integer thing keywords nil)))
+        (and ,value (write-card29 ,index ,value))))))
 
 (deftype member-vector (vector) `(member ,@(coerce (symbol-value vector) 'list)))
 
@@ -484,7 +486,7 @@
 ;;
 (define-accessor or (32)
   ;; Select from among two types (NULL/MEMBER and something else).
-  ((index &rest type-list &environment environment)
+  ((index &rest type-list)
    ;; OR-GET accessor accepts only two types. The first one must enum (either
    ;; null or a member specifier). Otherwise if the first type didn't match we
    ;; could have a condition signalled by a type-check or by other assertions
