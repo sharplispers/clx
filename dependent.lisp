@@ -61,9 +61,9 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defconstant +buffer-speed+ #+clx-debugging 1 #-clx-debugging 3
                "Speed compiler option for buffer code.")
-  (defconstant +buffer-safety+ #+clx-debugging 3 #-clx-debugging 0
+  (defconstant +buffer-safety+ #+clx-debugging 3 #-clx-debugging 1
                "Safety compiler option for buffer code.")
-  (defconstant +buffer-debug+ #+clx-debugging 2 #-clx-debugging 1
+  (defconstant +buffer-debug+ #+clx-debugging 3 #-clx-debugging 1
                "Debug compiler option for buffer code>")
   (defun declare-bufmac ()
     `(declare (optimize
@@ -1306,9 +1306,10 @@
 ;;; This controls macro expansion, and isn't changable at run-time You will
 ;;; probably want to set this to nil if you want good performance at
 ;;; production time.
+
 (defconstant +type-check?+
-  #+(or ecl CMU sbcl) nil
-  #-(or ecl CMU sbcl) t)
+  #+clx-debugging t
+  #-clx-debugging nil)
 
 ;; TYPE? is used to allow the code to do error checking at a different level from
 ;; the declarations.  It also does some optimizations for systems that don't have
