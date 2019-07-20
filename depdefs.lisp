@@ -20,6 +20,11 @@
 
 (in-package :xlib)
 
+;;; Enable this for debug optimization settings and to enforce type checks.
+#+ (or)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (pushnew :clx-debugging *features*))
+
 ;;;-------------------------------------------------------------------------
 ;;; Declarations
 ;;;-------------------------------------------------------------------------
