@@ -618,8 +618,9 @@
 (defun drawable-depth (drawable)
   (declare (type drawable drawable))
   (declare (clx-values card8))
-  (with-geometry (drawable :sizes 8)
-    (card8-get 1)))
+  (or (drawable-bit-depth drawable)
+      (setf (drawable-bit-depth drawable) (with-geometry (drawable :sizes 8)
+                                            (card8-get 1)))))
 
 (defun drawable-border-width (drawable)
   ;; setf'able
