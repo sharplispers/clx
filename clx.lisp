@@ -329,8 +329,7 @@
   (atom-id-map (make-hash-table :test (resource-id-map-test)
 				:size *atom-cache-size*)
 	       :type hash-table)
-  (extended-max-request-length 0 :type card32)
-  )
+  (extended-max-request-length 0 :type card32))
 
 (defun print-display-name (display stream)
   (declare (type (or null display) display))
@@ -360,7 +359,10 @@
   (id 0 :type resource-id)
   (display nil :type (or null display))
   (plist nil :type list)			; Extension hook
-  )
+
+  ;; bit-depth is set by the first call to DRAWABLE-DEPTH, used to avoid repeated
+  ;; round-trips to the server for querying this value. The bit depth of drawables can not change.
+  (bit-depth nil :type (or null fixnum)))
 
 (defun print-drawable (drawable stream depth)
   (declare (type drawable drawable)
@@ -371,12 +373,10 @@
     (let ((*print-base* 16)) (prin1 (drawable-id drawable) stream))))
 
 (def-clx-class (window (:include drawable) (:copier nil)
-		       (:print-function print-drawable))
-  )
+		       (:print-function print-drawable)))
 
 (def-clx-class (pixmap (:include drawable) (:copier nil)
-		       (:print-function print-drawable))
-  )
+		       (:print-function print-drawable)))
 
 (def-clx-class (visual-info (:copier nil) (:print-function print-visual-info))
   (id 0 :type resource-id)
@@ -406,8 +406,7 @@
 (def-clx-class (colormap (:copier nil) (:print-function print-colormap))
   (id 0 :type resource-id)
   (display nil :type (or null display))
-  (visual-info nil :type (or null visual-info))
-  )
+  (visual-info nil :type (or null visual-info)))
 
 (defun print-colormap (colormap stream depth)
   (declare (type colormap colormap)
@@ -422,8 +421,7 @@
 
 (def-clx-class (cursor (:copier nil) (:print-function print-cursor))
   (id 0 :type resource-id)
-  (display nil :type (or null display))
-  )
+  (display nil :type (or null display)))
 
 (defun print-cursor (cursor stream depth)
   (declare (type cursor cursor)
@@ -536,8 +534,7 @@
   (server-state (allocate-gcontext-state) :type gcontext-state)
   (local-state (allocate-gcontext-state) :type gcontext-state)
   (plist nil :type list)			; Extension hook
-  (next nil #-explorer :type #-explorer (or null gcontext))
-  )
+  (next nil #-explorer :type #-explorer (or null gcontext)))
 
 (defun print-gcontext (gcontext stream depth)
   (declare (type gcontext gcontext)
