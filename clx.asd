@@ -72,6 +72,15 @@ Independent FOSS developers"
 	      :components
 	      ((:file "shape")
 	       (:file "big-requests")
+	       (:file "xkb-keysymdef")
+	       (:file "xkb-constants")
+	       (:file "xkb-types")
+	       (:file "xkb-structs")
+	       (:file "xkeyboard" 
+		      :depends-on ("xkb-keysymdef"
+				   "xkb-constants"
+				   "xkb-types"
+				   "xkb-structs"))
 	       (:file "xvidmode")
 	       (:xrender-source-file "xrender")
                (:file "glx")
