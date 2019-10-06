@@ -1580,10 +1580,7 @@ Returns a list of (host display-number screen protocol)."
 	   (type (member 1 4 8 16 24 32) bits-per-pixel)
 	   (type (member 8 16 32) unit)
 	   (type generalized-boolean byte-lsb-first-p bit-lsb-first-p))
-  (progn bbuf boffset pixarray x y width height padded-bytes-per-line
-	 bits-per-pixel unit byte-lsb-first-p bit-lsb-first-p)
   (or
-   #+(or Genera lcl3.0 excl)
    (fast-read-pixarray-with-swap
     bbuf boffset pixarray x y width height padded-bytes-per-line
     bits-per-pixel unit byte-lsb-first-p bit-lsb-first-p)
@@ -1790,8 +1787,6 @@ Returns a list of (host display-number screen protocol)."
 	   (type (member 1 4 8 16 24 32) bits-per-pixel)
 	   (type (member 8 16 32) unit)
 	   (type generalized-boolean byte-lsb-first-p bit-lsb-first-p))
-  (progn bbuf boffset pixarray x y width height padded-bytes-per-line
-	 bits-per-pixel unit byte-lsb-first-p bit-lsb-first-p)
   (or
    (fast-write-pixarray-with-swap
     bbuf boffset pixarray x y width height padded-bytes-per-line
@@ -1816,7 +1811,6 @@ Returns a list of (host display-number screen protocol)."
   (declare (type pixarray pixarray copy)
 	   (type card16 x y width height)
 	   (type (member 1 4 8 16 24 32) bits-per-pixel))
-  ;; (progn pixarray copy x y width height bits-per-pixel nil) - frgo, 2019-10-06: What's that ???
   (or
    (unless (index= bits-per-pixel 24)
      (let ((pixarray-padded-bits-per-line
