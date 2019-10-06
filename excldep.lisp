@@ -81,6 +81,9 @@
     (wm-size-hints . wm-size-hints-p)
     ))
 
+;; This (if (and ...) t nil) stuff has a purpose -- it lets the old
+;; sun4 compiler opencode the `and'.
+
 (defun card8p (x)
   (declare (optimize (speed 3) (safety 0))
 	   (fixnum x))
