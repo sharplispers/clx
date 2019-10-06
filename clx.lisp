@@ -358,11 +358,8 @@
 (def-clx-class (drawable (:copier nil) (:print-function print-drawable))
   (id 0 :type resource-id)
   (display nil :type (or null display))
-  (plist nil :type list)			; Extension hook
-
-  ;; bit-depth is set by the first call to DRAWABLE-DEPTH, used to avoid repeated
-  ;; round-trips to the server for querying this value. The bit depth of drawables can not change.
-  (bit-depth nil :type (or null fixnum)))
+  ;; Extension hook
+  (plist nil :type list))
 
 (defun print-drawable (drawable stream depth)
   (declare (type drawable drawable)
