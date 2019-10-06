@@ -295,7 +295,6 @@
 ;; Character transformation
 ;;-----------------------------------------------------------------------------
 
-
 ;;; This stuff transforms chars to ascii codes in card8's and back.
 ;;; You might have to hack it a little to get it to work for your machine.
 
@@ -472,8 +471,7 @@
   #- (and allegro-version>= allegro-v10.1)
   `(excl:without-interrupts ,@body)
   #+ (and allegro-version>= allegro-v10.1)
-  `(excl:with-delayed-interrupts ,@body)
-  )
+  `(excl:with-delayed-interrupts ,@body))
 
 ;;; PROCESS-BLOCK: Wait until a given predicate returns a non-NIL value.
 ;;; Caller guarantees that PROCESS-WAKEUP will be called after the predicate's
@@ -498,7 +496,6 @@
       (if (> (mp::process-priority process) (mp::process-priority curproc))
 	  (mp::process-allow-schedule process)))))
 
-
 ;;; CURRENT-PROCESS: Return the current process object for input locking and
 ;;; for calling PROCESS-WAKEUP.
 
@@ -516,9 +513,7 @@
   #- (and allegro-version>= allegro-v10.1)
   `(excl:without-interrupts ,@body)
   #+ (and allegro-version>= allegro-v10.1)
-  `(excl:with-delayed-interrupts ,@body)
-  )
-
+  `(excl:with-delayed-interrupts ,@body))
 
 ;;; CONDITIONAL-STORE:
 
@@ -557,7 +552,6 @@
 ;;; OPEN-X-STREAM - create a stream for communicating to the appropriate X
 ;;; server
 
-
 ;;
 ;; On AllegroCL the Display stream actually is a stream!
 ;;
@@ -573,10 +567,6 @@
 
 ;;; BUFFER-READ-DEFAULT - read data from the X stream
 
-
-;;
-;; Rewritten 10/89 to not use foreign function interface to do I/O.
-;;
 (defun buffer-read-default (display vector start end timeout)
   (declare (type display display)
 	   (type buffer-bytes vector)
@@ -628,7 +618,6 @@
     (unless (null stream)
       (force-output stream))))
 
-
 ;;; BUFFER-CLOSE-DEFAULT - close the X stream
 
 (defun buffer-close-default (display &key abort)
@@ -640,14 +629,12 @@
     (unless (null stream)
       (close stream :abort abort))))
 
-
 ;;; BUFFER-INPUT-WAIT-DEFAULT - wait for for input to be available for the
 ;;; buffer.  This is called in read-input between requests, so that a process
 ;;; waiting for input is abortable when between requests.  Should return
 ;;; :TIMEOUT if it times out, NIL otherwise.
 
 ;;; The default implementation
-
 
 ;;
 ;; This is used so an 'eq' test may be used to find out whether or not we can
@@ -681,7 +668,6 @@
 					     :timeout timeout))
 	       (return-from buffer-input-wait-default :timeout))
 	   ))))
-
 
 ;;; BUFFER-LISTEN-DEFAULT - returns T if there is input available for the
 ;;; buffer. This should never block, so it can be called from the scheduler.
@@ -954,7 +940,6 @@
 ;;-----------------------------------------------------------------------------
 ;; Resource stuff
 ;;-----------------------------------------------------------------------------
-
 
 ;;; Utilities
 
