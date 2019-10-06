@@ -306,7 +306,7 @@
   (border-right 0 :type int16)
   (border-bottom 0 :type int16))
 
-(def-clx-class (rr-transform ( :type vector) :named )
+(def-clx-class (rr-transform #-allegro ( :type vector) #-allegro :named )
   (x  0 :type card32)
   (y  0 :type card32)
   (z  0 :type card32)
