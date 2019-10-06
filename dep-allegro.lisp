@@ -944,14 +944,12 @@
 ;;; Utilities
 
 (defun getenv (name)
-  (sys:getenv name)
-  )
+  (sys:getenv name))
 
 (defun get-host-name ()
   "Return the same hostname as gethostname(3) would"
   ;; resources-pathname was using short-site-name for this purpose
-  (short-site-name)
-  )
+  (short-site-name))
 
 (defun homedir-file-pathname (name)
   (merge-pathnames (user-homedir-pathname) (pathname name)))
