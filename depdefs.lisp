@@ -542,9 +542,15 @@ used, since NIL is the empty list.")
 		      ,(closintern 'print-object)
 		      ((object ,name) stream)
 		      (,print-function object stream 0))))))))
-      `(within-definition (,name def-clx-class)
-	 (defstruct (,name ,@options)
-	   ,@slots))))
+      (flet ((assert-valid-option (option)
+               (unless (typep option
+                              '(cons (member :constructor :include
+                                             :print-function :copier :predicate)))
+                 (error "~s: invalid option ~s." 'def-clx-class option))))
+        (mapc #'assert-valid-option options)
+        `(within-definition (,name def-clx-class)
+	   (defstruct (,name ,@options)
+	     ,@slots)))))
 
 #+Genera
 (progn
