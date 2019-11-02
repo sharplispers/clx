@@ -2324,23 +2324,24 @@
 (defun byte-width-calculation (argspecs)
   (let ((constant 0)
         (calculated ()))
-    (loop
-       for (name type length length-var) in argspecs
-       do (let ((byte-width (byte-width type)))
-            (typecase length
-              (number (incf constant (* byte-width length)))
-              (symbol (push `(* ,byte-width ,length) calculated))
-              (cons  (push `(* ,byte-width ,length-var) calculated)))))
+    (loop for (nil type length length-var) in argspecs
+          ;;   ^ name
+          for byte-width = (byte-width type)
+          do (typecase length
+               (number (incf constant (* byte-width length)))
+               (symbol (push `(* ,byte-width ,length) calculated))
+               (cons  (push `(* ,byte-width ,length-var) calculated))))
     (if (null calculated)
         constant
         (list* '+ constant calculated))))
 
 
 (defun composite-args (argspecs)
-  (loop
-     for (name type length length-var) in argspecs
-     when (consp length)
-     collect (list length-var length)))
+  (loop for (nil nil length length-var) in argspecs
+        ;;       ^ type
+        ;;   ^ name
+        when (consp length)
+        collect (list length-var length)))
 
 
 (defun make-setter-forms (argspecs)

@@ -180,8 +180,11 @@
 ;;; a^2+2abi+(bi)^2 -->
 ;;; a^2+2abi-b^2
 
+(deftype zoom-type ()
+  '(member :zoom-same :zoom-new :zoom-out))
+
 (defclass zoomer ()
-  ((zoom-type :initarg :type :reader zoom-type :type fixnum)
+  ((zoom-type :initarg :type :reader zoom-type :type zoom-type)
    (start-x :initarg :x :reader start-x :type fixnum)
    (start-y :initarg :y :reader start-y :type fixnum)
    (stop-x :accessor stop-x :initform -1 :type fixnum)

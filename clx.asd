@@ -31,85 +31,84 @@
 (defclass legacy-file (static-file) ())
 
 (defsystem #:clx
-    :description "An implementation of the X Window System protocol in Lisp."
-    :author "Texas Instruments Incorporated.
+  :description "An implementation of the X Window System protocol in Lisp."
+  :author "Texas Instruments Incorporated.
 Franz Inc, Berkeley, Ca.
 Independent FOSS developers"
-    :maintainer "sharplispers"
-    :license "MIT"
-    :depends-on (#+(or ecl sbcl) sb-bsd-sockets)
-    :version "0.7.5"
-    :serial t
-    :default-component-class clx-source-file
-    :in-order-to ((test-op (test-op "clx/test")))
-    :components
-    ((:file "package")
-     (:file "depdefs")
-     (:file "clx")
-     #-(or openmcl allegro lispworks) (:file "dependent")
-     #+openmcl (:file "dep-openmcl")
-     #+allegro (:file "dep-allegro")
-     #+lispworks (:file "dep-lispworks")
-     (:file "macros")
-     (:file "bufmac")
-     (:file "buffer")
-     (:file "display")
-     (:file "gcontext")
-     (:file "input")
-     (:file "requests")
-     (:file "fonts")
-     (:file "graphics")
-     (:file "text")
-     (:file "attributes")
-     (:file "translate")
-     (:file "keysyms")
-     (:file "manager")
-     (:file "image")
-     (:file "resource")
-     #+allegro
-     (:file "excldep" :pathname "excldep.lisp")
-     (:module "extensions"
-	      :components
-	      ((:file "shape")
-	       (:file "big-requests")
-	       (:file "xvidmode")
-	       (:xrender-source-file "xrender")
-               (:file "glx")
-               (:file "gl" :depends-on ("glx"))
-	       (:file "dpms")
-               (:file "xtest")
-               (:file "screensaver")
-               (:file "randr")
-               (:file "xinerama")
-               (:file "dbe")
-               (:file "xc-misc")
-               (:file "dri2")
-               (:file "composite")))
-     (:static-file "NEWS")
-     (:static-file "CHANGES")
-     (:static-file "README.md")
-     (:static-file "README-R5")
-     (:legacy-file "exclMakefile")
-     (:legacy-file "exclREADME")
-     (:legacy-file "exclcmac" :pathname "exclcmac.lisp")
-     (:legacy-file "excldepc" :pathname "excldep.c")
-     (:legacy-file "sockcl" :pathname "sockcl.lisp")
-     (:legacy-file "socket" :pathname "socket.c")
-     (:legacy-file "defsystem" :pathname "defsystem.lisp")
-     (:legacy-file "provide" :pathname "provide.lisp")
-     (:legacy-file "cmudep" :pathname "cmudep.lisp")
-     (:module "manual"
-	      ;; TODO: teach asdf how to process texinfo files
-	      :components ((:static-file "clx.texinfo")))
-     (:module "debug"
-	      :default-component-class legacy-file
-	      :components
-	      ((:file "debug" :pathname "debug.lisp")
-	       (:file "describe" :pathname "describe.lisp")
-	       (:file "event-test" :pathname "event-test.lisp")
-	       (:file "keytrans" :pathname "keytrans.lisp")
-	       (:file "trace" :pathname "trace.lisp")
-	       (:file "util" :pathname "util.lisp")))))
+  :maintainer "sharplispers"
+  :license "MIT"
+  :depends-on (#+(or ecl sbcl) sb-bsd-sockets)
+  :version "0.7.5"
+  :serial t
+  :default-component-class clx-source-file
+  :in-order-to ((test-op (test-op "clx/test")))
+  :components
+  ((:file "package")
+   (:file "depdefs")
+   (:file "clx")
+   #-(or openmcl allegro lispworks) (:file "dependent")
+   #+openmcl (:file "dep-openmcl")
+   #+allegro (:file "dep-allegro")
+   #+lispworks (:file "dep-lispworks")
+   (:file "macros")
+   (:file "bufmac")
+   (:file "buffer")
+   (:file "display")
+   (:file "gcontext")
+   (:file "input")
+   (:file "requests")
+   (:file "fonts")
+   (:file "graphics")
+   (:file "text")
+   (:file "attributes")
+   (:file "translate")
+   (:file "keysyms")
+   (:file "manager")
+   (:file "image")
+   (:file "resource")
+   #+allegro (:file "excldep")
+   (:module "extensions"
+	    :components
+	    ((:file "shape")
+	     (:file "big-requests")
+	     (:file "xvidmode")
+	     (:xrender-source-file "xrender")
+             (:file "glx")
+             (:file "gl" :depends-on ("glx"))
+	     (:file "dpms")
+             (:file "xtest")
+             (:file "screensaver")
+             (:file "randr")
+             (:file "xinerama")
+             (:file "dbe")
+             (:file "xc-misc")
+             (:file "dri2")
+             (:file "composite")))
+   (:static-file "NEWS")
+   (:static-file "CHANGES")
+   (:static-file "README.md")
+   (:static-file "README-R5")
+   (:legacy-file "exclMakefile")
+   (:legacy-file "exclREADME")
+   (:legacy-file "exclcmac" :pathname "exclcmac.lisp")
+   (:legacy-file "excldepc" :pathname "excldep.c")
+   (:legacy-file "sockcl" :pathname "sockcl.lisp")
+   (:legacy-file "socket" :pathname "socket.c")
+   (:legacy-file "defsystem" :pathname "defsystem.lisp")
+   (:legacy-file "provide" :pathname "provide.lisp")
+   (:legacy-file "cmudep" :pathname "cmudep.lisp")
+   (:module "manual"
+	    ;; TODO: teach asdf how to process texinfo files
+	    :components ((:static-file "clx.texinfo")))
+   (:module "debug"
+	    :default-component-class legacy-file
+	    :components
+	    ((:file "debug" :pathname "debug.lisp")
+	     (:file "describe" :pathname "describe.lisp")
+	     (:file "event-test" :pathname "event-test.lisp")
+	     (:file "keytrans" :pathname "keytrans.lisp")
+	     (:file "trace" :pathname "trace.lisp")
+	     (:file "util" :pathname "util.lisp")))))
 
 (defsystem #:clx/demo
   :depends-on ("clx")

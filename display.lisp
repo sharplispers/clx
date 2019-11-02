@@ -231,11 +231,17 @@
 				   (type resource-id id))
 			  (declare (clx-values ,type))
 			  ,(if (member type +clx-cached-types+)
-			       `(let ((,type (lookup-resource-id display id)))
-				  (cond ((null ,type) ;; Not found, create and save it.
-					 (setq ,type (,(xintern 'make- type)
-						      :display display :id id))
-					 (save-id display id ,type))
+			       `(multiple-value-bind (,type foundp)
+				    (with-display (display)
+				      (let ((,type (lookup-resource-id display id)))
+					(if (null ,type) ; Not found, create and save it.
+					    (let ((,type (,(xintern 'make- type)
+							  :display display :id id)))
+					      (save-id display id ,type)
+					      (values ,type nil))
+					    (values ,type t))))
+				  (cond ((not foundp)
+					 ,type)
 					;; Found.  Check the type
 					,(cond ((null +type-check?+)
 						`(t ,type))

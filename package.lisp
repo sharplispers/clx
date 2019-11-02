@@ -25,12 +25,12 @@
   (:size 3000)
   #+(or kcl ibcl) (:shadow rational)
   #+(or sbcl clasp) (:shadow defconstant)
-  #+allegro (:import-from excl without-interrupts)
   #+excl (:import-from excl arglist)
   #+Genera (:import-from zwei indentation)
   #+lcl3.0 (:import-from lcl arglist)
   #+lispm (:import-from lisp char-bit)
   #+lispm (:import-from sys arglist with-stack-list with-stack-list*)
+  #+clasp (:shadow arglist)
   #+(or sbcl ecl clasp) (:use sb-bsd-sockets)
   (:export
     *version* access-control access-error access-hosts

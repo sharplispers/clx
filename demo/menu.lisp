@@ -13,7 +13,7 @@
 ;;; documentation.
 ;;;
 ;;; Texas Instruments Incorporated provides this software "as is" without
-;;; express or implied warranty.  
+;;; express or implied warranty.
 ;;;
 
 (in-package :xlib)
@@ -58,7 +58,7 @@
 	      :x            0			;temporary value
 	      :y            0			;temporary value
 	      :width        16			;temporary value
-	      :height       16			;temporary value		
+	      :height       16			;temporary value
 	      :border-width 2
 	      :border       text-color
 	      :background   background-color
@@ -104,25 +104,25 @@
 	   (item-width  0)
 	   (items       (menu-item-alist menu))
 	   menu-width)
-      
+
       ;; Find max item string width
       (dolist (next-item items)
-	(setf item-width (max item-width 
+	(setf item-width (max item-width
 			      (TEXT-EXTENTS menu-font (second next-item)))))
-      
+
       ;; Compute final menu width, taking margins into account
       (setf menu-width (max title-width
-			    (+ item-width *menu-item-margin* *menu-item-margin*)))      
+			    (+ item-width *menu-item-margin* *menu-item-margin*)))
       (let ((window  (menu-window menu))
 	    (delta-y (+ item-height *menu-item-margin*)))
-	
-	;; Update width and height of menu window        
+
+	;; Update width and height of menu window
 	(WITH-STATE (window)
 	  (setf (DRAWABLE-WIDTH  window) menu-width
 		(DRAWABLE-HEIGHT window) (+ *menu-item-margin*
 					    (* (1+ (length items))
 					       delta-y))))
-	
+
 	;; Update width, height, position of item windows
 	(let ((item-left     (round (- menu-width item-width) 2))
 	      (next-item-top delta-y))
@@ -134,7 +134,7 @@
 		      (DRAWABLE-X      window) item-left
 		      (DRAWABLE-Y      window) next-item-top)))
 	    (incf next-item-top delta-y))))
-      
+
       ;; Map all item windows
       (MAP-SUBWINDOWS (menu-window menu))
 
@@ -153,7 +153,7 @@
 			  :resource-name (menu-title menu))
   (let* ((gcontext   (menu-gcontext menu))
         (baseline-y (FONT-ASCENT (GCONTEXT-FONT gcontext))))
-   
+
    ;; Show title centered in "reverse-video"
    (let ((fg (GCONTEXT-BACKGROUND gcontext))
 	 (bg (GCONTEXT-FOREGROUND gcontext)))
@@ -165,7 +165,7 @@
 		   (menu-title-width menu)) 2)	;start x
 	 baseline-y				;start y
 	 (menu-title menu))))
-   
+
    ;; Show each menu item (position is relative to item window)
    (dolist (item (menu-item-alist menu))
      (DRAW-IMAGE-GLYPHS
@@ -178,32 +178,32 @@
 (defun menu-choose (menu x y)
   ;; Display the menu so that first item is at x,y.
   (menu-present menu x y)
-  
+
   (let ((items (menu-item-alist menu))
 	(mw    (menu-window menu))
 	selected-item)
 
     ;; Event processing loop
-    (do () (selected-item)				
+    (do () (selected-item)
       (EVENT-CASE ((DRAWABLE-DISPLAY mw) :force-output-p t)
 	(:exposure     (count)
-		       
+
 	 ;; Discard all but final :exposure then display the menu
 	 (when (zerop count) (menu-refresh menu))
 	 t)
-	
+
 	(:button-release (event-window)
 	 ;;Select an item
 	 (setf selected-item (second (assoc event-window items)))
 	 t)
-	
+
 	(:enter-notify (window)
 	 ;;Highlight an item
 	 (let ((position (position window items :key #'first)))
 	   (when position
 	     (menu-highlight-item menu position)))
 	 t)
-	
+
 	(:leave-notify (window kind)
 	 (if (eql mw window)
 	     ;; Quit if pointer moved out of main menu window
@@ -214,14 +214,14 @@
 	     (when position
 	       (menu-unhighlight-item menu position))))
 	 t)
-	
+
 	(otherwise ()
 		   ;;Ignore and discard any other event
 		   t)))
-    
+
     ;; Erase the menu
 ;;;    (UNMAP-WINDOW mw)
-    
+
     ;; Return selected item string, if any
     (unless (eq selected-item :none) selected-item)))
 
@@ -235,7 +235,7 @@
 			 box-margin))
 	 (width       (+ (menu-item-width menu) box-margin box-margin))
 	 (height      (+ (menu-item-height menu) box-margin box-margin)))
-    
+
     ;; Draw a box in menu window around the given item.
     (DRAW-RECTANGLE (menu-window menu)
 		    (menu-gcontext menu)
@@ -252,7 +252,7 @@
 (defun menu-present (menu x y)
   ;; Make sure menu geometry is up-to-date
   (menu-recompute-geometry menu)
-  
+
   ;; Try to center first item at the given location, but
   ;; make sure menu is completely visible in its parent
   (let ((menu-window (menu-window menu)))
@@ -275,3 +275,99 @@
 
     ;; Make menu visible
     (MAP-WINDOW menu-window)))
+
+;;; Demo functions
+
+(defun just-say-lisp (&optional (font-name "fixed"))
+  (let* ((display   (open-default-display))
+         (screen    (first (DISPLAY-ROOTS display)))
+         (fg-color  (SCREEN-BLACK-PIXEL screen))
+         (bg-color  (SCREEN-WHITE-PIXEL screen))
+         (nice-font (OPEN-FONT display font-name))
+         (a-menu    (create-menu (screen-root screen) ; the menu's parent
+                                 fg-color bg-color nice-font)))
+
+    (setf (menu-title a-menu) "Please pick your favorite language:")
+    (menu-set-item-list a-menu '("Fortran" "APL" "Forth" "Lisp"))
+
+    ;; Bedevil the user until he picks a nice programming language
+    (unwind-protect
+        (do (choice)
+            ((and (setf choice (menu-choose a-menu 100 100))
+                  (string-equal "Lisp" choice))))
+
+      (CLOSE-DISPLAY display))))
+
+(defun pop-up (host strings &key (title "Pick one:") (font "fixed"))
+  (let* ((display   (OPEN-DISPLAY host))
+         (screen    (first (DISPLAY-ROOTS display)))
+         (fg-color  (SCREEN-BLACK-PIXEL screen))
+         (bg-color  (SCREEN-WHITE-PIXEL screen))
+         (font      (OPEN-FONT display font))
+         (parent-width 400)
+         (parent-height 400)
+         (parent    (CREATE-WINDOW :parent (SCREEN-ROOT screen)
+                                   :override-redirect :on
+                                   :x 100 :y 100
+                                   :width parent-width :height parent-height
+                                   :background bg-color
+                                   :event-mask (MAKE-EVENT-MASK :button-press
+                                                                :exposure)))
+         (a-menu    (create-menu parent fg-color bg-color font))
+         (prompt    "Press a button...")
+         (prompt-gc (CREATE-GCONTEXT :drawable parent
+                                     :foreground fg-color
+                                     :background bg-color
+                                     :font font))
+         (prompt-y  (FONT-ASCENT font))
+         (ack-y     (- parent-height  (FONT-DESCENT font))))
+    (setf (menu-title a-menu) title)
+    (menu-set-item-list a-menu strings)
+    ;; Present main window
+    (MAP-WINDOW parent)
+    (flet ((display-centered-text
+             (window string gcontext height width)
+             (multiple-value-bind (w a d l r fa fd) (text-extents gcontext string)
+               (declare (ignore a d l r))
+               (let ((box-height (+ fa fd)))
+                 ;; Clear previous text
+                 (CLEAR-AREA window
+                             :x 0 :y (- height fa)
+                             :width width :height box-height)
+                 ;; Draw new text
+                 (DRAW-IMAGE-GLYPHS window gcontext (round (- width w) 2) height string)))))
+      (unwind-protect
+          (loop
+            (EVENT-CASE (display :force-output-p t)
+              (:exposure (count)
+                ;; Display prompt
+                (when (zerop count)
+                  (display-centered-text
+                   parent
+                   prompt
+                   prompt-gc
+                   prompt-y
+                   parent-width))
+                t)
+              (:button-press (x y)
+                ;; Pop up the menu
+                (let ((choice (menu-choose a-menu x y)))
+                  (if choice
+                      (display-centered-text
+                       parent
+                       (format nil "You have selected ~a." choice)
+                       prompt-gc
+                       ack-y
+                       parent-width)
+
+                      (display-centered-text
+                       parent
+                       "No selection...try again."
+                       prompt-gc
+                       ack-y
+                       parent-width)))
+                             t)
+              (otherwise ()
+                ;; Ignore and discard any other event
+                t)))
+        (CLOSE-DISPLAY display)))))
