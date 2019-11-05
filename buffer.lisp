@@ -84,12 +84,12 @@
 
 (defun with-buffer-function (buffer timeout function)
   (declare (type display buffer)
-	   (type (or null number) timeout)
-	   (type function function)
-	   (dynamic-extent function)
-	   ;; FIXME: This is probably more a bug in SBCL (logged as
-	   ;; bug #243)
-	   (ignorable timeout))
+           (type (or null real) timeout)
+           (type function function)
+           (dynamic-extent function)
+           ;; FIXME: This is probably more a bug in SBCL (logged as
+           ;; bug #243)
+           (ignorable timeout))
   (with-buffer (buffer :timeout timeout :inline t)
     (funcall function)))
 
@@ -404,7 +404,7 @@
   (declare (type buffer buffer)
 	   (type vector vector)
 	   (type array-index start end)
-	   (type (or null number) timeout))
+	   (type (or null real) timeout))
   (declare (clx-values eof-p))
   (when (buffer-dead buffer)
     (x-error 'closed-display :display buffer))
