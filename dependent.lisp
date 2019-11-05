@@ -915,7 +915,7 @@
    :input t :output t :buffering :none))
 
 #+clasp
-(defun open-x-stream (host display protocol)  
+(defun open-x-stream (host display protocol)
   (declare (ignore protocol)
            (type (integer 0) display))
   (SB-BSD-SOCKETS:socket-make-stream
@@ -984,7 +984,7 @@
   (declare (type display display)
            (type buffer-bytes vector)
            (type array-index start end)
-           (type (or null fixnum) timeout))
+           (type (or null real) timeout))
   #.(declare-buffun)
   (cond ((and (eql timeout 0)
               (not (listen (display-input-stream display))))
@@ -1001,7 +1001,7 @@
   (declare (type display display)
            (type buffer-bytes vector)
            (type array-index start end)
-           (type (or null fixnum) timeout))
+           (type (or null real) timeout))
   #.(declare-buffun)
   (cond ((and (eql timeout 0)
               (not (listen (display-input-stream display))))
