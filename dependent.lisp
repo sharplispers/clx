@@ -623,21 +623,10 @@
                         &body body)
   ;; This macro is used by WITH-DISPLAY, which claims to be callable
   ;; recursively.  So, had better use a recursive lock.
-  ;;
-  ;; FIXME: This is hideously ugly.  If WITH-TIMEOUT handled NIL
-  ;; timeouts...
   (declare (ignore display whostate))
-  (if timeout
-      `(if ,timeout
-           (handler-case
-               (sb-ext:with-timeout ,timeout
-                 (sb-thread:with-recursive-lock (,lock)
-                   ,@body))
-             (sb-ext:timeout () nil))
-           (sb-thread:with-recursive-lock (,lock)
-             ,@body))
-      `(sb-thread:with-recursive-lock (,lock)
-         ,@body)))
+  `(sb-thread:with-recursive-lock (,lock ,@(when timeout
+                                             `(:timeout ,timeout)))
+     ,@body))
 
 ;;; WITHOUT-ABORTS
 
