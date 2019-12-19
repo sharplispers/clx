@@ -25,7 +25,6 @@
 	  composite-unredirect-window
 	  composite-unredirect-subwindows
 	  composite-get-overlay-window
-	  
     composite-release-overlay-window))
 
 (define-extension "Composite")
@@ -39,15 +38,16 @@
 
 ;; xrequests
 
-(defconstant  +composite-QueryVersion+			0)
-(defconstant  +composite-RedirectWindow+		1)
-(defconstant  +composite-RedirectSubwindows+		2)
+(defconstant  +composite-QueryVersion+ 0 "Query for the version of composite.")
+(defconstant  +composite-RedirectWindow+ 1 "Store this hierarchy off-screen.")
+(defconstant  +composite-RedirectSubwindows+ 2 )
 (defconstant  +composite-UnredirectWindow+		3)
 (defconstant  +composite-UnredirectSubwindows+		4)
 (defconstant  +composite-CreateRegionFromBorderClip+	5)
-(defconstant  +composite-NameWindowPixmap+		6)
-(defconstant  +composite-GetOverlayWindow+             7)
-(defconstant  +composite-ReleaseOverlayWindow+         8)
+(defconstant  +composite-NameWindowPixmap+ 6
+  "The off-screen pixmap for the window.")
+(defconstant  +composite-GetOverlayWindow+ 7 "Get a surface to draw on.")
+(defconstant  +composite-ReleaseOverlayWindow+ 8 "Release the overlay surface.")
 
 
 (defmacro composite-opcode (display)
@@ -75,7 +75,8 @@
 
 
 (defun composite-redirect-window (window update-type)
-  ""
+  "Store window and its children off-screen, using update-type for whether to
+sync those or not."
   (let ((display (window-display window)))
     (declare (type display display)
 	     (type window window)
@@ -88,7 +89,8 @@
       (card16 0))))
 
 (defun composite-redirect-subwindows (window update-type)
-  ""
+  "Store the subwindows of the window (but not the window itself).
+update-type determines if syncing is allowed."
   (let ((display (window-display window)))
     (declare (type display display)
 	     (type window window)
@@ -101,7 +103,7 @@
       (card16 0))))
 
 (defun composite-unredirect-window (window)
-  ""
+  "Terminates the redirection."
   (let ((display (window-display window)))
     (declare (type display display)
 	     (type window window))  
@@ -110,7 +112,7 @@
       (window window))))
 
 (defun composite-unredirect-subwindows (window)
-  ""
+  "Terminates the redirection of the child hierarchies of window."
   (let ((display (window-display window)))
     (declare (type display display)
 	     (type window window))  
@@ -119,7 +121,7 @@
       (window window))))
 
 (defun composite-create-region-from-border-clip (window region)
-  ""
+  "Region clipped on surrounding windows."
   (let ((display (window-display window)))
     (declare (type display display)
 	     (type window window))
@@ -129,7 +131,7 @@
       (window window))))
 	    
 (defun composite-name-window-pixmap (window drawable)
-  ""
+  "Refer to an off-screen pixmap for the window."
   (let ((display (window-display window)))
     (declare (type display display)
 	     (type window window))
@@ -139,7 +141,8 @@
       (drawable drawable))))
 
 (defun composite-get-overlay-window (window)
-  ""
+  "Take control of the window for composite use. A place to draw things without
+interference. Release with COMPOSITE-RELEASE-OVERLAY-WINDOW."
   (let ((display (window-display window)))
     (declare (type display display)
 	     (type window window))
@@ -151,7 +154,7 @@
        (card32-get 8)))))
 
 (defun composite-release-overlay-window (window)
-  ""
+  "Release a window which was controlled by COMPOSITE-GET-OVERLAY-WINDOW."
   (let ((display (window-display window)))
     (declare (type display display)
              (type window window))
