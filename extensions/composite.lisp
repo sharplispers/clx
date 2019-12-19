@@ -26,7 +26,8 @@
 	  composite-unredirect-subwindows
 	  composite-get-overlay-window
 	  
-	  ))
+    composite-release-overlay-window))
+
 (define-extension "Composite")
 
 (defconstant +composite-major+    0)
