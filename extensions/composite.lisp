@@ -29,21 +29,26 @@
 
 (define-extension "Composite")
 
-(defconstant +composite-major+    0)
-(defconstant +composite-minor+    4)
+(defconstant +composite-major+ 0 "Major version.")
+(defconstant +composite-minor+ 4 "Minor version.")
 
 
-(defconstant +redirect-automatic+		0)
-(defconstant +redirect-manual+			1)
+(defconstant +redirect-automatic+ 0
+  "The automatic update type automatically updates the parent window.")
+(defconstant +redirect-manual+ 1
+  "Prevents some activities that would otherwise be automatic.")
 
 ;; xrequests
 
 (defconstant  +composite-QueryVersion+ 0 "Query for the version of composite.")
 (defconstant  +composite-RedirectWindow+ 1 "Store this hierarchy off-screen.")
-(defconstant  +composite-RedirectSubwindows+ 2 )
-(defconstant  +composite-UnredirectWindow+		3)
-(defconstant  +composite-UnredirectSubwindows+		4)
-(defconstant  +composite-CreateRegionFromBorderClip+	5)
+(defconstant  +composite-RedirectSubwindows+ 2 "Store only the sub-hierarchy.")
+(defconstant  +composite-UnredirectWindow+ 3
+  "Stop storing the window and subwindows.")
+(defconstant  +composite-UnredirectSubwindows+ 4
+  "Stop storing the sub-hierarchy.")
+(defconstant  +composite-CreateRegionFromBorderClip+ 5
+  "The region clinpped against the surrounding windows.")
 (defconstant  +composite-NameWindowPixmap+ 6
   "The off-screen pixmap for the window.")
 (defconstant  +composite-GetOverlayWindow+ 7 "Get a surface to draw on.")
@@ -62,7 +67,7 @@
 ;; x requests
 
 (defun composite-query-version (display)
-  ""
+  "Query for the version. All clients are expected to query!"
   (declare (type display display))
   (with-buffer-request-and-reply (display (composite-opcode display) nil :sizes (32))
 				 ((data +composite-QueryVersion+)
@@ -142,7 +147,8 @@ update-type determines if syncing is allowed."
 
 (defun composite-get-overlay-window (window)
   "Take control of the window for composite use. A place to draw things without
-interference. Release with COMPOSITE-RELEASE-OVERLAY-WINDOW."
+interference. Requires a compositing window manager to be running in order to
+use the overlay. Release it with COMPOSITE-RELEASE-OVERLAY-WINDOW."
   (let ((display (window-display window)))
     (declare (type display display)
 	     (type window window))
