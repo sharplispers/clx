@@ -16022,7 +16022,7 @@ server and rendering sets of them.
 @subsection Picture formats
 
 The following is what the X protocol rendering spec has to say about picture formats.
-@url{http://www.xfree86.org/~keithp/render/protocol.html}
+@url{https://www.x.org/releases/X11R7.7/doc/renderproto/renderproto.txt}
 
 
 The @var{picture-format} object holds information needed to translate pixel values
