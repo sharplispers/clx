@@ -20,12 +20,12 @@
 (in-package :xlib)
 
 (export '(composite-query-version
-	  composite-redirect-window
-	  composite-redirect-subwindows
-	  composite-unredirect-window
-	  composite-unredirect-subwindows
-	  composite-get-overlay-window
-    composite-release-overlay-window))
+          composite-redirect-window
+          composite-redirect-subwindows
+          composite-unredirect-window
+          composite-unredirect-subwindows
+          composite-get-overlay-window
+          composite-release-overlay-window))
 
 (define-extension "Composite")
 
@@ -70,9 +70,9 @@
   "Query for the version. All clients are expected to query!"
   (declare (type display display))
   (with-buffer-request-and-reply (display (composite-opcode display) nil :sizes (32))
-				 ((data +composite-QueryVersion+)
-				  (card32 +composite-major+)
-				  (card32 +composite-minor+))
+                                 ((data +composite-QueryVersion+)
+                                  (card32 +composite-major+)
+                                  (card32 +composite-minor+))
     (values
      (card32-get 8)
      (card32-get 12))))
@@ -84,8 +84,8 @@
 sync those or not."
   (let ((display (window-display window)))
     (declare (type display display)
-	     (type window window)
-	     (type update-type update-type))  
+             (type window window)
+             (type update-type update-type))
     (with-buffer-request (display (composite-opcode display))
       (data +composite-redirectwindow+)
       (window window)
@@ -98,8 +98,8 @@ sync those or not."
 update-type determines if syncing is allowed."
   (let ((display (window-display window)))
     (declare (type display display)
-	     (type window window)
-	     (type update-type update-type))  
+             (type window window)
+             (type update-type update-type))
     (with-buffer-request (display (composite-opcode display))
       (data +composite-redirectsubwindows+)
       (window window)
@@ -111,7 +111,7 @@ update-type determines if syncing is allowed."
   "Terminates the redirection."
   (let ((display (window-display window)))
     (declare (type display display)
-	     (type window window))  
+             (type window window))
     (with-buffer-request (display (composite-opcode display))
       (data +composite-unredirectwindow+)
       (window window))))
@@ -120,7 +120,7 @@ update-type determines if syncing is allowed."
   "Terminates the redirection of the child hierarchies of window."
   (let ((display (window-display window)))
     (declare (type display display)
-	     (type window window))  
+             (type window window))
     (with-buffer-request (display (composite-opcode display))
       (data +composite-unredirectsubwindows+)
       (window window))))
@@ -129,17 +129,17 @@ update-type determines if syncing is allowed."
   "Region clipped on surrounding windows."
   (let ((display (window-display window)))
     (declare (type display display)
-	     (type window window))
-    (with-buffer-request (display (composite-opcode display)) 
+             (type window window))
+    (with-buffer-request (display (composite-opcode display))
       (data +composite-createregionfromborderclip+)
       (card32 region)
       (window window))))
-	    
+
 (defun composite-name-window-pixmap (window drawable)
   "Refer to an off-screen pixmap for the window."
   (let ((display (window-display window)))
     (declare (type display display)
-	     (type window window))
+             (type window window))
     (with-buffer-request (display (composite-opcode display))
       (data +composite-namewindowpixmap+)
       (window window)
@@ -151,13 +151,11 @@ interference. Requires a compositing window manager to be running in order to
 use the overlay. Release it with COMPOSITE-RELEASE-OVERLAY-WINDOW."
   (let ((display (window-display window)))
     (declare (type display display)
-	     (type window window))
+             (type window window))
     (with-buffer-request-and-reply (display (composite-opcode display) nil :sizes (32))
-				   ((data +composite-getoverlaywindow+)
-				    (window window)
-				    )
-      (values
-       (card32-get 8)))))
+                                   ((data +composite-getoverlaywindow+)
+                                    (window window))
+      (values (card32-get 8)))))
 
 (defun composite-release-overlay-window (window)
   "Release a window which was controlled by COMPOSITE-GET-OVERLAY-WINDOW."
