@@ -29,8 +29,10 @@
 
 (define-extension "Composite")
 
-(defconstant +composite-major+ 0 "Major version.")
-(defconstant +composite-minor+ 4 "Minor version.")
+(defconstant +composite-major+ 0
+  "Major version.")
+(defconstant +composite-minor+ 4
+  "Minor version.")
 
 
 (defconstant +redirect-automatic+ 0
@@ -40,9 +42,12 @@
 
 ;; xrequests
 
-(defconstant  +composite-QueryVersion+ 0 "Query for the version of composite.")
-(defconstant  +composite-RedirectWindow+ 1 "Store this hierarchy off-screen.")
-(defconstant  +composite-RedirectSubwindows+ 2 "Store only the sub-hierarchy.")
+(defconstant  +composite-QueryVersion+ 0
+  "Query for the version of composite.")
+(defconstant  +composite-RedirectWindow+ 1
+  "Store this hierarchy off-screen.")
+(defconstant  +composite-RedirectSubwindows+ 2
+  "Store only the sub-hierarchy.")
 (defconstant  +composite-UnredirectWindow+ 3
   "Stop storing the window and subwindows.")
 (defconstant  +composite-UnredirectSubwindows+ 4
@@ -51,8 +56,10 @@
   "The region clinpped against the surrounding windows.")
 (defconstant  +composite-NameWindowPixmap+ 6
   "The off-screen pixmap for the window.")
-(defconstant  +composite-GetOverlayWindow+ 7 "Get a surface to draw on.")
-(defconstant  +composite-ReleaseOverlayWindow+ 8 "Release the overlay surface.")
+(defconstant  +composite-GetOverlayWindow+ 7
+  "Get a surface to draw on.")
+(defconstant  +composite-ReleaseOverlayWindow+ 8
+  "Release the overlay surface.")
 
 
 (defmacro composite-opcode (display)
@@ -61,8 +68,6 @@
 ;; types
 
 (deftype update-type () '(card8))
-
-
 
 ;; x requests
 
@@ -76,8 +81,6 @@
     (values
      (card32-get 8)
      (card32-get 12))))
-
-
 
 (defun composite-redirect-window (window update-type)
   "Store window and its children off-screen, using update-type for whether to
