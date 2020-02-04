@@ -378,17 +378,26 @@ by every function, which attempts to generate RENDER requests."
               (display-render-info display)))
     res))
 
-(defun find-window-picture-format (window)
-  "Find the picture format which matches the given window."
-  (let* ((vi (window-visual-info window))
-         (display (window-display window)))
+(defun find-drawable-picture-format (drawable)
+  "Find the picture format which matches the given drawable."
+  (let* ((vi (typecase drawable
+	       (xlib:window (window-visual-info drawable))
+	       ;; For pixmaps we return the first available visual that matches depth
+	       ;; This may pose problems if pixmap is on a different screen.
+	       ;; If so, pixmap should probably store which screen it is created on,
+	       ;; as that information is only available at creation time.
+	       (xlib:pixmap (let ((root-window (xlib:drawable-root drawable)))
+			      (case (drawable-depth drawable)
+				(32 (cadr (assoc 32 (screen-depths (xlib:display-default-screen (xlib:drawable-display drawable))))))
+				(otherwise (window-visual-info root-window)))))))
+         (display (drawable-display drawable)))
     (ensure-render-initialized display)
     (case (visual-info-class vi)
       ((:true-color)
        (maphash (lambda (k f)
                   (declare (ignore k))
                   (when (and (eql (picture-format-type f) :direct)
-                             (eql (picture-format-depth f) (drawable-depth window))
+                             (eql (picture-format-depth f) (drawable-depth drawable))
                              (eql (dpb -1 (picture-format-red-byte f) 0)
                                   (visual-info-red-mask vi))
                              (eql (dpb -1 (picture-format-green-byte f) 0)
@@ -396,11 +405,10 @@ by every function, which attempts to generate RENDER requests."
                              (eql (dpb -1 (picture-format-blue-byte f) 0)
                                   (visual-info-blue-mask vi))
                              (eql (byte-size (picture-format-alpha-byte f)) 0))
-                    (return-from find-window-picture-format f)))
+                    (return-from find-drawable-picture-format f)))
                 (render-info-picture-formats
                  (display-render-info display))))
-      (t
-       ))))
+      (t))))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (define-accessor picture (32)
@@ -568,8 +576,7 @@ by every function, which attempts to generate RENDER requests."
                  (let ((display (drawable-display drawable)))
                    (ensure-render-initialized display)
                    (unless format
-                     ;; xxx check for drawable being a window
-                     (setf format (find-window-picture-format drawable)))
+                     (setf format (find-drawable-picture-format drawable)))
                    (let ((pid (allocate-resource-id display picture 'picture)))
                      (setf (picture-id picture) pid)
                      (with-buffer-request (display (extension-opcode display "RENDER"))
@@ -1040,13 +1047,13 @@ by every function, which attempts to generate RENDER requests."
     (let* ((w (array-dimension data 1))
            (h (array-dimension data 0))
            (bitmap-format (display-bitmap-format display))
+	   (glyph-depth (picture-format-depth (glyph-set-format glyph-set)))
            (unit (bitmap-format-unit bitmap-format))
            (byte-lsb-first-p (display-image-lsb-first-p display))
            (bit-lsb-first-p  (bitmap-format-lsb-first-p bitmap-format)))
       (let* ((padded-bytes-per-line
               (index* (index-ceiling
-                       (index* w (picture-format-depth
-                                  (glyph-set-format glyph-set)))
+                       (index* w glyph-depth )
                        32)
                       4))
              (request-bytes
@@ -1072,7 +1079,7 @@ by every function, which attempts to generate RENDER requests."
           (int16 y-advance)
           (progn
             (setf (buffer-boffset display) (advance-buffer-offset 28))
-            (let ((im (create-image :width w :height h :depth 8 :data data)))
+            (let ((im (create-image :width w :height h :depth glyph-depth :data data)))
               (write-image-z display im 0 0 w h
                              padded-bytes-per-line
                              unit byte-lsb-first-p bit-lsb-first-p)) ))) )))
