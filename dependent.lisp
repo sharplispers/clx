@@ -623,21 +623,10 @@
                         &body body)
   ;; This macro is used by WITH-DISPLAY, which claims to be callable
   ;; recursively.  So, had better use a recursive lock.
-  ;;
-  ;; FIXME: This is hideously ugly.  If WITH-TIMEOUT handled NIL
-  ;; timeouts...
   (declare (ignore display whostate))
-  (if timeout
-      `(if ,timeout
-           (handler-case
-               (sb-ext:with-timeout ,timeout
-                 (sb-thread:with-recursive-lock (,lock)
-                   ,@body))
-             (sb-ext:timeout () nil))
-           (sb-thread:with-recursive-lock (,lock)
-             ,@body))
-      `(sb-thread:with-recursive-lock (,lock)
-         ,@body)))
+  `(sb-thread:with-recursive-lock (,lock ,@(when timeout
+                                             `(:timeout ,timeout)))
+     ,@body))
 
 ;;; WITHOUT-ABORTS
 
@@ -915,7 +904,7 @@
    :input t :output t :buffering :none))
 
 #+clasp
-(defun open-x-stream (host display protocol)  
+(defun open-x-stream (host display protocol)
   (declare (ignore protocol)
            (type (integer 0) display))
   (SB-BSD-SOCKETS:socket-make-stream
@@ -984,9 +973,10 @@
   (declare (type display display)
            (type buffer-bytes vector)
            (type array-index start end)
-           (type (or null fixnum) timeout))
+           (type (or null (real 0 *)) timeout))
   #.(declare-buffun)
-  (cond ((and (eql timeout 0)
+  (cond ((and (not (null timeout))
+              (zerop timeout)
               (not (listen (display-input-stream display))))
          :timeout)
         (t
@@ -1001,9 +991,10 @@
   (declare (type display display)
            (type buffer-bytes vector)
            (type array-index start end)
-           (type (or null fixnum) timeout))
+           (type (or null (real 0 *)) timeout))
   #.(declare-buffun)
-  (cond ((and (eql timeout 0)
+  (cond ((and (not (null timeout))
+              (zerop timeout)
               (not (listen (display-input-stream display))))
          :timeout)
         (t

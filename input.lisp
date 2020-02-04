@@ -386,7 +386,7 @@
 
 (defun read-input (display timeout force-output-p predicate &rest predicate-args)
   (declare (type display display)
-	   (type (or null number) timeout)
+	   (type (or null real) timeout)
 	   (type generalized-boolean force-output-p)
 	   (dynamic-extent predicate-args))
   (declare (type function predicate)
@@ -501,7 +501,7 @@
 
 (defun wait-for-event (display timeout force-output-p)
   (declare (type display display)
-	   (type (or null number) timeout)
+	   (type (or null real) timeout)
 	   (type generalized-boolean force-output-p))
   (let ((event-process-p (not (eql timeout 0))))
     (declare (type generalized-boolean event-process-p))
@@ -1020,7 +1020,7 @@
 
 (defun event-loop-step-before (display timeout force-output-p current-event-symbol)
   (declare (type display display)
-	   (type (or null number) timeout)
+	   (type (or null real) timeout)
 	   (type generalized-boolean force-output-p)
 	   (type symbol current-event-symbol)
 	   (clx-values event eof-or-timeout))
@@ -1165,36 +1165,35 @@
   ;;
   ;; T for peek-p means the event (for which the handler returns non-nil) is not removed
   ;; from the queue (it is left in place), NIL means the event is removed.
-  
   (declare (type display display)
-	   (type (or null number) timeout)
-	   (type generalized-boolean peek-p discard-p force-output-p))
-  (declare (type t handler)
-	   (dynamic-extent handler))
+           (type (or null real) timeout)
+           (type generalized-boolean peek-p discard-p force-output-p)
+           (type t handler)
+           (dynamic-extent handler))
   (event-loop (display event timeout force-output-p discard-p)
     (let* ((event-code (event-code event)) ;; Event decoder defined by DECLARE-EVENT
-	   (event-decoder (and (index< event-code (length *event-handler-vector*))
-			       (svref *event-handler-vector* event-code))))
+           (event-decoder (and (index< event-code (length *event-handler-vector*))
+                               (svref *event-handler-vector* event-code))))
       (declare (type array-index event-code)
-	       (type (or null function) event-decoder))
+               (type (or null function) event-decoder))
       (if event-decoder
-	  (let ((event-handler (if (functionp handler)
-				   handler
-				   (and (type? handler 'sequence)
-					(< event-code (length handler))
-					(elt handler event-code)))))
-	    (if event-handler
-		(let ((result (funcall event-decoder display event event-handler)))
-		  (when result
-		    (unless peek-p
-		      (discard-current-event display))
-		    (return result)))
-	      (cerror "Ignore this event"
-		      "No handler for ~s event"
-		      (svref *event-key-vector* event-code))))
-	(cerror "Ignore this event"
-		"Server Error: event with unknown event code ~d received."
-		event-code)))))
+          (let ((event-handler (if (functionp handler)
+                                   handler
+                                   (and (type? handler 'sequence)
+                                        (< event-code (length handler))
+                                        (elt handler event-code)))))
+            (if event-handler
+                (let ((result (funcall event-decoder display event event-handler)))
+                  (when result
+                    (unless peek-p
+                      (discard-current-event display))
+                    (return result)))
+              (cerror "Ignore this event"
+                      "No handler for ~s event"
+                      (svref *event-key-vector* event-code))))
+        (cerror "Ignore this event"
+                "Server Error: event with unknown event code ~d received."
+                event-code)))))
 
 (defun make-event-handlers (&key (type 'vector) default)
   (declare (type t type)			;Sequence type specifier
