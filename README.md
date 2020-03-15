@@ -18,7 +18,7 @@ added from other CLXes around the net.
 
 ## Supported versions
 
-CLX should work with SBCL, CCL, ECL and CLISP. If it doesn't please submit an
+CLX should work with CCL, CLISP, CMUCL, ECL and SBCL. If it doesn't please submit an
 [issue](https://github.com/sharplispers/clx/issues/new) along with the version
 information of your implementation.
 
