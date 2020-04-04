@@ -52,7 +52,7 @@
                  string)))
            (read-short-length-vector (stream)
              (let ((length (read-short stream)))
-               (let ((vector (make-array length 
+               (let ((vector (make-array length
                                          :element-type '(unsigned-byte 8))))
                  (dotimes (k length)
                    (setf (aref vector k) (read-byte stream)))
@@ -72,7 +72,7 @@
                 ;; GET-BEST-AUTHORIZATION that we haven't finished
                 ;; with the stream.
                 (list family-id nil nil nil nil)))
-            (let ((address 
+            (let ((address
                    (case family
                      (:local (map 'string #'code-char address-data))
                      (:internet (coerce address-data 'list))
@@ -377,49 +377,50 @@ gethostname(3) - is used instead."
       display)))
 
 (defun open-display (host &key (display 0) protocol authorization-name authorization-data)
-  ;; Implementation specific routine to setup the buffer for a
-  ;; specific host and display.  This must interface with the local
-  ;; network facilities, and will probably do special things to
-  ;; circumvent the nework when displaying on the local host.
+  ;; Setup the buffer for a specific host and display.  This must
+  ;; interface with the local network facilities, and will probably do
+  ;; special things to circumvent the network when displaying on the
+  ;; local host.
   ;;
-  ;; A string must be acceptable as a host, but otherwise the possible types
-  ;; for host and protocol are not constrained, and will likely be very
-  ;; system dependent.  The default protocol is system specific.  Authorization,
-  ;; if any, is assumed to come from the environment somehow.
-  (declare (type integer display))
-  (declare (clx-values display))
-  ;; Get the authorization mechanism from the environment.  Handle the
-  ;; special case of a host name of "" and "unix" which means the
-  ;; protocol is :local
-  (when (null authorization-name)
-    (multiple-value-setq (authorization-name authorization-data)
-      (get-best-authorization host
-			      display
-			      (if (member host '("" "unix") :test #'equal)
-				  :local
-				  protocol))))
-  ;; PROTOCOL is the network protocol (something like :TCP :DNA or :CHAOS). See OPEN-X-STREAM.
-  (let* ((stream (open-x-stream host display protocol))
-	 (disp (make-buffer *output-buffer-size* #'make-display-internal
-			    :host host :display display
-			    :output-stream stream :input-stream stream))
-	 (ok-p nil))
-    (unwind-protect
-	(progn
-	  (display-connect disp
-			   :authorization-name authorization-name
-			   :authorization-data authorization-data)
-	  (setf (display-authorization-name disp) authorization-name)
-	  (setf (display-authorization-data disp) authorization-data)
-	  (initialize-resource-allocator disp)
-	  (initialize-predefined-atoms disp)
-	  (initialize-extensions disp)
-	  (when (assoc "BIG-REQUESTS" (display-extension-alist disp)
-		       :test #'string=)
-	    (enable-big-requests disp))
-	  (setq ok-p t))
-      (unless ok-p (close-display disp :abort t)))
-    disp))
+  ;; A string must be acceptable as a host, but otherwise the possible
+  ;; types for host and protocol are not constrained, and will likely
+  ;; be very system dependent.  The default protocol is system
+  ;; specific.  Authorization, if any, is assumed to come from the
+  ;; environment somehow.
+  (declare (type integer display)
+           (clx-values display))
+  ;; Special cases such as HOST being "" or "unix" are handled by
+  ;; PROTOCOL-FROM-HOST (See that function for a description of all
+  ;; special cases). PROTOCOL is assumed to have been normalized in
+  ;; the following code and functions called from here.
+  (let ((protocol (protocol-from-host host protocol)))
+    ;; Get the authorization mechanism from the environment.
+    (when (null authorization-name)
+      (multiple-value-setq (authorization-name authorization-data)
+        (get-best-authorization host display protocol)))
+    ;; PROTOCOL is the network protocol (something like :TCP, :DNA or
+    ;; :CHAOS). See OPEN-X-STREAM.
+    (let* ((stream (open-x-stream host display protocol))
+           (disp (make-buffer *output-buffer-size* #'make-display-internal
+                              :host host :display display
+                              :output-stream stream :input-stream stream))
+           (ok-p nil))
+      (unwind-protect
+           (progn
+             (display-connect disp
+                              :authorization-name authorization-name
+                              :authorization-data authorization-data)
+             (setf (display-authorization-name disp) authorization-name)
+             (setf (display-authorization-data disp) authorization-data)
+             (initialize-resource-allocator disp)
+             (initialize-predefined-atoms disp)
+             (initialize-extensions disp)
+             (when (assoc "BIG-REQUESTS" (display-extension-alist disp)
+                          :test #'string=)
+               (enable-big-requests disp))
+             (setq ok-p t))
+        (unless ok-p (close-display disp :abort t)))
+      disp)))
 
 (defun display-force-output (display)
   ; Output is normally buffered, this forces any buffered output to the server.
