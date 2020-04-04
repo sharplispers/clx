@@ -21,9 +21,9 @@
 
 ;;; DESCRIPTION
 ;;;
-;;; These functions provide an interface to the server extension 
-;;; XFree86-VidModeExtension which allows the video modes to be 
-;;; queried, adjusted dynamically and the mode switching to be 
+;;; These functions provide an interface to the server extension
+;;; XFree86-VidModeExtension which allows the video modes to be
+;;; queried, adjusted dynamically and the mode switching to be
 ;;; controlled.
 
 ;;; [ personal notes ]
@@ -31,8 +31,8 @@
 ;;; The documentation on this extension is very poor, probably,
 ;;; because it is not an X standard nor an X project team spec.
 ;;; Because of that, it need to be tested on some XFree 3.3.6,
-;;; and XFree 4.3.x to ensure that all request are correctly 
-;;; constructed as well as to indentify any obsolete/wrong 
+;;; and XFree 4.3.x to ensure that all request are correctly
+;;; constructed as well as to indentify any obsolete/wrong
 ;;; functions I made.
 
 (in-package :xlib)
@@ -56,8 +56,8 @@
 	  xfree86-vidmode-query-version
 	  xfree86-vidmode-set-client-version
 	  xfree86-vidmode-get-permissions
-	  xfree86-vidmode-mod-mode-line 
-	  xfree86-vidmode-get-mode-line 
+	  xfree86-vidmode-mod-mode-line
+	  xfree86-vidmode-get-mode-line
 	  xfree86-vidmode-get-all-mode-lines
 	  xfree86-vidmode-add-mode-line
 	  xfree86-vidmode-delete-mode-line
@@ -65,7 +65,7 @@
 	  xfree86-vidmode-get-gamma
 	  xfree86-vidmode-set-gamma
 	  xfree86-vidmode-get-gamma-ramp
-	  xfree86-vidmode-set-gamma-ramp     
+	  xfree86-vidmode-set-gamma-ramp
 	  xfree86-vidmode-get-gamma-ramp-size
 	  xfree86-vidmode-lock-mode-switch
 	  xfree86-vidmode-switch-to-mode
@@ -112,9 +112,9 @@
 (defconstant +get-permisions+      20)
 
 (define-extension "XFree86-VidModeExtension"
-  :events (:xfree86-vidmode-notify) 
-  :errors (xf86-vidmode-bad-clock 
-	   xf86-vidmode-bad-htimings 
+  :events (:xfree86-vidmode-notify)
+  :errors (xf86-vidmode-bad-clock
+	   xf86-vidmode-bad-htimings
 	   xf86-vidmode-bad-vtimings
 	   xf86-vidmode-mode-unsuitable
 	   xf86-vidmode-extension-disabled
@@ -216,12 +216,12 @@ return two values major-version and minor-version in that order."
     ((data +get-permisions+)
      (card16 (screen-position screen dpy))
      (card16 0))
-   (values 
+   (values
     (card32-get 8))))
 
 (defun xfree86-vidmode-mod-mode-line (display screen mode-line)
-  "Change the settings of the current video mode provided the 
-requested settings are valid (e.g. they don't exceed the 
+  "Change the settings of the current video mode provided the
+requested settings are valid (e.g. they don't exceed the
 capabilities of the monitor)."
   (declare (type display display)
 	   (type screen screen))
@@ -237,8 +237,8 @@ capabilities of the monitor)."
 (defun xfree86-vidmode-get-mode-line (display screen)
   "Query the settings for the currently selected video mode.
 return a mode-info structure fields with the server answer.
-If there are any server  private  values (currently  only 
-applicable  to  the S3 server) the function will store it 
+If there are any server  private  values (currently  only
+applicable  to  the S3 server) the function will store it
 into the returned structure."
   (declare (clx-values mode-info)
 	   (type display display)
@@ -246,13 +246,13 @@ into the returned structure."
   (let ((major (xfree86-vidmode-query-version display))
 	(offset 8))
     (declare (type fixnum offset)
-	     (type card16 major))    
+	     (type card16 major))
     (with-buffer-request-and-reply
         (display (vidmode-opcode display) nil :sizes (8 16 32))
       ((data +get-mode-line+)
        (card16 (screen-position screen display))
        (card16 0))
-     (let ((mode-info 
+     (let ((mode-info
 	    (make-mode-info
 	        :dotclock (card32-get offset)
 		:hdisplay (card16-get (incf offset 4))
@@ -275,17 +275,17 @@ into the returned structure."
        mode-info))))
 
 (defun xfree86-vidmode-get-all-mode-lines (dpy screen)
-  "Returns a list containing all video modes (as mode-info structure). 
+  "Returns a list containing all video modes (as mode-info structure).
 The first element of the list corresponds to the current video mode."
   (declare (type display dpy)
 	   (type screen screen))
   (multiple-value-bind (major minor) (xfree86-vidmode-query-version dpy)
     (declare (type card16 major minor))
-    (with-buffer-request-and-reply 
+    (with-buffer-request-and-reply
         (dpy (vidmode-opcode dpy) nil :sizes (8 16 32))
       ((data +get-all-mode-lines+)
        (card16 (screen-position screen dpy)))
-     (values 
+     (values
       ;; Note: There was a bug in the protocol implementation in versions
       ;; 0.x with x < 8 (the .private field wasn't being passed over the wire).
       ;; Check the server's version, and accept the old format if appropriate.
@@ -309,7 +309,7 @@ The first element of the list corresponds to the current video mode."
 		   (size (card32-get (incf offset (if (< major 2) 4 16)))))
 		(declare (type card32 size))
 		(incf offset 4)
-		(when bug-p 
+		(when bug-p
 		  (setf size 0))
 		(setf (mode-info-privsize mode-info) size
 		      (mode-info-private mode-info)
@@ -338,17 +338,17 @@ The first element of the list corresponds to the current video mode."
 	  do (multiple-value-bind (w1 w2) (__card32->card16__ card)
 	       (setf (svref v (incf i)) w1
 		     (svref v (incf i)) w2)))
-    
+
     (with-buffer-request (dpy (vidmode-opcode dpy))
       (data +add-mode-line+)
       (card32 (screen-position scr dpy))
       ((sequence :format card16) v))))
 
 (defun xfree86-vidmode-delete-mode-line (dpy scr mode-info)
-  "Delete mode argument. The specified mode must match an existing mode. 
-To be considered a match, all of the fields of the given mode-info 
-structure must match, except the privsize and private fields. 
-If the mode to be deleted is the current mode, a mode switch to the next 
+  "Delete mode argument. The specified mode must match an existing mode.
+To be considered a match, all of the fields of the given mode-info
+structure must match, except the privsize and private fields.
+If the mode to be deleted is the current mode, a mode switch to the next
 mode will occur first. The last remaining mode can not be deleted."
   (declare (type display dpy)
 	   (type screen scr))
@@ -362,42 +362,42 @@ mode will occur first. The last remaining mode can not be deleted."
       ((sequence :format card16) v))))
 
 (defconstant +mode-status+
-  '#(:MODE_BAD             ; unspecified reason 
-     :MODE_ERROR           ; error condition 
-     :MODE_OK              ; Mode OK 
-     :MODE_HSYNC           ; hsync out of range 
-     :MODE_VSYNC           ; vsync out of range 
-     :MODE_H_ILLEGAL       ; mode has illegal horizontal timings 
-     :MODE_V_ILLEGAL       ; mode has illegal horizontal timings 
-     :MODE_BAD_WIDTH       ; requires an unsupported linepitch 
-     :MODE_NO_MODE         ; no mode with a maching name 
-     :MODE_NO_INTERLACE    ; interlaced mode not supported 
-     :MODE_NO_DBLESCAN     ; doublescan mode not supported 
-     :MODE_NO_VSCAN        ; multiscan mode not supported 
-     :MODE_MEM             ; insufficient video memory 
-     :MODE_VIRTUAL_X       ; mode width too large for specified virtual size 
-     :MODE_VIRTUAL_Y       ; mode height too large for specified virtual size 
-     :MODE_MEM_VIRT        ; insufficient video memory given virtual size 
-     :MODE_NOCLOCK         ; no fixed clock available 
-     :MODE_CLOCK_HIGH      ; clock required is too high 
-     :MODE_CLOCK_LOW       ; clock required is too low 
-     :MODE_CLOCK_RANGE     ; clock/mode isn't in a ClockRange 
-     :MODE_BAD_HVALUE      ; horizontal timing was out of range 
-     :MODE_BAD_VVALUE      ; vertical timing was out of range 
-     :MODE_BAD_VSCAN       ; VScan value out of range 
-     :MODE_HSYNC_NARROW    ; horizontal sync too narrow 
-     :MODE_HSYNC_WIDE      ; horizontal sync too wide 
-     :MODE_HBLANK_NARROW   ; horizontal blanking too narrow 
-     :MODE_HBLANK_WIDE     ; horizontal blanking too wide 
-     :MODE_VSYNC_NARROW    ; vertical sync too narrow 
-     :MODE_VSYNC_WIDE      ; vertical sync too wide 
-     :MODE_VBLANK_NARROW   ; vertical blanking too narrow 
-     :MODE_VBLANK_WIDE     ; vertical blanking too wide 
-     :MODE_PANEL           ; exceeds panel dimensions 
-     :MODE_INTERLACE_WIDTH ; width too large for interlaced mode 
-     :MODE_ONE_WIDTH       ; only one width is supported 
-     :MODE_ONE_HEIGHT      ; only one height is supported 
-     :MODE_ONE_SIZE        ; only one resolution is supported 
+  '#(:MODE_BAD             ; unspecified reason
+     :MODE_ERROR           ; error condition
+     :MODE_OK              ; Mode OK
+     :MODE_HSYNC           ; hsync out of range
+     :MODE_VSYNC           ; vsync out of range
+     :MODE_H_ILLEGAL       ; mode has illegal horizontal timings
+     :MODE_V_ILLEGAL       ; mode has illegal horizontal timings
+     :MODE_BAD_WIDTH       ; requires an unsupported linepitch
+     :MODE_NO_MODE         ; no mode with a maching name
+     :MODE_NO_INTERLACE    ; interlaced mode not supported
+     :MODE_NO_DBLESCAN     ; doublescan mode not supported
+     :MODE_NO_VSCAN        ; multiscan mode not supported
+     :MODE_MEM             ; insufficient video memory
+     :MODE_VIRTUAL_X       ; mode width too large for specified virtual size
+     :MODE_VIRTUAL_Y       ; mode height too large for specified virtual size
+     :MODE_MEM_VIRT        ; insufficient video memory given virtual size
+     :MODE_NOCLOCK         ; no fixed clock available
+     :MODE_CLOCK_HIGH      ; clock required is too high
+     :MODE_CLOCK_LOW       ; clock required is too low
+     :MODE_CLOCK_RANGE     ; clock/mode isn't in a ClockRange
+     :MODE_BAD_HVALUE      ; horizontal timing was out of range
+     :MODE_BAD_VVALUE      ; vertical timing was out of range
+     :MODE_BAD_VSCAN       ; VScan value out of range
+     :MODE_HSYNC_NARROW    ; horizontal sync too narrow
+     :MODE_HSYNC_WIDE      ; horizontal sync too wide
+     :MODE_HBLANK_NARROW   ; horizontal blanking too narrow
+     :MODE_HBLANK_WIDE     ; horizontal blanking too wide
+     :MODE_VSYNC_NARROW    ; vertical sync too narrow
+     :MODE_VSYNC_WIDE      ; vertical sync too wide
+     :MODE_VBLANK_NARROW   ; vertical blanking too narrow
+     :MODE_VBLANK_WIDE     ; vertical blanking too wide
+     :MODE_PANEL           ; exceeds panel dimensions
+     :MODE_INTERLACE_WIDTH ; width too large for interlaced mode
+     :MODE_ONE_WIDTH       ; only one width is supported
+     :MODE_ONE_HEIGHT      ; only one height is supported
+     :MODE_ONE_SIZE        ; only one resolution is supported
      ))
 
 (defun decode-status-mode (status)
@@ -405,10 +405,10 @@ mode will occur first. The last remaining mode can not be deleted."
   (svref +mode-status+ (+ status 2)))
 
 (defun xfree86-vidmode-validate-mode-line (dpy scr mode-info)
-  "Checked the validity of a mode-info argument. If the specified mode can be 
-used by the server (i.e. meets all the constraints placed upon a mode by the 
+  "Checked the validity of a mode-info argument. If the specified mode can be
+used by the server (i.e. meets all the constraints placed upon a mode by the
 combination of the server, card, and monitor) the function returns :mode_ok
-otherwise it returns a keyword indicating  the  reason why the mode is 
+otherwise it returns a keyword indicating  the  reason why the mode is
 invalid."
   (declare (type display dpy)
 	   (type screen scr))
@@ -428,7 +428,7 @@ invalid."
 (defun xfree86-vidmode-get-gamma (display screen)
   (declare (type display display)
 	   (type screen screen))
-  (with-buffer-request-and-reply 
+  (with-buffer-request-and-reply
       (display (vidmode-opcode display) nil :sizes (8 16 32))
     ((data +get-gamma+)
      (card16 (screen-position screen display))
@@ -436,12 +436,12 @@ invalid."
      (card32 0) (card32 0)
      (card32 0) (card32 0)
      (card32 0) (card32 0))
-   (values 
+   (values
     (/ (the card32 (or (card32-get 8) 0)) 10000.0)
     (/ (the card32 (or (card32-get 12) 0)) 10000.0)
     (/ (the card32 (or (card32-get 16) 0)) 10000.0))))
 
-(defun xfree86-vidmode-set-gamma (dpy scr &key (red 1.0) (green 1.0) (blue 1.0))
+(defun xfree86-vidmode-set-gamma (dpy scr &key (red 1.0f0) (green 1.0f0) (blue 1.0f0))
   (declare (type display dpy)
 	   (type screen scr)
 	   (type (single-float 0.100f0 10.000f0) red green blue))
@@ -452,7 +452,7 @@ invalid."
     (card32 (truncate (* red 10000)))
     (card32 (truncate (* green 10000)))
     (card32 (truncate (* blue 10000)))
-    (card32 0) 
+    (card32 0)
     (card32 0)
     (card32 0)))
 
@@ -487,7 +487,7 @@ invalid."
     (data +set-gamma-ramp+)
     (card16 (screen-position scr dpy))
     (card16 size)
-    ((sequence :format card16) 
+    ((sequence :format card16)
      (if (zerop (mod size 2))
 	 (concatenate 'vector red green blue)
          (concatenate 'vector red '#(0) green '#(0) blue '#(0))))))
@@ -495,7 +495,7 @@ invalid."
 (defun xfree86-vidmode-get-gamma-ramp-size (dpy screen)
   (declare (type display dpy)
 	   (type screen screen))
-  (with-buffer-request-and-reply 
+  (with-buffer-request-and-reply
       (dpy (vidmode-opcode dpy) nil :sizes (8 16 32))
     ((data +get-gamma-ramp-size+)
      (card16 (screen-position screen dpy))
@@ -504,7 +504,7 @@ invalid."
 
 (defun xfree86-vidmode-lock-mode-switch (display screen lock-p)
   "Allow or disallow mode switching whether the request to switch
-modes comes from a call to the mode switching functions or from one 
+modes comes from a call to the mode switching functions or from one
 of the mode switch key sequences (e.g. Ctrl-Alt-+ Ctrl-Alt--)."
   (declare (type display display)
 	   (type screen screen)
@@ -515,8 +515,8 @@ of the mode switch key sequences (e.g. Ctrl-Alt-+ Ctrl-Alt--)."
     (card16 (if lock-p 1 0))))
 
 (defun xfree86-vidmode-switch-to-mode (display screen mode-info)
-  "Switch directly to the specified mode. The specified mode must match 
-an existing mode. Matching is as specified in the description of the 
+  "Switch directly to the specified mode. The specified mode must match
+an existing mode. Matching is as specified in the description of the
 xf86-vidmode-delete-mode-line function."
   (declare (type display display)
 	   (type screen screen))
@@ -538,7 +538,7 @@ xf86-vidmode-delete-mode-line function."
 	  ((sequence :format card16) v))))))
 
 (defun xfree86-vidmode-switch-mode (display screen zoom)
-  "Change the video mode to next (or previous) video mode, depending 
+  "Change the video mode to next (or previous) video mode, depending
 of zoom sign. If positive, switch to next mode, else switch to prev mode."
   (declare (type display display)
 	   (type screen screen)
@@ -567,14 +567,14 @@ of zoom sign. If positive, switch to next mode, else switch to prev mode."
     (card16 #xFFFF)))
 
 (defun xfree86-vidmode-get-monitor (dpy screen)
-  "Information known to the server about the monitor is returned. 
+  "Information known to the server about the monitor is returned.
 Multiple value return:
  hsync (list of hi, low, ...)
  vsync (list of hi, low, ...)
  vendor name
- model name 
+ model name
 
-The hi and low values will be equal if a discreate value was given 
+The hi and low values will be equal if a discreate value was given
 in the XF86Config file."
   (declare (type display dpy)
 	   (type screen screen))
@@ -595,7 +595,7 @@ in the XF86Config file."
 			       :result-type 'list)))
      (declare (type card8 nhsync nvsync vendor-name-length model-name-length)
 	      (type fixnum pad vindex mindex))
-     (values 
+     (values
       (loop for i of-type card32 in hsync
 	    collect (/ (ldb (byte 16 0) i) 100.)
 	    collect (/ (ldb (byte 32 16) i) 100.))
@@ -606,8 +606,8 @@ in the XF86Config file."
       (string-get model-name-length mindex)))))
 
 (defun xfree86-vidmode-get-viewport (dpy screen)
-  "Query the location of the upper left corner of the viewport into 
-the virtual screen. The upper left coordinates will be returned as 
+  "Query the location of the upper left corner of the viewport into
+the virtual screen. The upper left coordinates will be returned as
 a multiple value."
   (declare (type display dpy)
 	   (type screen screen))
@@ -618,11 +618,11 @@ a multiple value."
     ;; Check the server's version, and don't wait for a reply with older
     ;; versions.
     (when (and (= major 0) (< minor 8))
-      (format cl:*error-output* 
+      (format cl:*error-output*
 	      "running an old version ~a ~a~%"
 	      major minor)
       (return-from xfree86-vidmode-get-viewport nil))
-    (with-buffer-request-and-reply 
+    (with-buffer-request-and-reply
 	(dpy (vidmode-opcode dpy) nil :sizes (8 16 32))
       ((data +get-viewport+)
        (card16 (screen-position screen dpy))
@@ -630,9 +630,9 @@ a multiple value."
      (values
       (card32-get 8)
       (card32-get 12)))))
-       
+
 (defun xfree86-vidmode-set-viewport (dpy screen &key (x 0) (y 0))
-  "Set upper left corner of the viewport into the virtual screen to the 
+  "Set upper left corner of the viewport into the virtual screen to the
 x and y keyword parameters value (zero will be theire default value)."
   (declare (type display dpy)
 	   (type screen screen)
@@ -651,7 +651,7 @@ x and y keyword parameters value (zero will be theire default value)."
  clock list"
   (declare (type display dpy)
 	   (type screen screen))
-  (with-buffer-request-and-reply 
+  (with-buffer-request-and-reply
       (dpy (vidmode-opcode dpy) nil :sizes (8 16 32))
     ((data +get-dot-clocks+)
      (card16 (screen-position screen dpy))
@@ -692,7 +692,7 @@ x and y keyword parameters value (zero will be theire default value)."
 	     (type card32 dotclock flags privsize)
 	     (type (or null sequence) private))
     (let* ((size (+ (if (< major 2) 14 22) (* privsize 2)))
-	   (v (or data (make-array size :initial-element 0))))      
+	   (v (or data (make-array size :initial-element 0))))
       (declare (type fixnum size)
 	       (type simple-vector v))
       ;; store dotclock (card32) according clx bytes order.
