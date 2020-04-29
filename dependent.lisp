@@ -909,14 +909,22 @@
 
 #+(or sbcl ecl clasp)
 (defun make-unix-x-socket (path)
-  (handler-case
-      (let ((socket (make-instance 'local-socket :type :stream)))
-        (socket-connect socket path)
-        socket)
-    (error (condition)
-      (values nil (list "~@<Could not connect to UNIX socket ~S: ~
-                         ~A~@:>"
-                        path condition)))))
+  (let ((errors '()))
+    (flet ((try (socket-class path)
+             (handler-case
+                 (let ((socket (make-instance socket-class :type :stream)))
+                   (socket-connect socket path)
+                   socket)
+               (error (condition)
+                 (push (list socket-class condition) errors)
+                 nil))))
+      (or (try 'local-abstract-socket path)
+          (try 'local-socket path)
+          (values nil (list "~@<Could not connect to X server socket ~
+                             via UNIX socket ~S:~@:_~
+                             ~{~{* ~@<Using a ~S failed: ~
+                             ~A~@:>~}~^~@:_~}~:>"
+                            path errors))))))
 
 #+(or sbcl ecl clasp)
 (defun make-inet-x-socket (host port)
