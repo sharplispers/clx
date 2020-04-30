@@ -928,21 +928,32 @@
 
 #+(or sbcl ecl clasp)
 (defun make-inet-x-socket (host port)
-  (let* ((result (handler-case
-                     (get-host-by-name host)
+  (multiple-value-bind (host-ent/v4 host-ent/v6)
+      (handler-case
+          (get-host-by-name host)
+        (error (condition)
+          (return-from make-inet-x-socket
+            (values nil (list "~@<Host ~S not found: ~A~@:>" host condition)))))
+    (let ((addresses/v4 (host-ent-addresses host-ent/v4))
+          (addresses/v6 (when host-ent/v6
+                          (host-ent-addresses host-ent/v6)))
+          (errors '()))
+      (flet ((try (socket-class addresses)
+               (let ((address (first addresses)))
+                 (handler-case
+                     (let ((socket (make-instance socket-class :type :stream :protocol :tcp)))
+                       (socket-connect socket address port)
+                       socket)
                    (error (condition)
-                     (return-from make-inet-x-socket
-                       (values nil (list "~@<Host ~S not found: ~A~@:>" host condition))))))
-         (addresses (host-ent-addresses result))
-         (address (first addresses)))
-    (handler-case
-        (let ((socket (make-instance 'inet-socket :type :stream :protocol :tcp)))
-          (socket-connect socket address port)
-          socket)
-      (error (condition)
-        (values nil (list "~@<Could not connect to host ~A (at address ~
-                          ~S), port ~S: ~A~@:>"
-                          host address port condition))))))
+                     (push (list socket-class address condition) errors)
+                     nil)))))
+        (or (when addresses/v4 (try 'inet-socket addresses/v4))
+            (when addresses/v6 (try 'inet6-socket addresses/v6))
+            (values nil (list "~@<Could not connect to X server socket ~
+                               on host ~S, port ~S:~@:_~
+                               ~{~{* ~@<Using ~S address ~S failed: ~
+                               ~A~@:>~}~^~@:_~}~:>"
+                              host port errors)))))))
 
 #+(or sbcl ecl clasp)
 (defun make-x-socket-stream (socket)
