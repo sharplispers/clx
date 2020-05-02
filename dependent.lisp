@@ -814,7 +814,7 @@
 ;; It doesn't because CLtL doesn't pass the environment to GET-SETF-METHOD.
 
 ;; FIXME: both sbcl and ecl has compare-and-swap these days.
-;; FIXME: Verify for clasp 
+;; FIXME: Verify for clasp
 
 #-sbcl
 (defmacro conditional-store (place old-value new-value)
@@ -860,109 +860,128 @@
 ;;; OPEN-X-STREAM - create a stream for communicating to the appropriate X
 ;;; server
 
-#-(or CMU sbcl ecl clisp clasp)
 (defun open-x-stream (host display protocol)
-  host display protocol ;; unused
-  (error "OPEN-X-STREAM not implemented yet."))
+  (declare (type (integer 0) display))
+  (flet ((lose (reason)
+           (error 'connection-failure :major-version *protocol-major-version*
+                                      :minor-version *protocol-minor-version*
+                                      :host host
+                                      :display display
+                                      :reason reason)))
+    (multiple-value-bind (socket reason)
+        (case protocol
+          ;; Establish a connection to the X11 server over a Unix
+          ;; socket.
+          (:local
+           (let ((path (unix-socket-path-from-host host display)))
+             (unless (probe-file path)
+               (lose (list "UNIX socket ~S does not exist" path)))
+             (make-unix-x-socket path)))
+          ;; Establish a TCP connection to the X11 server, which is
+          ;; listening on port 6000 + display-number.
+          (:internet
+           (make-inet-x-socket host (+ *x-tcp-port* display)))
+          ;; TODO
+          (t
+           (lose (list "~S is not a known protocol" protocol))))
+      (when (null socket)
+        (lose reason))
+      (make-x-socket-stream socket))))
+
+#-(or CMU sbcl ecl clisp clasp)
+(defun open-unix-x-socket (host display protocol)
+  (declare (ignore host display protocol))
+  (error "OPEN-UNIX-X-SOCKET not implemented yet."))
 
 #+clisp
-(defun open-x-stream (host display protocol)
-  (declare (ignore protocol)
-           (type (integer 0) display))
-  (let ((socket
-         ;; are we dealing with a localhost?
-         (when (or (string= host "")
-                   (string= host "unix"))
-           ;; ok, try to connect to a AF_UNIX domain socket
-           (sys::make-socket-stream "" display))))
-    (if socket
-        socket
-        ;; try to connect by hand
-        (let ((host (host-address host)))
-          (when host
-            ;; Fixme: get a descent ip standard in CLX: a vector!
-            (let ((ip (format nil
-                              "~{~D~^.~}"
-                              (rest host))))
-              (socket:socket-connect (+ 6000 display) ip
-                                     :element-type '(unsigned-byte 8))))))))
+(defun make-unix-x-socket (path)
+  (sys::make-socket-stream "" path))
 
-#+(or sbcl ecl)
-(defun open-x-stream (host display protocol)
-  (declare (ignore protocol)
-           (type (integer 0) display))
-  (socket-make-stream
-   (let ((unix-domain-socket-path (unix-socket-path-from-host host display)))
-     (if unix-domain-socket-path
-         (let ((s (make-instance 'local-socket :type :stream)))
-           (socket-connect s unix-domain-socket-path)
-           s)
-         (let ((host (car (host-ent-addresses (get-host-by-name host)))))
-           (when host
-             (let ((s (make-instance 'inet-socket :type :stream :protocol :tcp)))
-               (socket-connect s host (+ 6000 display))
-               s)))))
-   :element-type '(unsigned-byte 8)
-   :input t :output t :buffering :none))
+#+clisp
+(defun make-inet-x-socket (host port)
+  (let ((host (host-address host)))
+    (when host
+      ;; Fixme: get a descent ip standard in CLX: a vector!
+      (let ((ip (format nil "~{~D~^.~}" (rest host))))
+        (socket:socket-connect port ip :element-type '(unsigned-byte 8))))))
 
-#+clasp
-(defun open-x-stream (host display protocol)
-  (declare (ignore protocol)
-           (type (integer 0) display))
-  (SB-BSD-SOCKETS:socket-make-stream
-   (let ((unix-domain-socket-path (unix-socket-path-from-host host display)))
-     (if unix-domain-socket-path
-         (let ((s (make-instance 'SB-BSD-SOCKETS:local-socket :type :stream)))
-           (SB-BSD-SOCKETS:socket-connect s unix-domain-socket-path)
-           s)
-         (let ((host (car (SB-BSD-SOCKETS:host-ent-addresses (SB-BSD-SOCKETS:get-host-by-name host)))))
-           (when host
-             (let ((s (make-instance 'SB-BSD-SOCKETS:inet-socket :type :stream :protocol :tcp)))
-               (SB-BSD-SOCKETS:socket-connect s host (+ 6000 display))
-               s)))))
-   :element-type '(unsigned-byte 8)
-   :input t :output t :buffering :none))
+#+clisp
+(defun make-x-socket-stream (socket)
+  socket)
+
+#+(or sbcl ecl clasp)
+(defun make-unix-x-socket (path)
+  (let ((errors '()))
+    (flet ((try (socket-class path)
+             (handler-case
+                 (let ((socket (make-instance socket-class :type :stream)))
+                   (socket-connect socket path)
+                   socket)
+               (error (condition)
+                 (push (list socket-class condition) errors)
+                 nil))))
+      (or (try 'local-abstract-socket path)
+          (try 'local-socket path)
+          (values nil (list "~@<Could not connect to X server socket ~
+                             via UNIX socket ~S:~@:_~
+                             ~{~{* ~@<Using a ~S failed: ~
+                             ~A~@:>~}~^~@:_~}~:>"
+                            path errors))))))
+
+#+(or sbcl ecl clasp)
+(defun make-inet-x-socket (host port)
+  (multiple-value-bind (host-ent/v4 host-ent/v6)
+      (handler-case
+          (get-host-by-name host)
+        (error (condition)
+          (return-from make-inet-x-socket
+            (values nil (list "~@<Host ~S not found: ~A~@:>" host condition)))))
+    (let ((addresses/v4 (host-ent-addresses host-ent/v4))
+          (addresses/v6 (when host-ent/v6
+                          (host-ent-addresses host-ent/v6)))
+          (errors '()))
+      (flet ((try (socket-class addresses)
+               (let ((address (first addresses)))
+                 (handler-case
+                     (let ((socket (make-instance socket-class :type :stream :protocol :tcp)))
+                       (socket-connect socket address port)
+                       socket)
+                   (error (condition)
+                     (push (list socket-class address condition) errors)
+                     nil)))))
+        (or (when addresses/v4 (try 'inet-socket addresses/v4))
+            (when addresses/v6 (try 'inet6-socket addresses/v6))
+            (values nil (list "~@<Could not connect to X server socket ~
+                               on host ~S, port ~S:~@:_~
+                               ~{~{* ~@<Using ~S address ~S failed: ~
+                               ~A~@:>~}~^~@:_~}~:>"
+                              host port errors)))))))
+
+#+(or sbcl ecl clasp)
+(defun make-x-socket-stream (socket)
+  (socket-make-stream socket :element-type '(unsigned-byte 8)
+                             :input t :output t :buffering :none))
 
 #+cmu
-(defun open-x-stream (host display protocol)
-  (let ((stream-fd
-         (ecase protocol
-           ;; establish a TCP connection to the X11 server, which is
-           ;; listening on port 6000 + display-number
-           ((:internet :tcp nil)
-            (let ((fd (ext:connect-to-inet-socket host (+ *x-tcp-port* display))))
-              (unless (plusp fd)
-                (error 'connection-failure
-                       :major-version *protocol-major-version*
-                       :minor-version *protocol-minor-version*
-                       :host host
-                       :display display
-                       :reason (format nil "Cannot connect to internet socket: ~S"
-                                       (unix:get-unix-error-msg))))
-              fd))
-           ;; establish a connection to the X11 server over a Unix
-           ;; socket.  (:|| comes from Darwin's weird DISPLAY
-           ;; environment variable)
-           ((:unix :local :||)
-            (let ((path (unix-socket-path-from-host host display)))
-              (unless (probe-file path)
-                (error 'connection-failure
-                       :major-version *protocol-major-version*
-                       :minor-version *protocol-minor-version*
-                       :host host
-                       :display display
-                       :reason (format nil "Unix socket ~s does not exist" path)))
-              (let ((fd (ext:connect-to-unix-socket (namestring path))))
-                (unless (plusp fd)
-                  (error 'connection-failure
-                         :major-version *protocol-major-version*
-                         :minor-version *protocol-minor-version*
-                         :host host
-                         :display display
-                         :reason (format nil "Can't connect to unix socket: ~S"
-                                         (unix:get-unix-error-msg))))
-                fd))))))
-    (system:make-fd-stream stream-fd :input t :output t :element-type '(unsigned-byte 8))))
+(defun make-unix-x-socket (path)
+  (let ((fd (ext:connect-to-unix-socket (namestring path))))
+    (if (plusp fd)
+        fd
+        (values nil (list "Can't connect to unix socket: ~S"
+                          (unix:get-unix-error-msg))))))
+
+#+cmu
+(defun make-inet-x-socket (host port)
+  (let ((fd (ext:connect-to-inet-socket host port)))
+    (if (plusp fd)
+        fd
+        (return-from make-inet-x-socket
+          (values nil (list "Cannot connect to internet socket: ~S"
+                            (unix:get-unix-error-msg)))))))
+
+#+cmu
+(defun make-x-socket-stream (socket)
+  (system:make-fd-stream socket :input t :output t :element-type '(unsigned-byte 8)))
 
 ;;; BUFFER-READ-DEFAULT for CMU Common Lisp.
 ;;;
@@ -1624,30 +1643,29 @@ C language bindings
 Returns a list of (host display-number screen protocol)."
   (let* ((name (or display-name
                    (getenv "DISPLAY")
-                   (error "DISPLAY environment variable is not set")))
+                   (error "DISPLAY environment variable is not set.")))
          (slash-i (or (position #\/ name) -1))
-         (colon-i (position #\: name :start (1+ slash-i)))
+         (colon-i (or (position #\: name :start (1+ slash-i))
+                      (error "No \":\" character in display name.")))
          (decnet-colon-p (eql (elt name (1+ colon-i)) #\:))
-         (host (subseq name (1+ slash-i) (if decnet-colon-p
-                                             (1+ colon-i)
-                                             colon-i)))
-         (dot-i (and colon-i (position #\. name :start colon-i)))
-         (display (when colon-i
-                    (parse-integer name
-                                   :start (if decnet-colon-p
-                                              (+ colon-i 2)
-                                              (1+ colon-i))
-                                   :end dot-i)))
-         (screen (when dot-i
-                   (parse-integer name :start (1+ dot-i))))
-         (protocol
-          (cond ((or (string= host "") (string-equal host "unix")) :local)
-                (decnet-colon-p :decnet)
-                ((> slash-i -1) (intern
-                                 (string-upcase (subseq name 0 slash-i))
-                                 :keyword))
-                (t :internet))))
-    (list host (or display 0) (or screen 0) protocol)))
+         (display-i (if decnet-colon-p
+                        (1+ colon-i)
+                        colon-i))
+         (dot-i (position #\. name :start colon-i))
+         (host (subseq name (1+ slash-i) display-i))
+         (display (parse-integer name :start (1+ display-i) :end dot-i))
+         (screen (if dot-i
+                     (parse-integer name :start (1+ dot-i))
+                     0))
+         (protocol (cond (decnet-colon-p
+                          :decnet)
+                         ((> slash-i -1)
+                          (intern (string-upcase (subseq name 0 slash-i))
+                                  :keyword))
+                         (t
+                          nil)))
+         (protocol (protocol-from-host host protocol)))
+    (list host display screen protocol)))
 
 
 ;;-----------------------------------------------------------------------------

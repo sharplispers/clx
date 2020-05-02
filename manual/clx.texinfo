@@ -240,8 +240,8 @@ Extensions
 * Extensions (Extensions)::
 * SHAPE - The X11 Nonrectangular Window Shape Extension::
 * RENDER - A new rendering system for X11::
-* DPMS - The X11 Display Power Management Signaling Extension::  
-* BIG-REQUESTS - Big Requests Extension::  
+* DPMS - The X11 Display Power Management Signaling Extension::
+* BIG-REQUESTS - Big Requests Extension::
 
 RENDER - A new rendering system for X11
 
@@ -2280,7 +2280,7 @@ display 0 (zero).
 A keyword argument that specifies which network protocol should be
 used for connecting to the server (for example, @var{:tcp},
 @var{:dna}, or @var{:chaos}). The set of possible values and the
-default value are implementation specific.
+default value are implementation specific. TODO :tcp or :internet
 
 @end table
 
@@ -15903,11 +15903,11 @@ of zero is a hint that no repetition should occur.
 @node Extensions, Errors, Control Functions, Top
 @chapter Extensions
 @menu
-* Extensions (Extensions)::     
-* SHAPE - The X11 Nonrectangular Window Shape Extension::  
-* RENDER - A new rendering system for X11::  
-* DPMS - The X11 Display Power Management Signaling Extension::  
-* BIG-REQUESTS - Big Requests Extension::  
+* Extensions (Extensions)::
+* SHAPE - The X11 Nonrectangular Window Shape Extension::
+* RENDER - A new rendering system for X11::
+* DPMS - The X11 Display Power Management Signaling Extension::
+* BIG-REQUESTS - Big Requests Extension::
 @end menu
 
 @node Extensions (Extensions), SHAPE - The X11 Nonrectangular Window Shape Extension, Extensions, Extensions
@@ -16014,7 +16014,7 @@ server and rendering sets of them.
 * The picture object::
 * Glyphs and Glyphsets::
 * Using glyphs::
-* Using cursors::       
+* Using cursors::
 * Errors (Extensions)::
 @end menu
 
@@ -16333,7 +16333,7 @@ Requests the sequence of glyphs to be drawn with the glyph-set.
 @defun render-create-cursor picture &optional (x 0) (y 0))
 
 
-Creates cursor object from xrender @var{picture}. 
+Creates cursor object from xrender @var{picture}.
 The @var{x} and @var{y} coordinates define the hotspot relative to the source's
 origin and must be a point within the source. The resulting picture will
 nominally be drawn to the screen with :over operator.
@@ -16343,7 +16343,7 @@ display limitations.  In particular, if the display supports only
 two colors cursors without translucency, the cursor will be
 transformed so that areas less than .5 alpha will be transparent,
 else opaque, and areas darker than 50% gray will be black else
-white. 
+white.
 
 The source picture can be freed immediately if no further explicit
 references to it are to be made.
@@ -16429,7 +16429,7 @@ value indicates that the mode is disabled.
 @var{card16}
 @item suspend
 @var{card16}
-@item off 
+@item off
 @var{card16}
 @end table
 
@@ -16437,7 +16437,7 @@ value indicates that the mode is disabled.
 Set the values of the DPMS timeouts.  All values are in units of
 seconds.  A value of zero for any timeout value disables that mode.
 @end defun
- 
+
 @defun dpms-enable display
 @table @var
 @item display
@@ -16487,7 +16487,7 @@ Forces a specific DPMS level on the server.
 Returns two values: the DPMS power-level and state value for the
 display.
 
-State is one of the keywords DPMS-ENABLED or DPMS-DISABLED.  
+State is one of the keywords DPMS-ENABLED or DPMS-DISABLED.
 
 If state is DPMS-ENABLED, then power-level is returned as one of the
 keywords DPMS-MODE-ON, DPMS-MODE-STANDBY, DPMS-MODE-SUSPEND or

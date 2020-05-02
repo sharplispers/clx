@@ -92,7 +92,7 @@
 (declaim (declaration arglist))
 
 ;;; INDENTATION argpos1 arginden1 argpos2 arginden2 --- Tells the lisp editor how to
-;;; indent calls to the function or macro containing the declaration.  
+;;; indent calls to the function or macro containing the declaration.
 
 #-genera
 (declaim (declaration indentation))
@@ -246,7 +246,7 @@
 
 (defun make-index-op (operator args)
   `(the array-index
-	(values 
+	(values
 	  ,(case (length args)
 	     (0 `(,operator))
 	     (1 `(,operator
@@ -597,7 +597,7 @@ used, since NIL is the empty list.")
   (dead nil :type (or null (not null)))
   ;; T makes buffer-flush a noop.  Manipulated with with-buffer-flush-inhibited.
   (flush-inhibit nil :type (or null (not null)))
-  
+
   ;; Change these functions when using shared memory buffers to the server
   ;; Function to call when writing the buffer
   (write-function 'buffer-write-default)
@@ -613,7 +613,7 @@ used, since NIL is the empty list.")
   (listen-function 'buffer-listen-default)
 
   #+Genera (debug-io nil :type (or null stream))
-  ) 
+  )
 
 ;;-----------------------------------------------------------------------------
 ;; Printing routines.
@@ -653,7 +653,7 @@ used, since NIL is the empty list.")
 
 #+lcl3.0
 (lucid::def-foreign-function
-    (connect-to-server 
+    (connect-to-server
       (:language :c)
       (:return-type :signed-32bit))
   (host :simple-string)
@@ -664,6 +664,26 @@ used, since NIL is the empty list.")
 ;; Finding the server socket
 ;;-----------------------------------------------------------------------------
 
+(defun protocol-from-host (host protocol)
+  (cond ;; The special case of HOST being "" or "unix" means the
+        ;; protocol is :local, irregardless of PROTOCOL.
+        ((member host '("" "unix") :test #'equal)
+         :local)
+        ;; PROTOCOL being :UNIX is accepted as an alias for :LOCAL.
+        ;; PROTOCOL being :|| comes from Darwin's weird DISPLAY
+        ;; environment variable containing values like
+        ;; "/tmp/launch...".
+        ((member protocol '(:unix :||) :test #'eq)
+         :local)
+        ;; Treat :TCP as an alias for :INTERNET.
+        ((eq :protocol :tcp)
+         :internet)
+        ;; Keep other non-NIL values of PROTOCOL unchanged.
+        (protocol)
+        ;; If PROTOCOL is NIL, assume :INTERNET.
+        (t
+         :internet)))
+
 ;; These are here because dep-openmcl.lisp, dep-lispworks.lisp and
 ;; dependent.lisp need them
 (defconstant +X-unix-socket-path+
@@ -671,12 +691,9 @@ used, since NIL is the empty list.")
   "The location of the X socket")
 
 (defun unix-socket-path-from-host (host display)
-  "Return the name of the unix domain socket for host and display, or
-nil if a network socket should be opened."
-  (cond ((or (string= host "") (string= host "unix"))
-	 (format nil "~A~D" +X-unix-socket-path+ display))
-	#+darwin
-	((or (and (> (length host) 10) (string= host "tmp/launch" :end1 10))
-	     (and (> (length host) 29) (string= host "private/tmp/com.apple.launchd" :end1 29)))
-	 (format nil "/~A:~D" host display))	  
-	(t nil)))
+  "Return the name of the UNIX domain socket for HOST, PROTOCOL and DISPLAY."
+  (if #+darwin (or (and (> (length host) 10) (string= host "tmp/launch" :end1 10))
+                   (and (> (length host) 29) (string= host "private/tmp/com.apple.launchd" :end1 29)))
+      #-darwin nil
+      (format nil "/~A:~D" host display)
+      (format nil "~A~D" +X-unix-socket-path+ display)))
