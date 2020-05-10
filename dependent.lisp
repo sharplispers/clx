@@ -595,14 +595,6 @@
   `(mp:with-lock-held (,lock ,whostate ,@(and timeout `(:timeout ,timeout)))
      ,@body))
 
-#+clisp
-(defmacro holding-lock ((lock display &optional (whostate "CLX wait")
-                              &key timeout)
-                        &body body)
-  (declare (ignore lock display whostate timeout))
-  `(progn
-     ,@body))
-
 #+(and ecl threads)
 (defmacro holding-lock ((lock display &optional (whostate "CLX wait")
                               &key timeout)
