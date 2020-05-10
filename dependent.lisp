@@ -805,25 +805,34 @@
 ;; This should use GET-SETF-METHOD to avoid evaluating subforms multiple times.
 ;; It doesn't because CLtL doesn't pass the environment to GET-SETF-METHOD.
 
-;; FIXME: both sbcl and ecl has compare-and-swap these days.
-;; FIXME: Verify for clasp 
-
-#-sbcl
-(defmacro conditional-store (place old-value new-value)
-  `(without-interrupts
-     (cond ((eq ,place ,old-value)
-            (setf ,place ,new-value)
-            t))))
-
-#+sbcl
+#-(or (and clasp threads) ecl sbcl)
 (progn
   (defvar *conditional-store-lock*
-    (sb-thread:make-mutex :name "conditional store"))
+    (make-process-lock "conditional store"))
   (defmacro conditional-store (place old-value new-value)
-    `(sb-thread:with-mutex (*conditional-store-lock*)
-       (cond ((eq ,place ,old-value)
-              (setf ,place ,new-value)
-              t)))))
+    `(holding-lock (*conditional-store-lock*)
+       (if (eq ,place ,old-value)
+           (prog1 t
+             (setf ,place ,new-value))
+           nil))))
+
+#+(and clasp threads)
+(defmacro conditional-store (place old-value new-value)
+  (let ((ov (gensym)))
+    `(let ((,ov ,old-value))
+       (eq ,ov (mp:cas ,place ,ov ,new-value)))))
+
+#+ecl
+(defmacro conditional-store (place old-value new-value)
+  (let ((ov (gensym)))
+    `(let ((,ov ,old-value))
+       (eq ,ov (mp:compare-and-swap ,place ,ov ,new-value)))))
+
+#+sbcl
+(defmacro conditional-store (place old-value new-value)
+  (let ((ov (gensym)))
+    `(let ((,ov ,old-value))
+       (eq ,ov (sb-ext:compare-and-swap ,place ,ov ,new-value)))))
 
 ;;;----------------------------------------------------------------------------
 ;;; IO Error Recovery
