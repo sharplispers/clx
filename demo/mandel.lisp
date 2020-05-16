@@ -4,26 +4,27 @@
 
 (in-package #:xlib-demo/mandel)
 
-(defvar *display* (xlib:open-default-display))
-(defvar *screen* (xlib:display-default-screen *display*))
+(declaim (special *display* *screen* *backing-store* *colmap* *helpwin*
+                  *zoom-table* *zoomcolmap* *white* *winmap* *textmap*))
 
-(defvar *backing-store* (make-hash-table) "Backing store hashtable, keyed off window id")
-(defvar *colmap* nil)
-(defvar *helpwin* nil)
-(defvar *zoom-table* (make-hash-table))
-(defvar *zoomcolmap* (xlib:create-gcontext
-		      :drawable (xlib:screen-root *screen*)
-		      :foreground (xlib:screen-white-pixel *screen*)
-		      :function boole-xor))
-(defvar *white* (xlib:create-gcontext
-		 :drawable (xlib:screen-root *screen*)
-		 :foreground (xlib:screen-white-pixel *screen*)
-		 ))
-(defvar *winmap* (make-hash-table))
-(defvar *textmap* (xlib:create-gcontext
-		   :drawable (xlib:screen-root *screen*)
-		   :foreground (xlib:screen-black-pixel *screen*)
-		   :background (xlib:screen-white-pixel *screen*)))
+(defun init ()
+  (setf *display* (xlib:open-default-display)
+        *screen* (xlib:display-default-screen *display*)
+
+        *backing-store* (make-hash-table) ; Backing store hashtable, keyed off window id
+        *colmap* nil
+        *helpwin* nil
+        *zoom-table* (make-hash-table)
+        *zoomcolmap* (xlib:create-gcontext :drawable (xlib:screen-root *screen*)
+                                           :foreground (xlib:screen-white-pixel *screen*)
+                                           :function boole-xor)
+        *white* (xlib:create-gcontext :drawable (xlib:screen-root *screen*)
+                                      :foreground (xlib:screen-white-pixel *screen*))
+        *winmap* (make-hash-table)
+        *textmap* (xlib:create-gcontext :drawable (xlib:screen-root *screen*)
+                                        :foreground (xlib:screen-black-pixel *screen*)
+                                        :background (xlib:screen-white-pixel *screen*)))
+  (init-colours))
 
 ;;; OK, this is an ugly hack to make sure we can handle
 ;;; shift and modstate in a sane way, alas we can't 100% rely
@@ -99,7 +100,7 @@
 (defmethod empty-win ((q out-queue) win)
   (let ((temp-queue (gethash win (win-queues q))))
     (empty temp-queue)))
-  
+
 (defmethod enqueue ((q queue) item)
   (cond ((empty-p q)
 	 (setf (q-head q) (cons item nil))
@@ -150,7 +151,7 @@
 	      (val nil)
 	      (temp-queue (gethash next (win-queues q))
 			  (gethash next (win-queues q))))
-	     (finished val) 
+	     (finished val)
 	  (cond ((empty-p temp-queue)
 		 (setf next (dequeue windows)))
 		(t (setf val (dequeue temp-queue))
@@ -292,7 +293,7 @@
 	   (double-float lx ly hx hy)
 	   (fixnum maxiter))
   (let ((dx (coerce (/ (- hx lx) 512.0d0) 'double-float))
-	(dy (coerce (/ (- hy ly) 512.0d0) 'double-float)))	    
+	(dy (coerce (/ (- hy ly) 512.0d0) 'double-float)))
     (setf (gethash win *winmap*)
 	  (make-mandel-square :x 0 :y 0 :s 512
 			      :base-r lx :base-i ly
@@ -323,7 +324,7 @@
 (defun fill-square-p (ix iy s bx by dx dy max win)
   (declare (fixnum ix iy s max)
 	   (double-float bx by dx dy))
-  (let ((norm (iter (+ bx (* ix dx)) (+ by (* iy dy)) max))) 
+  (let ((norm (iter (+ bx (* ix dx)) (+ by (* iy dy)) max)))
     (and
      (loop for px from ix below (+ ix s)
 	   for x of-type double-float = (+ bx (* px dx))
@@ -435,7 +436,7 @@
 				(the fixnum (start-y zoomer))))))
 	  (xlib:draw-rectangle win *zoomcolmap*
 			       (the fixnum (start-x zoomer))
-			       (the fixnum (start-y zoomer)) 
+			       (the fixnum (start-y zoomer))
 			       old-side old-side))
 	(setf (stop-x zoomer) (max (the fixnum (start-x zoomer))
 				   (the fixnum x)
@@ -445,7 +446,7 @@
 				   ))
 	(xlib:draw-rectangle win *zoomcolmap*
 			     (the fixnum (start-x zoomer))
-			     (the fixnum (start-y zoomer)) 
+			     (the fixnum (start-y zoomer))
 			     new-side new-side)
 	(xlib:display-force-output *display*)))))
 
@@ -479,7 +480,7 @@
 	    (setf lx (+ (ms-base-r sq)
 			(* x (ms-dr sq)))
 		  ly (+ (ms-base-i sq)
-			(* y (ms-dr sq))) 
+			(* y (ms-dr sq)))
 		  hx (+ (ms-base-r sq)
 			(* (+ side x) (ms-dr sq)))
 		  hy (+ (ms-base-i sq)
@@ -498,7 +499,7 @@
 				   (- br (* 512 dr)) (- bi (* 512 di))
 				   (+ (* 1024 dr) br) (+ (* 1024 di) bi)
 				   (ms-maxiter sq))))
-				 
+
 	  (t (format t "Unknown/unimplemented zoom type ~a~%~%" (zoom-type zoomer))))))))
 
 (defun quit-window (window)
@@ -507,7 +508,7 @@
       (empty temp))))
 
 (defun event-loop ()
-  (init-colours)
+  (init)
   (do ((quit nil)
        (redisplay nil t))
       ((eq quit 'quit))
