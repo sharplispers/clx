@@ -634,13 +634,6 @@
   `(threads:with-thread-lock (,lock)
      ,@body))
 
-#+(or) ;; How to implement a timeout?
-(defmacro holding-lock ((lock display &optional (whostate "CLX wait")
-                              &key timeout)
-                        &body body)
-  (declare (ignore display whostate))
-  (threads:with-thread-lock (lock)))
-
 ;;; WITHOUT-ABORTS
 
 ;;; If you can inhibit asynchronous keyboard aborts inside the body of this
