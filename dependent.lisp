@@ -532,7 +532,7 @@
 
 ;;; MAKE-PROCESS-LOCK: Creating a process lock.
 
-#-(or sbcl (and cmu mp) (and ecl threads) (and clasp threads))
+#-(or abcl sbcl (and cmu mp) (and ecl threads) (and clasp threads))
 (defun make-process-lock (name)
   (declare (ignore name))
   nil)
@@ -553,6 +553,10 @@
 (defun make-process-lock (name)
   (mp:make-recursive-mutex name))
 
+#+abcl
+(defun make-process-lock (name)
+  (threads:make-thread-lock))
+
 ;;; HOLDING-LOCK: Execute a body of code with a lock held.
 
 ;;; The holding-lock macro takes a timeout keyword argument.  EVENT-LISTEN
@@ -561,7 +565,7 @@
 
 ;; If you're not sharing DISPLAY objects within a multi-processing
 ;; shared-memory environment, this is sufficient
-#-(or sbcl (and CMU mp) (and ecl threads) (and clasp threads))
+#-(or abcl sbcl (and CMU mp) (and ecl threads) (and clasp threads))
 (defmacro holding-lock ((locator display &optional whostate &key timeout) &body body)
   (declare (ignore locator display whostate timeout))
   `(progn ,@body))
@@ -621,6 +625,21 @@
   `(sb-thread:with-recursive-lock (,lock ,@(when timeout
                                              `(:timeout ,timeout)))
      ,@body))
+
+#+abcl
+(defmacro holding-lock ((lock display &optional (whostate "CLX wait")
+                              &key timeout)
+                        &body body)
+  (declare (ignore display whostate timeout))
+  `(threads:with-thread-lock (,lock)
+     ,@body))
+
+#+(or) ;; How to implement a timeout?
+(defmacro holding-lock ((lock display &optional (whostate "CLX wait")
+                              &key timeout)
+                        &body body)
+  (declare (ignore display whostate))
+  (threads:with-thread-lock (lock)))
 
 ;;; WITHOUT-ABORTS
 
@@ -719,10 +738,15 @@
 
 (declaim (inline process-wakeup))
 
-#-(or (and sbcl sb-thread) (and cmu mp) (and ecl threads) (and clasp threads))
+#-(or abcl (and sbcl sb-thread) (and cmu mp) (and ecl threads) (and clasp threads))
 (defun process-wakeup (process)
   (declare (ignore process))
   nil)
+
+#+abcl
+(defun process-wakeup (process)
+  (declare (ignore process))
+  (threads:yield))
 
 #+(and cmu mp)
 (defun process-wakeup (process)
@@ -762,7 +786,7 @@
 
 ;;; Default return NIL, which is acceptable even if there is a scheduler.
 
-#-(or sbcl (and cmu mp) (and ecl threads) (and clasp threads))
+#-(or abcl sbcl (and cmu mp) (and ecl threads) (and clasp threads))
 (defun current-process ()
   nil)
 
@@ -773,6 +797,10 @@
 #+sbcl
 (defun current-process ()
   sb-thread:*current-thread*)
+
+#+abcl
+(defun current-process ()
+  (threads:current-thread))
 
 ;;; WITHOUT-INTERRUPTS -- provide for atomic operations.
 
@@ -810,7 +838,7 @@
   (defvar *conditional-store-lock*
     (make-process-lock "conditional store"))
   (defmacro conditional-store (place old-value new-value)
-    `(holding-lock (*conditional-store-lock*)
+    `(holding-lock (*conditional-store-lock* nil)
        (if (eq ,place ,old-value)
            (prog1 t
              (setf ,place ,new-value))
