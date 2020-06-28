@@ -182,7 +182,7 @@
   '(member :rotate-0 :rotate-90 :rotate-180 :rotate-270 :reflect-x :reflect-y))
 
 (deftype rotation-mask ()
-  '(or mask16 (clx-list event-mask-class)))
+  '(or mask16 (clx-list rotation-mask-class)))
 
   ;; Select
 
@@ -435,17 +435,48 @@
   (boolean state)
   )
 
-;; x-requests
+;;; Helpers
 
+(declaim (ftype (function (card32 card32) (values boolean &optional))
+                rr-has-rates))
+(defun rr-has-rates (major minor)
+  (or (> major 1)
+      (and (= major 1) (>= minor 1))))
+
+;;; Requests
+
+(declaim (ftype (function (display) (values card32 card32 &optional))
+                rr-query-version))
 (defun rr-query-version (display)
-"Returns version MAJOR and MINOR from server."
-  (with-buffer-request-and-reply (display (randr-opcode display) nil :sizes (32))
+  "Execute the RRQueryVersion request and return its result as multiple
+values consisting of the server's major and minor protocol versions."
+  (with-buffer-request-and-reply (display (randr-opcode display) nil
+                                  :sizes (32))
                                  ((data +rr-QueryVersion+)
                                   (card32 +rr-major+)
                                   (card32 +rr-minor+))
     (values
      (card32-get 8)
      (card32-get 12))))
+
+;; Unexported
+(declaim (ftype (function (display (or null card32) (or null card32))
+                          (values card32 card32 &optional))
+                rr-maybe-query-version))
+(defun rr-maybe-query-version (display major minor)
+  "Return MAJOR and MINOR as multiple values, substituting 0 for NIL,
+unless they are both NIL, in which case call RR-QUERY-VERSION and return
+its values.
+
+Some requests (e.g., RRGetScreenInfo) behave differently after a version
+query (only the first query has any effect on these requests).
+In order that the functions executing such requests be able to skip
+subsequent (redundant) queries, have them accept MAJOR and MINOR keyword
+arguments and call this function with those arguments instead of calling
+RR-QUERY-VERSION."
+  (if (or major minor)
+      (values (or major 0) (or minor 0))
+      (rr-query-version display)))
 
 (defun rr-set-screen-config (window timestamp conf-timestamp size-id rotation refresh)
   "Sets the current screen to which the given window belongs.  Timestamps are obtained from rr-get-screen-info.  Rotation can be a list of rotation keys or a rotation mask.  Returns timestamp, config timestamp, the root window of the screen and sub-pixel order."
@@ -487,39 +518,96 @@
       (card16 select-mask)
       (pad16))))
 
-(defun rr-get-screen-info (window &optional (result-type 'list))
-"Returns rotations, root-window, timestamp, config-timestamp, current-size-id, current rotation, current rate, a list of screen-size structures, and last a sequence of refresh-rates"
-  (let ((display (window-display window)))
-    (declare (type display display)
-             (type window window))
-    (with-buffer-request-and-reply (display (randr-opcode display) nil :sizes (8 16 32))
-                                   ((data +rr-GetScreenInfo+ )
-                                    (window window))
-      (let ((num-screens (card16-get 20))
-              (num-rates (card16-get 28))
-            (rates-location 0))
-        (declare (type fixnum rates-location num-rates))
-          (values
-           (make-rotation-keys (card16-get 1)) ; possible rotations, using card16, not card8 from spec.
-           (window-get 8) ;root window
-           (card32-get 12) ;timestamp
-           (card32-get 16) ;config-timestamp
-           (card16-get 22) ;size-id
-           (make-rotation-keys (card16-get 24)) ;current rotation
-           (card16-get 26) ; current rate
-           (loop :for x fixnum :from 1 :to num-screens
-                 :for offset fixnum := 32 :then (+ offset 8)
-                 :collect (make-screen-size (card16-get offset)
-                                            (card16-get (index+ offset 2))
-                                            (card16-get (index+ offset 4))
-                                            (card16-get (index+ offset 6)))
-                 :finally (setf rates-location (+ offset 8 2)))
-           (sequence-get :format card16 :length num-rates :index rates-location :result-type result-type))))))
+(declaim (ftype (function (window &key
+                                  (:major (or null card32))
+                                  (:minor (or null card32))
+                                  (:result-type t))
+                          (values (clx-list rotation-mask-class)
+                                  window
+                                  timestamp
+                                  timestamp
+                                  size-id
+                                  (clx-list rotation-mask-class)
+                                  (clx-list screen-size)
+                                  (or null card16)
+                                  (clx-sequence card16)
+                                  &optional))
+                rr-get-screen-info))
+(defun rr-get-screen-info (window &key major minor (result-type 'list))
+  "Execute the RRGetScreenInfo request and return its result as multiple
+values consisting of:
 
+1. List of possible rotations and reflections
+2. Root window
+3. Timestamp
+4. Configuration timestamp
+5. Current screen size index (in the list of possible screen sizes)
+6. Current rotation and reflection
+7. List of possible screen sizes
+8. Current refresh rate (non-NIL only if server's protocol version is
+   1.1 or later)
+9. Sequence of refresh rate information (non-NIL only if server's
+   protocol version is 1.1 or later)
+
+Each screen size has in the refresh rate information sequence a
+corresponding refresh rate count followed by that number of possible
+refresh rates.
+For example, '(2 120 60 1 60) means that the first screen size has the
+two refresh rates 120 and 60, and that the second screen size has the
+single refresh rate 60.
+
+If MAJOR and MINOR, which comprise the server's protocol version, are
+missing, this function executes the RRQueryVersion request before
+RRGetScreenInfo in order to, first, potentially ask the server to
+include, if it can, the current refresh rate and the refresh rate
+information sequence in its reply to the latter request, and second,
+determine whether this information is forthcoming.
+Otherwise, this function assumes MAJOR and MINOR are the result of
+RR-QUERY-VERSION -- failing which it will behave unreliably -- and it
+skips executing the RRQueryVersion request."
+  (let ((display (window-display window)))
+    (declare (type display display))
+    (multiple-value-bind (major minor)
+        (rr-maybe-query-version display major minor)
+      (with-buffer-request-and-reply (display (randr-opcode display) nil
+                                      :sizes (8 16 32))
+                                     ((data +rr-GetScreenInfo+)
+                                      (window window))
+        (let* ((num-screens (card16-get 20))
+               (rate-info-length (card16-get 28))
+               (screen-start +replysize+)
+               (rate-info-start (index+ screen-start (index* num-screens 8)))
+               (has-rates (rr-has-rates major minor)))
+          (values
+           ;; Possible rotations and reflections
+           (make-rotation-keys (card16-get 1))
+           (window-get 8)               ; Root window
+           (card32-get 12)              ; Timestamp
+           (card32-get 16)              ; Configuration timestamp
+           (card16-get 22)              ; Current screen size index
+           ;; Current rotation and reflection
+           (make-rotation-keys (card16-get 24))
+           (loop for i fixnum from 1 to num-screens
+                 for offset fixnum = screen-start then (+ offset 8)
+                 collect (make-screen-size (card16-get offset)
+                                           (card16-get (index+ offset 2))
+                                           (card16-get (index+ offset 4))
+                                           (card16-get (index+ offset 6))))
+           ;; Some servers (e.g., X.Org) always reply with the current
+           ;; refresh rate if they support it, even before receiving any
+           ;; version query.
+           ;; However, the refresh rate information is available only
+           ;; after querying the version (when providing an appropriate
+           ;; client version).
+           (when has-rates (card16-get 26)) ; Current refresh rate
+           (when has-rates (sequence-get :result-type result-type
+                                         :format card16
+                                         :length rate-info-length
+                                         :index rate-info-start))))))))
 
 ;; Version 1.2
 
-(defun rr-get-screen-size-range (window &optional (result-type 'list))
+(defun rr-get-screen-size-range (window &key (result-type 'list))
 "Returns a sequence of minimum width, minimum height, max width, max height."
   (let ((display (window-display window)))
    (with-buffer-request-and-reply (display (randr-opcode display) nil :sizes (16))
@@ -546,7 +634,7 @@
       (card32 width-mm)
       (card32 height-mm))))
 
-(defun rr-get-screen-resources (window &optional (result-type 'list))
+(defun rr-get-screen-resources (window &key (result-type 'list))
   ""
   (let ((display (window-display window)))
     (declare (type display display)
@@ -574,7 +662,7 @@
 
 
 
-(defun rr-get-output-info (display output config-timestamp &optional (result-type 'list))
+(defun rr-get-output-info (display output config-timestamp &key (result-type 'list))
 "FIXME: indexes might be off, name not decoded properly"
   (with-buffer-request-and-reply (display (randr-opcode display) nil :sizes (8 16 32))
                                  ((data +rr-getoutputinfo+)
@@ -604,7 +692,7 @@
         (sequence-get :result-type 'string :format card16 :length name-length :index name-start :transform #'code-char))
 )))
 
-(defun rr-list-output-properties (display output &optional (result-type 'list))
+(defun rr-list-output-properties (display output &key (result-type 'list))
 "Returns a list of atom properties for given display. ?keep it simple and return id's or atom-names?"
   (declare (type display display)
            (type card32 output))
@@ -615,7 +703,7 @@
       (values
        (sequence-get :format card32 :result-type result-type :length num-atoms :index +replysize+ :transform #'(lambda (id) (atom-name display id)))))))
 
-(defun rr-query-output-property (display output atom &optional (result-type 'list))
+(defun rr-query-output-property (display output atom &key (result-type 'list))
 "Querys the current properties of an atom.  Atom may be referenced by either id or keyword"
   (let ((atom (if (typep atom 'keyword) (find-atom display atom) atom)))
     (declare (type display display)
@@ -630,7 +718,7 @@
        (boolean-get 10) ; immutable
        (sequence-get :result-type result-type :index +replysize+ :length (card32-get 4))))))
 
-(defun rr-configure-output-property (display output atom value-list &optional (pending nil) (range nil))
+(defun rr-configure-output-property (display output atom value-list &key pending range)
   "Atom can be specified by either id or keyword"
   (let ((atom (if (typep atom 'keyword) (find-atom display atom) atom))
         (seq (coerce value-list 'vector)))
@@ -647,7 +735,7 @@
 ;; Spec says type is not interpreted, what use?  shit, are certain property types tied to certain formats?  change if necessary after get-output-property
 
 ;; FIXME asynchronous match error
-(defun rr-change-output-property (display output atom mode data &optional  (atom-type 0) )
+(defun rr-change-output-property (display output atom mode data &key (atom-type 0))
 "Mode may be 0-replace 1-prepend 2-append. atom-type is obtained by calling rr-get-output-property "
   (let ((atom (if (typep atom 'keyword) (find-atom display atom) atom))
         (data-length (length data))
@@ -672,7 +760,7 @@
       (card32 output)
       (card32 atom))))
 
-(defun rr-get-output-property (display output property  &optional (type 0) (delete 0) (pending 0) (result-type 'list))
+(defun rr-get-output-property (display output property &key (type 0) (delete 0) (pending 0) (result-type 'list))
   ""
   (let ((atom (if (typep property 'keyword) (find-atom display property) property)))
     (with-buffer-request-and-reply (display (randr-opcode display) nil :sizes (8 16 32))
@@ -744,7 +832,7 @@
    (card32 output)
    (card32 mode)))
 
-(defun rr-get-crtc-info (display crtc config-timestamp &optional (result-type 'list))
+(defun rr-get-crtc-info (display crtc config-timestamp &key (result-type 'list))
   ""
   (with-buffer-request-and-reply (display (randr-opcode display) nil :sizes (8 16 32))
                                  ((data +rr-getcrtcinfo+)
@@ -794,7 +882,7 @@
     (values
      (card16-get 8))))
 
-(defun rr-get-crtc-gamma (display crtc &optional (result-type 'list))
+(defun rr-get-crtc-gamma (display crtc &key (result-type 'list))
   "Get current gamma ramps, returns 3 sequences for red, green, blue."
   (with-buffer-request-and-reply (display (randr-opcode display) nil :sizes (8 16 32))
                                  ((data +rr-getcrtcgamma+)
@@ -825,7 +913,7 @@
 ;; version 1.3
 
 
- (defun rr-get-screen-resources-current (window &optional (result-type 'list ))
+ (defun rr-get-screen-resources-current (window &key (result-type 'list))
    "Unlike RRGetScreenResources, this merely returns the current configuration, and does not poll for hardware changes."
    (let ((display (window-display window)))
      (with-buffer-request-and-reply (display (randr-opcode display) nil :sizes (8 16 32))
@@ -849,7 +937,7 @@
          (string-get name-bytes name-start))))))
 
 
-;; (defun rr-set-crtc-transform (display crtc transform &optional ( filter-name nil) ( filter-parameters nil))
+;; (defun rr-set-crtc-transform (display crtc transform &key filter-name filter-parameters)
 ;;   "FIXME:Transfrom may be a list or vector of length 9.  ?perhaps allow length 6?"
 ;;   (let ((seq (if filter-parameters (coerce filter-parameters 'vector) nil ))
 ;;      (param-length (length filter-parameters))
@@ -874,7 +962,7 @@
 ;;       )))
 
 
-(defun rr-get-crtc-transform (display crtc &optional (result-type 'list))
+(defun rr-get-crtc-transform (display crtc &key (result-type 'list))
   ""
   (with-buffer-request-and-reply (display (randr-opcode display) nil :sizes (8 16 32))
                                  ((data +rr-getcrtctransform+)
