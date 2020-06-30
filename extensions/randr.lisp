@@ -20,11 +20,11 @@
 (in-package :xlib)
 
 (export '(rr-query-version
-          rr-get-screen-info
           rr-set-screen-config
+          rr-select-input
+          rr-get-screen-info
 
-          ;;  1.2
-
+          ;; Version 1.2
           rr-get-screen-size-range
           rr-set-screen-size
           rr-get-screen-resources
@@ -40,30 +40,33 @@
           rr-add-output-mode
           rr-delete-output-mode
           rr-get-crtc-info
+          rr-set-crtc-config
           rr-get-crtc-gamma-size
           rr-get-crtc-gamma
           rr-set-crtc-gamma
 
-          ;;  1.3
-
+          ;; Version 1.3
           rr-get-screen-resources-current
-          rr-set-crtc-transform
+          ;; rr-set-crtc-transform
           rr-get-crtc-transform
-          rr-get-panning
-          rr-set-panning
+          ;; rr-get-panning
+          ;; rr-set-panning
           rr-set-output-primary
-          rr-get-output-primary
+          rr-get-output-primary     
 
-          ;;  1.4
-
+          ;; Version 1.4
           rr-get-providers
           rr-get-provider-info
-          rr-set-provider-output-source
           rr-set-provider-offload-sink
+          rr-set-provider-output-source
           rr-list-provider-properties
-          rr-select-input
+          ;; rr-query-provider-property
+          ;; rr-configure-provider-property
+          ;; rr-change-provider-property
+          ;; rr-delete-provider-property
+          ;; rr-get-provider-property
 
-          ;; mask related
+          ;; Mask-related
           make-mode-flag-keys
           make-mode-flag-mask
           make-rr-select-mask
@@ -71,7 +74,7 @@
           make-rotation-keys
           make-rotation-mask
 
-          ;; struct related
+          ;; Struct-related
           rr-panning-top
           rr-panning-left
           rr-panning-width
@@ -95,75 +98,73 @@
            :rr-crtc-change-notify
            :rr-output-change-notify
            :rr-output-property-notify)
-  :errors (output
-           crtc
-           mode))
+  :errors (rr-bad-output
+           rr-bad-crtc
+           rr-bad-mode))
+
+(define-condition rr-bad-output (request-error) ())
+(define-condition rr-bad-crtc (request-error) ())
+(define-condition rr-bad-mode (request-error) ())
+
+(define-error rr-bad-output decode-core-error)
+(define-error rr-bad-crtc decode-core-error)
+(define-error rr-bad-mode decode-core-error)
 
 (defun randr-opcode (display)
   (extension-opcode display "RANDR"))
 
+(defconstant +rr-major+ 1)
+(defconstant +rr-minor+ 4)
 
-(defconstant +rr-major+			1)
-(defconstant +rr-minor+			4)
+;; Version 1.0 and later exclude opcodes 1 and 3.
+(defconstant +rr-QueryVersion+ 0)
+(defconstant +rr-SetScreenConfig+ 2)
+(defconstant +rr-SelectInput+ 4)
+(defconstant +rr-GetScreenInfo+ 5)
 
-(defconstant  +rr-QueryVersion+                 0)
-  ;; we skip 1 to make old clients fail pretty immediately */
+;; Version 1.2
+(defconstant +rr-GetScreenSizeRange+ 6)
+(defconstant +rr-SetScreenSize+ 7)
+(defconstant +rr-GetScreenResources+ 8)
+(defconstant +rr-GetOutputInfo+ 9)
+(defconstant +rr-ListOutputProperties+ 10)
+(defconstant +rr-QueryOutputProperty+ 11)
+(defconstant +rr-ConfigureOutputProperty+ 12)
+(defconstant +rr-ChangeOutputProperty+ 13)
+(defconstant +rr-DeleteOutputProperty+ 14)
+(defconstant +rr-GetOutputProperty+ 15)
+(defconstant +rr-CreateMode+ 16)
+(defconstant +rr-DestroyMode+ 17)
+(defconstant +rr-AddOutputMode+ 18)
+(defconstant +rr-DeleteOutputMode+ 19)
+(defconstant +rr-GetCrtcInfo+ 20)
+(defconstant +rr-SetCrtcConfig+ 21)
+(defconstant +rr-GetCrtcGammaSize+ 22)
+(defconstant +rr-GetCrtcGamma+ 23)
+(defconstant +rr-SetCrtcGamma+ 24)
 
+;; Version 1.3
+(defconstant +rr-GetScreenResourcesCurrent+ 25)
+(defconstant +rr-SetCrtcTransform+ 26)
+(defconstant +rr-GetCrtcTransform+ 27)
+(defconstant +rr-GetPanning+ 28)
+(defconstant +rr-SetPanning+ 29)
+(defconstant +rr-SetOutputPrimary+ 30)
+(defconstant +rr-GetOutputPrimary+ 31)
 
-(defconstant  +rr-SetScreenConfig+              2)
-(defconstant  +rr-OldScreenChangeSelectInput+	3) ;; 3 used to be ScreenChangeSelectInput; deprecated */
-
-(defconstant  +rr-SelectInput+                  4)
-(defconstant  +rr-GetScreenInfo+                5)
-
-  ;; * V1.2 additions */
-
-(defconstant  +rr-GetScreenSizeRange+           6)
-(defconstant  +rr-SetScreenSize+                7)
-(defconstant  +rr-GetScreenResources+           8)
-(defconstant  +rr-GetOutputInfo+                9)
-(defconstant  +rr-ListOutputProperties+        10)
-(defconstant  +rr-QueryOutputProperty+	       11)
-(defconstant  +rr-ConfigureOutputProperty+     12)
-(defconstant  +rr-ChangeOutputProperty+        13)
-(defconstant  +rr-DeleteOutputProperty+    14)
-(defconstant  +rr-GetOutputProperty+	    15)
-(defconstant  +rr-CreateMode+		    16)
-(defconstant  +rr-DestroyMode+		    17)
-(defconstant  +rr-AddOutputMode+	    18)
-(defconstant  +rr-DeleteOutputMode+	    19)
-(defconstant  +rr-GetCrtcInfo+		    20)
-(defconstant  +rr-SetCrtcConfig+	    21)
-(defconstant  +rr-GetCrtcGammaSize+	    22)
-(defconstant  +rr-GetCrtcGamma+	    23)
-(defconstant  +rr-SetCrtcGamma+	    24)
-
-  ;; /* V1.3 additions */
-
-(defconstant  +rr-GetScreenResourcesCurrent+	25)
-(defconstant  +rr-SetCrtcTransform+	    26)
-(defconstant  +rr-GetCrtcTransform+	    27)
-(defconstant  +rr-GetPanning+		    28)
-(defconstant  +rr-SetPanning+		    29)
-(defconstant  +rr-SetOutputPrimary+	    30)
-(defconstant  +rr-GetOutputPrimary+	    31)
-
-  ;; 1.4 additions
-
-
-(defconstant  +rr-GetProviders+	      32)
-(defconstant  +rr-GetProviderInfo+	      33)
-(defconstant  +rr-SetProviderOffloadSink+    34)
-(defconstant  +rr-SetProviderOutputSource+   35)
-(defconstant  +rr-ListProviderProperties+    36)
-(defconstant  +rr-QueryProviderProperty+     37)
-(defconstant  +rr-ConfigureProviderProperty+ 38)
-(defconstant  +rr-ChangeProviderProperty+    39)
-(defconstant  +rr-DeleteProviderProperty+    40)
-(defconstant  +rr-GetProviderProperty+	      41)
+;; Version 1.4
+(defconstant +rr-GetProviders+ 32)
+(defconstant +rr-GetProviderInfo+ 33)
+(defconstant +rr-SetProviderOffloadSink+ 34)
+(defconstant +rr-SetProviderOutputSource+ 35)
+(defconstant +rr-ListProviderProperties+ 36)
+(defconstant +rr-QueryProviderProperty+ 37)
+(defconstant +rr-ConfigureProviderProperty+ 38)
+(defconstant +rr-ChangeProviderProperty+ 39)
+(defconstant +rr-DeleteProviderProperty+ 40)
+(defconstant +rr-GetProviderProperty+ 41)
 
 ;;; status returns
-
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defconstant +rr-config-status+ '#(:success :invalid-config-time :invalid-time :failed))
@@ -516,7 +517,6 @@
                  :finally (setf rates-location (+ offset 8 2)))
            (sequence-get :format card16 :length num-rates :index rates-location :result-type result-type))))))
 
-
 ;; Version 1.2
 
 (defun rr-get-screen-size-range (window &optional (result-type 'list))
@@ -527,7 +527,6 @@
                                    (window window))
      (values
       (sequence-get :format card16 :length 4 :index 8 :result-type result-type)))))
-
 
 ;; doesn't work, asynchronous match error. set screen config works fine.
 
@@ -822,8 +821,7 @@
       (pad16)
       ((sequence :format card16) seq))))
 
-;; version 1.3
-
+;; Version 1.3
 
  (defun rr-get-screen-resources-current (window &optional (result-type 'list ))
    "Unlike RRGetScreenResources, this merely returns the current configuration, and does not poll for hardware changes."
@@ -950,8 +948,7 @@
        (card32-get 8)
        ))))
 
-
-
+;; Version 1.4
 
 (defun rr-get-providers (window)
 ""
@@ -980,21 +977,21 @@
      (card16-get 20) ; num associated providers
      (string-get (card16-get 22) 56))))
 
-(defun rr-set-provider-output-source (display provider source-provider config-timestamp)
-  (with-buffer-request (display (randr-opcode display))
-    (data +rr-setprovideroutputsource+)
-    (card32 provider)
-    (card32 source-provider)
-    (card32 config-timestamp)))
-
-(defun rr-set-provider-offload-sink (display provider sink-provider config-timestamp)
+(defun rr-set-provider-offload-sink (display provider sink-provider
+                                     config-timestamp)
   (with-buffer-request (display (randr-opcode display))
     (data +rr-setprovideroffloadsink+)
     (card32 provider)
     (card32 sink-provider)
     (card32 config-timestamp)))
 
-
+(defun rr-set-provider-output-source (display provider source-provider
+                                      config-timestamp)
+  (with-buffer-request (display (randr-opcode display))
+    (data +rr-setprovideroutputsource+)
+    (card32 provider)
+    (card32 source-provider)
+    (card32 config-timestamp)))
 
 (defun rr-list-provider-properties (display provider)
 ""
