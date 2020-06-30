@@ -166,8 +166,16 @@
 
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (defconstant +rr-config-status+ '#(:success :invalid-config-time :invalid-time :failed))
-  (defconstant +rr-connection+ '#(:connected :disconnected :unknown-connection)))
+  (defconstant +rr-config-status-vector+
+    '#(:success :invalid-config-time :invalid-time :failed))
+  (defconstant +connection-vector+
+    '#(:connected :disconnected :unknown-connection)))
+
+(deftype rr-config-status ()
+  '(member :success :invalid-config-time :invalid-time :failed))
+
+(deftype connection ()
+  '(member :connected :disconnected :unknown-connection))
 
 ;;; mask-vectors and types
 
@@ -214,10 +222,19 @@
 
   ;; temporarily here since not in xrender.lisp
 
-
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (defconstant +render-subpixel-order+
-    '#(:unknown :horizontal-RGB :horizontal-BGR :vertical-RGB :vertical-BGR :none)))
+  (defconstant +render-subpixel-order-vector+
+    '#(:unknown
+       :horizontal-RGB :horizontal-BGR
+       :vertical-RGB :vertical-BGR
+       :none)))
+
+(deftype render-subpixel-order ()
+  '(member
+    :unknown
+    :horizontal-RGB :horizontal-BGR
+    :vertical-RGB :vertical-BGR
+    :none))
 
   ;; mask encode-decode functions
 
@@ -259,8 +276,8 @@
 
 (deftype size-id () 'card16)
 (deftype rr-mode () '(or null resource-id))
+(deftype crtc () 'resource-id)
 (deftype output () 'resource-id)
-(deftype connection () '(or +connected+ +disconnected+ +unknown-connection+))
 
 ;; structs
 
@@ -467,11 +484,11 @@
                                     (card16 refresh)
                                     (pad16))
       (values
-       (member8-vector-get 1 +rr-config-status+)
+       (member8-vector-get 1 +rr-config-status-vector+)
        (card32-get 8)  ;; timestamp
        (card32-get 12) ;; config timestamp
        (window-get 16) ;; root window
-       (member16-vector-get 20 +render-subpixel-order+) ;; sub pixel order
+       (member16-vector-get 20 +render-subpixel-order-vector+)
        ))))
 
 (defun rr-select-input (window enable)
@@ -572,37 +589,67 @@
          (string-get name-bytes name-start))
         ))))
 
+(declaim (ftype (function (display output timestamp &optional t)
+                          (values rr-config-status
+                                  timestamp
+                                  crtc
+                                  card32
+                                  card32
+                                  connection
+                                  render-subpixel-order
+                                  (clx-sequence crtc)
+                                  card16
+                                  (clx-sequence rr-mode)
+                                  (clx-sequence output)
+                                  string
+                                  &optional))
+                rr-get-output-info))
+(defun rr-get-output-info (display output config-timestamp
+                           &optional (result-type 'list))
+  "Execute the RRGetOutputInfo request and return its result as multiple
+values consisting of:
 
-
-(defun rr-get-output-info (display output config-timestamp &optional (result-type 'list))
-"FIXME: indexes might be off, name not decoded properly"
-  (with-buffer-request-and-reply (display (randr-opcode display) nil :sizes (8 16 32))
+1. Configuration status
+2. Timestamp
+3. Current connected CRTC
+4. Width in millimeters
+5. Height in millimeters
+6. Connection
+7. Subpixel order
+8. Sequence of CRTCs
+9. Number of preferred modes (first in the sequence of possible modes)
+10. Sequence of possible modes
+11. Sequence of clones
+12. Name"
+  (with-buffer-request-and-reply (display (randr-opcode display) nil
+                                  :sizes (8 16 32))
                                  ((data +rr-getoutputinfo+)
                                   (card32 output)
                                   (card32 config-timestamp))
     (let* ((num-crtcs (card16-get 26))
-          (num-modes (card16-get 28))
-          (num-clones (card16-get 32))
-          (name-length (card16-get 34))
-          (crtc-start 26)
-          (mode-start (index+ crtc-start (index* num-crtcs 4)))
-          (clone-start (index+ mode-start (index* num-modes 4)))
-          (name-start (index+ clone-start (index* num-clones 4))))
+           (num-modes (card16-get 28))
+           (num-clones (card16-get 32))
+           (name-length (card16-get 34))
+           (crtc-start 36)
+           (mode-start (index+ crtc-start (index* num-crtcs 4)))
+           (clone-start (index+ mode-start (index* num-modes 4)))
+           (name-start (index+ clone-start (index* num-clones 4))))
       (values
-        (member8-vector-get 1 +rr-config-status+)
-        (card32-get 8)  ; timestamp
-        (card32-get 12) ; current connected crtc
-        (card32-get 16) ; width in mm
-        (card32-get 20) ; height in mm
-        (member8-vector-get 24 +rr-connection+)
-        (member8-vector-get 25 +render-subpixel-order+)  ; sub-pixel-order
-        (sequence-get :result-type result-type :length num-crtcs :index 26)
-        (card16-get 30)
-        (sequence-get :result-type result-type :length num-modes :index mode-start)
-        (sequence-get :result-type result-type :length num-clones :index clone-start)
-        ;(string-get name-length name-start )
-        (sequence-get :result-type 'string :format card16 :length name-length :index name-start :transform #'code-char))
-)))
+       (member8-vector-get 1 +rr-config-status-vector+)
+       (card32-get 8)                   ; Timestamp
+       (card32-get 12)                  ; Current connected CRTC
+       (card32-get 16)                  ; Width in millimeters
+       (card32-get 20)                  ; Height in millimeters
+       (member8-vector-get 24 +connection-vector+)
+       (member8-vector-get 25 +render-subpixel-order-vector+)
+       (sequence-get :result-type result-type :length num-crtcs
+                     :index crtc-start)
+       (card16-get 30)                  ; Number of preferred modes
+       (sequence-get :result-type result-type :length num-modes
+                     :index mode-start)
+       (sequence-get :result-type result-type :length num-clones
+                     :index clone-start)
+       (string-get name-length name-start)))))
 
 (defun rr-list-output-properties (display output &optional (result-type 'list))
 "Returns a list of atom properties for given display. ?keep it simple and return id's or atom-names?"
@@ -754,7 +801,7 @@
            (pos-outputs (card16-get 30))
            (pos-start (index+ +replysize+ (index* num-outputs 4))))
       (values
-       (member8-vector-get 1 +rr-config-status+)
+       (member8-vector-get 1 +rr-config-status-vector+)
        (card32-get 8)                                   ; timestamp
        (int16-get 12)					; x
        (int16-get 14)					; y
@@ -782,7 +829,7 @@
                                     (pad16)
                                     ((sequence :format card32) seq))
       (values
-       (member8-vector-get 1 +rr-config-status+)
+       (member8-vector-get 1 +rr-config-status-vector+)
        (card32-get 8) ; new timestamp
        ))))
 
@@ -908,7 +955,7 @@
 ;;                               ((data +rr-getpanning+)
 ;;                                (card32 crtc))
 ;;     (values
-;;      (member8-vector-get 1 +rr-config-status+)
+;;      (member8-vector-get 1 +rr-config-status-vector+)
 ;;      (card32-get 8) ; timestamp
 ;;      (rr-panning-get 12)
 ;;                                      ;(sequence-get :length 8 :format card16 :index 12 :result-type result-type)
@@ -928,7 +975,7 @@
 ;;                                (rr-panning rr-panning))
 
 ;;     (values
-;;      (member8-vector-get 1 +rr-config-status+)
+;;      (member8-vector-get 1 +rr-config-status-vector+)
 ;;                                      ;  (card32-get 8) ; new timestamp
 ;;      )))
 
