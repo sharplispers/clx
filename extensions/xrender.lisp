@@ -117,6 +117,8 @@
 
           find-matching-picture-formats
           find-window-picture-format
+          find-standard-picture-format
+
           render-free-picture
           render-free-glyph-set
           render-query-version
@@ -378,6 +380,55 @@ by every function, which attempts to generate RENDER requests."
               (display-render-info display)))
     res))
 
+(defun find-standard-picture-format (display format)
+  (ensure-render-initialized display)
+  (maphash (ecase format
+             (:argb32
+              (lambda (k f)
+                (declare (ignore k))
+                (when (and (= (picture-format-depth f) 32)
+                           (= (byte-size (picture-format-alpha-byte f)) 8)
+                           (= (byte-size (picture-format-red-byte f)) 8)
+                           (= (byte-size (picture-format-green-byte f)) 8)
+                           (= (byte-size (picture-format-blue-byte f)) 8)
+                           (= (byte-position (picture-format-alpha-byte f)) 24)
+                           (= (byte-position (picture-format-red-byte f)) 16)
+                           (= (byte-position (picture-format-green-byte f)) 8)
+                           (= (byte-position (picture-format-blue-byte f)) 0))
+                  (return-from find-standard-picture-format f))))
+             (:rgb24
+              (lambda (k f)
+                (declare (ignore k))
+                (when (and (= (picture-format-depth f) 24)
+                           (= (byte-size (picture-format-red-byte f)) 8)
+                           (= (byte-size (picture-format-green-byte f)) 8)
+                           (= (byte-size (picture-format-blue-byte f)) 8)
+                           (= (byte-position (picture-format-red-byte f)) 16)
+                           (= (byte-position (picture-format-green-byte f)) 8)
+                           (= (byte-position (picture-format-blue-byte f)) 0))
+                  (return-from find-standard-picture-format f))))
+             (:a8
+              (lambda (k f)
+                (declare (ignore k))
+                (when (and (= (picture-format-depth f) 8)
+                           (= (byte-size (picture-format-alpha-byte f)) 8))
+                  (return-from find-standard-picture-format f))))
+             (:a4
+              (lambda (k f)
+                (declare (ignore k))
+                (when (and (= (picture-format-depth f) 4)
+                           (= (byte-size (picture-format-alpha-byte f)) 4))
+                  (return-from find-standard-picture-format f))))
+             (:a1
+              (lambda (k f)
+                (declare (ignore k))
+                (when (and (= (picture-format-depth f) 1)
+                           (= (byte-size (picture-format-alpha-byte f)) 1))
+                  (return-from find-standard-picture-format f)))))
+           (render-info-picture-formats (display-render-info display)))
+  (error "Standard format ~s not found." format))
+
+;;; fixme?
 (defun find-window-picture-format (window)
   "Find the picture format which matches the given window."
   (let* ((vi (window-visual-info window))
