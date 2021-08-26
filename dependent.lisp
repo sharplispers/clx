@@ -1478,39 +1478,19 @@
              (error "Unknown host ~S" host))
            (no-address-error ()
              (error "Host ~S has no ~S address" host family)))
-    (let ((hostent #+rwi-sockets(ext:lookup-host-entry (string host))
-                   #+mna-sockets(net.sbcl.sockets:look-up-host-entry
-                                 (string host))
-                   #+db-sockets(sockets:get-host-by-name (string host))))
+    (let ((hostent (ext:lookup-host-entry (string host))))
       (when (not hostent)
         (no-host-error))
       (ecase family
         ((:internet nil 0)
-         #+rwi-sockets(unless (= (ext::host-entry-addr-type hostent) 2)
-                        (no-address-error))
-         #+mna-sockets(unless (= (net.sbcl.sockets::host-entry-addr-type hostent) 2)
-                        (no-address-error))
-         ;; the following form is for use with SBCL and Daniel
-         ;; Barlow's socket package
-         #+db-sockets(unless (sockets:host-ent-address hostent)
-                       (no-address-error))
-         (append (list :internet)
-                 #+rwi-sockets
-                 (let ((addr (first (ext::host-entry-addr-list hostent))))
-                   (list (ldb (byte 8 24) addr)
-                         (ldb (byte 8 16) addr)
-                         (ldb (byte 8  8) addr)
-                         (ldb (byte 8  0) addr)))
-                 #+mna-sockets
-                 (let ((addr (first (net.sbcl.sockets::host-entry-addr-list hostent))))
-                   (list (ldb (byte 8 24) addr)
-                         (ldb (byte 8 16) addr)
-                         (ldb (byte 8  8) addr)
-                         (ldb (byte 8  0) addr)))
-                 ;; the following form is for use with SBCL and Daniel
-                 ;; Barlow's socket package
-                 #+db-sockets(coerce (sockets:host-ent-address hostent)
-                                     'list)))))))
+         (unless (= (ext::host-entry-addr-type hostent) 2)
+           (no-address-error))
+         (let ((addr (first (ext::host-entry-addr-list hostent))))
+           (list :internet
+                 (ldb (byte 8 24) addr)
+                 (ldb (byte 8 16) addr)
+                 (ldb (byte 8  8) addr)
+                 (ldb (byte 8  0) addr))))))))
 
 ;;#+sbcl
 ;;(require :sockets)
