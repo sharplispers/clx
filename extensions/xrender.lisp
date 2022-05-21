@@ -571,7 +571,7 @@ by every function, which attempts to generate RENDER requests."
                          (defun (setf ,(xintern 'picture- slot)) (new-value picture)
                            (setf (picture-%changed-p picture) t)
                            (setf (aref (picture-%values picture) ,index) new-value))))
-    
+
                (defun synchronise-picture-state (picture)
                  (when (picture-%changed-p picture)
                    (let ((display (picture-display picture)))
@@ -979,9 +979,11 @@ by every function, which attempts to generate RENDER requests."
 (defmacro %render-composite-glyphs
     (opcode type transform display dest glyph-set source dest-x dest-y sequence
      alu src-x src-y mask-format start end)
-  (let ((size (ecase type (card8 1) (card16 2) (card32 4)))
-        ;; FIXME: the last chunk for CARD8 can be 254.
-        (chunksize (ecase type (card8 252) (card16 254) (card32 254))))
+  (multiple-value-bind (size chunksize)
+      (ecase type
+        (card8 (values 1 252)) ; FIXME: the last chunk for CARD8 can be 254.
+        (card16 (values 2 254))
+        (card32 (values 4 254)))
     `(multiple-value-bind (nchunks leftover)
          (floor (- end start) ,chunksize)
        (let* ((payloadsize (+ (* nchunks (+ 8 (* ,chunksize ,size)))
@@ -989,7 +991,7 @@ by every function, which attempts to generate RENDER requests."
                                   (+ 8 (* 4 (ceiling (* leftover ,size) 4)))
                                   0)))
               (request-length (+ 7 (/ payloadsize 4))))
-         (declare (integer request-length))
+         (declare (type array-index request-length))
          (with-buffer-request (,display (extension-opcode ,display "RENDER") :length (* 4 request-length))
            (data ,opcode)
            (length request-length)
