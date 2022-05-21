@@ -1149,13 +1149,13 @@ by every function, which attempts to generate RENDER requests."
       (card16 y))))
 
 ;; untested
-(defun render-free-glyphs (glyph-set glyphs)
+(defun render-free-glyphs (glyph-set glyphs &key (start 0) (end (length glyphs)))
   "This request removes glyphs from glyph-set. Each glyph must exist in glyph-set (else a Match error results)."
   (let ((display (glyph-set-display glyph-set)))
     (with-buffer-request (display (extension-opcode display "RENDER"))
       (data +X-RenderFreeGlyphs+)
       (glyph-set glyph-set)
-      ((sequence :format card32) glyphs))))
+      ((sequence :format card32 :start start :end end) glyphs))))
 
 
 #||
