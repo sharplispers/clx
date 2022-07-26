@@ -314,26 +314,30 @@
   (height-in-mm     0 :type card16))
 
 (def-clx-class (mode-info
-                (:constructor make-mode-info (id width height dot-clock
+                (:constructor make-mode-info (name id width height dot-clock
                                               h-sync-start h-sync-end h-sync-total h-sync-skew
-                                              v-sync-start v-sync-end v-total name-length mode-flags)))
-  (id            0 :type card32)
-  (width         0 :type card16)
-  (height        0 :type card16)
-  (dot-clock     0 :type card32)
-  (h-sync-start  0 :type card16)
-  (h-sync-end    0 :type card16)
-  (h-sync-total  0 :type card16)
-  (h-sync-skew   0 :type card16)
-  (v-sync-start  0 :type card16)
-  (v-sync-end    0 :type card16)
-  (v-total       0 :type card16)
-  (name-length   0 :type card16)
-  (mode-flags    0 :type mode-flag-mask))
+                                              v-sync-start v-sync-end v-total mode-flags)))
+  ;; Internally, the NAME slot is temporarily used to store the name
+  ;; length. In such cases, the length is replaced by the name string
+  ;; before the object is returned to user code.
+  (name         "" :type (or card16 string))
+  (id           0  :type card32)
+  (width        0  :type card16)
+  (height       0  :type card16)
+  (dot-clock    0  :type card32)
+  (h-sync-start 0  :type card16)
+  (h-sync-end   0  :type card16)
+  (h-sync-total 0  :type card16)
+  (h-sync-skew  0  :type card16)
+  (v-sync-start 0  :type card16)
+  (v-sync-end   0  :type card16)
+  (v-total      0  :type card16)
+  (mode-flags   0  :type mode-flag-mask))
 
 (define-accessor rr-mode-info (32) ; interns in package xlib :(
   ((index)
    `(make-mode-info
+     (card16-get (+ ,index 26))
      (card32-get ,index)
      (card16-get (+ ,index  4))
      (card16-get (+ ,index  6))
@@ -345,10 +349,9 @@
      (card16-get (+ ,index 20))
      (card16-get (+ ,index 22))
      (card16-get (+ ,index 24))
-     (card16-get (+ ,index 26))
      (card32-get (+ ,index 28))))
   ((index thing)
-   `(progn
+   `(let ((name (mode-info-name ,thing)))
       (card32-put ,index             (mode-info-id           ,thing))
       (card16-put (index+ ,index  4) (mode-info-width        ,thing))
       (card16-put (index+ ,index  6) (mode-info-height       ,thing))
@@ -360,8 +363,9 @@
       (card16-put (index+ ,index 20) (mode-info-v-sync-start ,thing))
       (card16-put (index+ ,index 22) (mode-info-v-sync-end   ,thing))
       (card16-put (index+ ,index 24) (mode-info-v-total      ,thing))
-      (card16-put (index+ ,index 26) (mode-info-name-length  ,thing))
-      (card32-put (index+ ,index 28) (mode-info-mode-flags   ,thing)))))
+      (card16-put (index+ ,index 26) (length name))
+      (card32-put (index+ ,index 28) (mode-info-mode-flags   ,thing))
+      (string-put (index+ ,index 32) name :appending t))))
 
 (def-clx-class (panning)
   (left          0 :type card16)
@@ -675,9 +679,10 @@ ENABLE may be a select-mask or list of select-keys."
 (defun split-mode-names (mode-names-string mode-infos)
   (loop :for mode-info :in mode-infos
         :for start     =   0 :then end
-        :for end       =   (+ start (mode-info-name-length mode-info))
+        :for end       =   (+ start (mode-info-name mode-info))
         :for name      =   (subseq mode-names-string start end)
-        :collect name))
+        :do (setf (mode-info-name mode-info) name)))
+
 
 (defun get-screen-resources (window &key (result-type 'list))
   ""
@@ -870,40 +875,58 @@ ATOM may be referenced by either id or keyword"
                                                      :result-type result-type))))))
         (values type value-length value)))))
 
-(defun create-mode (window mode-info name)
-  "FIXME"
+(defun create-mode (window mode-info)
+  "Create a mode described by MODE-INFO and return its id."
   (declare (type window    window)
-           (type mode-info mode-info)
-           (type string    name))
+           (type mode-info mode-info))
   (let ((display (window-display window)))
     (with-buffer-request-and-reply (display (randr-opcode display) nil
                                     :sizes (8 16 32))
                                    ((data   +rr-createmode+)
                                     (window window)
-                                    (progn (xlib::rr-mode-info-put 8 mode-info)
-                                           (string-put 40 name)))
+                                    ;; `rr-mode-info-put' writes the
+                                    ;; variable length name after the
+                                    ;; fixed fields, therefore the
+                                    ;; automatic request offset/length
+                                    ;; tracking does not work.
+                                    (progn
+                                      (xlib::rr-mode-info-put 8 mode-info)
+                                      (let ((size (+ 40 (length (mode-info-name mode-info)))))
+                                        ;; Write request size and bump
+                                        ;; buffer pointer.
+                                        (card16-put 2 (ceiling (xlib::lround size) 4))
+                                        (setf (xlib::buffer-boffset xlib::%buffer)
+                                              (index+ xlib::buffer-boffset size)))))
       (let ((mode (card32-get 8)))
         mode))))
 
 (defun destroy-mode (display mode)
-  ""
- (with-buffer-request (display (randr-opcode display))
-   (data   +rr-destroymode+)
-   (card32 mode)))
+  "Destroy mode with id MODE on DISPLAY."
+  (declare (type display display)
+           (type mode-id mode))
+  (with-buffer-request (display (randr-opcode display))
+    (data   +rr-destroymode+)
+    (card32 mode)))
 
 (defun add-output-mode (display output mode)
-  ""
- (with-buffer-request (display (randr-opcode display))
-   (data   +rr-addoutputmode+)
-   (card32 output)
-   (card32 mode)))
+  "Add mode with id MODE to the available modes of output with id OUTPUT on DISPLAY."
+  (declare (type display   display)
+           (type output-id output)
+           (type mode-id   mode))
+  (with-buffer-request (display (randr-opcode display))
+    (data   +rr-addoutputmode+)
+    (card32 output)
+    (card32 mode)))
 
 (defun delete-output-mode (display output mode)
-  ""
- (with-buffer-request (display (randr-opcode display))
-   (data   +rr-deleteoutputmode+)
-   (card32 output)
-   (card32 mode)))
+  "Remove mode with id MODE from the available modes of output with id OUTPUT on DISPLAY."
+  (declare (type display   display)
+           (type output-id output)
+           (type mode-id   mode))
+  (with-buffer-request (display (randr-opcode display))
+    (data   +rr-deleteoutputmode+)
+    (card32 output)
+    (card32 mode)))
 
 (defun get-crtc-info (display crtc config-timestamp &key (result-type 'list))
   ""
