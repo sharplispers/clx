@@ -61,9 +61,11 @@
 
   ;; 1.2
   (:export
-   #:get-screen-size-range
-   #:set-screen-size
-   #:get-screen-resources
+   #:screen-size
+   #:screen-size-width-in-pixels
+   #:screen-size-height-in-pixels
+   #:screen-size-width-in-mm
+   #:screen-size-height-in-mm
 
    #:mode-info
    #:make-mode-info
@@ -80,6 +82,10 @@
    #:mode-info-v-sync-end
    #:mode-info-v-total
    #:mode-info-mode-flags
+
+   #:get-screen-size-range
+   #:set-screen-size
+   #:get-screen-resources
 
    #:get-output-info
    #:list-output-properties
@@ -533,18 +539,21 @@ QUERY-VERSION."
                                   &optional))
                 get-screen-info))
 (defun get-screen-info (window &key major minor (result-type 'list))
-  "Execute the RRGetScreenInfo request and return its result as multiple
-values consisting of:
+  "Return information for the display containing WINDOW as multiple values.
 
-1. List of possible rotations and reflections
-2. Root window
-3. Timestamp
-4. Configuration timestamp
-5. Current screen size index (in the list of possible screen sizes)
-6. Current rotation and reflection
-7. List of possible screen sizes
-8. Current refresh rate (non-NIL only if server's protocol version is
+Return nine values:
+1. Root window
+2. Timestamp
+3. Configuration timestamp
+4. Current rotation and reflection
+5. Current screen size. A `screen-size' instance which is also an
+   element of the list of possible screen sizes (the eighth return
+   value).
+6. Current refresh rate (non-NIL only if server's protocol version is
    1.1 or later)
+7. List of possible rotations and reflections
+8. List of possible screen sizes. Each element is a `screen-size'
+   instance.
 9. Sequence of refresh rate information (non-NIL only if server's
    protocol version is 1.1 or later)
 
@@ -564,6 +573,7 @@ determine whether this information is forthcoming.
 Otherwise, this function assumes MAJOR and MINOR are the result of
 QUERY-VERSION -- failing which it will behave unreliably -- and it
 skips executing the RRQueryVersion request."
+  (declare (type window window))
   (let ((display (window-display window)))
     (declare (type display display))
     (multiple-value-bind (major minor)
@@ -572,10 +582,8 @@ skips executing the RRQueryVersion request."
                                               :sizes (8 16 32))
                                      ((data   +rr-GetScreenInfo+)
                                       (window window))
-        (let* ((num-screens        (card16-get 20))
+        (let* ((screen-size-count  (card16-get 20))
                (rate-info-length   (card16-get 28))
-               (screen-start       +replysize+)
-               (rate-info-start    (index+ screen-start (index* num-screens 8)))
                (has-rates          (has-rates-p major minor))
                ;; Possible rotations and reflections
                (rotations          (make-rotation-keys (card16-get 1)))
@@ -584,13 +592,6 @@ skips executing the RRQueryVersion request."
                (config-timestamp   (card32-get 16))
                (current-size-index (card16-get 22))
                (current-rotation   (make-rotation-keys (card16-get 24)))
-               (sizes              (loop :repeat num-screens
-                                         :for offset fixnum = screen-start :then (+ offset 8)
-                                         :collect (make-screen-size
-                                                   (card16-get offset)
-                                                   (card16-get (index+ offset 2))
-                                                   (card16-get (index+ offset 4))
-                                                   (card16-get (index+ offset 6)))))
                ;; Some servers (e.g., X.Org) always reply with the
                ;; current refresh rate if they support it, even before
                ;; receiving any version query.
@@ -599,6 +600,15 @@ skips executing the RRQueryVersion request."
                ;; appropriate client version).
                (current-rate       (when has-rates
                                      (card16-get 26)))
+               (screen-sizes-start +replysize+)
+               (sizes              (loop :repeat screen-size-count
+                                         :for offset fixnum = screen-sizes-start :then (+ offset 8)
+                                         :collect (make-screen-size
+                                                   (card16-get offset)
+                                                   (card16-get (index+ offset 2))
+                                                   (card16-get (index+ offset 4))
+                                                   (card16-get (index+ offset 6)))))
+               (rate-info-start    (index+ screen-sizes-start (index* screen-size-count 8)))
                (rates              (when has-rates
                                      (sequence-get :format      card16
                                                    :index       rate-info-start
