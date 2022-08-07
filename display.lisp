@@ -36,8 +36,10 @@
 ;;; The format of the .Xauthority file is documented in the XFree
 ;;; sources, in the file xc/lib/Xau/README.
 
-;;; Stolen from the cmucl sources, with patches by Hannu Rummukainen and
-;;; Scott Fahlman.
+;;; Stolen from the cmucl sources, with patches by
+;;; * Hannu Rummukainen
+;;; * Scott Fahlman
+;;; * Copyright (C) 2022 Massimo Zaniboni <mzan@dokmelody.org>
 
 (defun read-xauth-entry (stream)
   (labels ((read-short (stream &optional (eof-errorp t))
@@ -108,7 +110,7 @@
 	    (when (or (eql protocol :local)
 		      (and (eql protocol :internet)
 			   (equal host-address '(127 0 0 1))))
-	      (setq host-address (get-host-name))
+	      (setq host-address (or (getenv "XAUTHLOCALHOSTNAME") (get-host-name)))
 	      (setq protocol :local))
 	    (loop
 	     (destructuring-bind (family address number name data)
