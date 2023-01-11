@@ -392,7 +392,7 @@
   (border-bottom 0 :type int16))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (define-accessor rr-panning (#.(* 8 24)) ; interns in package xlib :(
+  (define-accessor rr-panning (24) ; interns in package xlib :(
     ((index)
      `(make-panning :left          (card16-get ,index)
                     :top           (card16-get (index+ ,index  2))
