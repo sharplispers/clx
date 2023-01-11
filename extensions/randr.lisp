@@ -49,7 +49,7 @@
    #:member8-vector-get
    #:member16-vector-get
    #:boolean-get
-   #:sequence-get        #:sequence-put
+   #:sequence-get
    #:string-get          #:string-put
    #:window-get
    #:decode-mask         #:encode-mask)
@@ -427,7 +427,7 @@
   (f 0 :type card32))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (define-accessor rr-transform (#.(* 8 4 9)) ; interns in package xlib :(
+  (define-accessor rr-transform (36) ; interns in package xlib :(
     ((index) `(make-transform :x (card32-get (index+ ,index 0))
                               :y (card32-get (index+ ,index 4))
                               :z (card32-get (index+ ,index 8))
@@ -437,7 +437,7 @@
                               :d (card32-get (index+ ,index 24))
                               :e (card32-get (index+ ,index 28))
                               :f (card32-get (index+ ,index 32))))
-    ((index thing) `(sequence-put ,index ,thing :start 1))))
+    ((index thing) `(xlib::sequence-put ,index ,thing :start 1))))
 
 ;;; Events
 
@@ -1157,38 +1157,27 @@ configuration, and does not poll for hardware changes."
 
 (defun set-crtc-transform (display crtc transform
                            &key (filter-name "") filter-parameters)
-  "Set the transform of CRTC to TRANSFORM on DISPLAY.
-
-TRANSFORM is a vector of nine elements of type (unsigned-byte 16)
-which correspond to the elements of the transform matrix. The
-vector-backed structure type provides the functions `make-transform',
-`transform-a', etc. for manipulating such an object.
-
-Note that successful execution of this request may set but not apply
-the new transform immediately. Calling `set-crtc-config' (possibly
-with an unchanged configuration) can be used to force the change into
-effect."
-  (declare (type display                       display)
-           (type crtc-id                       crtc)
-           (type (vector (unsigned-byte 16) 9) transform)
-           (type string                        filter-name))
-  (when filter-parameters (error "Filter parameters are not currently supported"))
-  (let ((name-length  (length filter-name)))
+  "FIXME:Transform may be a list or vector of length 9.  ?perhaps allow length 6?"
+  (declare (type display display)
+           (type crtc-id crtc)
+           (type string  filter-name))
+  (error "not implemented")
+  (let* ((seq          (if filter-parameters
+                           (coerce filter-parameters 'vector)
+                           #()))
+         ;; (param-length (length seq))
+         (name-length  (length filter-name)))
     (declare (type vector seq)
              (type card16 param-length))
     (with-buffer-request (display (randr-opcode display))
-      (data                  +rr-setcrtctransform+)
-      (card32                crtc)
-      (rr-transform          transform)
-      (card16                name-length)
+      (data                      +rr-setcrtctransform+)
+      (card32                    crtc)
+      (rr-transform              transform)
+      (card16                    name-length)
       (pad16)
-      ((string :appending t) filter-name) ; appending to not store string length again
-      (progn
-        ;; Write request size and bump buffer pointer.
-        (let ((size (+ 48 name-length)))
-          (card16-put 2 (ceiling (xlib::lround size) 4))
-          (setf (xlib::buffer-boffset xlib::%buffer)
-                (index+ xlib::buffer-boffset size)))))))
+      ((string :appending t)     filter-name) ; appending to not store string length again
+      ;; ((sequence :format card32) seq) TODO does not work after variable-length field; look at `create-mode' for inspiration
+      )))
 
 (defun get-panning (display crtc)
   "Return panning information for CRTC on DISPLAY."
