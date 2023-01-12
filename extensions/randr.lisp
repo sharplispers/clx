@@ -662,9 +662,24 @@ skips executing the RRQueryVersion request."
 
 
 
-(defun rr-get-output-info (display output config-timestamp &key (result-type 'list))
-"FIXME: indexes might be off, name not decoded properly"
-  (with-buffer-request-and-reply (display (randr-opcode display) nil :sizes (8 16 32))
+(defun rr-get-output-info (display output config-timestamp
+                           &key (result-type 'list))
+  "Execute the RRGetOutputInfo request and return its result as multiple
+values consisting of:
+1. Configuration status
+2. Timestamp
+3. Current connected CRTC
+4. Width in millimeters
+5. Height in millimeters
+6. Connection
+7. Subpixel order
+8. Sequence of CRTCs
+9. Number of preferred modes (first in the sequence of possible modes)
+10. Sequence of possible modes
+11. Sequence of clones
+12. Name"
+  (with-buffer-request-and-reply (display (randr-opcode display) nil
+                                  :sizes (8 16 32))
                                  ((data +rr-getoutputinfo+)
                                   (card32 output)
                                   (card32 config-timestamp))
@@ -672,25 +687,30 @@ skips executing the RRQueryVersion request."
           (num-modes (card16-get 28))
           (num-clones (card16-get 32))
           (name-length (card16-get 34))
-          (crtc-start 26)
+          (crtc-start 36)
           (mode-start (index+ crtc-start (index* num-crtcs 4)))
           (clone-start (index+ mode-start (index* num-modes 4)))
           (name-start (index+ clone-start (index* num-clones 4))))
       (values
-        (member8-vector-get 1 +rr-config-status+)
-        (card32-get 8)  ; timestamp
-        (card32-get 12) ; current connected crtc
-        (card32-get 16) ; width in mm
-        (card32-get 20) ; height in mm
-        (member8-vector-get 24 +rr-connection+)
-        (member8-vector-get 25 +render-subpixel-order+)  ; sub-pixel-order
-        (sequence-get :result-type result-type :length num-crtcs :index 26)
-        (card16-get 30)
-        (sequence-get :result-type result-type :length num-modes :index mode-start)
-        (sequence-get :result-type result-type :length num-clones :index clone-start)
-        ;(string-get name-length name-start )
-        (sequence-get :result-type 'string :format card16 :length name-length :index name-start :transform #'code-char))
-)))
+        (member8-vector-get 1 +rr-config-status+)       ; Config Status
+        (card32-get 8)                                  ; Timestamp
+        (card32-get 12)                                 ; Current CRTC
+        (card32-get 16)                                 ; Width in mm
+        (card32-get 20)                                 ; Height in mm
+        (member8-vector-get 24 +rr-connection+)         ; Connection Status
+        (member8-vector-get 25 +render-subpixel-order+) ; Subpixel-order
+        (sequence-get :result-type result-type          ; Sequence of CRTCs
+                      :length num-crtcs
+                      :index crtc-start)
+        (card16-get 30)                                 ; Preferred modes
+        (sequence-get :result-type result-type          ; Possible modes
+                      :length num-modes
+                      :index mode-start)
+        (sequence-get :result-type result-type          ; Clones
+                      :length num-clones
+                      :index clone-start)
+        (string-get name-length name-start)             ; Name
+        ))))
 
 (defun rr-list-output-properties (display output &key (result-type 'list))
 "Returns a list of atom properties for given display. ?keep it simple and return id's or atom-names?"
