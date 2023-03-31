@@ -593,15 +593,27 @@ by every function, which attempts to generate RENDER requests."
                                                   (aref (picture-%server-values picture) ,index)))
                                          (setf (aref (picture-%server-values picture) ,index)
                                           (aref (picture-%values picture) ,index))))))))
+                   ;; Ensure that the picture clip rectangles are updated when
+                   ;; it is necessary. It is important to copy the mask values
+                   ;; when it is a sequence (instead of assigning it), because
+                   ;; the client may modify the sequence without changing its
+                   ;; identity. We still test for EQUALP to avoid a roundtrip.
+                   ;; -- jd 2023-03-31
                    ,(let ((index (position 'clip-mask specs :key #'second)))
-                         `(unless (eql (aref (picture-%values picture) ,index)
-                                   (aref (picture-%server-values picture)
-                                    ,index))
-                           (%render-change-picture-clip-rectangles
-                            picture (aref (picture-%values picture) ,index))
-                           (setf (aref (picture-%server-values picture) ,index)
-                                 (aref (picture-%values picture) ,index))))
-
+                      `(let ((clip-mask (aref (picture-%values picture) ,index))
+                             (serv-mask (aref (picture-%server-values picture) ,index)))
+                         (unless (equalp clip-mask serv-mask)
+                           (if (typep clip-mask 'sequence)
+                               (let ((clip-length (length clip-mask)))
+                                 (if (and (typep serv-mask 'sequence)
+                                          (= (length serv-mask) clip-length))
+                                     (replace serv-mask clip-mask)
+                                     (setf (aref (picture-%server-values picture) ,index)
+                                           (make-array clip-length
+                                                       :initial-contents clip-mask)))
+                                 (%render-change-picture-clip-rectangles picture clip-mask))
+                               (setf (aref (picture-%server-values picture) ,index)
+                                     clip-mask)))))
                    (setf (picture-%changed-p picture) nil)))
 
                (defun render-create-picture
