@@ -1003,11 +1003,27 @@
               (zerop timeout)
               (not (listen (display-input-stream display))))
          :timeout)
+        #+sbcl
         (t
-         (#+cmu system:read-n-bytes
-                #+sbcl sb-sys:read-n-bytes
-                (display-input-stream display)
-                vector start (- end start))
+         (let ((bytes-read (sb-sys:read-n-bytes
+                            (display-input-stream display)
+                            vector start (- end start)
+                            nil)))
+           (if (or (not bytes-read) ;; EOF at start
+                   (< bytes-read
+                      (- end start))) ;; EOF after short read
+               t
+               nil)))
+        #+cmu
+        (t
+         ;; FIXME: Return non-NIL, non-:TIMEOUT on EOF.  Do not
+         ;; blindly copy the SBCL version above, as the SBCL source
+         ;; notes that CMUCL treats NIL EOF-ERROR-P as also requesting
+         ;; that READ-N-BYTES return when any number of bytes have
+         ;; been read, not specifically N bytes.
+         (system:read-n-bytes
+          (display-input-stream display)
+          vector start (- end start))
          nil)))
 
 #+(or ecl clisp clasp)
