@@ -383,7 +383,7 @@
    (unless buffer (setq buffer '%buffer))
    (let* ((real-end (if appending (or end `(length ,data)) (gensym)))
           (writer (xintern 'write-sequence- format))
-          (form `(,writer ,buffer (index+ buffer-boffset ,(lround index))
+          (form `(,writer ,buffer (index+ buffer-boffset (lround ,index))
                           ,data ,start ,real-end ,transform)))
      (flet ((maker (size)
               (if appending
@@ -392,7 +392,7 @@
                     (unless (= size 1)
                       (setq idx `(index-ceiling ,idx ,size)))
                     `(let ((,real-end ,(or end `(length ,data))))
-                       (write-card16 2 (index+ ,idx ,(index-ceiling index 4)))
+                       (write-card16 2 (index+ ,idx (index-ceiling ,index 4)))
                        ,form)))))
        (ecase format
          ((card8 int8)
@@ -686,7 +686,7 @@
           (sizes (remove-duplicates (append '(8 16) item-sizes sizes))))
       `(with-buffer-output (,buffer :length ,length :sizes ,sizes)
          (setf (buffer-last-request ,buffer) buffer-boffset)
-         (write-card8 0 ,opcode)           ;; Stick in the opcode
+         (write-card8 0 ,opcode) ; Stick in the opcode
          ,@code
          ,@(when index
              (setq index (lround index))
