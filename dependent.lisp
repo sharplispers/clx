@@ -1037,6 +1037,15 @@
               (zerop timeout)
               (not (listen (display-input-stream display))))
          :timeout)
+	#+ecl
+	(t
+	 (let ((length-read
+		(read-sequence vector
+                               (display-input-stream display)
+                               :start start
+                               :end end)))
+	   (/= length-read end)))
+	#-ecl
         (t
          (read-sequence vector
                         (display-input-stream display)
