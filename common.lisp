@@ -13,16 +13,18 @@
            (type array-index start end)
            (type (or null (real 0 *)) timeout))
   #.(declare-buffun)
-  (cond ((and (not (null timeout))
-              (zerop timeout)
-              (not (listen (display-input-stream display))))
-         :timeout)
-        (t
-         (read-sequence vector
-                        (display-input-stream display)
-                        :start start
-                        :end end)
-         nil)))
+  (if (and (not (null timeout))
+           (zerop timeout)
+           (not (listen (display-input-stream display))))
+      :timeout
+      (let ((n (read-sequence vector
+                              (display-input-stream display)
+                              :start start
+                              :end end)))
+        (cond
+          ((= n end) nil)
+          ((= n start) :end-of-file)
+          (t :truncated)))))
 
 ;;; This is a legacy and obsolete fallback implementation.
 ;;;
