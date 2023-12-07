@@ -50,6 +50,7 @@ Independent FOSS developers"
    #+openmcl (:file "dep-openmcl")
    #+allegro (:file "dep-allegro")
    #+lispworks (:file "dep-lispworks")
+   (:file "common")
    (:file "macros")
    (:file "bufmac")
    (:file "buffer")

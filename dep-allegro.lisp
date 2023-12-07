@@ -564,71 +564,6 @@
 	stream
       (error "Cannot connect to server: ~A:~D" host display))))
 
-
-;;; BUFFER-READ-DEFAULT - read data from the X stream
-
-(defun buffer-read-default (display vector start end timeout)
-  (declare (type display display)
-	   (type buffer-bytes vector)
-	   (type array-index start end)
-	   (type (or null (real 0 *)) timeout))
-  #.(declare-buffun)
-
-  (let* ((howmany (- end start))
-	 (stream (display-input-stream display)))
-    (declare (type array-index howmany)
-	     (type (or null stream) stream))
-    (or (cond ((stream-char-avail-p stream) nil)
-	      ((and timeout (= timeout 0)) :timeout)
-	      ((buffer-input-wait-default display timeout)))
-	(stream-read-bytes stream vector start howmany))))
-
-;;; WARNING:
-;;;	CLX performance will suffer if your lisp uses read-byte for
-;;;	receiving all data from the X Window System server.
-;;;	You are encouraged to write a specialized version of
-;;;	buffer-read-default that does block transfers.
-
-
-;;; BUFFER-WRITE-DEFAULT - write data to the X stream
-
-(defun buffer-write-default (vector display start end)
-  (declare (type buffer-bytes vector)
-	   (type display display)
-	   (type array-index start end))
-  #.(declare-buffun)
-  (let ((stream (display-output-stream display)))
-    (unless (null stream)
-      (write-sequence vector stream :start start :end end)))
-  )
-
-;;; WARNING:
-;;;	CLX performance will be severely degraded if your lisp uses
-;;;	write-byte to send all data to the X Window System server.
-;;;	You are STRONGLY encouraged to write a specialized version
-;;;	of buffer-write-default that does block transfers.
-
-;;; buffer-force-output-default - force output to the X stream
-
-(defun buffer-force-output-default (display)
-  ;; The default buffer force-output function for use with common-lisp streams
-  (declare (type display display))
-  (let ((stream (display-output-stream display)))
-    (declare (type (or null stream) stream))
-    (unless (null stream)
-      (force-output stream))))
-
-;;; BUFFER-CLOSE-DEFAULT - close the X stream
-
-(defun buffer-close-default (display &key abort)
-  ;; The default buffer close function for use with common-lisp streams
-  (declare (type display display))
-  #.(declare-buffun)
-  (let ((stream (display-output-stream display)))
-    (declare (type (or null stream) stream))
-    (unless (null stream)
-      (close stream :abort abort))))
-
 ;;; BUFFER-INPUT-WAIT-DEFAULT - wait for for input to be available for the
 ;;; buffer.  This is called in read-input between requests, so that a process
 ;;; waiting for input is abortable when between requests.  Should return
@@ -668,15 +603,6 @@
 					     :timeout timeout))
 	       (return-from buffer-input-wait-default :timeout))
 	   ))))
-
-;;; BUFFER-LISTEN-DEFAULT - returns T if there is input available for the
-;;; buffer. This should never block, so it can be called from the scheduler.
-
-(defun buffer-listen-default (display)
-  (declare (type display display))
-  (let ((stream (display-input-stream display)))
-    (declare (type (or null stream) stream))
-    (stream-char-avail-p stream)))
 
 
 ;;;----------------------------------------------------------------------------
