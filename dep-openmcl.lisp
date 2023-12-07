@@ -579,58 +579,6 @@
                       :remote-host host
 			 :remote-port (+ 6000 display)))))
 
-;;; BUFFER-READ-DEFAULT - read data from the X stream
-
-(defun buffer-read-default (display vector start end timeout)
-  (declare (type display display)
-	   (type buffer-bytes vector)
-	   (type array-index start end)
-	   (type (or null (real 0 *)) timeout))
-  #.(declare-buffun)
-  (let ((stream (display-input-stream display)))
-    (declare (type (or null stream) stream))
-    (or (cond ((null stream))
-	      ((listen stream) nil)
-	      ((and timeout (= timeout 0)) :timeout)
-	      ((buffer-input-wait-default display timeout)))
-	(progn
-	  (ccl:stream-read-ivector stream vector start (- end start))
-	  nil))))
-
-;;; BUFFER-WRITE-DEFAULT - write data to the X stream
-
-(defun buffer-write-default (vector display start end)
-  (declare (type buffer-bytes vector)
-	   (type display display)
-	   (type array-index start end))
-  #.(declare-buffun)
-  (let ((stream (display-output-stream display)))
-    (declare (type (or null stream) stream))
-    (unless (null stream)
-      (ccl:stream-write-ivector stream vector start (- end start)))
-    nil))
-
-;;; buffer-force-output-default - force output to the X stream
-
-(defun buffer-force-output-default (display)
-  ;; The default buffer force-output function for use with common-lisp streams
-  (declare (type display display))
-  (let ((stream (display-output-stream display)))
-    (declare (type (or null stream) stream))
-    (unless (null stream)
-      (force-output stream))))
-
-;;; BUFFER-CLOSE-DEFAULT - close the X stream
-
-(defun buffer-close-default (display &key abort)
-  ;; The default buffer close function for use with common-lisp streams
-  (declare (type display display))
-  #.(declare-buffun)
-  (let ((stream (display-output-stream display)))
-    (declare (type (or null stream) stream))
-    (unless (null stream)
-      (close stream :abort abort))))
-
 ;;; BUFFER-INPUT-WAIT-DEFAULT - wait for for input to be available for the
 ;;; buffer.  This is called in read-input between requests, so that a process
 ;;; waiting for input is abortable when between requests.  Should return
@@ -650,20 +598,6 @@
 	     (if (ccl::process-input-wait fd ticks)
                  nil
                  :timeout))))))
-
-
-;;; BUFFER-LISTEN-DEFAULT - returns T if there is input available for the
-;;; buffer. This should never block, so it can be called from the scheduler.
-
-;;; The default implementation is to just use listen.
-
-(defun buffer-listen-default (display)
-  (declare (type display display))
-  (let ((stream (display-input-stream display)))
-    (declare (type (or null stream) stream))
-    (if (null stream)
-	t
-      (listen stream))))
 
 
 ;;;----------------------------------------------------------------------------
