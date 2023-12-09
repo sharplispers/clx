@@ -552,13 +552,16 @@ Example: '(:glx-rgba (:glx-alpha-size 4) :glx-double-buffer (:glx-class 4 =)."
                           collect visual))
            (result (first candidates)))
     
-      (dolist (candidate (rest candidates))
-        ;; Visuals with glx-class 3 (pseudo-color) and 4 (true-color)
-        ;; are preferred over glx-class 2 (static-color) and 5 (direct-color).
-        (let ((class (visual-attribute candidate :glx-class)))
-          (when (or (= class 3)
-                    (= class 4))
-            (setf result candidate))))
+      ;; Visuals with glx-class 3 (pseudo-color) and 4 (true-color)
+      ;; are preferred over glx-class 2 (static-color) and 5 (direct-color).
+      (let ((result-class (visual-attribute result :glx-class)))
+        (when (or (= result-class 2)
+                  (= result-class 5))
+          (dolist (candidate (rest candidates))
+            (let ((class (visual-attribute candidate :glx-class)))
+              (when (or (= class 3)
+                        (= class 4))
+                (setf result candidate))))))
       result)))
 
 
