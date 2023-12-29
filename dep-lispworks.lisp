@@ -20,7 +20,7 @@
 
 (in-package :xlib)
 
-;;; NOTE: This was: #-(or lispworks6 lispworks7), i.e. LW 5.x and 6.x only.
+;;; NOTE: This was: #-(or lispworks6 lispworks7), i.e. for LW 6.x and 7.x only.
 ;;;       Now LW 8.x is confirmed working (by running McCLIM), thus we should
 ;;;       enable LW 8.x and all future versions by default, and only very old
 ;;;       LW versions (4.x and 5.x) are disabled here.  -- binghe, 2023/12/29
