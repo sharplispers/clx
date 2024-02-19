@@ -28,7 +28,7 @@
 
 
 ;;; The size of the output buffer.  Must be a multiple of 4.
-(defparameter *output-buffer-size* 8192)
+(defparameter *output-buffer-size* #x10000)
 
 #+explorer
 (zwei:define-indentation event-case (1 1))
