@@ -1,5 +1,24 @@
 -*- Text -*-
 
+-- Changes in CLX 0.7.6, 2024-05-13 --
+
+Introduce rudimentary LICENSE file
+Enable CLX for LispWorks 8.x and later
+BUFFER-READ-DEFAULT handles gracefully eof and partial reads
+RENDER-FREE-GLYPHS accepts START and END arguments
+Export a new convenience function FIND-STANDARD-PICTURE-FORMAT
+Fix RR-GET-SCREEN-INFO rates
+Initial port for ABCL
+Various fixes for bundled demos
+Document composite extension
+Export COMPOSITE-RELEASE-OVERLAY-WINDOW
+Portability fixes for multiple Common Lisp implementations
+Merge support for CLASP
+Merge support for CMUCL
+Cleanup of dependents and removal of obsolete kludges
+Export RENDER-SET-PICTURE-TRANSFORM
+Implement all render triangle functions from XRender
+
 -- Changes in CLX 0.7.5, 2018-02-04 --
 
 Various OpenMCL (CCL) issues fixed
