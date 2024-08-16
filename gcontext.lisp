@@ -226,7 +226,7 @@
 (def-gc-accessor foreground card32)
 (def-gc-accessor background card32)
 (def-gc-accessor line-width card16)
-(def-gc-accessor line-style (member :solid :dash :double-dash))
+(def-gc-accessor line-style (member :solid :on-off-dash :double-dash))
 (def-gc-accessor cap-style (member :not-last :butt :round :projecting))
 (def-gc-accessor join-style (member :miter :round :bevel))
 (def-gc-accessor fill-style (member :solid :tiled :stippled :opaque-stippled))

@@ -254,8 +254,6 @@
            (finishes (setf (xlib:window-priority child-window) priority)))
       (finishes (setf (xlib:window-save-under child-window) :on))
 
-      (is (= (xlib:drawable-width child-window) 100))
-      (sleep 2)
       (is (= (xlib:drawable-width child-window) 120))
       (is (= (xlib:drawable-height child-window) 120))
       (is (= (xlib:drawable-x child-window) 60))

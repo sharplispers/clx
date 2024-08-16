@@ -5804,7 +5804,7 @@ ends of the individual dashes, except @var{:not-last} is treated as
 
 @table @var
 @item line-style
-One of @var{:dash}, @var{:double-dash}, or @var{:solid}.
+One of @var{:on-off-dash}, @var{:double-dash}, or @var{:solid}.
 @end table
 
 @end defun
