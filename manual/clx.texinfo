@@ -5796,7 +5796,7 @@ than the odd dashes. The @var{:butt} style is used where even and odd
 dashes meet (see paragraph 5.4.7, Fill-Rule and
 Fill-Style).
 
-@item :on-off-dash
+@item :dash
 Only the even dashes are drawn, with cap-style applied to all internal
 ends of the individual dashes, except @var{:not-last} is treated as
 @var{:butt}.
@@ -5804,7 +5804,7 @@ ends of the individual dashes, except @var{:not-last} is treated as
 
 @table @var
 @item line-style
-One of @var{:on-off-dash}, @var{:double-dash}, or @var{:solid}.
+One of @var{:dash}, @var{:double-dash}, or @var{:solid}.
 @end table
 
 @end defun

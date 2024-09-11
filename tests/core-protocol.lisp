@@ -426,11 +426,11 @@
       (is (equalp (xlib:gcontext-join-style gc) :round))
       (is (member (xlib:gcontext-line-style gc) '(:solid
                                                   :double-dash
-                                                  :on-off-dash)))
+                                                  :dash)))
       (finishes (setf (xlib:gcontext-line-style gc) :double-dash))
       (is (equalp (xlib:gcontext-line-style gc) :double-dash))
-      (finishes (setf (xlib:gcontext-line-style gc) :on-off-dash))
-      (is (equalp (xlib:gcontext-line-style gc) :on-off-dash))
+      (finishes (setf (xlib:gcontext-line-style gc) :dash))
+      (is (equalp (xlib:gcontext-line-style gc) :dash))
       (is (typep (xlib:gcontext-line-width gc) 'xlib:card16))
       (is (xlib:gcontext-p gc))
       (is (not (xlib:gcontext-p root-window)))
