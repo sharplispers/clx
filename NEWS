@@ -1,5 +1,9 @@
 -*- Text -*-
 
+-- Changes in CLX 0.7.7, 2025-06-03
+
+Fix failing tests and documentation to use the line style :DASH
+
 -- Changes in CLX 0.7.6, 2024-05-13 --
 
 Introduce rudimentary LICENSE file
