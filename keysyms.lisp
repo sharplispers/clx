@@ -166,6 +166,17 @@
   (define-keysym #\backspace (keysym 255 008))	; :tty
   )
 
+;;; Cursor control & motion
+(define-keysym :home (keysym 255 080))
+(define-keysym :left (keysym 255 081))
+(define-keysym :up (keysym 255 082))
+(define-keysym :right (keysym 255 083))
+(define-keysym :down (keysym 255 084))
+(define-keysym :page-up (keysym 255 085))
+(define-keysym :page-down (keysym 255 086))
+(define-keysym :end (keysym 255 087))
+(define-keysym :begin (keysym 255 088))
+
 ;;; these keysym definitions are only correct if the underlying lisp's
 ;;; definition of characters between 160 and 255 match latin1 exactly.
 ;;; If the characters are in some way locale-dependent (as, I believe,
