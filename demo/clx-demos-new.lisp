@@ -1,6 +1,13 @@
 (defpackage #:xlib-demo/demos-new
   (:use :common-lisp)
-  (:export #:demo))
+  (:export #:demo
+           #:*display* #:*screen* #:*root* :*colormap*
+           #:*black-pixel* #:*white-pixel* #:*font*
+           #:*font* #:*window*
+           #:*demos*
+
+           #:make-demo
+           #:with-x11-context))
 
 (in-package :xlib-demo/demos-new)
 

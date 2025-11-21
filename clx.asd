@@ -123,6 +123,7 @@ Independent FOSS developers"
 	     (:file "clipboard")
 	     (:file "clx-demos")
 	     (:file "clx-demos-new")
+	     (:file "hello-world")
 	     (:file "gl-test")
 	     ;; FIXME: compiling this generates 30-odd spurious code
 	     ;; deletion notes.  Find out why, and either fix or
