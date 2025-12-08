@@ -123,6 +123,7 @@ Independent FOSS developers"
 	     (:file "clipboard")
 	     (:file "clx-demos")
 	     (:file "clx-demos-new")
+	     (:file "qix")
 	     (:file "greynetic")
 	     (:file "hello-world")
 	     (:file "gl-test")
