@@ -4,10 +4,11 @@
            #:*display* #:*screen* #:*root* :*colormap*
            #:*black-pixel* #:*white-pixel* #:*font*
            #:*font* #:*window*
-           #:*demos*
+           #:*demos* #:*delay*
 
            #:make-demo
-           #:with-x11-context))
+           #:with-x11-context
+           #:full-window-state))
 
 (in-package :xlib-demo/demos-new)
 
@@ -38,6 +39,8 @@
 (defparameter *demos* '()  "Registry of available demos.")
 (declaim (type list *demos*))
 
+(defparameter *delay* 0.5)
+
 (defstruct demo
   (name "" :type string )
   (function nil :type function))
@@ -65,6 +68,12 @@
      (unwind-protect
           (progn ,@body)
        (xlib:close-display *display*))))
+
+(defun full-window-state (w)
+  (xlib:with-state (w)
+    (values (xlib:drawable-width w) (xlib:drawable-height w)
+            (xlib:drawable-x w) (xlib:drawable-y w)
+            (xlib:window-map-state w))))
 
 (defun start-in-thread (function name &optional args)
   #+sbcl
