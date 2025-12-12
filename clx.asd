@@ -123,6 +123,7 @@ Independent FOSS developers"
 	     (:file "clipboard")
 	     (:file "clx-demos")
 	     (:file "clx-demos-new")
+	     (:file "hanoi")
 	     (:file "petal")
 	     (:file "qix")
 	     (:file "greynetic")
