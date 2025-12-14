@@ -124,56 +124,6 @@
 
 
 
-;;;; Recurrence Demo
-
-;;; Copyright (C) 1988 Michael O. Newton (newton@csvax.caltech.edu)
-
-;;; Permission is granted to any individual or institution to use, copy,
-;;; modify, and distribute this software, provided that this complete
-;;; copyright and permission notice is maintained, intact, in all copies and
-;;; supporting documentation.  
-
-;;; The author provides this software "as is" without express or
-;;; implied warranty.
-
-;;; This routine plots the recurrence 
-;;;      x <- y(1+sin(0.7x)) - 1.2(|x|)^.5
-;;;      y <- .21 - x
-;;; As described in a ?? 1983 issue of the Mathematical Intelligencer
-
-(defun recurrence (display window &optional (point-count 10000))
-  (let ((gc (xlib:create-gcontext :drawable window
-				  :background *white-pixel*
-				  :foreground *black-pixel*)))
-    (multiple-value-bind (width height) (full-window-state window)
-      (xlib:clear-area window)
-      (draw-ppict window gc point-count 0.0 0.0 (* width 0.5) (* height 0.5))
-      (xlib:display-finish-output display)
-      (sleep 1))
-    (xlib:free-gcontext gc)))
-
-;;; Draw points.  X assumes points are in the range of width x height,
-;;; with 0,0 being upper left and 0,H being lower left.
-;;; hw and hh are half-width and half-height of screen
-
-(defun draw-ppict (win gc count x y hw hh)
-  "Recursively draw pretty picture"
-  (unless (zerop count)
-    (let ((xf (floor (* (+ 1.0 x) hw ))) ;These lines center the picture
-          (yf (floor (* (+ 0.7 y) hh ))))
-      (xlib:draw-point win gc xf yf)
-      (draw-ppict win gc (1- count) 
-                  (- (* y (1+ (sin (* 0.7 x)))) (* 1.2 (sqrt (abs x))))
-                  (- 0.21 x)
-                  hw
-                  hh))))
-
-(defdemo recurrence-demo "Recurrence" ()
-  10 10 700 700
-  "Plots a cool recurrence relation."
-  (recurrence *display* *window*))
-
-
 ;;;; Plaid
 
 ;;; 

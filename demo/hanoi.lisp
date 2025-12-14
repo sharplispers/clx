@@ -240,7 +240,7 @@ TEMP-NEEDLE, is needed for temporary storage."
                                        :foreground *white-pixel*
                                        :fill-style :solid
                                        :function boole-xor)))
-          (xlib:set-wm-properties window :name title)
+          (xlib:set-wm-properties *hanoi-window* :name title)
           (xlib:clear-area *hanoi-window*)
           (xlib:map-window *hanoi-window*)
           (xlib:display-force-output *display*)
