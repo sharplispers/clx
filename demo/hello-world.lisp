@@ -1,5 +1,5 @@
 (defpackage #:xlib-demo/hello-world
-  (:use :common-lisp :xlib :xlib-demo/demos-new)
+  (:use :common-lisp :xlib :xlib-demo/demos)
   (:export #:hello-world))
 
 (in-package :xlib-demo/hello-world)

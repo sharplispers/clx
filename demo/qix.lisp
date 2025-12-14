@@ -1,5 +1,5 @@
 (defpackage #:xlib-demo/qix
-  (:use :common-lisp :xlib :xlib-demo/demos-new)
+  (:use :common-lisp :xlib :xlib-demo/demos)
   (:export #:qix))
 
 (in-package :xlib-demo/qix)

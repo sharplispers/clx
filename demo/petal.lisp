@@ -1,5 +1,5 @@
 (defpackage #:xlib-demo/petal
-  (:use :common-lisp :xlib :xlib-demo/demos-new)
+  (:use :common-lisp :xlib :xlib-demo/demos)
   (:export #:petal))
 
 (in-package :xlib-demo/petal)

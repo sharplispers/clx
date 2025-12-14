@@ -9,111 +9,180 @@
 ;;;
 ;;; Backported some changes found in CMUCL repository -- jd 2018-12-29.
 
+
 (defpackage #:xlib-demo/demos
   (:use :common-lisp)
-  (:export #:demo))
+  (:export #:demo
+           #:*display* #:*screen* #:*root* :*colormap*
+           #:*black-pixel* #:*white-pixel* #:*font*
+           #:*font* #:*window*
+           #:*demos* #:*delay*
+
+           #:make-demo
+           #:with-x11-context
+           #:full-window-state))
 
 (in-package :xlib-demo/demos)
 
-
-;;;; Graphic demos wrapper macro.
+(defparameter *display* nil
+  "The current X11 display connection.")
 
-;;; This wrapper macro should be reconsidered with respect to its property
-;;; list usage.  Possibly a demo structure should be used with *demos*
-;;; pointing to these instead of function names.  Also, something should
-;;; be done about a title window that displays the name of the demo while
-;;; it is running.
+(defparameter *screen* nil
+  "The current default screen of the current display.")
 
-(defparameter *demos* nil)
+(defparameter *root* nil
+  "The root window of the current screen.")
+
+(defparameter *colormap* nil
+  "The default colormap for the current screen.")
+
+(defparameter *black-pixel* nil
+  "The pixel value that represents black on the current screen.")
+
+(defparameter *white-pixel* nil
+  "The pixel value that represents white on the current screen.")
+
+(defparameter *font* nil
+  "The default font used for text rendering in demos.")
+
+(defparameter *window* nil
+  "The current demo window.")
+
+(defparameter *demos* '()  "Registry of available demos.")
+(declaim (type list *demos*))
+
 (defparameter *delay* 0.5)
 
-(defvar *display* nil)
-(defvar *screen* nil)
-(defvar *root* nil)
-(defvar *black-pixel* nil)
-(defvar *white-pixel* nil)
-(defvar *window* nil)
+(defstruct demo
+  (name "" :type string )
+  (function nil :type function))
 
-(defmacro defdemo (fun-name demo-name args x y width height doc &rest forms)
-  `(progn
-     (defun ,fun-name ,args
-       ,doc
-       (let* ((*display* (or *display*
-                             (xlib:open-default-display)
-                             (xlib:open-display (machine-instance))))
-              (*screen* (xlib:display-default-screen *display*))
-              (*root* (xlib:screen-root *screen*))
-              (*black-pixel* (xlib:screen-black-pixel *screen*))
-              (*white-pixel* (xlib:screen-white-pixel *screen*))
-              (*window* (xlib:create-window :parent *root*
-                                            :x ,x :y ,y
-                                            :event-mask '(:visibility-change)
-                                            :width ,width :height ,height
-                                            :background *white-pixel*
-                                            :border *black-pixel*
-                                            :border-width 2
-                                            :override-redirect :off)))
-         (xlib:set-wm-properties *window*
-				 :name ,demo-name
-				 :icon-name ,demo-name
-				 :resource-name ,demo-name
-				 :x ,x :y ,y :width ,width :height ,height
-				 :user-specified-position-p t
-				 :user-specified-size-p t
-				 :min-width ,width :min-height ,height
-				 :width-inc nil :height-inc nil)
-	 (xlib:map-window *window*)
-	 ;; Wait until we get mapped before doing anything.
-         (xlib:display-finish-output *display*)
-	 (unwind-protect (progn ,@forms)
-           (xlib:display-finish-output *display*)
-	   (xlib:unmap-window *window*))))
-    (setf (get ',fun-name 'demo-name) ',demo-name)
-    (setf (get ',fun-name 'demo-doc) ',doc)
-    (pushnew ',fun-name *demos*)
-    ',fun-name))
+(defun open-default-font (display)
+  (xlib:open-font display
+                  (or (first
+                       (xlib:list-font-names
+                        display
+                        "-adobe-courier-medium-r-*--48-0-0-0-m-0-*-*"
+                        :max-fonts 1))
+                      "fixed")))
 
-
-;;; DEMO
+(defmacro with-x11-context (&body body)
+  `(let* ((*display* (or (xlib:open-default-display)
+                         (xlib:open-display (machine-instance))))
+          (*screen* (xlib:display-default-screen *display*))
+          (*root* (xlib:screen-root *screen*))
+          (*colormap* (xlib:screen-default-colormap *screen*))
+          (*black-pixel* (xlib:screen-black-pixel *screen*))
+          (*white-pixel* (xlib:screen-white-pixel *screen*))
+          (*font* (open-default-font *display*)))
+     (setf (xlib:display-report-asynchronous-errors *display*)
+           '(:after-finish-output))
+     (unwind-protect
+          (progn ,@body)
+       (xlib:close-display *display*))))
 
-(defvar *name-to-function* (make-hash-table :test #'eq))
-(defvar *keyword-package* (find-package "KEYWORD"))
-(defvar *demo-names* nil)
+(defun full-window-state (w)
+  (xlib:with-state (w)
+    (values (xlib:drawable-width w) (xlib:drawable-height w)
+            (xlib:drawable-x w) (xlib:drawable-y w)
+            (xlib:window-map-state w))))
+
+(defun start-in-thread (function name &optional args)
+  #+sbcl
+  (sb-thread:make-thread
+   (lambda () (apply function args))
+   :name name)
+
+  #+(and cmu mp)
+  (mp:make-process
+   (lambda () (apply function args))
+   :name name)
+
+  #+(and ecl threads)
+  (mp:process-run-function
+   name
+   (lambda () (apply function args)))
+
+  #+(and clasp threads)
+  (mp:process-run-function
+   name
+   (lambda () (apply function args)))
+
+  #+abcl
+  (threads:make-thread
+   (lambda () (apply function args))
+   :name name)
+
+  #-(or sbcl (and cmu mp) (and ecl threads) (and clasp threads) abcl)
+  (progn
+    (warn "Threading not supported on this Lisp implementation")
+    nil))
 
 (defun demo ()
-  (let ((*demo-names* '("Quit")))
-    (dolist (d *demos*)
-      (setf (gethash (intern (string-upcase (get d 'demo-name))
-			     *keyword-package*)
-		     *name-to-function*)
-	    d)
-      (push (get d 'demo-name) *demo-names*))
-  
-    (let* ((display (xlib:open-default-display))
-           (screen (xlib:display-default-screen display))
-           (fg-color (xlib:screen-white-pixel screen))
-           (bg-color (xlib:screen-black-pixel screen))
-           (nice-font (xlib:open-font display "fixed")))
-      
-      (let ((a-menu (xlib::create-menu
-                     (xlib::screen-root screen) ;the menu's parent
-                     fg-color bg-color nice-font)))
-        
-        (setf (xlib::menu-title a-menu) "Please pick your favorite demo:")
-        (xlib::menu-set-item-list a-menu *demo-names*)
-        (ignore-errors ;; closing window is not handled properly in menu.
-          (unwind-protect
-               (do ((choice (xlib::menu-choose a-menu 100 100)
-                            (xlib::menu-choose a-menu 100 100)))
-                   ((and choice (string-equal "Quit" choice)))
-                 (let* ((demo-choice (intern (string-upcase choice)
-                                             *keyword-package*))
-                        (fun (gethash demo-choice *name-to-function*)))
-                   (setf choice nil)
-                   (when fun
-                     (ignore-errors (funcall fun)))))
-            (xlib:display-finish-output display)
-            (xlib:close-display display)))))))
+  (with-x11-context ()
+    (let* ((menu (xlib::create-menu *root* *white-pixel* *black-pixel*
+                                    *font*))
+           (menu-window (xlib::menu-window menu)))
+      (setf (xlib:window-event-mask (xlib::menu-window menu))
+            (xlib:make-event-mask :structure-notify :leave-window
+                                  :exposure)
 
-
-;;;; Shared demo utilities.
+            (xlib::menu-title menu)
+            "Please pick your favorite demo:")
+      (xlib::menu-set-item-list
+       menu
+       (append (mapcar #'demo-name *demos*) '("Quit")))
+      (xlib::menu-present menu 0 0)
+
+      (loop
+        with quit-requested = nil
+        with items of-type list = (xlib::menu-item-alist menu)
+        until quit-requested do
+          (xlib:event-case (*display* :timeout 0.01 :force-output-p t)
+            (:destroy-notify
+             (event-window)
+             (when (xlib:window-equal event-window menu-window)
+               (setf quit-requested t)
+               t))
+            (:exposure
+             (event-window count)
+             (when (xlib:window-equal event-window menu-window)
+               (locally (declare (type xlib:card8 count))
+                 ;; Only refresh on final exposure event
+                 (when (zerop count)
+                   (xlib::menu-refresh menu)))
+               t))
+            (:button-release
+             (event-window)
+             (let ((item-name (second (assoc event-window items))))
+               (when item-name
+                 (if (string-equal "Quit" item-name)
+                     (setf quit-requested t)
+                     (let ((demo (find item-name
+                                       *demos*
+                                       :key #'demo-name
+                                       :test #'string-equal)))
+                       (start-in-thread
+                        (lambda () (funcall (demo-function demo)))
+                        (demo-name demo))))))
+             t)
+            (:enter-notify
+             (window)
+             (locally (declare (type xlib:window window))
+               (let ((position (position window items :key #'first)))
+                 (when position
+                   (xlib::menu-highlight-item menu position))))
+             t)
+            (:leave-notify
+             (window)
+             (locally (declare (type xlib:window window))
+               (let ((position (position window items :key #'first)))
+                 (when position
+                   (xlib::menu-unhighlight-item menu position))))
+             t)
+            (otherwise
+             ()
+             t))))))
+
+#+nil
+(demo)

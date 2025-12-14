@@ -1,5 +1,5 @@
 (defpackage #:xlib-demo/bounce-window
-  (:use :common-lisp :xlib :xlib-demo/demos-new)
+  (:use :common-lisp :xlib :xlib-demo/demos)
   (:export #:bounce-window))
 
 (in-package :xlib-demo/bounce-window)

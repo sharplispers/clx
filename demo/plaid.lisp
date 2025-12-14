@@ -1,5 +1,5 @@
 (defpackage #:xlib-demo/plaid
-  (:use :common-lisp :xlib :xlib-demo/demos-new)
+  (:use :common-lisp :xlib :xlib-demo/demos)
   (:export #:plaid))
 
 (in-package :xlib-demo/plaid)

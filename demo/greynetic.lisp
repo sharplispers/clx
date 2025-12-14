@@ -1,5 +1,5 @@
 (defpackage #:xlib-demo/greynetic
-  (:use :common-lisp :xlib :xlib-demo/demos-new)
+  (:use :common-lisp :xlib :xlib-demo/demos)
   (:export #:greynetic))
 
 (in-package :xlib-demo/greynetic)

@@ -122,7 +122,6 @@ Independent FOSS developers"
 	     (:file "clclock")
 	     (:file "clipboard")
 	     (:file "clx-demos")
-	     (:file "clx-demos-new")
 	     (:file "bouncing-balls")
 	     (:file "plaid")
 	     (:file "recurrence")

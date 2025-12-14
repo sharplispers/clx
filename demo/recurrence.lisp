@@ -1,5 +1,5 @@
 (defpackage #:xlib-demo/recurrence
-  (:use :common-lisp :xlib :xlib-demo/demos-new)
+  (:use :common-lisp :xlib :xlib-demo/demos)
   (:export #:recurrence))
 
 (in-package :xlib-demo/recurrence)

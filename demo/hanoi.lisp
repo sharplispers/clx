@@ -1,5 +1,5 @@
 (defpackage #:xlib-demo/hanoi
-  (:use :common-lisp :xlib :xlib-demo/demos-new)
+  (:use :common-lisp :xlib :xlib-demo/demos)
   (:export #:hanoi))
 
 (in-package :xlib-demo/hanoi)
