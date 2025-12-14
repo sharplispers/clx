@@ -63,5 +63,3 @@
 
 (push (make-demo :name "Recurrence" :function #'recurrence) *demos*)
 
-
-
