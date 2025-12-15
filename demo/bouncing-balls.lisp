@@ -99,8 +99,9 @@
     (let ((window (create-window
                    :parent (screen-root *screen*)
                    :x 36 :y 34 :width 700 :height 500
-                   :background *white-pixel*)))
-      (xlib:set-wm-properties window :name "Plaid")
+                   :background *white-pixel*
+                   :event-mask '(:structure-notify))))
+      (xlib:set-wm-properties window :name "Bouncing balls")
       (xlib:map-window window)
       (xlib:clear-area window)
       (xlib:display-finish-output *display*)
@@ -122,7 +123,8 @@
                                                   :drawable window))
                (pixmap-gc (xlib:create-gcontext :drawable bounce-pixmap
                                                 :foreground *white-pixel*
-                                                :background *black-pixel*)))
+                                                :background *black-pixel*))
+               (runningp t))
           (xlib:put-image bounce-pixmap pixmap-gc (get-bounce-image)
                           :x 0 :y 0 :width 38 :height 34)
           (xlib:free-gcontext pixmap-gc)
@@ -130,9 +132,22 @@
             (xor-ball bounce-pixmap window gcontext (ball-x ball) (ball-y ball)))
           (xlib:display-finish-output *display*)
           (dotimes (i duration)
-            (dolist (ball balls)
-              (bounce-1-ball bounce-pixmap window gcontext ball)
-              (xlib:display-finish-output *display*))
+            (unless runningp (return))
+            (xlib:event-case (*display* :timeout 0 :discard-p t)
+              (:destroy-notify
+               (event-window)
+               (when (xlib:window-equal event-window window)
+                 (setf runningp nil)
+                 t))
+              (otherwise
+               (event-window)
+               (when (xlib:window-equal event-window window)
+                 t)))
+            (when runningp
+              (ignore-errors
+               (dolist (ball balls)
+                 (bounce-1-ball bounce-pixmap window gcontext ball)
+                 (xlib:display-finish-output *display*))))
             (sleep (/ *delay* 50.0)))
           (xlib:free-pixmap bounce-pixmap)
           (xlib:free-gcontext gcontext))))))
