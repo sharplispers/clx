@@ -52,7 +52,8 @@
   (with-x11-context ()
     (let* ((window (create-window
                     :parent (screen-root *screen*)
-                    :x 100 :y 100 :width 600 :height 600))
+                    :x 100 :y 100 :width 600 :height 600
+                    :background *black-pixel*))
            (depth (xlib:drawable-depth window))
            (draw-gcontext (xlib:create-gcontext :drawable window
                                                 :foreground *white-pixel*
