@@ -44,7 +44,8 @@
                       :y 512
                       :width (+ 20 width)
                       :height (+ 20 ascent)
-                      :background midnightblue))
+                      :background midnightblue
+                      :event-mask '(:structure-notify)))
              (gcontext (xlib:create-gcontext
                         :drawable window
                         :fill-style :solid
@@ -61,9 +62,21 @@
                           :foreground midnightblue
                           :font *font*)))
         (xlib:map-window window)
-        (loop
-          (update-clockface window gcontext background)
-          (sleep 1))))))
+        (loop with runningp = t
+              while runningp do
+                (xlib:event-case (*display* :timeout 1 :discard-p t)
+                  (:destroy-notify
+                   (event-window)
+                   (when (xlib:window-equal event-window window)
+                     (setf runningp nil)
+                     t))
+                  (otherwise
+                   (event-window)
+                   (when (and event-window window
+                              (xlib:window-equal event-window window))
+                     t)))
+                (ignore-errors
+                 (update-clockface window gcontext background)))))))
 
 (push (make-demo :name "Clock" :function #'clock) *demos*)
 
