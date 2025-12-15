@@ -1,6 +1,6 @@
 (defpackage #:xlib-demo/clclock
-  (:use "CL")
-  (:export "CLOCK"))
+  (:use :common-lisp :xlib :xlib-demo/demos)
+  (:export #:clock))
 
 (in-package #:xlib-demo/clclock)
 
@@ -73,3 +73,6 @@
     (loop
       (update-clockface)
       (sleep 1))))
+
+(push (make-demo :name "Clock" :function #'clock) *demos*)
+
