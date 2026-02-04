@@ -1,11 +1,8 @@
 (defpackage #:xlib-demo/clclock
-  (:use "CL")
-  (:export "CLOCK"))
+  (:use :common-lisp :xlib :xlib-demo/demos)
+  (:export #:clock))
 
 (in-package #:xlib-demo/clclock)
-
-(declaim (special *display* *screen* *colormap* *font* *win* *gcontext*
-                  *background* *palette* *black*))
 
 (defun romanize (arg)
   (if (zerop arg)
@@ -16,60 +13,70 @@
   (multiple-value-bind (s m h) (decode-universal-time (get-universal-time))
     (format nil "~a ~a ~a" (romanize h) (romanize m) (romanize s))))
 
-(defun update-clockface ()
+(defun update-clockface (window gcontext background)
   (let ((string (clock-string)))
-    (let ((string-width (xlib:text-width *gcontext* string)))
-      (xlib:draw-rectangle *win* *background*
+    (let ((string-width (xlib:text-width gcontext string)))
+      (xlib:draw-rectangle window background
                            0 0
-                           (xlib:drawable-width *win*)
-                           (xlib:drawable-height *win*)
+                           (xlib:drawable-width window)
+                           (xlib:drawable-height window)
                            :fill-p)
-      (xlib:draw-glyphs *win* *gcontext*
+      (xlib:draw-glyphs window gcontext
                         (- (truncate
-                            (- (xlib:drawable-width *win*) string-width)
+                            (- (xlib:drawable-width window) string-width)
                             2)
                            10)
-                        (- (xlib:drawable-height *win*) 10)
+                        (- (xlib:drawable-height window) 10)
                         string)))
   (xlib:display-force-output *display*))
 
 (defun clock ()
-  (let* ((*display* (xlib:open-default-display))
-         (*screen* (xlib:display-default-screen *display*))
-         (*colormap* (xlib:screen-default-colormap *screen*))
-
-         (*font* (xlib:open-font *display* "fixed")))
+  (with-x11-context ()
     (multiple-value-bind (width ascent)
         (xlib:text-extents *font* "XVIIII XXXVIIII XXXVIIII")
-      (setq *win* (xlib:create-window
-                   :parent (xlib:screen-root *screen*)
-                   :x 512
-                   :y 512
-                   :width (+ 20 width)
-                   :height (+ 20 ascent)
-                   :background (xlib:alloc-color *colormap*
-                                                 (xlib:lookup-color *colormap*
-                                                                    "midnightblue")))
-            *gcontext* (xlib:create-gcontext
-                        :drawable *win*
+      (let* ((midnightblue
+               (xlib:alloc-color
+                *colormap*
+                (xlib:lookup-color *colormap* "midnightblue")))
+             (window (xlib:create-window
+                      :parent (xlib:screen-root *screen*)
+                      :x 512
+                      :y 512
+                      :width (+ 20 width)
+                      :height (+ 20 ascent)
+                      :background midnightblue
+                      :event-mask '(:structure-notify)))
+             (gcontext (xlib:create-gcontext
+                        :drawable window
                         :fill-style :solid
-                        :background (xlib:screen-white-pixel *screen*)
-                        :foreground (xlib:alloc-color *colormap*
-                                                      (xlib:lookup-color
-                                                       *colormap*
-                                                       "yellow"))
-                        :font *font*)
-            *background* (xlib:create-gcontext
-                          :drawable *win*
+                        :background *white-pixel*
+                        :foreground
+                        (xlib:alloc-color
+                         *colormap*
+                         (xlib:lookup-color *colormap* "yellow"))
+                        :font *font*))
+             (background (xlib:create-gcontext
+                          :drawable window
                           :fill-style :solid
-                          :background (xlib:screen-white-pixel *screen*)
-                          :foreground (xlib:alloc-color *colormap*
-                                                        (xlib:lookup-color *colormap*
-                                                                           "midnightblue"))
-                          :font *font*)
-            *palette* nil
-            *black* (xlib:screen-black-pixel *screen*)))
-    (xlib:map-window *win*)
-    (loop
-      (update-clockface)
-      (sleep 1))))
+                          :background *white-pixel*
+                          :foreground midnightblue
+                          :font *font*)))
+        (xlib:map-window window)
+        (loop with runningp = t
+              while runningp do
+                (xlib:event-case (*display* :timeout 1 :discard-p t)
+                  (:destroy-notify
+                   (event-window)
+                   (when (xlib:window-equal event-window window)
+                     (setf runningp nil)
+                     t))
+                  (otherwise
+                   (event-window)
+                   (when (and event-window window
+                              (xlib:window-equal event-window window))
+                     t)))
+                (ignore-errors
+                 (update-clockface window gcontext background)))))))
+
+(push (make-demo :name "Clock" :function #'clock) *demos*)
+
