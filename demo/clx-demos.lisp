@@ -48,7 +48,7 @@
 (defparameter *window* nil
   "The current demo window.")
 
-(defparameter *demos* '()  "Registry of available demos.")
+(defvar *demos* '()  "Registry of available demos.")
 (declaim (type list *demos*))
 
 (defparameter *delay* 0.5)
@@ -66,7 +66,7 @@
                         :max-fonts 1))
                       "fixed")))
 
-(defmacro with-x11-context (&body body)
+(defmacro with-x11-context (() &body body)
   `(let* ((*display* (or (xlib:open-default-display)
                          (xlib:open-display (machine-instance))))
           (*screen* (xlib:display-default-screen *display*))
@@ -115,8 +115,8 @@
 
   #-(or sbcl (and cmu mp) (and ecl threads) (and clasp threads) abcl)
   (progn
-    (warn "Threading not supported on this Lisp implementation")
-    nil))
+    (warn "Threading not supported on this Lisp implementation.")
+    (apply function args)))
 
 (defun demo ()
   (with-x11-context ()
@@ -137,7 +137,7 @@
       (loop
         with quit-requested = nil
         with items of-type list = (xlib::menu-item-alist menu)
-        until quit-requested do
+        until (or quit-requested (xlib::display-dead *display*)) do
           (xlib:event-case (*display* :timeout 0.01 :force-output-p t)
             (:destroy-notify
              (event-window)
@@ -163,7 +163,11 @@
                                        :key #'demo-name
                                        :test #'string-equal)))
                        (start-in-thread
-                        (lambda () (funcall (demo-function demo)))
+                        (lambda ()
+                          (handler-case
+                              (funcall (demo-function demo))
+                            (serious-condition (c)
+                              (format *debug-io* "~s error:~%~a" item-name c))))
                         (demo-name demo))))))
              t)
             (:enter-notify
@@ -184,5 +188,8 @@
              ()
              t))))))
 
-#+nil
+#+ (or)
 (demo)
+
+(with-standard-io-syntax
+  (format t "~&To start CLX demos run: ~s" '(xlib-demo/demos:demo)))
