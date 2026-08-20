@@ -470,6 +470,8 @@
 	   (type generalized-boolean propagate-p)
 	   (type (or null display) display)
 	   (dynamic-extent args))
+  (when (eq event-key :generic-event)
+    (error "CLX does not support sending GenericEvents"))
   (unless event-mask (setq event-mask 0))
   (unless display (setq display (window-display window)))
   (let ((internal-event-code (get-event-code event-key))
