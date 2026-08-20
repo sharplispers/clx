@@ -84,7 +84,8 @@ Independent FOSS developers"
              (:file "dbe")
              (:file "xc-misc")
              (:file "dri2")
-             (:file "composite")))
+             (:file "composite")
+             (:file "xinput2")))
    (:static-file "NEWS")
    (:static-file "CHANGES")
    (:static-file "README.md")
@@ -150,7 +151,8 @@ Independent FOSS developers"
 	    ((:file "package")
              (:file "util")
              (:file "core-protocol" :depends-on ("package" "util"))
-             (:file "generic-event" :depends-on ("package"))))))
+             (:file "generic-event" :depends-on ("package"))
+             (:file "xinput2" :depends-on ("package" "util"))))))
 
 #+sbcl
 (defmethod perform :around ((o compile-op) (f xrender-source-file))
