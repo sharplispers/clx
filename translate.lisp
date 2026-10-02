@@ -453,7 +453,7 @@
 	   (type card8 keycode)
 	   (type card16 state)
 	   (type (or null card8) keysym-index)
-	   (type (or null (function (base-char card16 generalized-boolean card8) card8))
+	   (type (or null (function (display card8 card16) card8))
 		 keysym-index-function))
   (declare (clx-values (or null character)))
   (let* ((index (or keysym-index
