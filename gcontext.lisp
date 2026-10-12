@@ -779,7 +779,7 @@
                    (bit 1 (the xgcmask (ash bit 1)))
                    (nbyte 16)
                    (mask 0)
-                   (local (svref local-state i) (svref local-state i)))
+                   (local nil))
                   ((index>= i +gcontext-fast-change-length+)
                    (card29-put 12 mask)
                    (card16-put 2 (index-ash nbyte -2))
@@ -788,6 +788,11 @@
                         (type xgcmask bit)
                         (type gcmask mask)
                         (type (or null card32) local))
+               ;; Read the component inside the body: a DO* step form would
+               ;; also be evaluated for I = +GCONTEXT-FAST-CHANGE-LENGTH+ and
+               ;; fetch the internal CLIP entry (ORDERING RECT-SEQ), which is
+               ;; not a CARD32.
+               (setq local (svref local-state i))
                (unless (eql local (the (or null card32) (svref server-state i)))
                  (setf (svref server-state i) local)
                  (card32-put nbyte local)
