@@ -88,10 +88,10 @@
     (declare (arglist name (width) get-macro put-macro &optional predicating-put-macro))
     (when (cdddr get-put-macros)
       (error "Too many parameters to define-accessor: ~s" (cdddr get-put-macros)))
-    (let ((get-macro (or (first get-put-macros) (error "No GET macro form for ~s" name)))
-          (put-macro (or (second get-put-macros) (error "No PUT macro form for ~s" name))))
+    (let* ((get-macro (or (first get-put-macros) (error "No GET macro form for ~s" name)))
+           (put-macro (or (second get-put-macros) (error "No PUT macro form for ~s" name))))
       `(within-definition (,name define-accessor)
-         (setf (get ',name 'byte-width) ,(and width (floor width 8)))
+         (setf (get ',(xintern name) 'byte-width) ,(and width (floor width 8)))
          (defmacro ,(getify name) ,(car get-macro)
            ,@(cdr get-macro))
          (defmacro ,(putify name) ,(car put-macro)
@@ -356,7 +356,7 @@
      ,(or reply-buffer '%reply-buffer) 'string ,length nil nil 0 ,index))
   ((index string &key buffer (start 0) end header-length appending)
    (unless buffer (setq buffer '%buffer))
-   (unless header-length (setq header-length (lround index)))
+   (unless header-length (setq header-length `(lround ,index)))
    (let* ((real-end (if appending (or end `(length ,string)) (gensym)))
           (form `(write-sequence-char ,buffer (index+ buffer-boffset ,header-length)
                                       ,string ,start ,real-end)))
@@ -383,7 +383,7 @@
    (unless buffer (setq buffer '%buffer))
    (let* ((real-end (if appending (or end `(length ,data)) (gensym)))
           (writer (xintern 'write-sequence- format))
-          (form `(,writer ,buffer (index+ buffer-boffset ,(lround index))
+          (form `(,writer ,buffer (index+ buffer-boffset (lround ,index))
                           ,data ,start ,real-end ,transform)))
      (flet ((maker (size)
               (if appending
@@ -392,7 +392,7 @@
                     (unless (= size 1)
                       (setq idx `(index-ceiling ,idx ,size)))
                     `(let ((,real-end ,(or end `(length ,data))))
-                       (write-card16 2 (index+ ,idx ,(index-ceiling index 4)))
+                       (write-card16 2 (index+ ,idx (index-ceiling ,index 4)))
                        ,form)))))
        (ecase format
          ((card8 int8)
@@ -612,18 +612,19 @@
 
 (defmacro check-put (index value type &rest args &environment env)
   (let* ((var (if (or (symbolp value) (constantp value)) value '.value.))
+         (index (or index '(buffer-boffset %buffer)))
          (body
-          (if (or (null (macroexpand `(type-check ,var ',type) env))
-                  (member type '(or progn pad8 pad16))
-                  (constantp value))
-              `(,(putify type) ,index ,var ,@args)
-              ;; Do type checking
-              (if (get type 'predicating-put)
-                  `(or (,(putify type t) ,index ,var ,@args)
-                       (x-type-error ,var ',(if args `(,type ,@args) type)))
-                  `(if (type? ,var ',type)
-                       (,(putify type) ,index ,var ,@args)
-                       (x-type-error ,var ',(if args `(,type ,@args) type)))))))
+           (if (or (null (macroexpand `(type-check ,var ',type) env))
+                   (member type '(or progn pad8 pad16))
+                   (constantp value))
+               `(,(putify type) ,index ,var ,@args)
+               ;; Do type checking
+               (if (get type 'predicating-put)
+                   `(or (,(putify type t) ,index ,var ,@args)
+                        (x-type-error ,var ',(if args `(,type ,@args) type)))
+                   `(if (type? ,var ',type)
+                        (,(putify type) ,index ,var ,@args)
+                        (x-type-error ,var ',(if args `(,type ,@args) type)))))))
     (if (eq var value)
         body
         `(let ((,var ,value))
@@ -635,7 +636,7 @@
   ;; Given a lists of the form (type item item ... item)
   ;; Calls body-function with four arguments, a function name,
   ;; index, item name, and optional arguments.
-  ;; The results are appended together and retured.
+  ;; The results are appended together and returned.
   (unless body-function
     (setq body-function
           #'(lambda (type index item args)
@@ -685,7 +686,7 @@
           (sizes (remove-duplicates (append '(8 16) item-sizes sizes))))
       `(with-buffer-output (,buffer :length ,length :sizes ,sizes)
          (setf (buffer-last-request ,buffer) buffer-boffset)
-         (write-card8 0 ,opcode)           ;; Stick in the opcode
+         (write-card8 0 ,opcode) ; Stick in the opcode
          ,@code
          ,@(when index
              (setq index (lround index))
