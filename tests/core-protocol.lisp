@@ -3,6 +3,42 @@
   (:use #:clx-test-utils))
 (in-package #:xlib-test-displays)
 
+(deftest change-keyboard-mapping-buffer-offset ()
+  "Keysyms are serialized relative to the request, even after queued requests."
+  (dolist (pending '(0 1 2 8))
+    (dolist (spec '((#2A((#xff61)) 0 1)
+                    (#2A((0 0) (#xff61 #xff62) (#xff63 #xff64)) 1 3)))
+      (destructuring-bind (keysyms start end) spec
+        (let* ((display (xlib::make-buffer 4096 #'xlib::make-display-internal
+                                           :host "" :display 0
+                                           :output-stream nil :input-stream nil))
+               (columns (array-dimension keysyms 1))
+               (count (- end start))
+               (offset (* pending 4))
+               (length (+ 8 (* count columns 4))))
+          ;; A dirty buffer makes an unwritten payload fail deterministically.
+          (xlib::with-buffer-output (display :index 0)
+            (dotimes (i 4096) (xlib::write-card8 i #xa5)))
+          (dotimes (i pending) (xlib:no-operation display))
+          (xlib:change-keyboard-mapping display keysyms
+                                       :start start :end end :first-keycode 202)
+          (is (= (xlib::buffer-boffset display) (+ offset length)))
+          (xlib::with-buffer-output (display :index 0)
+            (dotimes (i pending)
+              (is (= (xlib::read-card8 (* i 4)) 127))))
+          (xlib::with-buffer-output (display :index offset)
+            (is (= (xlib::read-card8 0) 100))
+            (is (= (xlib::read-card8 1) count))
+            (is (= (xlib::read-card16 2) (/ length 4)))
+            (is (= (xlib::read-card8 4) 202))
+            (is (= (xlib::read-card8 5) columns))
+            (loop for i from start below end do
+              (dotimes (j columns)
+                (is (= (xlib::read-card32
+                         (+ 8 (* 4 (+ (* (- i start) columns) j))))
+                       (aref keysyms i j)))))))))))
+
+
 ;;; Manual notes:
 ;;;
 ;;; - xlib:display-error-handler documentation has broken reference "See
