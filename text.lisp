@@ -1016,7 +1016,10 @@
 	  (do ((j 0 (index+ j 1)))
 	      ((index>= j keysyms-per-keycode))
 	    (declare (type array-index j))
-	    (card29-put (index* w 4) (aref keysyms i j))
+	    ;; W is absolute, while CARD29-PUT adds BUFFER-BOFFSET itself.
+	    ;; Counting that offset twice leaves stale bytes in the request.
+	    (card29-put (index- (index* w 4) buffer-boffset)
+			(aref keysyms i j))
 	    (index-incf w))))))) 
 
 (defun keyboard-mapping (display &key first-keycode start end data)
