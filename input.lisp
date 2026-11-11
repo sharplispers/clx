@@ -29,6 +29,7 @@
 
 ;; Event Resource
 (defvar *event-free-list* nil) ;; List of unused (processed) events
+(defvar *reply-buffer-free-lists* (make-array 32 :initial-element nil))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   ;; Maximum number of events supported (the X11 alpha release only has 34)
@@ -36,12 +37,13 @@
   (defvar *event-key-vector* (make-array +max-events+ :initial-element nil)
     "Vector of event keys - See define-event"))
 
-(defvar *event-macro-vector* (make-array +max-events+ :initial-element nil)
-  "Vector of event handler functions - See declare-event")
-(defvar *event-handler-vector* (make-array +max-events+ :initial-element nil)
-  "Vector of event handler functions - See declare-event")
-(defvar *event-send-vector* (make-array +max-events+ :initial-element nil)
-  "Vector of event sending functions - See declare-event")
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defvar *event-macro-vector* (make-array +max-events+ :initial-element nil)
+    "Vector of event handler functions - See declare-event")
+  (defvar *event-handler-vector* (make-array +max-events+ :initial-element nil)
+    "Vector of event handler functions - See declare-event")
+  (defvar *event-send-vector* (make-array +max-events+ :initial-element nil)
+    "Vector of event sending functions - See declare-event"))
 
 (defun allocate-event ()
   (or (threaded-atomic-pop *event-free-list* reply-next reply-buffer)
@@ -49,8 +51,26 @@
 
 (defun deallocate-event (reply-buffer)
   (declare (type reply-buffer reply-buffer))
-  (setf (reply-size reply-buffer) +replysize+)
-  (threaded-atomic-push reply-buffer *event-free-list* reply-next reply-buffer))
+  ;; EVENT-CODE is stored in REPLY-SIZE while an event is queued, so use
+  ;; DATA-SIZE to decide which pool owns the buffer.  In particular, a
+  ;; GenericEvent may be larger than the fixed 32-byte event buffer.
+  (let ((size (reply-data-size reply-buffer)))
+    (if (index<= size +replysize+)
+        (progn
+          (setf (reply-size reply-buffer) +replysize+
+                (reply-data-size reply-buffer) 0)
+          (threaded-atomic-push reply-buffer *event-free-list*
+                                reply-next reply-buffer))
+        (let ((index (integer-length (index1- size))))
+          (declare (type array-index index))
+          ;; REPLY-SIZE is used as EVENT-CODE while queued.  Restore the
+          ;; allocation capacity before putting a variable event back in the
+          ;; size-indexed reply pool.
+          (setf (reply-size reply-buffer) (index-ash 1 index)
+                (reply-data-size reply-buffer) 0)
+          (threaded-atomic-push reply-buffer
+                                (svref *reply-buffer-free-lists* index)
+                                reply-next reply-buffer)))))
 
 ;; Extensions are handled as follows:
 ;; DEFINITION:	Use DEFINE-EXTENSION
@@ -78,8 +98,10 @@
 ;;
 
 
-;; Any event-code greater than 34 is for an extension
-(defparameter *first-extension-event-code* 35)
+;; Event code 35 is the core GenericEvent introduced by X11.  Traditional
+;; extension events therefore start at 36; XI2 event types are carried in the
+;; GenericEvent evtype field and are not server event numbers.
+(defparameter *first-extension-event-code* 36)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defvar *extensions* nil)) ;; alist of (extension-name-symbol events errors)
@@ -261,8 +283,6 @@
 
 ;;;
 
-(defvar *reply-buffer-free-lists* (make-array 32 :initial-element nil))
-
 (defun allocate-reply-buffer (size)
   (declare (type array-index size))
   (if (index<= size +replysize+)
@@ -279,10 +299,10 @@
     (declare (type array-index size))
     (if (index<= size +replysize+)
 	(deallocate-event reply-buffer)
-      (let ((index (integer-length (index1- size))))
-	(declare (type array-index index))
-	(threaded-atomic-push reply-buffer (svref *reply-buffer-free-lists* index)
-			      reply-next reply-buffer)))))
+        (let ((index (integer-length (index1- size))))
+	  (declare (type array-index index))
+	  (threaded-atomic-push reply-buffer (svref *reply-buffer-free-lists* index)
+				reply-next reply-buffer)))))
 
 ;;;
 
@@ -368,6 +388,38 @@
   (enqueue-event reply-buffer display)
   nil)
 
+(defun generic-event-size (length)
+  "Return the byte size of a GenericEvent with LENGTH trailing units.
+
+Signals an error before allocation when the untrusted wire value cannot be
+  represented as an ARRAY-INDEX."
+  (declare (type card32 length))
+  (let ((size (+ +replysize+ (* length 4))))
+    (if (and (typep size 'array-index)
+	     (or (index<= size +replysize+)
+		 (< (integer-length (index1- size))
+		    (length *reply-buffer-free-lists*))))
+	size
+	(error "GenericEvent packet of ~D bytes is too large" size))))
+
+(defun read-generic-event-input (display reply-buffer length timeout)
+  "Read the variable tail of a GenericEvent into REPLY-BUFFER.
+
+REPLY-BUFFER already contains the first 32 bytes.  The return value is a
+non-NIL input error indicator, as for BUFFER-INPUT.  Once the header has been
+received, this deliberately reads without a timeout so a partial tail cannot
+be mistaken for a complete packet."
+  (declare (type display display)
+	   (type reply-buffer reply-buffer)
+	   (type array-index length)
+	   (type (or null real) timeout)
+	   (ignore timeout))
+  (when (index> length +replysize+)
+    (return-from read-generic-event-input
+      (buffer-input display (reply-ibuf8 reply-buffer)
+			    +replysize+ length)))
+  nil)
+
 (defun note-input-complete (display token)
   (declare (type display display))
   (when (eq (display-input-in-progress display) token)
@@ -394,7 +446,7 @@
   (let ((reply-buffer nil)
 	(token (or (current-process) (cons nil nil))))
     (declare (type (or null reply-buffer) reply-buffer))
-    (unwind-protect 
+    (unwind-protect
 	(tagbody
 	  loop
 	     (when (display-dead display)
@@ -413,55 +465,93 @@
 		       (conditional-store (display-input-in-progress display) nil token))
 	     (if (eql timeout 0)
 		 (return-from read-input :timeout)
-		 (apply #'process-block "CLX Input Lock"
-			#'(lambda (display predicate &rest predicate-args)
-			    (declare (type display display)
-				     (dynamic-extent predicate-args)
-				     (type function predicate)
-				     (dynamic-extent predicate))
-			    (or (apply predicate predicate-args)
-				(null (display-input-in-progress display))
-				(not (null (display-dead display)))))
-			display predicate predicate-args))
+	       (apply #'process-block "CLX Input Lock"
+		      #'(lambda (display predicate &rest predicate-args)
+			  (declare (type display display)
+				   (dynamic-extent predicate-args)
+				   (type function predicate)
+				   (dynamic-extent predicate))
+			  (or (apply predicate predicate-args)
+			      (null (display-input-in-progress display))
+			      (not (null (display-dead display)))))
+		      display predicate predicate-args))
 	       (go loop))
 	     ;; Now start gobbling.
 	     (setq reply-buffer (allocate-event))
 	     (with-buffer-input (reply-buffer :sizes (8 16 32))
-	       (let ((type 0))
-		 (declare (type card8 type))
+	       (let ((type 0)
+		     (generic-event-buffer nil))
+		 (declare (type card8 type)
+			  (type (or null reply-buffer) generic-event-buffer))
 		 ;; Wait for input before we disallow aborts.
 		 (unless (eql timeout 0)
 		   (let ((eof-p (buffer-input-wait display timeout)))
 		     (when eof-p (return-from read-input eof-p))))
 		 (without-aborts
 		   (let ((eof-p (buffer-input display buffer-bbuf 0 +replysize+
-					      (if force-output-p 0 timeout))))
+					    (if force-output-p 0 timeout))))
 		     (when eof-p
 		       (when (eq eof-p :timeout)
 			 (if force-output-p
 			     (go force-output)
 			   (return-from read-input :timeout)))
-		       (setf (display-dead display) t)
-		       (return-from read-input eof-p)))
-		   (setf (reply-data-size reply-buffer) +replysize+)
-		   (when (= (the card8 (setq type (read-card8 0))) 1)
-		     ;; Normal replies can be longer than +replysize+, so we
-		     ;; have to handle them while aborts are still disallowed.
-		     (let ((value
-			     (read-reply-input
-			       display (read-card16 2)
-			       (index+ +replysize+ (index* (read-card32 4) 4))
-			       (shiftf reply-buffer nil))))
-		       (when value
-			 (return-from read-input value))
-		       (go loop))))
-		 (if (zerop type)
-		     (read-error-input
-		       display (read-card16 2) (shiftf reply-buffer nil) token)
-		   (read-event-input
-		     display (read-card8 0) (shiftf reply-buffer nil)))))
-	     (go loop)
-	  force-output 
+	       (setf (display-dead display) t)
+	       (return-from read-input eof-p)))
+	   (setf (reply-data-size reply-buffer) +replysize+)
+	   (setq type (read-card8 0))
+	   (cond
+	     ((= type 1)
+	      ;; Normal replies can be longer than +replysize+, so we have to
+	      ;; handle them while aborts are still disallowed.
+	      (let ((value
+		      (read-reply-input
+			display (read-card16 2)
+			(index+ +replysize+ (index* (read-card32 4) 4))
+			(shiftf reply-buffer nil))))
+		(when value
+		  (return-from read-input value))
+		(go loop)))
+	     ((= (logand type #x7f) 35)
+	      ;; GenericEvents are the one X event whose packet extends beyond
+	      ;; the initial 32-byte read.  Read the complete packet before it
+	      ;; is made visible to the event queue, or the next event would be
+	      ;; read from the tail of this one.
+	      (let* ((length (read-card32 4))
+		     (total-size (generic-event-size length))
+		     (event-buffer reply-buffer))
+		(declare (type card32 length)
+			 (type array-index total-size)
+			 (type reply-buffer event-buffer))
+		(when (index> total-size +replysize+)
+		  (setq event-buffer (allocate-reply-buffer total-size))
+		  (buffer-replace (reply-ibuf8 event-buffer)
+				  (reply-ibuf8 reply-buffer)
+				  0 +replysize+)
+		  ;; The fixed buffer is no longer an event and can be recycled
+		  ;; immediately.  Keep EVENT-BUFFER live for the tail read.
+		  (let ((fixed-buffer reply-buffer))
+		    (setq reply-buffer event-buffer)
+		    (deallocate-event fixed-buffer)))
+		(let ((eof-p (read-generic-event-input
+				display event-buffer total-size timeout)))
+		  (when eof-p
+		    (return-from read-input eof-p)))
+		(setf (reply-data-size event-buffer) total-size)
+		(setq generic-event-buffer event-buffer
+		      reply-buffer nil)))
+	     ;; Ordinary events leave WITHOUT-ABORTS here; their queue/disposal
+	     ;; path retains the historical abort behavior.
+	     (t nil)))
+	 (cond
+	   ((zerop type)
+	    (read-error-input
+	     display (read-card16 2) (shiftf reply-buffer nil) token))
+	   (generic-event-buffer
+	    (read-event-input display type (shiftf generic-event-buffer nil)))
+	   (t
+	    (read-event-input display type (shiftf reply-buffer nil))))
+	     (go loop)))
+	  force-output
 	     (note-input-complete display token)
 	     (display-force-output display)
 	     (setq force-output-p nil)
@@ -593,6 +683,8 @@
 	   (type event-key event-key)
 	   (type generalized-boolean append-p send-event-p)
 	   (dynamic-extent args))
+  (when (eq event-key :generic-event)
+    (error "CLX does not support synthesizing GenericEvents"))
   (unless (get event-key 'event-code)
     (x-type-error event-key 'event-key))
   (let* ((event (allocate-event))
@@ -603,6 +695,7 @@
 	     (type (or null card8) event-code))
     (unless event-code (x-type-error event-key 'event-key))
     (setf (event-code event) event-code)
+    (setf (reply-data-size event) +replysize+)
     (with-display (display)
       (apply (svref *event-send-vector* event-code) display args)
       (buffer-replace buffer
@@ -988,6 +1081,57 @@
   ((member8 :modifier :keyboard :pointer) request)
   (card8 start) ;; first key-code
   (card8 count))
+
+;; GenericEvent is a receive-only event.  Its first ten bytes have a stable
+;; core layout, while bytes 10 through the end belong to the extension.  Keep
+;; the payload opaque here; extensions such as XInput2 can decode it without
+;; CLX having to model every extension's event header.
+(define-event :generic-event 35)
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+(defun generic-event-event-get-macro (display event-key variable)
+  (getf
+   `(:display (the display ,display)
+     :event-key (the keyword ,event-key)
+     :event-code (the card8 (logand #x7f (read-card8 0)))
+     :send-event-p (logbitp 7 (read-card8 0))
+     :sequence (read-card16 2)
+     :extension (read-card8 1)
+     :length (read-card32 4)
+     :evtype (read-card16 8)
+     :data (let* ((end (reply-data-size %reply-buffer))
+                  (data (make-array (- end 10) :element-type 'card8)))
+             (replace data (reply-ibuf8 %reply-buffer)
+                      :start2 10 :end2 end)
+             data))
+   variable))
+
+(defun generic-event-event-get (display event handler)
+  (declare (type display display)
+           (type reply-buffer event)
+           (type function handler)
+           (dynamic-extent handler))
+  (reading-event (event :display display :sizes (8 16 32))
+    (let* ((end (reply-data-size event))
+           (data (make-array (- end 10) :element-type 'card8)))
+      (replace data (reply-ibuf8 event) :start2 10 :end2 end)
+      (funcall handler
+               :display display
+               :event-key :generic-event
+               :event-code (logand #x7f (read-card8 0))
+               :send-event-p (logbitp 7 (read-card8 0))
+               :sequence (read-card16 2)
+               :extension (read-card8 1)
+               :length (read-card32 4)
+               :evtype (read-card16 8)
+               :data data))))
+)
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (setf (svref *event-macro-vector* 35)
+        #'generic-event-event-get-macro)
+  (setf (svref *event-handler-vector* 35)
+        #'generic-event-event-get))
 
 
 ;;
