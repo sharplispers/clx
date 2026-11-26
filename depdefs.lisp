@@ -675,12 +675,6 @@ used, since NIL is the empty list.")
 nil if a network socket should be opened."
   (cond ((or (string= host "") (string= host "unix"))
 	 (format nil "~A~D" +X-unix-socket-path+ display))
-	;; XQuartz on macOS sets DISPLAY to the path of a launchd socket,
-	;; e.g. /tmp/launch-XXXXXX/org.x:0 (old releases),
-	;; /private/tmp/com.apple.launchd.XXXXXXXXXX/org.xquartz:0 or
-	;; /var/run/com.apple.launchd.XXXXXXXXXX/org.xquartz:0 (recent macOS).
-	;; GET-DEFAULT-DISPLAY strips the leading slash as the protocol
-	;; separator, so HOST arrives here without it.
 	#+darwin
 	((or (and (> (length host) 10) (string= host "tmp/launch" :end1 10))
 	     (search "com.apple.launchd" host))
