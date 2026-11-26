@@ -677,6 +677,6 @@ nil if a network socket should be opened."
 	 (format nil "~A~D" +X-unix-socket-path+ display))
 	#+darwin
 	((or (and (> (length host) 10) (string= host "tmp/launch" :end1 10))
-	     (search "com.apple.launchd" host))
+	     (search "/com.apple.launchd" host))
 	 (format nil "/~A:~D" host display))
 	(t nil)))
