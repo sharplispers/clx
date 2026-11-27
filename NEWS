@@ -1,5 +1,10 @@
 -*- Text -*-
 
+-- Pending changes
+
+UNIX-SOCKET-PATH-FROM-HOST is more robust for different DISPLAY paths. Notably
+it works now with the most recent XQuartz / MacOS.
+
 -- Changes in CLX 0.7.8, 2026-02-04
 
 Refactor clx-demo system
