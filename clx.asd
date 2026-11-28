@@ -149,7 +149,8 @@ Independent FOSS developers"
 	    :components
 	    ((:file "package")
              (:file "util")
-             (:file "core-protocol" :depends-on ("package" "util"))))))
+             (:file "core-protocol" :depends-on ("package" "util"))
+             (:file "generic-event" :depends-on ("package"))))))
 
 #+sbcl
 (defmethod perform :around ((o compile-op) (f xrender-source-file))
